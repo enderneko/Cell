@@ -18,14 +18,14 @@ local importFrame, title, textArea
 
 local function CreateIndicatorsImportFrame()
     if not Cell.frames.indicatorsTab.mask then
-        Cell:CreateMask(Cell.frames.indicatorsTab, nil, {1, -1, -1, 1})
+        Cell.CreateMask(Cell.frames.indicatorsTab, nil, {1, -1, -1, 1})
         Cell.frames.indicatorsTab.mask:Hide()
     end
 
-    importFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsImport", Cell.frames.indicatorsTab, 430, 297)
+    importFrame = Cell.CreateFrame("CellOptionsFrame_IndicatorsImport", Cell.frames.indicatorsTab, 430, 297)
     importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel() + 50)
-    Cell:StylizeFrame(importFrame, nil, Cell:GetAccentColorTable())
-    importFrame:SetPoint("BOTTOMLEFT", P:Scale(1), 24)
+    Cell.StylizeFrame(importFrame, nil, Cell.GetAccentColorTable())
+    importFrame:SetPoint("BOTTOMLEFT", P.Scale(1), 24)
 
     -- title
     title = importFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
@@ -33,25 +33,25 @@ local function CreateIndicatorsImportFrame()
 
     -- list
     local listFrame = CreateFrame("Frame", nil, importFrame, "BackdropTemplate")
-    Cell:StylizeFrame(listFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
+    Cell.StylizeFrame(listFrame, {0, 0, 0, 0}, Cell.GetAccentColorTable())
     listFrame:SetPoint("TOPLEFT", 5, -20)
     listFrame:SetPoint("BOTTOMRIGHT", importFrame, "BOTTOMLEFT", 139, 29)
-    Cell:CreateScrollFrame(listFrame)
+    Cell.CreateScrollFrame(listFrame)
     listFrame.scrollFrame:SetScrollStep(19)
 
     -- buttons
-    local importBtn = Cell:CreateButton(importFrame, L["Import"], "green", {67, 20})
+    local importBtn = Cell.CreateButton(importFrame, L["Import"], "green", {67, 20})
     importBtn:SetPoint("BOTTOMLEFT", 5, 5)
     importBtn:SetEnabled(false)
     importBtn:SetScript("OnClick", function()
         -- lower frame level
         importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel() + 20)
 
-        local text = L["Import"].." > "..Cell:GetAccentColorString()..toLayoutName.."|r\n"
+        local text = L["Import"].." > "..Cell.GetAccentColorString()..toLayoutName.."|r\n"
             ..L["This may overwrite built-in indicators"].."\n"
             ..L["|cff1Aff1AYes|r - Overwrite"].."\n|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
 
-        local popup = Cell:CreateConfirmPopup(Cell.frames.indicatorsTab, 250, text, function(self)
+        local popup = Cell.CreateConfirmPopup(Cell.frames.indicatorsTab, 250, text, function(self)
             local toLayoutTable = CellDB["layouts"][toLayout]
             -- last custom index
             local lastIndex
@@ -73,7 +73,7 @@ local function CreateIndicatorsImportFrame()
                     lastIndex = lastIndex + 1
                     t["indicatorName"] = "indicator"..lastIndex
                     -- NOTE: remove invalid spells from custom indicators
-                    F:FilterInvalidSpells(t["auras"])
+                    F.FilterInvalidSpells(t["auras"])
                     tinsert(toLayoutTable["indicators"], t)
                 end
             end
@@ -83,15 +83,15 @@ local function CreateIndicatorsImportFrame()
             -- related
             for k, v in pairs(imported.related) do
                 if k ~= "cleuGlow" and k ~= "targetedSpellsGlow" then
-                    F:FilterInvalidSpells(v)
+                    F.FilterInvalidSpells(v)
                 end
 
                 CellDB[k] = v
 
                 if k == "debuffBlacklist" then
-                    Cell.vars.debuffBlacklist = F:ConvertTable(CellDB[k])
+                    Cell.vars.debuffBlacklist = F.ConvertTable(CellDB[k])
                 elseif k == "bigDebuffs" then
-                    Cell.vars.bigDebuffs = F:ConvertTable(CellDB[k])
+                    Cell.vars.bigDebuffs = F.ConvertTable(CellDB[k])
                 elseif k == "aoeHealings" then
                     I.UpdateAoEHealings(CellDB[k])
                 elseif k == "defensives" then
@@ -109,7 +109,7 @@ local function CreateIndicatorsImportFrame()
                 --         CellDB[k] = nil
                 --     end
                 elseif k == "targetedSpellsList" then
-                    Cell.vars.targetedSpellsList = F:ConvertTable(CellDB[k])
+                    Cell.vars.targetedSpellsList = F.ConvertTable(CellDB[k])
                 elseif k == "targetedSpellsGlow" then
                     Cell.vars.targetedSpellsGlow = CellDB[k]
                 elseif k == "actions" then
@@ -118,8 +118,8 @@ local function CreateIndicatorsImportFrame()
             end
 
             -- fire events
-            Cell:Fire("UpdateIndicators", toLayout)
-            Cell:Fire("IndicatorsChanged", toLayout)
+            Cell.Fire("UpdateIndicators", toLayout)
+            Cell.Fire("IndicatorsChanged", toLayout)
 
             importFrame:Hide()
         end, function(self)
@@ -130,8 +130,8 @@ local function CreateIndicatorsImportFrame()
         textArea.eb:ClearFocus()
     end)
 
-    local closeBtn = Cell:CreateButton(importFrame, L["Close"], "red", {67, 20})
-    closeBtn:SetPoint("BOTTOMLEFT", importBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
+    local closeBtn = Cell.CreateButton(importFrame, L["Close"], "red", {67, 20})
+    closeBtn:SetPoint("BOTTOMLEFT", importBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
     closeBtn:SetScript("OnClick", function()
         importFrame:Hide()
     end)
@@ -143,7 +143,7 @@ local function CreateIndicatorsImportFrame()
         listFrame.scrollFrame:Reset()
     end
 
-    textArea = Cell:CreateScrollEditBox(importFrame, function(eb, userChanged)
+    textArea = Cell.CreateScrollEditBox(importFrame, function(eb, userChanged)
         if userChanged then
             listFrame.scrollFrame:Reset()
             local text = eb:GetText()
@@ -181,9 +181,9 @@ local function CreateIndicatorsImportFrame()
                                 local b
                                 if t["type"] == "built-in" then
                                     local color = Cell.defaults.indicatorIndices[t.indicatorName] and "" or "|cff777777"
-                                    b = Cell:CreateButton(listFrame.scrollFrame.content, color..L[t["name"]], "transparent-accent", {20, 20})
+                                    b = Cell.CreateButton(listFrame.scrollFrame.content, color..L[t["name"]], "transparent-accent", {20, 20})
                                 else
-                                    b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-accent", {20, 20})
+                                    b = Cell.CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-accent", {20, 20})
                                     b.typeIcon = b:CreateTexture(nil, "ARTWORK")
                                     b.typeIcon:SetPoint("RIGHT", -2, 0)
                                     b.typeIcon:SetSize(16, 16)
@@ -231,7 +231,7 @@ local function CreateIndicatorsImportFrame()
             end
         end
     end)
-    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
+    Cell.StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell.GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", listFrame, "TOPRIGHT", 5, 0)
     textArea:SetPoint("BOTTOMRIGHT", -5, 5)
 
@@ -263,7 +263,7 @@ end
 -- functions
 -------------------------------------------------
 local init
-function F:ShowIndicatorsImportFrame(layout)
+function F.ShowIndicatorsImportFrame(layout)
     if not init then
         init = true
         CreateIndicatorsImportFrame()

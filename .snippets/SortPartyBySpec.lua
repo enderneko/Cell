@@ -91,7 +91,7 @@ function SlashCmdList.CELLSORT()
     wipe(nameList)
     wipe(nameToPriority)
 
-    for unit in F:IterateGroupMembers() do
+    for unit in F.IterateGroupMembers() do
         local name = UnitName(unit)
         tinsert(nameList, name)
 
@@ -114,8 +114,8 @@ function SlashCmdList.CELLSORT()
 
     CellPartyFrameHeader:SetAttribute("groupingOrder", "")
     CellPartyFrameHeader:SetAttribute("groupBy", nil)
-    CellPartyFrameHeader:SetAttribute("nameList", F:TableToString(nameList, ","))
+    CellPartyFrameHeader:SetAttribute("nameList", F.TableToString(nameList, ","))
     CellPartyFrameHeader:SetAttribute("sortMethod", "NAMELIST")
     --texplore(nameList)
-    F:Print("re-sorted.")
+    F.Print("re-sorted.")
 end

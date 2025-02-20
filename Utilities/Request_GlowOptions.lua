@@ -29,17 +29,17 @@ local function CreatePreviewButton()
     previewButton.widgets.powerBar:SetMinMaxValues(0, 1)
     previewButton.widgets.powerBar:SetValue(1)
 
-    local previewButtonBG = Cell:CreateFrame("CellGlowsPreviewButtonBG", previewButton)
+    local previewButtonBG = Cell.CreateFrame("CellGlowsPreviewButtonBG", previewButton)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
-    Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
+    Cell.StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
 
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
-    previewText:SetText(Cell:GetAccentColorString()..L["Preview"])
+    previewText:SetText(Cell.GetAccentColorString()..L["Preview"])
 
-    Cell:Fire("CreatePreview", previewButton)
+    Cell.Fire("CreatePreview", previewButton)
 end
 
 local function UpdatePreviewButton()
@@ -61,19 +61,19 @@ local function UpdatePreviewButton()
         previewButton.indicators.nameText:Hide()
     end
 
-    P:Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
-    B:SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
-    B:SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
+    P.Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
+    B.SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
+    B.SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
 
     previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
     -- health color
-    local r, g, b = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
+    local r, g, b = F.GetHealthBarColor(1, false, F.GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
 
     -- power color
-    r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
+    r, g, b = F.GetPowerBarColor("player", Cell.vars.playerClass)
     previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
 
     -- alpha
@@ -81,7 +81,7 @@ local function UpdatePreviewButton()
 
     previewButton:Show()
 
-    Cell:Fire("UpdatePreview", previewButton)
+    Cell.Fire("UpdatePreview", previewButton)
 end
 
 -------------------------------------------------
@@ -216,14 +216,14 @@ local function SliderValueChanged(index, value, refresh)
 end
 
 local function CreateGlowOptionsFrame()
-    glowOptionsFrame = Cell:CreateFrame("CellOptionsFrame_GlowOptions", Cell.frames.optionsFrame, 127, 371)
+    glowOptionsFrame = Cell.CreateFrame("CellOptionsFrame_GlowOptions", Cell.frames.optionsFrame, 127, 371)
     glowOptionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.optionsFrame, "BOTTOMRIGHT", 5, 0)
 
     local glowTypeText = glowOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     glowTypeText:SetText(L["Glow Type"])
     glowTypeText:SetPoint("TOPLEFT", 5, -5)
 
-    glowTypeDropdown = Cell:CreateDropdown(glowOptionsFrame, 117)
+    glowTypeDropdown = Cell.CreateDropdown(glowOptionsFrame, 117)
     glowTypeDropdown:SetPoint("TOPLEFT", 5, -22)
     glowTypeDropdown:SetItems({
         {
@@ -257,7 +257,7 @@ local function CreateGlowOptionsFrame()
     })
 
     -- glowColor
-    glowColor = Cell:CreateColorPicker(glowOptionsFrame, L["Glow Color"], false, function(r, g, b)
+    glowColor = Cell.CreateColorPicker(glowOptionsFrame, L["Glow Color"], false, function(r, g, b)
         -- update db
         glowOptionsTable[2][1][1] = r
         glowOptionsTable[2][1][2] = g
@@ -270,54 +270,54 @@ local function CreateGlowOptionsFrame()
     glowColor:SetPoint("TOPLEFT", glowTypeDropdown, "BOTTOMLEFT", 0, -10)
 
     -- x
-    glowOffsetX = Cell:CreateSlider(L["X Offset"], glowOptionsFrame, -100, 100, 117, 1, function(value)
+    glowOffsetX = Cell.CreateSlider(L["X Offset"], glowOptionsFrame, -100, 100, 117, 1, function(value)
         SliderValueChanged(2, value)
     end)
     glowOffsetX:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
 
     -- y
-    glowOffsetY = Cell:CreateSlider(L["Y Offset"], glowOptionsFrame, -100, 100, 117, 1, function(value)
+    glowOffsetY = Cell.CreateSlider(L["Y Offset"], glowOptionsFrame, -100, 100, 117, 1, function(value)
         SliderValueChanged(3, value)
     end)
     glowOffsetY:SetPoint("TOPLEFT", glowOffsetX, "BOTTOMLEFT", 0, -40)
 
     -- glowNumber
-    glowLines = Cell:CreateSlider(L["Lines"], glowOptionsFrame, 1, 30, 117, 1, function(value)
+    glowLines = Cell.CreateSlider(L["Lines"], glowOptionsFrame, 1, 30, 117, 1, function(value)
         SliderValueChanged(4, value)
     end)
     glowLines:SetPoint("TOPLEFT", glowOffsetY, "BOTTOMLEFT", 0, -40)
 
-    glowParticles = Cell:CreateSlider(L["Particles"], glowOptionsFrame, 1, 30, 117, 1, function(value)
+    glowParticles = Cell.CreateSlider(L["Particles"], glowOptionsFrame, 1, 30, 117, 1, function(value)
         SliderValueChanged(4, value, true)
     end)
     glowParticles:SetPoint("TOPLEFT", glowOffsetY, "BOTTOMLEFT", 0, -40)
 
     -- duration
-    glowDuration = Cell:CreateSlider(L["Duration"], glowOptionsFrame, 0.1, 3, 117, 0.1, function(value)
+    glowDuration = Cell.CreateSlider(L["Duration"], glowOptionsFrame, 0.1, 3, 117, 0.1, function(value)
         SliderValueChanged(4, value, true)
     end)
     glowDuration:SetPoint("TOPLEFT", glowOffsetY, "BOTTOMLEFT", 0, -40)
 
     -- glowFrequency
-    glowFrequency = Cell:CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 117, 0.01, function(value)
+    glowFrequency = Cell.CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 117, 0.01, function(value)
         SliderValueChanged(5, value)
     end)
     glowFrequency:SetPoint("TOPLEFT", glowLines, "BOTTOMLEFT", 0, -40)
 
     -- glowLength
-    glowLength = Cell:CreateSlider(L["Length"], glowOptionsFrame, 1, 20, 117, 1, function(value)
+    glowLength = Cell.CreateSlider(L["Length"], glowOptionsFrame, 1, 20, 117, 1, function(value)
         SliderValueChanged(6, value)
     end)
     glowLength:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
 
     -- glowThickness
-    glowThickness = Cell:CreateSlider(L["Thickness"], glowOptionsFrame, 1, 20, 117, 1, function(value)
+    glowThickness = Cell.CreateSlider(L["Thickness"], glowOptionsFrame, 1, 20, 117, 1, function(value)
         SliderValueChanged(7, value)
     end)
     glowThickness:SetPoint("TOPLEFT", glowLength, "BOTTOMLEFT", 0, -40)
 
     -- glowScale
-    glowScale = Cell:CreateSlider(L["Scale"], glowOptionsFrame, 50, 500, 117, 1, function(value)
+    glowScale = Cell.CreateSlider(L["Scale"], glowOptionsFrame, 50, 500, 117, 1, function(value)
         SliderValueChanged(6, value/100)
     end, nil, true)
     glowScale:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
@@ -330,7 +330,7 @@ end
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-function U:ShowGlowOptions(parent, t)
+function U.ShowGlowOptions(parent, t)
     if not glowOptionsFrame then
         CreateGlowOptionsFrame()
     end
@@ -346,7 +346,7 @@ function U:ShowGlowOptions(parent, t)
     end
 end
 
-function U:HideGlowOptions()
+function U.HideGlowOptions()
     if glowOptionsFrame then glowOptionsFrame:Hide() end
 end
 
@@ -358,11 +358,11 @@ local function UpdateLayout()
         UpdatePreviewButton()
     end
 end
-Cell:RegisterCallback("UpdateLayout", "GlowOptions_UpdateLayout", UpdateLayout)
+Cell.RegisterCallback("UpdateLayout", "GlowOptions_UpdateLayout", UpdateLayout)
 
 local function UpdateAppearance()
     if previewButton then
         UpdatePreviewButton()
     end
 end
-Cell:RegisterCallback("UpdateAppearance", "GlowOptions_UpdateAppearance", UpdateAppearance)
+Cell.RegisterCallback("UpdateAppearance", "GlowOptions_UpdateAppearance", UpdateAppearance)

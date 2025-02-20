@@ -4,7 +4,7 @@ local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 local B = Cell.bFuncs
 
-local generalTab = Cell:CreateFrame("CellOptionsFrame_GeneralTab", Cell.frames.optionsFrame, nil, nil, true)
+local generalTab = Cell.CreateFrame("CellOptionsFrame_GeneralTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.generalTab = generalTab
 generalTab:SetAllPoints(Cell.frames.optionsFrame)
 generalTab:Hide()
@@ -15,41 +15,41 @@ generalTab:Hide()
 local showSoloCB, showPartyCB, showRaidCB, hideBlizzardPartyCB, hideBlizzardRaidCB
 
 local function CreateVisibilityPane()
-    local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 130)
+    local visibilityPane = Cell.CreateTitledPane(generalTab, L["Visibility"], 205, 130)
     visibilityPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 5, -5)
 
-    showSoloCB = Cell:CreateCheckButton(visibilityPane, L["Show Solo"], function(checked, self)
+    showSoloCB = Cell.CreateCheckButton(visibilityPane, L["Show Solo"], function(checked, self)
         CellDB["general"]["showSolo"] = checked
-        Cell:Fire("UpdateVisibility", "solo")
+        Cell.Fire("UpdateVisibility", "solo")
     end, L["Show Solo"], L["Show while not in a group"], L["To open options frame, use /cell options"])
     showSoloCB:SetPoint("TOPLEFT", visibilityPane, "TOPLEFT", 5, -27)
 
-    showPartyCB = Cell:CreateCheckButton(visibilityPane, L["Show Party"], function(checked, self)
+    showPartyCB = Cell.CreateCheckButton(visibilityPane, L["Show Party"], function(checked, self)
         CellDB["general"]["showParty"] = checked
-        Cell:Fire("UpdateVisibility", "party")
+        Cell.Fire("UpdateVisibility", "party")
     end, L["Show Party"], L["Show while in a party"], L["To open options frame, use /cell options"])
     showPartyCB:SetPoint("TOPLEFT", showSoloCB, "BOTTOMLEFT", 0, -7)
 
-    showRaidCB = Cell:CreateCheckButton(visibilityPane, L["Show Raid"], function(checked, self)
+    showRaidCB = Cell.CreateCheckButton(visibilityPane, L["Show Raid"], function(checked, self)
         CellDB["general"]["showRaid"] = checked
-        Cell:Fire("UpdateVisibility", "raid")
+        Cell.Fire("UpdateVisibility", "raid")
     end, L["Show Raid"], L["Show while in a raid"], L["To open options frame, use /cell options"])
     showRaidCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
 
-    hideBlizzardPartyCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Party"], function(checked, self)
+    hideBlizzardPartyCB = Cell.CreateCheckButton(visibilityPane, L["Hide Blizzard Party"], function(checked, self)
         CellDB["general"]["hideBlizzardParty"] = checked
 
-        local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
+        local popup = Cell.CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
             ReloadUI()
         end, nil, true)
         popup:SetPoint("TOPLEFT", generalTab, 117, -77)
     end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
     hideBlizzardPartyCB:SetPoint("TOPLEFT", showRaidCB, "BOTTOMLEFT", 0, -7)
 
-    hideBlizzardRaidCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Raid"], function(checked, self)
+    hideBlizzardRaidCB = Cell.CreateCheckButton(visibilityPane, L["Hide Blizzard Raid"], function(checked, self)
         CellDB["general"]["hideBlizzardRaid"] = checked
 
-        local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
+        local popup = Cell.CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
             ReloadUI()
         end, nil, true)
         popup:SetPoint("TOPLEFT", generalTab, 117, -77)
@@ -81,10 +81,10 @@ local function UpdateTooltipsOptions()
 end
 
 local function CreateTooltipsPane()
-    local tooltipsPane = Cell:CreateTitledPane(generalTab, L["Tooltips"], 205, 270)
+    local tooltipsPane = Cell.CreateTitledPane(generalTab, L["Tooltips"], 205, 270)
     tooltipsPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 222, -5)
 
-    enableTooltipsCB = Cell:CreateCheckButton(tooltipsPane, L["Enabled"], function(checked, self)
+    enableTooltipsCB = Cell.CreateCheckButton(tooltipsPane, L["Enabled"], function(checked, self)
         CellDB["general"]["enableTooltips"] = checked
         hideTooltipsInCombatCB:SetEnabled(checked)
         -- enableAuraTooltipsCB:SetEnabled(checked)
@@ -103,19 +103,19 @@ local function CreateTooltipsPane()
     end)
     enableTooltipsCB:SetPoint("TOPLEFT", tooltipsPane, "TOPLEFT", 5, -27)
 
-    hideTooltipsInCombatCB = Cell:CreateCheckButton(tooltipsPane, L["Hide in Combat"], function(checked, self)
+    hideTooltipsInCombatCB = Cell.CreateCheckButton(tooltipsPane, L["Hide in Combat"], function(checked, self)
         CellDB["general"]["hideTooltipsInCombat"] = checked
     end, L["Hide in Combat"], L["Hide tooltips for units"], L["This will not affect aura tooltips"])
     hideTooltipsInCombatCB:SetPoint("TOPLEFT", enableTooltipsCB, "BOTTOMLEFT", 0, -7)
 
     -- auras tooltips
-    -- enableAuraTooltipsCB = Cell:CreateCheckButton(tooltipsPane, L["Enable Auras Tooltips"].." (pending)", function(checked, self)
+    -- enableAuraTooltipsCB = Cell.CreateCheckButton(tooltipsPane, L["Enable Auras Tooltips"].." (pending)", function(checked, self)
     -- end)
     -- enableAuraTooltipsCB:SetPoint("TOPLEFT", hideTooltipsInCombatCB, "BOTTOMLEFT", 0, -7)
     -- enableAuraTooltipsCB:SetEnabled(false)
 
     -- position
-    tooltipsAnchor = Cell:CreateDropdown(tooltipsPane, 137)
+    tooltipsAnchor = Cell.CreateDropdown(tooltipsPane, 137)
     tooltipsAnchor:SetPoint("TOPLEFT", hideTooltipsInCombatCB, "BOTTOMLEFT", 0, -25)
     local points = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
     local relativePoints = {"TOP", "TOPLEFT", "TOPRIGHT", "RIGHT", "LEFT", "BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT"}
@@ -136,7 +136,7 @@ local function CreateTooltipsPane()
     tooltipsAnchorText:SetText(L["Anchor Point"])
     tooltipsAnchorText:SetPoint("BOTTOMLEFT", tooltipsAnchor, "TOPLEFT", 0, 1)
 
-    tooltipsAnchoredTo = Cell:CreateDropdown(tooltipsPane, 137)
+    tooltipsAnchoredTo = Cell.CreateDropdown(tooltipsPane, 137)
     tooltipsAnchoredTo:SetPoint("TOPLEFT", tooltipsAnchor, "BOTTOMLEFT", 0, -25)
     local relatives = {"Default", "Cell", "Unit Button", "Cursor", "Cursor Left", "Cursor Right"}
     local relativeToItems = {}
@@ -156,13 +156,13 @@ local function CreateTooltipsPane()
     tooltipsAnchoredToText:SetText(L["Anchored To"])
     tooltipsAnchoredToText:SetPoint("BOTTOMLEFT", tooltipsAnchoredTo, "TOPLEFT", 0, 1)
 
-    tooltipsX = Cell:CreateSlider(L["X Offset"], tooltipsPane, -100, 100, 137, 1)
+    tooltipsX = Cell.CreateSlider(L["X Offset"], tooltipsPane, -100, 100, 137, 1)
     tooltipsX:SetPoint("TOPLEFT", tooltipsAnchoredTo, "BOTTOMLEFT", 0, -25)
     tooltipsX.afterValueChangedFn = function(value)
         CellDB["general"]["tooltipsPosition"][4] = value
     end
 
-    tooltipsY = Cell:CreateSlider(L["Y Offset"], tooltipsPane, -100, 100, 137, 1)
+    tooltipsY = Cell.CreateSlider(L["Y Offset"], tooltipsPane, -100, 100, 137, 1)
     tooltipsY:SetPoint("TOPLEFT", tooltipsX, "BOTTOMLEFT", 0, -40)
     tooltipsY.afterValueChangedFn = function(value)
         CellDB["general"]["tooltipsPosition"][5] = value
@@ -175,22 +175,22 @@ end
 local lockCB, fadeOutCB, menuPositionDD
 
 local function CreatePositionPane()
-    local positionPane = Cell:CreateTitledPane(generalTab, L["Position"], 205, 120)
+    local positionPane = Cell.CreateTitledPane(generalTab, L["Position"], 205, 120)
     positionPane:SetPoint("TOPLEFT", generalTab, 5, -150)
 
-    lockCB = Cell:CreateCheckButton(positionPane, L["Lock Cell Frames"], function(checked, self)
+    lockCB = Cell.CreateCheckButton(positionPane, L["Lock Cell Frames"], function(checked, self)
         CellDB["general"]["locked"] = checked
-        Cell:Fire("UpdateMenu", "lock")
+        Cell.Fire("UpdateMenu", "lock")
     end)
     lockCB:SetPoint("TOPLEFT", 5, -27)
 
-    fadeOutCB = Cell:CreateCheckButton(positionPane, L["Fade Out Menu"], function(checked, self)
+    fadeOutCB = Cell.CreateCheckButton(positionPane, L["Fade Out Menu"], function(checked, self)
         CellDB["general"]["fadeOut"] = checked
-        Cell:Fire("UpdateMenu", "fadeOut")
+        Cell.Fire("UpdateMenu", "fadeOut")
     end, L["Fade Out Menu"], L["Fade out menu buttons on mouseout"])
     fadeOutCB:SetPoint("TOPLEFT", lockCB, "BOTTOMLEFT", 0, -7)
 
-    menuPositionDD = Cell:CreateDropdown(positionPane, 137)
+    menuPositionDD = Cell.CreateDropdown(positionPane, 137)
     menuPositionDD:SetPoint("TOPLEFT", fadeOutCB, "BOTTOMLEFT", 0, -25)
     menuPositionDD:SetItems({
         {
@@ -198,7 +198,7 @@ local function CreatePositionPane()
             ["value"] = "top_bottom",
             ["onClick"] = function()
                 CellDB["general"]["menuPosition"] = "top_bottom"
-                Cell:Fire("UpdateMenu", "position")
+                Cell.Fire("UpdateMenu", "position")
             end,
         },
         {
@@ -206,7 +206,7 @@ local function CreatePositionPane()
             ["value"] = "left_right",
             ["onClick"] = function()
                 CellDB["general"]["menuPosition"] = "left_right"
-                Cell:Fire("UpdateMenu", "position")
+                Cell.Fire("UpdateMenu", "position")
             end,
         },
     })
@@ -221,11 +221,11 @@ end
 -------------------------------------------------
 local nicknameEB, syncCB
 local function CreateNicknamePane()
-    local nicknamePane = Cell:CreateTitledPane(generalTab, L["Nickname"], 205, 130)
+    local nicknamePane = Cell.CreateTitledPane(generalTab, L["Nickname"], 205, 130)
     nicknamePane:SetPoint("TOPLEFT", generalTab, 5, -300)
 
     -- my nickname
-    nicknameEB = Cell:CreateEditBox(nicknamePane, 195, 20)
+    nicknameEB = Cell.CreateEditBox(nicknamePane, 195, 20)
     nicknameEB:SetPoint("TOPLEFT", 5, -27)
     nicknameEB:SetScript("OnTextChanged", function(self, userChanged)
         local text = strtrim(nicknameEB:GetText())
@@ -246,7 +246,7 @@ local function CreateNicknamePane()
         end
     end)
 
-    nicknameEB.confirmBtn = Cell:CreateButton(nicknameEB, "OK", "accent", {50, 20})
+    nicknameEB.confirmBtn = Cell.CreateButton(nicknameEB, "OK", "accent", {50, 20})
     nicknameEB.confirmBtn:SetPoint("TOPRIGHT", nicknameEB)
     nicknameEB.confirmBtn:Hide()
     nicknameEB.confirmBtn:SetScript("OnHide", function()
@@ -256,7 +256,7 @@ local function CreateNicknamePane()
         local text = strtrim(nicknameEB:GetText())
         nicknameEB:SetText(text)
         CellDB["nicknames"]["mine"] = text
-        Cell:Fire("UpdateNicknames", "mine", text)
+        Cell.Fire("UpdateNicknames", "mine", text)
         nicknameEB.confirmBtn:Hide()
         nicknameEB:ClearFocus()
     end)
@@ -267,26 +267,26 @@ local function CreateNicknamePane()
     nicknameEB.tip:SetText(L["My Nickname"])
 
     -- sync with others
-    syncCB = Cell:CreateCheckButton(nicknamePane, L["Nickname Sync"], function(checked, self)
+    syncCB = Cell.CreateCheckButton(nicknamePane, L["Nickname Sync"], function(checked, self)
         CellDB["nicknames"]["sync"] = checked
-        Cell:Fire("UpdateNicknames", "sync", checked)
+        Cell.Fire("UpdateNicknames", "sync", checked)
     end)
     syncCB:SetPoint("TOPLEFT", nicknameEB, "BOTTOMLEFT", 0, -7)
 
     -- custom nicknames
-    local customNicknamesBtn = Cell:CreateButton(nicknamePane, L["Custom Nicknames"], "accent-hover", {137, 20})
+    local customNicknamesBtn = Cell.CreateButton(nicknamePane, L["Custom Nicknames"], "accent-hover", {137, 20})
     customNicknamesBtn:SetPoint("TOPLEFT", syncCB, "BOTTOMLEFT", 0, -7)
     Cell.frames.generalTab.customNicknamesBtn = customNicknamesBtn
     customNicknamesBtn:SetScript("OnClick", function()
-        F:ShowCustomNicknames()
+        F.ShowCustomNicknames()
     end)
 
     -- custom
-    local blacklistBtn = Cell:CreateButton(nicknamePane, L["Nickname Blacklist"], "accent-hover", {137, 20})
+    local blacklistBtn = Cell.CreateButton(nicknamePane, L["Nickname Blacklist"], "accent-hover", {137, 20})
     blacklistBtn:SetPoint("TOPLEFT", customNicknamesBtn, "BOTTOMLEFT", 0, -7)
     Cell.frames.generalTab.nicknameBlacklistBtn = blacklistBtn
     blacklistBtn:SetScript("OnClick", function()
-        F:ShowNicknameBlacklist()
+        F.ShowNicknameBlacklist()
     end)
 end
 
@@ -296,24 +296,24 @@ end
 local alwaysUpdateAurasCB, useCleuCB, translitCB
 
 local function CreateMiscPane()
-    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 130)
+    local miscPane = Cell.CreateTitledPane(generalTab, L["Misc"], 205, 130)
     miscPane:SetPoint("TOPLEFT", generalTab, 222, -300)
 
-    alwaysUpdateAurasCB = Cell:CreateCheckButton(miscPane, L["Always Update Auras"], function(checked, self)
+    alwaysUpdateAurasCB = Cell.CreateCheckButton(miscPane, L["Always Update Auras"], function(checked, self)
         CellDB["general"]["alwaysUpdateAuras"] = checked
     end, L["Ignore UNIT_AURA payloads"], L["This may help solve issues of indicators not updating correctly"])
     alwaysUpdateAurasCB:SetPoint("TOPLEFT", 5, -27)
     alwaysUpdateAurasCB:SetEnabled(Cell.isRetail)
 
-    useCleuCB = Cell:CreateCheckButton(miscPane, L["Faster Health Updates"], function(checked, self)
+    useCleuCB = Cell.CreateCheckButton(miscPane, L["Faster Health Updates"], function(checked, self)
         CellDB["general"]["useCleuHealthUpdater"] = checked
-        Cell:Fire("UpdateCLEU")
+        Cell.Fire("UpdateCLEU")
     end, "|cffff2727"..L["HIGH CPU USAGE"].." (EXPERIMENTAL)", L["Use CLEU events to increase health update rate"])
     useCleuCB:SetPoint("TOPLEFT", alwaysUpdateAurasCB, "BOTTOMLEFT", 0, -9)
 
-    translitCB = Cell:CreateCheckButton(miscPane, L["Translit Cyrillic to Latin"], function(checked, self)
+    translitCB = Cell.CreateCheckButton(miscPane, L["Translit Cyrillic to Latin"], function(checked, self)
         CellDB["general"]["translit"] = checked
-        Cell:Fire("TranslitNames")
+        Cell.Fire("TranslitNames")
     end)
     translitCB:SetPoint("TOPLEFT", useCleuCB, "BOTTOMLEFT", 0, -9)
 end
@@ -326,7 +326,7 @@ local framePriorityWidget
 -- TODO: move to Widgets.lua
 local function CreateFramePriorityWidget(parent)
     local f = CreateFrame("Frame", nil, parent)
-    P:Size(f, 336, 20)
+    P.Size(f, 336, 20)
 
     local function GetPriority(name)
         for i, t in pairs(CellDB["general"]["framePriority"]) do
@@ -347,16 +347,16 @@ local function CreateFramePriorityWidget(parent)
     end
 
     for _, name in pairs({"Main", "Spotlight", "Quick Assist"}) do
-        buttons[name] = Cell:CreateButton(f, L[name], "accent-hover", {110, 20})
+        buttons[name] = Cell.CreateButton(f, L[name], "accent-hover", {110, 20})
         buttons[name]._priorityName = name
 
-        buttons[name].cb = Cell:CreateCheckButton(buttons[name], "", function(checked, self)
+        buttons[name].cb = Cell.CreateCheckButton(buttons[name], "", function(checked, self)
             CellDB["general"]["framePriority"][GetPriority(name)][2] = checked
             buttons[name]:SetEnabled(checked)
             buttons[name]._enabled = checked
             sort(CellDB["general"]["framePriority"], Comparator)
             f:Load(CellDB["general"]["framePriority"])
-            F:UpdateFramePriority()
+            F.UpdateFramePriority()
         end)
         buttons[name].cb:SetPoint("LEFT", 3, 0)
 
@@ -378,7 +378,7 @@ local function CreateFramePriorityWidget(parent)
             self:SetFrameStrata("LOW")
             -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
             C_Timer.After(0.05, function()
-                local b = F:GetMouseFocus()
+                local b = F.GetMouseFocus()
                 if b ~= self and b and b._priority and b._enabled then
                     -- print(self._priorityName, "->", b._priorityName)
 
@@ -387,7 +387,7 @@ local function CreateFramePriorityWidget(parent)
                     tinsert(CellDB["general"]["framePriority"], b._priority, temp)
                 end
                 f:Load(CellDB["general"]["framePriority"])
-                F:UpdateFramePriority()
+                F.UpdateFramePriority()
             end)
         end)
     end
@@ -397,7 +397,7 @@ local function CreateFramePriorityWidget(parent)
             buttons[p[1]]:SetFrameStrata(parent:GetFrameStrata())
             buttons[p[1]]:Show()
             buttons[p[1]]:ClearAllPoints()
-            buttons[p[1]]:SetPoint("TOPLEFT", (i-1)*(P:Scale(110)+P:Scale(3)), 0)
+            buttons[p[1]]:SetPoint("TOPLEFT", (i-1)*(P.Scale(110)+P.Scale(3)), 0)
             buttons[p[1]]._enabled = p[2]
             buttons[p[1]]:SetEnabled(p[2])
             buttons[p[1]].cb:SetChecked(p[2])
@@ -409,13 +409,13 @@ local function CreateFramePriorityWidget(parent)
 end
 
 local function CreateLibGetFramePane()
-    local miscPane = Cell:CreateTitledPane(generalTab, "LibGetFrame", 422, 80)
+    local miscPane = Cell.CreateTitledPane(generalTab, "LibGetFrame", 422, 80)
     miscPane:SetPoint("TOPLEFT", generalTab, 5, -450)
 
     framePriorityWidget = CreateFramePriorityWidget(miscPane)
     framePriorityWidget:SetPoint("TOPLEFT", 5, -45)
 
-    -- framePriorityDD = Cell:CreateDropdown(miscPane, 250)
+    -- framePriorityDD = Cell.CreateDropdown(miscPane, 250)
     -- framePriorityDD:SetPoint("TOPLEFT", alwaysUpdateAurasCB, "BOTTOMLEFT", 0, -29)
     -- framePriorityDD:SetItems({
     --     {
@@ -461,8 +461,8 @@ local function ShowTab(tab)
             CreateLibGetFramePane()
 
             -- mask
-            F:ApplyCombatProtectionToFrame(generalTab)
-            Cell:CreateMask(generalTab, nil, {1, -1, -1, 1})
+            F.ApplyCombatProtectionToFrame(generalTab)
+            Cell.CreateMask(generalTab, nil, {1, -1, -1, 1})
             generalTab.mask:Hide()
         end
 
@@ -520,4 +520,4 @@ local function ShowTab(tab)
         generalTab:Hide()
     end
 end
-Cell:RegisterCallback("ShowOptionsTab", "GeneralTab_ShowTab", ShowTab)
+Cell.RegisterCallback("ShowOptionsTab", "GeneralTab_ShowTab", ShowTab)

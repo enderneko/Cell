@@ -45,17 +45,17 @@ local function DoImport(noReload)
                     tremove(layout["indicators"], i)
                 end
             else -- remove invalid spells from custom indicators
-                F:FilterInvalidSpells(layout["indicators"][i]["auras"])
+                F.FilterInvalidSpells(layout["indicators"][i]["auras"])
             end
         end
         -- powerFilters
         if Cell.flavor ~= imported.flavor then
-            layout.powerFilters = F:Copy(Cell.defaults.layout.powerFilters)
+            layout.powerFilters = F.Copy(Cell.defaults.layout.powerFilters)
         end
     end
 
     -- add missing indicators
-    if F:Getn(builtInFound) ~= Cell.defaults.builtIns then
+    if F.Getn(builtInFound) ~= Cell.defaults.builtIns then
         for indicatorName, index in pairs(Cell.defaults.indicatorIndices) do
             if not builtInFound[indicatorName] then
                 for _, layout in pairs(imported["layouts"]) do
@@ -110,14 +110,14 @@ local function DoImport(noReload)
     imported["characterDB"] = nil
 
     -- remove invalid spells
-    F:FilterInvalidSpells(imported["debuffBlacklist"])
-    F:FilterInvalidSpells(imported["bigDebuffs"])
-    F:FilterInvalidSpells(imported["actions"])
-    F:FilterInvalidSpells(imported["aoeHealings"]["custom"])
-    F:FilterInvalidSpells(imported["defensives"]["custom"])
-    F:FilterInvalidSpells(imported["externals"]["custom"])
-    F:FilterInvalidSpells(imported["targetedSpellsList"])
-    -- F:FilterInvalidSpells(imported["cleuAuras"])
+    F.FilterInvalidSpells(imported["debuffBlacklist"])
+    F.FilterInvalidSpells(imported["bigDebuffs"])
+    F.FilterInvalidSpells(imported["actions"])
+    F.FilterInvalidSpells(imported["aoeHealings"]["custom"])
+    F.FilterInvalidSpells(imported["defensives"]["custom"])
+    F.FilterInvalidSpells(imported["externals"]["custom"])
+    F.FilterInvalidSpells(imported["targetedSpellsList"])
+    -- F.FilterInvalidSpells(imported["cleuAuras"])
 
     -- disable autorun
     -- for i = 1, #imported["snippets"] do
@@ -154,8 +154,8 @@ local function DoImport(noReload)
     end
 
     if noReload then
-        F:Print(L["Profile imported successfully."])
-        -- TODO: F:Print(L["Profile imported: %s."])
+        F.Print(L["Profile imported successfully."])
+        -- TODO: F.Print(L["Profile imported: %s."])
     else
         ReloadUI()
     end
@@ -167,14 +167,14 @@ end
 local function GetExportString(includeNicknames, includeCharacter)
     local prefix = "!CELL:"..Cell.versionNum..":ALL!"
 
-    local db = F:Copy(CellDB)
+    local db = F.Copy(CellDB)
 
     if not includeNicknames then
         db["nicknames"] = nil
     end
 
     if includeCharacter then
-        db["characterDB"] = F:Copy(CellCharacterDB)
+        db["characterDB"] = F.Copy(CellCharacterDB)
     end
 
     db["flavor"] = Cell.flavor
@@ -192,25 +192,25 @@ end
 local function CreateImportConfirmationFrame()
     confirmationFrame = CreateFrame("Frame", nil, Cell.frames.aboutTab, "BackdropTemplate")
     confirmationFrame:SetSize(361, 165)
-    Cell:StylizeFrame(confirmationFrame, {0.1, 0.1, 0.1, 0.95}, Cell:GetAccentColorTable())
+    Cell.StylizeFrame(confirmationFrame, {0.1, 0.1, 0.1, 0.95}, Cell.GetAccentColorTable())
     confirmationFrame:EnableMouse(true)
     confirmationFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 300)
     confirmationFrame:SetPoint("TOP", importExportFrame, 0, -25)
     confirmationFrame:Hide()
 
     -- no
-    local button2 = Cell:CreateButton(confirmationFrame, L["No"], "red", {55, 17})
+    local button2 = Cell.CreateButton(confirmationFrame, L["No"], "red", {55, 17})
     button2:SetPoint("BOTTOMRIGHT")
-    button2:SetBackdropBorderColor(Cell:GetAccentColorRGB())
+    button2:SetBackdropBorderColor(Cell.GetAccentColorRGB())
     button2:SetScript("OnClick", function()
         confirmationFrame:Hide()
         importExportFrame:Hide()
     end)
 
     -- yes
-    local button1 = Cell:CreateButton(confirmationFrame, L["Yes"], "green", {55, 17})
-    button1:SetPoint("BOTTOMRIGHT", button2, "BOTTOMLEFT", P:Scale(1), 0)
-    button1:SetBackdropBorderColor(Cell:GetAccentColorRGB())
+    local button1 = Cell.CreateButton(confirmationFrame, L["Yes"], "green", {55, 17})
+    button1:SetPoint("BOTTOMRIGHT", button2, "BOTTOMLEFT", P.Scale(1), 0)
+    button1:SetBackdropBorderColor(Cell.GetAccentColorRGB())
     button1:SetScript("OnClick", function()
         DoImport()
         confirmationFrame:Hide()
@@ -242,26 +242,26 @@ local function CreateImportConfirmationFrame()
     local checkboxes = {}
 
     -- 1:general
-    checkboxes.general = Cell:CreateCheckButton(confirmationFrame, L["General"], function(checked)
+    checkboxes.general = Cell.CreateCheckButton(confirmationFrame, L["General"], function(checked)
         ignoredIndices["general"] = not checked
     end)
     checkboxes.general:SetPoint("TOPLEFT", 15, -55)
 
     -- 2:appearance
-    checkboxes.appearance = Cell:CreateCheckButton(confirmationFrame, L["Appearance"], function(checked)
+    checkboxes.appearance = Cell.CreateCheckButton(confirmationFrame, L["Appearance"], function(checked)
         ignoredIndices["appearance"] = not checked
         ignoredIndices["debuffTypeColor"] = not checked
     end)
     checkboxes.appearance:SetPoint("TOPLEFT", checkboxes.general, 165, 0)
 
     -- 3:click-castings
-    checkboxes.clickCastings = Cell:CreateCheckButton(confirmationFrame, L["Click-Castings"], function(checked)
+    checkboxes.clickCastings = Cell.CreateCheckButton(confirmationFrame, L["Click-Castings"], function(checked)
         ignoredIndices["clickCastings"] = not checked
     end)
     checkboxes.clickCastings:SetPoint("TOPLEFT", checkboxes.general, "BOTTOMLEFT", 0, -7)
 
     -- 4:layouts
-    checkboxes.layouts = Cell:CreateCheckButton(confirmationFrame, L["Layouts"] .. " & " .. L["Indicators"], function(checked)
+    checkboxes.layouts = Cell.CreateCheckButton(confirmationFrame, L["Layouts"] .. " & " .. L["Indicators"], function(checked)
         ignoredIndices["layouts"] = not checked
         ignoredIndices["layoutAutoSwitch"] = not checked
         ignoredIndices["dispelBlacklist"] = not checked
@@ -280,13 +280,13 @@ local function CreateImportConfirmationFrame()
     checkboxes.layouts:SetPoint("TOPLEFT", checkboxes.appearance, "BOTTOMLEFT", 0, -7)
 
     -- 5:raid debuffs
-    checkboxes.raidDebuffs = Cell:CreateCheckButton(confirmationFrame, L["Raid Debuffs"], function(checked)
+    checkboxes.raidDebuffs = Cell.CreateCheckButton(confirmationFrame, L["Raid Debuffs"], function(checked)
         ignoredIndices["raidDebuffs"] = not checked
     end)
     checkboxes.raidDebuffs:SetPoint("TOPLEFT", checkboxes.clickCastings, "BOTTOMLEFT", 0, -7)
 
     -- 6:utilities
-    checkboxes.utilities = Cell:CreateCheckButton(confirmationFrame, L["Utilities"], function(checked)
+    checkboxes.utilities = Cell.CreateCheckButton(confirmationFrame, L["Utilities"], function(checked)
         ignoredIndices["tools"] = not checked
         ignoredIndices["spellRequest"] = not checked
         ignoredIndices["dispelRequest"] = not checked
@@ -296,13 +296,13 @@ local function CreateImportConfirmationFrame()
     checkboxes.utilities:SetPoint("TOPLEFT", checkboxes.layouts, "BOTTOMLEFT", 0, -7)
 
     -- 7:code snippets
-    checkboxes.snippets = Cell:CreateCheckButton(confirmationFrame, L["Code Snippets"], function(checked)
+    checkboxes.snippets = Cell.CreateCheckButton(confirmationFrame, L["Code Snippets"], function(checked)
         ignoredIndices["snippets"] = not checked
     end)
     checkboxes.snippets:SetPoint("TOPLEFT", checkboxes.raidDebuffs, "BOTTOMLEFT", 0, -7)
 
     -- 8:nickname
-    checkboxes.nickname = Cell:CreateCheckButton(confirmationFrame, L["Nickname"], function(checked)
+    checkboxes.nickname = Cell.CreateCheckButton(confirmationFrame, L["Nickname"], function(checked)
         ignoredIndices["nicknames"] = not checked
     end)
     checkboxes.nickname:SetPoint("TOPLEFT", checkboxes.utilities, "BOTTOMLEFT", 0, -7)
@@ -335,26 +335,26 @@ end
 local function CreateImportExportFrame()
     importExportFrame = CreateFrame("Frame", "CellOptionsFrame_ImportExport", Cell.frames.aboutTab, "BackdropTemplate")
     importExportFrame:Hide()
-    Cell:StylizeFrame(importExportFrame, nil, Cell:GetAccentColorTable())
+    Cell.StylizeFrame(importExportFrame, nil, Cell.GetAccentColorTable())
     importExportFrame:EnableMouse(true)
     importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
-    P:Size(importExportFrame, 430, 170)
-    importExportFrame:SetPoint("BOTTOMLEFT", P:Scale(1), 27)
+    P.Size(importExportFrame, 430, 170)
+    importExportFrame:SetPoint("BOTTOMLEFT", P.Scale(1), 27)
 
     if not Cell.frames.aboutTab.mask then
-        Cell:CreateMask(Cell.frames.aboutTab, nil, {1, -1, -1, 1})
+        Cell.CreateMask(Cell.frames.aboutTab, nil, {1, -1, -1, 1})
         Cell.frames.aboutTab.mask:Hide()
     end
 
     -- close
-    local closeBtn = Cell:CreateButton(importExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
-    closeBtn:SetPoint("TOPRIGHT", P:Scale(-5), P:Scale(-1))
+    local closeBtn = Cell.CreateButton(importExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
+    closeBtn:SetPoint("TOPRIGHT", P.Scale(-5), P.Scale(-1))
     closeBtn:SetScript("OnClick", function() importExportFrame:Hide() end)
 
     -- import
-    importBtn = Cell:CreateButton(importExportFrame, L["Import"], "green", {57, 18})
+    importBtn = Cell.CreateButton(importExportFrame, L["Import"], "green", {57, 18})
     importBtn:Hide()
-    importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", P:Scale(1), 0)
+    importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", P.Scale(1), 0)
     importBtn:SetScript("OnClick", function()
         -- lower frame level
         importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 20)
@@ -364,7 +364,7 @@ local function CreateImportExportFrame()
         -- local text = "|cFFFF7070"..L["All Cell settings will be overwritten!"].."|r\n"..
         --     "|cFFB7B7B7"..L["Autorun will be disabled for all code snippets"].."|r\n"..
         --     L["|cff1Aff1AYes|r - Overwrite"].."\n".."|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
-        -- local popup = Cell:CreateConfirmPopup(Cell.frames.aboutTab, 200, text, function(self)
+        -- local popup = Cell.CreateConfirmPopup(Cell.frames.aboutTab, 200, text, function(self)
         --     DoImport()
         -- end, function()
         --     importExportFrame:Hide()
@@ -379,7 +379,7 @@ local function CreateImportExportFrame()
     title:SetPoint("TOPLEFT", 5, -5)
 
     -- export include nickname settings
-    includeNicknamesCB = Cell:CreateCheckButton(importExportFrame, L["Include Nickname Settings"], function(checked)
+    includeNicknamesCB = Cell.CreateCheckButton(importExportFrame, L["Include Nickname Settings"], function(checked)
         exported = GetExportString(checked, includeCharacterCB:GetChecked())
         textArea:SetText(exported)
     end)
@@ -387,16 +387,16 @@ local function CreateImportExportFrame()
     includeNicknamesCB:Hide()
 
     -- export include character settings
-    includeCharacterCB = Cell:CreateCheckButton(importExportFrame, L["Include Character Settings"], function(checked)
+    includeCharacterCB = Cell.CreateCheckButton(importExportFrame, L["Include Character Settings"], function(checked)
         exported = GetExportString(includeNicknamesCB:GetChecked(), checked)
         textArea:SetText(exported)
     end)
     includeCharacterCB:SetPoint("TOPLEFT", includeNicknamesCB, "TOPRIGHT", 200, 0)
     includeCharacterCB:Hide()
-    Cell:SetTooltips(includeCharacterCB, "ANCHOR_TOPLEFT", 0, 2, L["Click-Castings"]..", "..L["Layout Auto Switch"])
+    Cell.SetTooltips(includeCharacterCB, "ANCHOR_TOPLEFT", 0, 2, L["Click-Castings"]..", "..L["Layout Auto Switch"])
 
     -- textArea
-    textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userChanged)
+    textArea = Cell.CreateScrollEditBox(importExportFrame, function(eb, userChanged)
         if userChanged then
             if isImport then
                 imported = nil
@@ -435,7 +435,7 @@ local function CreateImportExportFrame()
             end
         end
     end)
-    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
+    Cell.StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell.GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", 5, -20)
     textArea:SetPoint("BOTTOMRIGHT", -5, 5)
 
@@ -467,7 +467,7 @@ end
 -- show import
 ---------------------------------------------------------------------
 local init
-function F:ShowImportFrame()
+function F.ShowImportFrame()
     if not init then
         init = true
         CreateImportExportFrame()
@@ -487,13 +487,13 @@ function F:ShowImportFrame()
     includeNicknamesCB:Hide()
     includeCharacterCB:Hide()
     textArea:SetPoint("TOPLEFT", 5, -20)
-    P:Height(importExportFrame, 200)
+    P.Height(importExportFrame, 200)
 end
 
 ---------------------------------------------------------------------
 -- show export
 ---------------------------------------------------------------------
-function F:ShowExportFrame()
+function F.ShowExportFrame()
     if not init then
         init = true
         CreateImportExportFrame()
@@ -518,7 +518,7 @@ function F:ShowExportFrame()
         includeCharacterCB:Show()
     end
     textArea:SetPoint("TOPLEFT", 5, -50)
-    P:Height(importExportFrame, 230)
+    P.Height(importExportFrame, 230)
 end
 
 ---------------------------------------------------------------------

@@ -13,8 +13,8 @@ icon:Hide()
 
 icon.tex = icon:CreateTexture(nil, "ARTWORK")
 icon.tex:SetTexCoord(0.12, 0.88, 0.12, 0.88)
-P:Point(icon.tex, "TOPLEFT", icon, "TOPLEFT", 1, -1)
-P:Point(icon.tex, "BOTTOMRIGHT", icon, "BOTTOMRIGHT", -1, 1)
+P.Point(icon.tex, "TOPLEFT", icon, "TOPLEFT", 1, -1)
+P.Point(icon.tex, "BOTTOMRIGHT", icon, "BOTTOMRIGHT", -1, 1)
 
 icon.tex:SetTexture(1022951)
 
@@ -25,7 +25,7 @@ frame:SetScript("OnEvent", function(self, event)
 
     if subEvent == "SPELL_HEAL" then
         if spellId == 234946 then
-            local b = F:GetUnitButtonByGUID(destGUID)
+            local b = F.GetUnitButtonByGUID(destGUID)
             if b then
                 icon:SetParent(b.widgets.indicatorFrame)
                 icon:SetFrameLevel(5) -- 层级

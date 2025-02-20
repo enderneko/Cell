@@ -11,7 +11,7 @@ frame:SetScript("OnEvent", function(self, event)
 
     if subEvent == "SPELL_HEAL" then
         if spellId == 2061 or spellId == 2060 then
-            F:IterateAllUnitButtons(function(b)
+            F.IterateAllUnitButtons(function(b)
                 if b.states.guid == destGUID then
                     LCG.PixelGlow_Start(b)
                 else
@@ -21,7 +21,7 @@ frame:SetScript("OnEvent", function(self, event)
         end
 
         if spellId == 234946 then
-            F:IterateAllUnitButtons(function(b)
+            F.IterateAllUnitButtons(function(b)
                 if b.states.guid == destGUID then
                     LCG.AutoCastGlow_Start(b)
                 else

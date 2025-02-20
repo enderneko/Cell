@@ -22,22 +22,22 @@ local IsInRaid = IsInRaid
 -------------------------------------------------
 local buffs = {
     -- Power Word: Fortitude - 真言术：韧
-    ["PWF"] = {id = 21562, glowColor = {F:GetClassColor("PRIEST")}, provider = "PRIEST", level = 6},
+    ["PWF"] = {id = 21562, glowColor = {F.GetClassColor("PRIEST")}, provider = "PRIEST", level = 6},
     -- Mark of the Wild - 野性印记
-    ["MotW"] = {id = 1126, glowColor = {F:GetClassColor("DRUID")}, provider = "DRUID", level = 9},
+    ["MotW"] = {id = 1126, glowColor = {F.GetClassColor("DRUID")}, provider = "DRUID", level = 9},
     -- Arcane Brilliance - 奥术智慧
-    ["AB"] = {id = 1459, glowColor = {F:GetClassColor("MAGE")}, provider = "MAGE", level = 8},
+    ["AB"] = {id = 1459, glowColor = {F.GetClassColor("MAGE")}, provider = "MAGE", level = 8},
     -- Battle Shout - 战斗怒吼
-    ["BS"] = {id = 6673, glowColor = {F:GetClassColor("WARRIOR")}, provider = "WARRIOR", level = 10},
+    ["BS"] = {id = 6673, glowColor = {F.GetClassColor("WARRIOR")}, provider = "WARRIOR", level = 10},
     -- Blessing of the Bronze - 青铜龙的祝福
-    ["BotB"] = {id = 364342, glowColor = {F:GetClassColor("EVOKER")}, provider = "EVOKER", level = 30},
+    ["BotB"] = {id = 364342, glowColor = {F.GetClassColor("EVOKER")}, provider = "EVOKER", level = 30},
     -- Skyfury - 天怒
-    ["SF"] = {id = 462854, glowColor = {F:GetClassColor("SHAMAN")}, provider = "SHAMAN", level = 16},
+    ["SF"] = {id = 462854, glowColor = {F.GetClassColor("SHAMAN")}, provider = "SHAMAN", level = 16},
 }
 
 do
     for _, t in pairs(buffs) do
-        local name, icon = F:GetSpellInfo(t["id"])
+        local name, icon = F.GetSpellInfo(t["id"])
         t["name"] = name
         t["icon"] = icon
     end
@@ -146,7 +146,7 @@ local function Reset(which)
     end
 end
 
-function F:GetUnaffectedString(spell)
+function F.GetUnaffectedString(spell)
     local list = unaffected[spell]
     local buff = buffs[spell]["name"]
 
@@ -170,7 +170,7 @@ end
 -------------------------------------------------
 local buffTrackerFrame = CreateFrame("Frame", "CellBuffTrackerFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.buffTrackerFrame = buffTrackerFrame
-P:Size(buffTrackerFrame, 102, 50)
+P.Size(buffTrackerFrame, 102, 50)
 PixelUtil.SetPoint(buffTrackerFrame, "BOTTOMLEFT", UIParent, "CENTER", 1, 1)
 buffTrackerFrame:SetClampedToScreen(true)
 buffTrackerFrame:SetMovable(true)
@@ -181,7 +181,7 @@ buffTrackerFrame:SetScript("OnDragStart", function()
 end)
 buffTrackerFrame:SetScript("OnDragStop", function()
     buffTrackerFrame:StopMovingOrSizing()
-    P:SavePosition(buffTrackerFrame, CellDB["tools"]["buffTracker"][4])
+    P.SavePosition(buffTrackerFrame, CellDB["tools"]["buffTracker"][4])
 end)
 
 -------------------------------------------------
@@ -193,8 +193,8 @@ buffTrackerFrame.moverText:SetText(L["Mover"])
 buffTrackerFrame.moverText:Hide()
 
 local fakeIconsFrame = CreateFrame("Frame", nil, buffTrackerFrame)
-P:Point(fakeIconsFrame, "BOTTOMRIGHT", buffTrackerFrame)
-P:Point(fakeIconsFrame, "TOPLEFT", buffTrackerFrame, "TOPLEFT", 0, -18)
+P.Point(fakeIconsFrame, "BOTTOMRIGHT", buffTrackerFrame)
+P.Point(fakeIconsFrame, "TOPLEFT", buffTrackerFrame, "TOPLEFT", 0, -18)
 fakeIconsFrame:EnableMouse(true)
 fakeIconsFrame:SetFrameLevel(buffTrackerFrame:GetFrameLevel() + 10)
 fakeIconsFrame:Hide()
@@ -203,18 +203,18 @@ local fakeIcons = {}
 local function CreateFakeIcon(spellIcon)
     local bg = fakeIconsFrame:CreateTexture(nil, "BORDER")
     bg:SetColorTexture(0, 0, 0, 1)
-    P:Size(bg, 32, 32)
+    P.Size(bg, 32, 32)
 
     local icon = fakeIconsFrame:CreateTexture(nil, "ARTWORK")
     icon:SetTexture(spellIcon)
     icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-    P:Point(icon, "TOPLEFT", bg, "TOPLEFT", 1, -1)
-    P:Point(icon, "BOTTOMRIGHT", bg, "BOTTOMRIGHT", -1, 1)
+    P.Point(icon, "TOPLEFT", bg, "TOPLEFT", 1, -1)
+    P.Point(icon, "BOTTOMRIGHT", bg, "BOTTOMRIGHT", -1, 1)
 
     function bg:UpdatePixelPerfect()
-        P:Resize(bg)
-        P:Repoint(bg)
-        P:Repoint(icon)
+        P.Resize(bg)
+        P.Repoint(bg)
+        P.Repoint(icon)
     end
 
     return bg
@@ -231,18 +231,18 @@ local function ShowMover(show)
         if not CellDB["tools"]["buffTracker"][1] then return end
         buffTrackerFrame:EnableMouse(true)
         buffTrackerFrame.moverText:Show()
-        Cell:StylizeFrame(buffTrackerFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
+        Cell.StylizeFrame(buffTrackerFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
         fakeIconsFrame:Show()
         buffTrackerFrame:SetAlpha(1)
     else
         buffTrackerFrame:EnableMouse(false)
         buffTrackerFrame.moverText:Hide()
-        Cell:StylizeFrame(buffTrackerFrame, {0, 0, 0, 0}, {0, 0, 0, 0})
+        Cell.StylizeFrame(buffTrackerFrame, {0, 0, 0, 0}, {0, 0, 0, 0})
         fakeIconsFrame:Hide()
         buffTrackerFrame:SetAlpha(CellDB["tools"]["fadeOut"] and 0 or 1)
     end
 end
-Cell:RegisterCallback("ShowMover", "BuffTracker_ShowMover", ShowMover)
+Cell.RegisterCallback("ShowMover", "BuffTracker_ShowMover", ShowMover)
 
 -------------------------------------------------
 -- buttons
@@ -261,9 +261,9 @@ end
 local function CreateBuffButton(parent, size, spell, icon, index)
     local b = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate,BackdropTemplate")
     if parent then b:SetFrameLevel(parent:GetFrameLevel() + 1) end
-    P:Size(b, size[1], size[2])
+    P.Size(b, size[1], size[2])
 
-    b:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
+    b:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
@@ -271,7 +271,7 @@ local function CreateBuffButton(parent, size, spell, icon, index)
     b:SetAttribute("macrotext1", "/cast [@player] " .. spell)
     b:HookScript("OnClick", function(self, button, down)
         if button == "RightButton" and (down == GetCVarBool("ActionButtonUseKeyDown")) then
-            local msg = F:GetUnaffectedString(index)
+            local msg = F.GetUnaffectedString(index)
             if msg then
                 UpdateSendChannel()
                 SendChatMessage(msg, sendChannel)
@@ -280,13 +280,13 @@ local function CreateBuffButton(parent, size, spell, icon, index)
     end)
 
     b.texture = b:CreateTexture(nil, "OVERLAY")
-    P:Point(b.texture, "TOPLEFT", b, "TOPLEFT", 1, -1)
-    P:Point(b.texture, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
+    P.Point(b.texture, "TOPLEFT", b, "TOPLEFT", 1, -1)
+    P.Point(b.texture, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
     b.texture:SetTexture(icon)
     b.texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
     b.count = b:CreateFontString(nil, "OVERLAY")
-    P:Point(b.count, "TOPLEFT", b.texture, "TOPLEFT", 2, -2)
+    P.Point(b.count, "TOPLEFT", b.texture, "TOPLEFT", 2, -2)
     b.count:SetFont(GameFontNormal:GetFont(), 14, "OUTLINE")
     b.count:SetShadowColor(0, 0, 0)
     b.count:SetShadowOffset(0, 0)
@@ -298,14 +298,14 @@ local function CreateBuffButton(parent, size, spell, icon, index)
 
     function b:SetTooltips(list)
         b:SetScript("OnEnter", function()
-            if F:Getn(list) ~= 0 then
+            if F.Getn(list) ~= 0 then
                 CellTooltip:SetOwner(b, "ANCHOR_TOPLEFT", 0, 3)
                 CellTooltip:AddLine(L["Unaffected"])
                 for unit in pairs(list) do
                     local class = UnitClassBase(unit)
                     local name = UnitName(unit)
                     if class and name then
-                        CellTooltip:AddLine(F:GetClassColorStr(class) .. name .. "|r")
+                        CellTooltip:AddLine(F.GetClassColorStr(class) .. name .. "|r")
                     end
                 end
                 CellTooltip:Show()
@@ -350,13 +350,13 @@ local function CreateBuffButton(parent, size, spell, icon, index)
     end
 
     function b:UpdatePixelPerfect()
-        P:Resize(b)
-        P:Repoint(b)
-        b:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
+        P.Resize(b)
+        P.Repoint(b)
+        b:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
         b:SetBackdropBorderColor(0, 0, 0, 1)
 
-        P:Repoint(b.texture)
-        P:Repoint(b.count)
+        P.Repoint(b.texture)
+        P.Repoint(b.count)
     end
 
     return b
@@ -375,7 +375,7 @@ end
 local function UpdateButtons()
     for _, k in pairs(order) do
         if available[k] then
-            local n = F:Getn(unaffected[k])
+            local n = F.Getn(unaffected[k])
             if n == 0 then
                 buttons[k].count:SetText("")
                 buttons[k]:SetAlpha(0.5)
@@ -385,7 +385,7 @@ local function UpdateButtons()
                 buttons[k]:SetAlpha(1)
                 if unaffected[k][myUnit] then
                     -- color, N, frequency, length, thickness
-                    buttons[k]:StartGlow("Pixel", buffs[k]["glowColor"], 8, 0.25, P:Scale(8), P:Scale(2))
+                    buttons[k]:StartGlow("Pixel", buffs[k]["glowColor"], 8, 0.25, P.Scale(8), P.Scale(2))
                 else
                     buttons[k]:StopGlow()
                 end
@@ -419,13 +419,13 @@ local function RepointButtons()
 
         local last
         for _, k in pairs(order) do
-            P:ClearPoints(buttons[k])
+            P.ClearPoints(buttons[k])
             if available[k] then
                 buttons[k]:Show()
                 if last then
-                    P:Point(buttons[k], point, last, relativePoint, offsetX, offsetY)
+                    P.Point(buttons[k], point, last, relativePoint, offsetX, offsetY)
                 else
-                    P:Point(buttons[k], point, firstX, firstY)
+                    P.Point(buttons[k], point, firstX, firstY)
                 end
                 last = buttons[k]
             else
@@ -436,11 +436,11 @@ local function RepointButtons()
 
         last = nil
         for _, icon in pairs(fakeIcons) do
-            P:ClearPoints(icon)
+            P.ClearPoints(icon)
             if last then
-                P:Point(icon, point, last, relativePoint, offsetX, offsetY)
+                P.Point(icon, point, last, relativePoint, offsetX, offsetY)
             else
-                P:Point(icon, point, buffTrackerFrame, point, firstX, firstY)
+                P.Point(icon, point, buffTrackerFrame, point, firstX, firstY)
             end
             last = icon
         end
@@ -453,17 +453,17 @@ local function ResizeButtons()
     else
         local size = CellDB["tools"]["buffTracker"][3]
         for _, i in pairs(fakeIcons) do
-            P:Size(i, size, size)
+            P.Size(i, size, size)
         end
         for _, b in pairs(buttons) do
-            P:Size(b, size, size)
+            P.Size(b, size, size)
         end
 
-        local n = F:Getn(buttons)
+        local n = F.Getn(buttons)
         if strfind(CellDB["tools"]["buffTracker"][2], "left") then
-            buffTrackerFrame:SetSize(n * P:Scale(size) + (n - 1) * P:Scale(3), P:Scale(size + 18))
+            buffTrackerFrame:SetSize(n * P.Scale(size) + (n - 1) * P.Scale(3), P.Scale(size + 18))
         else
-            buffTrackerFrame:SetSize(P:Scale(size), n * P:Scale(size) + (n - 1) * P:Scale(3) + P:Scale(18))
+            buffTrackerFrame:SetSize(P.Scale(size), n * P.Scale(size) + (n - 1) * P.Scale(3) + P.Scale(18))
         end
     end
 end
@@ -475,7 +475,7 @@ local fadeOuts = {}
 for _, b in pairs(buttons) do
     tinsert(fadeOuts, b)
 end
-A:ApplyFadeInOutToParent(buffTrackerFrame, function()
+A.ApplyFadeInOutToParent(buffTrackerFrame, function()
     return CellDB["tools"]["fadeOut"] and not buffTrackerFrame.moverText:IsShown()
 end, unpack(fadeOuts))
 
@@ -496,7 +496,7 @@ local function CheckUnit(unit, updateBtn)
         for k, v in pairs(available) do
             if v then
                 if required == k or requiredByEveryone[k] then
-                    if not F:FindAuraById(unit, "BUFF", buffs[k]["id"]) then
+                    if not F.FindAuraById(unit, "BUFF", buffs[k]["id"]) then
                         unaffected[k][unit] = true
                         I.ShowMissingBuff(unit, k, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
                     else
@@ -527,7 +527,7 @@ local function IterateAllUnits()
     Reset("available")
     myUnit = ""
 
-    for unit in F:IterateGroupMembers() do
+    for unit in F.IterateGroupMembers() do
         if UnitIsConnected(unit) and UnitIsVisible(unit) then
             if UnitClassBase(unit) == "PRIEST" then
                 if UnitLevel(unit) >= buffs["PWF"]["level"] then
@@ -571,7 +571,7 @@ local function IterateAllUnits()
 
     Reset("unaffected")
 
-    for unit in F:IterateGroupMembers() do
+    for unit in F.IterateGroupMembers() do
         CheckUnit(unit)
     end
 
@@ -683,7 +683,7 @@ local function UpdateTools(which)
             ShowMover(false)
 
             -- missingBuffs indicator
-            for unit in F:IterateGroupMembers() do
+            for unit in F.IterateGroupMembers() do
                 I.HideMissingBuffs(unit, true)
             end
         end
@@ -701,13 +701,13 @@ local function UpdateTools(which)
     end
 
     if not which then -- position
-        P:LoadPosition(buffTrackerFrame, CellDB["tools"]["buffTracker"][4])
+        P.LoadPosition(buffTrackerFrame, CellDB["tools"]["buffTracker"][4])
     end
 end
-Cell:RegisterCallback("UpdateTools", "BuffTracker_UpdateTools", UpdateTools)
+Cell.RegisterCallback("UpdateTools", "BuffTracker_UpdateTools", UpdateTools)
 
 local function UpdatePixelPerfect()
-    -- P:Resize(buffTrackerFrame)
+    -- P.Resize(buffTrackerFrame)
 
     for _, i in pairs(fakeIcons) do
         i:UpdatePixelPerfect()
@@ -717,4 +717,4 @@ local function UpdatePixelPerfect()
         b:UpdatePixelPerfect()
     end
 end
-Cell:RegisterCallback("UpdatePixelPerfect", "BuffTracker_UpdatePixelPerfect", UpdatePixelPerfect)
+Cell.RegisterCallback("UpdatePixelPerfect", "BuffTracker_UpdatePixelPerfect", UpdatePixelPerfect)

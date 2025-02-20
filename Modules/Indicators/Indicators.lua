@@ -8,7 +8,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 
 CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS = false
 
-local indicatorsTab = Cell:CreateFrame("CellOptionsFrame_IndicatorsTab", Cell.frames.optionsFrame, nil, nil, true)
+local indicatorsTab = Cell.CreateFrame("CellOptionsFrame_IndicatorsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.indicatorsTab = indicatorsTab
 indicatorsTab:SetAllPoints(Cell.frames.optionsFrame)
 
@@ -41,12 +41,12 @@ local function CreatePreviewButton()
     previewButton.widgets.powerBar:SetMinMaxValues(0, 1)
     previewButton.widgets.powerBar:SetValue(1)
 
-    previewButtonBG = Cell:CreateFrame("CellIndicatorsPreviewButtonBG", indicatorsTab)
+    previewButtonBG = Cell.CreateFrame("CellIndicatorsPreviewButtonBG", indicatorsTab)
     -- previewButtonBG:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 5, -1)
     -- previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, 5, -5)
     previewButtonBG:SetPoint("BOTTOM", previewButton, 0, -5)
     previewButtonBG:SetFrameStrata("BACKGROUND")
-    Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
+    Cell.StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
 
     function previewButton:UpdatePoint()
@@ -60,7 +60,7 @@ local function CreatePreviewButton()
         if (previewButton.width * CellDB["indicatorPreview"]["scale"]) <= 105 then
             x = Round((115-previewButton.width)/2)+5
             previewButtonBG:SetPoint("BOTTOM", previewButton, 0, -5)
-            P:Width(previewButtonBG, 115)
+            P.Width(previewButtonBG, 115)
         else
             previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, 5, -5)
         end
@@ -74,7 +74,7 @@ local function CreatePreviewButton()
     previewText:SetText(L["Preview"])
 
     -- preview alpha
-    -- previewAlphaSlider = Cell:CreateSlider(L["Alpha"], previewButtonBG, 0, 1, 50, 0.1, nil, function(value)
+    -- previewAlphaSlider = Cell.CreateSlider(L["Alpha"], previewButtonBG, 0, 1, 50, 0.1, nil, function(value)
     --     CellDB["indicatorPreview"]["alpha"] = value
     --     listButtons[selected]:Click()
     -- end)
@@ -84,7 +84,7 @@ local function CreatePreviewButton()
     -- previewAlphaSlider.highText:Hide()
 
     -- preview scale
-    previewScaleSlider = Cell:CreateSlider(L["Scale"], previewButtonBG, 1, 5, 50, 1, nil, function(value)
+    previewScaleSlider = Cell.CreateSlider(L["Scale"], previewButtonBG, 1, 5, 50, 1, nil, function(value)
         CellDB["indicatorPreview"]["scale"] = value
         previewButton:SetScale(value)
         previewButton:UpdatePoint()
@@ -95,20 +95,20 @@ local function CreatePreviewButton()
     previewScaleSlider.highText:Hide()
 
     -- preview show all active indicators
-    previewShowAllCB = Cell:CreateCheckButton(previewButtonBG, L["Show All"], function(checked)
+    previewShowAllCB = Cell.CreateCheckButton(previewButtonBG, L["Show All"], function(checked)
         CellDB["indicatorPreview"]["showAll"] = checked
         -- listButtons[selected]:Click()
         ListHighlightFn(selected)
     end)
     previewShowAllCB:SetPoint("TOPLEFT", previewScaleSlider, "TOPRIGHT", 7, 2)
 
-    Cell:Fire("CreatePreview", previewButton)
+    Cell.Fire("CreatePreview", previewButton)
 end
 
 local function UpdatePreviewButton()
-    P:Size(previewButton, currentLayoutTable["main"]["size"][1], currentLayoutTable["main"]["size"][2])
-    B:SetOrientation(previewButton, currentLayoutTable["barOrientation"][1], currentLayoutTable["barOrientation"][2])
-    B:SetPowerSize(previewButton, currentLayoutTable["main"]["powerSize"])
+    P.Size(previewButton, currentLayoutTable["main"]["size"][1], currentLayoutTable["main"]["size"][2])
+    B.SetOrientation(previewButton, currentLayoutTable["barOrientation"][1], currentLayoutTable["barOrientation"][2])
+    B.SetPowerSize(previewButton, currentLayoutTable["main"]["powerSize"])
 
     previewButton:UpdatePoint()
 
@@ -118,18 +118,18 @@ local function UpdatePreviewButton()
     previewButton.widgets.powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
 
     -- health color
-    local r, g, b, lossR, lossG, lossB = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
+    local r, g, b, lossR, lossG, lossB = F.GetHealthBarColor(1, false, F.GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     previewButton.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
 
     -- power color
-    r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
+    r, g, b = F.GetPowerBarColor("player", Cell.vars.playerClass)
     previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
 
     -- alpha
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
 
-    Cell:Fire("UpdatePreview", previewButton)
+    Cell.Fire("UpdatePreview", previewButton)
 end
 
 -- indicator preview onupdate
@@ -346,7 +346,7 @@ local function InitIndicator(indicatorName)
         end)
         function indicator:SetColor(cType, cTable)
             if cType == "class_color" then
-                indicator.tex:SetColorTexture(F:GetClassColor(Cell.vars.playerClass))
+                indicator.tex:SetColorTexture(F.GetClassColor(Cell.vars.playerClass))
             else
                 indicator.tex:SetColorTexture(cTable[1], cTable[2], cTable[3])
             end
@@ -598,7 +598,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     if not indicatorsTab:IsShown() then return end
 
     if not indicatorName then -- init
-        if layout == true then --! call from UpdateIndicators(true) not from Cell:Fire("UpdateIndicators", ...)
+        if layout == true then --! call from UpdateIndicators(true) not from Cell.Fire("UpdateIndicators", ...)
             if not previewButton._indicatorsCreated then
                 previewButton._indicatorsCreated = true
                 I.CreateDefensiveCooldowns(previewButton)
@@ -619,8 +619,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     if t["indicatorName"] == "statusText" then
                         indicator:SetPosition(t["position"][1], t["position"][2], t["position"][3])
                     else
-                        P:ClearPoints(indicator)
-                        P:Point(indicator, t["position"][1], previewButton, t["position"][2], t["position"][3], t["position"][4])
+                        P.ClearPoints(indicator)
+                        P.Point(indicator, t["position"][1], previewButton, t["position"][2], t["position"][3], t["position"][4])
                     end
                 end
                 -- update anchor
@@ -637,7 +637,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     if t["indicatorName"] == "debuffs" then
                         indicator:SetSize(t["size"][1], t["size"][2])
                     else
-                        P:Size(indicator, t["size"][1], t["size"][2])
+                        P.Size(indicator, t["size"][1], t["size"][2])
                     end
                 end
                 -- update thickness
@@ -657,7 +657,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update height
                 if t["height"] then
-                    P:Height(indicator, t["height"])
+                    P.Height(indicator, t["height"])
                 end
                 -- update alpha
                 if t["alpha"] then
@@ -804,7 +804,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- end
             end
             -- pixel perfect
-            B:UpdatePixelPerfect(previewButton, true)
+            B.UpdatePixelPerfect(previewButton, true)
         end
     else
         local indicator = previewButton.indicators[indicatorName]
@@ -831,8 +831,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if indicatorName == "statusText" then
                 indicator:SetPosition(value[1], value[2], value[3])
             else
-                P:ClearPoints(indicator)
-                P:Point(indicator, value[1], previewButton, value[2], value[3], value[4])
+                P.ClearPoints(indicator)
+                P.Point(indicator, value[1], previewButton, value[2], value[3], value[4])
             end
             -- update arrangement
             if indicator.indicatorType == "icons" then
@@ -846,11 +846,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if indicatorName == "debuffs" then
                 indicator:SetSize(value[1], value[2])
             else
-                P:Size(indicator, value[1], value[2])
+                P.Size(indicator, value[1], value[2])
             end
             ListHighlightFn(selected) -- NOTE: update glow
         elseif setting == "size-border" then
-            P:Size(indicator, value[1], value[2])
+            P.Size(indicator, value[1], value[2])
             indicator:SetBorder(value[3])
         elseif setting == "thickness" then
             indicator:SetThickness(value)
@@ -858,7 +858,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:UpdateThresholdsPreview()
             end
         elseif setting == "height" then
-            P:Height(indicator, value)
+            P.Height(indicator, value)
         elseif setting == "textWidth" then
             indicator:UpdateTextWidth(value)
         elseif setting == "alpha" then
@@ -982,8 +982,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 
             -- update position
             if value["position"] then
-                P:ClearPoints(indicator)
-                P:Point(indicator, value["position"][1], previewButton, value["position"][2], value["position"][3], value["position"][4])
+                P.ClearPoints(indicator)
+                P.Point(indicator, value["position"][1], previewButton, value["position"][2], value["position"][3], value["position"][4])
             end
             -- update anchor
             if value["anchor"] then
@@ -991,7 +991,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
             -- update size
             if value["size"] then
-                P:Size(indicator, value["size"][1], value["size"][2])
+                P.Size(indicator, value["size"][1], value["size"][2])
             end
             -- update thickness
             if value["thickness"] then
@@ -1081,7 +1081,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         end
     end
 end
-Cell:RegisterCallback("UpdateIndicators", "PreviewButton_UpdateIndicators", UpdateIndicators)
+Cell.RegisterCallback("UpdateIndicators", "PreviewButton_UpdateIndicators", UpdateIndicators)
 
 -------------------------------------------------
 -- layout
@@ -1089,10 +1089,10 @@ Cell:RegisterCallback("UpdateIndicators", "PreviewButton_UpdateIndicators", Upda
 local layoutDropdown, LoadLayoutDropdown, LoadSyncDropdown
 
 local function CreateLayoutPane()
-    local layoutPane = Cell:CreateTitledPane(indicatorsTab, L["Layout"], 136, 50)
+    local layoutPane = Cell.CreateTitledPane(indicatorsTab, L["Layout"], 136, 50)
     layoutPane:SetPoint("TOPLEFT", indicatorsTab, "TOPLEFT", 5, -5)
 
-    layoutDropdown = Cell:CreateDropdown(layoutPane, 136)
+    layoutDropdown = Cell.CreateDropdown(layoutPane, 136)
     layoutDropdown:SetPoint("TOPLEFT", 0, -25)
 end
 
@@ -1152,7 +1152,7 @@ local function UpdateSyncedLayouts()
     --! CLEAR SYNC
     for slave, master in pairs(slaves) do
         if CellDB["layouts"][slave] then -- not deleted
-            CellDB["layouts"][slave]["indicators"] = F:Copy(CellDB["layouts"][slave]["indicators"])
+            CellDB["layouts"][slave]["indicators"] = F.Copy(CellDB["layouts"][slave]["indicators"])
         end
     end
 
@@ -1178,7 +1178,7 @@ local function UpdateSyncedLayouts()
     end
 
     -- update syncStatus
-    if F:Getn(masters) == 0 then
+    if F.Getn(masters) == 0 then
         syncStatus:Hide()
     else
         local text = ""
@@ -1202,7 +1202,7 @@ local function UpdateSyncedLayouts()
     end
 end
 
-function F:GetNotifiedLayoutName(layout)
+function F.GetNotifiedLayoutName(layout)
     -- if currentlyEnabled is a slave
     local masterOfCurrentlyEnabled = slaves[Cell.vars.currentLayout]
     if masterOfCurrentlyEnabled then
@@ -1260,12 +1260,12 @@ LoadSyncDropdown = function()
                 ["text"] = layout == "default" and _G.DEFAULT or layout,
                 ["value"] = layout,
                 ["onClick"] = function()
-                    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["All indicators of %s will be replaced with those in %s"]:format("|cffff0066"..(currentLayout == "default" and _G.DEFAULT or currentLayout).."|r", "|cffff0066"..(layout == "default" and _G.DEFAULT or layout).."|r"), function(self)
+                    local popup = Cell.CreateConfirmPopup(indicatorsTab, 200, L["All indicators of %s will be replaced with those in %s"]:format("|cffff0066"..(currentLayout == "default" and _G.DEFAULT or currentLayout).."|r", "|cffff0066"..(layout == "default" and _G.DEFAULT or layout).."|r"), function(self)
                         currentLayoutTable["syncWith"] = layout
                         -- currentLayoutTable = CellDB["layouts"][currentLayout]
                         UpdateSyncedLayouts()
                         --! notify unitbuttons to update current indicators
-                        Cell:Fire("UpdateIndicators", currentLayout)
+                        Cell.Fire("UpdateIndicators", currentLayout)
                         --! update indicators preview
                         UpdateIndicators(true)
                         LoadIndicatorList()
@@ -1287,7 +1287,7 @@ LoadSyncDropdown = function()
                 -- currentLayoutTable = CellDB["layouts"][currentLayout]
                 UpdateSyncedLayouts()
                 --! notify unitbuttons to update current indicators
-                Cell:Fire("UpdateIndicators", currentLayout)
+                Cell.Fire("UpdateIndicators", currentLayout)
                 --! update indicators preview
                 UpdateIndicators(true)
                 LoadIndicatorList()
@@ -1302,23 +1302,23 @@ LoadSyncDropdown = function()
 end
 
 local function CreateSyncPane()
-    local syncPane = Cell:CreateTitledPane(indicatorsTab, L["Sync With"], 136, 50)
+    local syncPane = Cell.CreateTitledPane(indicatorsTab, L["Sync With"], 136, 50)
     syncPane:SetPoint("TOPLEFT", 5, -60)
 
     -- tip
-    syncTip = Cell:CreateButton(syncPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil, L["Indicator Sync"], L["syncTips"])
+    syncTip = Cell.CreateButton(syncPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil, L["Indicator Sync"], L["syncTips"])
     syncTip:SetPoint("TOPRIGHT")
     syncTip.tex = syncTip:CreateTexture(nil, "ARTWORK")
     syncTip.tex:SetAllPoints(syncTip)
     syncTip.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info2.tga")
 
     -- sync
-    syncDropdown = Cell:CreateDropdown(syncPane, 136)
+    syncDropdown = Cell.CreateDropdown(syncPane, 136)
     syncDropdown:SetPoint("TOPLEFT", 0, -25)
 
     -- sync status
     syncStatus = CreateFrame("Frame", "CellIndicatorsSyncStatus", indicatorsTab, "BackdropTemplate")
-    Cell:StylizeFrame(syncStatus, nil, Cell:GetAccentColorTable())
+    Cell.StylizeFrame(syncStatus, nil, Cell.GetAccentColorTable())
     syncStatus:SetSize(150, 30)
     syncStatus:SetPoint("TOPRIGHT", syncPane, "TOPLEFT", -10, 3)
 
@@ -1414,23 +1414,23 @@ local auraTypeItems = {
 }
 
 local function CreateListPane()
-    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 487)
+    local listPane = Cell.CreateTitledPane(indicatorsTab, L["Indicators"], 136, 487)
     listPane:SetPoint("TOPLEFT", 5, -115)
 
-    listFrame = Cell:CreateFrame("IndicatorsTab_ListFrame", listPane)
+    listFrame = Cell.CreateFrame("IndicatorsTab_ListFrame", listPane)
     listFrame:SetPoint("TOPLEFT", 0, -25)
     listFrame:SetPoint("BOTTOMRIGHT", 0, 43)
     listFrame:Show()
 
-    Cell:CreateScrollFrame(listFrame)
+    Cell.CreateScrollFrame(listFrame)
     listFrame.scrollFrame:SetScrollStep(19)
 
     -- buttons
-    local createBtn = Cell:CreateButton(listPane, nil, "green-hover", {46, 20}, nil, nil, nil, nil, nil, L["Create"])
+    local createBtn = Cell.CreateButton(listPane, nil, "green-hover", {46, 20}, nil, nil, nil, nil, nil, L["Create"])
     createBtn:SetPoint("TOPLEFT", listFrame, "BOTTOMLEFT", 0, -4)
     createBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create", {16, 16}, {"CENTER", 0, 0})
     createBtn:SetScript("OnClick", function()
-        local popup = Cell:CreateConfirmPopup(indicatorsTab, 220, L["Create new indicator"], function(self)
+        local popup = Cell.CreateConfirmPopup(indicatorsTab, 220, L["Create new indicator"], function(self)
             local name = strtrim(self.editBox:GetText())
             local indicatorName
             local indicatorType, indicatorAuraType = self.dropdown1:GetSelected(), self.dropdown2:GetSelected()
@@ -1439,7 +1439,7 @@ local function CreateListPane()
             indicatorName = "indicator" .. (last - Cell.defaults.builtIns + 1)
 
             tinsert(currentLayoutTable["indicators"], I.GetDefaultCustomIndicatorTable(name, indicatorName, indicatorType, indicatorAuraType))
-            Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
+            Cell.Fire("UpdateIndicators", F.GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
 
             LoadIndicatorList()
             listButtons[last+1]:Click()
@@ -1457,25 +1457,25 @@ local function CreateListPane()
         popup.dropdown2:SetItems(auraTypeItems)
         popup.dropdown2:SetSelectedItem(1)
     end)
-    Cell:RegisterForCloseDropdown(createBtn)
+    Cell.RegisterForCloseDropdown(createBtn)
 
-    renameBtn = Cell:CreateButton(listPane, nil, "blue-hover", {46, 20}, nil, nil, nil, nil, nil, L["Rename"])
-    renameBtn:SetPoint("TOPLEFT", createBtn, "TOPRIGHT", P:Scale(-1), 0)
+    renameBtn = Cell.CreateButton(listPane, nil, "blue-hover", {46, 20}, nil, nil, nil, nil, nil, L["Rename"])
+    renameBtn:SetPoint("TOPLEFT", createBtn, "TOPRIGHT", P.Scale(-1), 0)
     renameBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\rename", {16, 16}, {"CENTER", 0, 0})
     renameBtn:SetEnabled(false)
     renameBtn:SetScript("OnClick", function()
         local name = currentLayoutTable["indicators"][selected]["name"]
-        local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Rename indicator"].."\n"..name, function(self)
+        local popup = Cell.CreateConfirmPopup(indicatorsTab, 200, L["Rename indicator"].."\n"..name, function(self)
             local newName = strtrim(self.editBox:GetText())
             currentLayoutTable["indicators"][selected]["name"] = newName
             listButtons[selected]:SetText(newName)
         end, nil, true, true)
         popup:SetPoint("TOPLEFT", 117, -187)
     end)
-    Cell:RegisterForCloseDropdown(renameBtn)
+    Cell.RegisterForCloseDropdown(renameBtn)
 
-    deleteBtn = Cell:CreateButton(listPane, nil, "red-hover", {46, 20}, nil, nil, nil, nil, nil, L["Delete"])
-    deleteBtn:SetPoint("TOPLEFT", renameBtn, "TOPRIGHT", P:Scale(-1), 0)
+    deleteBtn = Cell.CreateButton(listPane, nil, "red-hover", {46, 20}, nil, nil, nil, nil, nil, L["Delete"])
+    deleteBtn:SetPoint("TOPLEFT", renameBtn, "TOPRIGHT", P.Scale(-1), 0)
     deleteBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\trash", {16, 16}, {"CENTER", 0, 0})
     deleteBtn:SetEnabled(false)
     deleteBtn:SetScript("OnClick", function()
@@ -1483,39 +1483,39 @@ local function CreateListPane()
         local indicatorName = currentLayoutTable["indicators"][selected]["indicatorName"]
         local auraType = currentLayoutTable["indicators"][selected]["auraType"]
 
-        local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Delete indicator"].."?\n"..name, function(self)
-            Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(currentLayout), indicatorName, "remove", auraType)
+        local popup = Cell.CreateConfirmPopup(indicatorsTab, 200, L["Delete indicator"].."?\n"..name, function(self)
+            Cell.Fire("UpdateIndicators", F.GetNotifiedLayoutName(currentLayout), indicatorName, "remove", auraType)
             tremove(currentLayoutTable["indicators"], selected)
             LoadIndicatorList()
             listButtons[1]:Click()
         end, nil, true)
         popup:SetPoint("TOPLEFT", 117, -187)
     end)
-    Cell:RegisterForCloseDropdown(deleteBtn)
+    Cell.RegisterForCloseDropdown(deleteBtn)
 
-    local importBtn = Cell:CreateButton(listPane, nil, "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"], L["Custom indicators will not be overwritten, even with same name"])
-    importBtn:SetPoint("TOPLEFT", createBtn, "BOTTOMLEFT", 0, P:Scale(1))
+    local importBtn = Cell.CreateButton(listPane, nil, "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"], L["Custom indicators will not be overwritten, even with same name"])
+    importBtn:SetPoint("TOPLEFT", createBtn, "BOTTOMLEFT", 0, P.Scale(1))
     importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import", {16, 16}, {"TOPLEFT", 14, -2})
     importBtn:SetScript("OnClick", function()
-        F:ShowIndicatorsImportFrame(currentLayout)
+        F.ShowIndicatorsImportFrame(currentLayout)
     end)
-    Cell:RegisterForCloseDropdown(importBtn)
+    Cell.RegisterForCloseDropdown(importBtn)
 
-    local exportBtn = Cell:CreateButton(listPane, nil, "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Export"])
-    exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", P:Scale(-1), 0)
+    local exportBtn = Cell.CreateButton(listPane, nil, "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Export"])
+    exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", P.Scale(-1), 0)
     exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export", {16, 16}, {"TOPLEFT", 14, -2})
     exportBtn:SetScript("OnClick", function()
-        F:ShowIndicatorsExportFrame(currentLayout)
+        F.ShowIndicatorsExportFrame(currentLayout)
     end)
-    Cell:RegisterForCloseDropdown(exportBtn)
+    Cell.RegisterForCloseDropdown(exportBtn)
 
-    local copyBtn = Cell:CreateButton(listPane, nil, "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Copy"], L["Copy indicators from one layout to another"], L["Custom indicators will not be overwritten, even with same name"])
-    copyBtn:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", P:Scale(-1), 0)
+    local copyBtn = Cell.CreateButton(listPane, nil, "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Copy"], L["Copy indicators from one layout to another"], L["Custom indicators will not be overwritten, even with same name"])
+    copyBtn:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", P.Scale(-1), 0)
     copyBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\copy", {16, 16}, {"TOPLEFT", 14, -2})
     copyBtn:SetScript("OnClick", function()
-        F:ShowIndicatorsCopyFrame()
+        F.ShowIndicatorsCopyFrame()
     end)
-    Cell:RegisterForCloseDropdown(copyBtn)
+    Cell.RegisterForCloseDropdown(copyBtn)
 end
 
 -------------------------------------------------
@@ -1524,16 +1524,16 @@ end
 local settingsFrame
 
 local function CreateSettingsPane()
-    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 597)
-    settingsPane:SetPoint("TOPLEFT", 153, P:Scale(-5))
+    local settingsPane = Cell.CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 597)
+    settingsPane:SetPoint("TOPLEFT", 153, P.Scale(-5))
 
     -- settings frame
-    settingsFrame = Cell:CreateFrame("IndicatorsTab_SettingsFrame", settingsPane, 10, 10, true)
-    settingsFrame:SetPoint("TOPLEFT", 0, P:Scale(-25))
+    settingsFrame = Cell.CreateFrame("IndicatorsTab_SettingsFrame", settingsPane, 10, 10, true)
+    settingsFrame:SetPoint("TOPLEFT", 0, P.Scale(-25))
     settingsFrame:SetPoint("BOTTOMRIGHT")
     settingsFrame:Show()
 
-    Cell:CreateScrollFrame(settingsFrame)
+    Cell.CreateScrollFrame(settingsFrame)
     settingsFrame.scrollFrame:SetScrollStep(50)
 end
 
@@ -1573,14 +1573,14 @@ if Cell.isRetail then
         ["tankActiveMitigation"] = {"|cffb7b7b7"..I.GetTankActiveMitigationString(), "enabled", "color-class", "size", "position", "frameLevel"},
         ["dispels"] = {"enabled", "dispelFilters", "highlightType", "dispelBlacklist", "iconStyle", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showAnimation", "checkbutton3:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton4:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "size-normal-big", "num:10", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell.GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["privateAuras"] = {"|cffb7b7b7"..L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."], "enabled", "privateAuraOptions", "size-square", "position", "frameLevel"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
         ["crowdControls"] = {"enabled", "builtInCrowdControls", "customCrowdControls", "durationVisibility", "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["actions"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "actionsPreview", "actionsList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
-        ["missingBuffs"] = {I.GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
+        ["missingBuffs"] = {I.GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell.GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
 elseif Cell.isCata or Cell.isWrath then
     indicatorSettings = {
@@ -1611,12 +1611,12 @@ elseif Cell.isCata or Cell.isWrath then
         ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["dispels"] = {"enabled", "dispelFilters", "highlightType", "dispelBlacklist", "iconStyle", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showAnimation", "checkbutton3:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton4:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "size-normal-big", "num:10", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell.GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
         ["actions"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "actionsPreview", "actionsList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
-        ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
+        ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell.GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
 elseif Cell.isVanilla then
     indicatorSettings = {
@@ -1645,12 +1645,12 @@ elseif Cell.isVanilla then
         ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["dispels"] = {"enabled", "dispelFilters", "highlightType", "dispelBlacklist", "iconStyle", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showAnimation", "checkbutton3:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton4:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "size-normal-big", "num:10", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell.GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
         ["actions"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "actionsPreview", "actionsList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
-        ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
+        ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell.GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
 end
 
@@ -1660,7 +1660,7 @@ local function ShowIndicatorSettings(id)
     settingsFrame.scrollFrame:ResetScroll()
     settingsFrame.scrollFrame:ResetHeight()
 
-    local notifiedLayout = F:GetNotifiedLayoutName(currentLayout)
+    local notifiedLayout = F.GetNotifiedLayoutName(currentLayout)
     local indicatorTable = currentLayoutTable["indicators"][id]
     local indicatorName = indicatorTable["indicatorName"]
     local indicatorType = indicatorTable["type"]
@@ -1721,12 +1721,12 @@ local function ShowIndicatorSettings(id)
         end
     end
 
-    local widgets = Cell:CreateIndicatorSettings(settingsFrame.scrollFrame.content, settingsTable)
+    local widgets = Cell.CreateIndicatorSettings(settingsFrame.scrollFrame.content, settingsTable)
 
     local last
     for i, w in pairs(widgets) do
         if last then
-            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, P:Scale(-10))
+            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, P.Scale(-10))
         else
             w:SetPoint("TOPLEFT")
         end
@@ -1749,7 +1749,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(indicatorTable[currentSetting])
             w:SetFunc(function(value)
                 indicatorTable[currentSetting] = value
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
                 -- show enabled/disabled status
                 if value then
                     listButtons[id]:SetTextColor(1, 1, 1, 1)
@@ -1767,7 +1767,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(setting, indicatorTable[setting], tooltip)
             w:SetFunc(function(value)
                 indicatorTable[setting] = value
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
             end)
 
         -- font
@@ -1775,7 +1775,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(indicatorTable["font"])
             w:SetFunc(function()
                 -- NOTE: values already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "font", indicatorTable["font"])
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "font", indicatorTable["font"])
             end)
 
         -- font1, font2
@@ -1785,16 +1785,16 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(indicatorTable["font"][index], setting)
             w:SetFunc(function()
                 -- NOTE: values already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "font", indicatorTable["font"])
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "font", indicatorTable["font"])
             end)
 
         -- auras
         elseif currentSetting == "auras" then
-            w:SetDBValue(L[F:UpperFirst(indicatorTable["auraType"]).." List"], indicatorTable["auras"], indicatorType == "glow", indicatorType == "icons",
+            w:SetDBValue(L[F.UpperFirst(indicatorTable["auraType"]).." List"], indicatorTable["auras"], indicatorType == "glow", indicatorType == "icons",
                 indicatorType == "bars" or indicatorType == "blocks" or indicatorType == "border")
             w:SetFunc(function(value)
                 -- NOTE: already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "auras", indicatorTable["auraType"], value)
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "auras", indicatorTable["auraType"], value)
             end)
 
         -- debuffBlacklist
@@ -1802,8 +1802,8 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"], true)
             w:SetFunc(function(value)
                 CellDB["debuffBlacklist"] = value
-                Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
-                Cell:Fire("UpdateIndicators", notifiedLayout, "", "debuffBlacklist")
+                Cell.vars.debuffBlacklist = F.ConvertTable(CellDB["debuffBlacklist"])
+                Cell.Fire("UpdateIndicators", notifiedLayout, "", "debuffBlacklist")
             end)
 
         -- dispelBlacklist
@@ -1811,8 +1811,8 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L["Highlight Filter (blacklist)"], CellDB["dispelBlacklist"], true)
             w:SetFunc(function(value)
                 CellDB["dispelBlacklist"] = value
-                Cell.vars.dispelBlacklist = F:ConvertTable(CellDB["dispelBlacklist"])
-                Cell:Fire("UpdateIndicators", notifiedLayout, "", "dispelBlacklist")
+                Cell.vars.dispelBlacklist = F.ConvertTable(CellDB["dispelBlacklist"])
+                Cell.Fire("UpdateIndicators", notifiedLayout, "", "dispelBlacklist")
             end)
 
         -- builtInAoEHealings
@@ -1821,7 +1821,7 @@ local function ShowIndicatorSettings(id)
             w:SetFunc(function()
                 I.UpdateAoEHealings(CellDB["aoeHealings"])
                 -- NOTE: no need to fire UpdateIndicators
-                -- Cell:Fire("UpdateIndicators", notifiedLayout, "", "aoeHealings")
+                -- Cell.Fire("UpdateIndicators", notifiedLayout, "", "aoeHealings")
             end)
 
         -- customAoEHealings
@@ -1831,7 +1831,7 @@ local function ShowIndicatorSettings(id)
                 CellDB["aoeHealings"]["custom"] = value
                 I.UpdateAoEHealings(CellDB["aoeHealings"])
                 -- NOTE: no need to fire UpdateIndicators
-                -- Cell:Fire("UpdateIndicators", notifiedLayout, "", "aoeHealings")
+                -- Cell.Fire("UpdateIndicators", notifiedLayout, "", "aoeHealings")
             end)
 
         -- builtInDefensives
@@ -1839,7 +1839,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(I.GetDefensives(), CellDB["defensives"]["disabled"])
             w:SetFunc(function()
                 I.UpdateDefensives(CellDB["defensives"])
-                Cell:Fire("UpdateIndicators", notifiedLayout, "", "defensives")
+                Cell.Fire("UpdateIndicators", notifiedLayout, "", "defensives")
             end)
 
         -- customDefensives
@@ -1848,7 +1848,7 @@ local function ShowIndicatorSettings(id)
             w:SetFunc(function(value)
                 CellDB["defensives"]["custom"] = value
                 I.UpdateDefensives(CellDB["defensives"])
-                Cell:Fire("UpdateIndicators", notifiedLayout, "", "defensives")
+                Cell.Fire("UpdateIndicators", notifiedLayout, "", "defensives")
             end)
 
         -- builtInExternals
@@ -1856,7 +1856,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(I.GetExternals(), CellDB["externals"]["disabled"])
             w:SetFunc(function()
                 I.UpdateExternals(CellDB["externals"])
-                Cell:Fire("UpdateIndicators", notifiedLayout, "", "externals")
+                Cell.Fire("UpdateIndicators", notifiedLayout, "", "externals")
             end)
 
         -- customExternals
@@ -1865,7 +1865,7 @@ local function ShowIndicatorSettings(id)
             w:SetFunc(function(value)
                 CellDB["externals"]["custom"] = value
                 I.UpdateExternals(CellDB["externals"])
-                Cell:Fire("UpdateIndicators", notifiedLayout, "", "externals")
+                Cell.Fire("UpdateIndicators", notifiedLayout, "", "externals")
             end)
 
         -- builtInCrowdControls
@@ -1873,7 +1873,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(I.GetCrowdControls(), CellDB["crowdControls"]["disabled"])
             w:SetFunc(function()
                 I.UpdateCrowdControls(CellDB["crowdControls"])
-                Cell:Fire("UpdateIndicators", notifiedLayout, "", "crowdControls")
+                Cell.Fire("UpdateIndicators", notifiedLayout, "", "crowdControls")
             end)
 
         -- customCrowdControls
@@ -1882,7 +1882,7 @@ local function ShowIndicatorSettings(id)
             w:SetFunc(function(value)
                 CellDB["crowdControls"]["custom"] = value
                 I.UpdateCrowdControls(CellDB["crowdControls"])
-                Cell:Fire("UpdateIndicators", notifiedLayout, "", "crowdControls")
+                Cell.Fire("UpdateIndicators", notifiedLayout, "", "crowdControls")
             end)
 
         -- cleuAuras
@@ -1898,8 +1898,8 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L["Big Debuffs"], CellDB["bigDebuffs"], true)
             w:SetFunc(function(value)
                 CellDB["bigDebuffs"] = value
-                Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
-                Cell:Fire("UpdateIndicators", notifiedLayout, "", "bigDebuffs")
+                Cell.vars.bigDebuffs = F.ConvertTable(CellDB["bigDebuffs"])
+                Cell.Fire("UpdateIndicators", notifiedLayout, "", "bigDebuffs")
             end)
 
         -- actionsPreview
@@ -1907,7 +1907,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(indicatorTable["speed"])
             w:SetFunc(function(value)
                 indicatorTable["speed"] = value
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "speed", value)
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "speed", value)
             end)
 
         -- actionsList
@@ -1923,7 +1923,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L["Spell List"], CellDB["targetedSpellsList"], true)
             w:SetFunc(function(value)
                 CellDB["targetedSpellsList"] = value
-                Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
+                Cell.vars.targetedSpellsList = F.ConvertTable(CellDB["targetedSpellsList"])
             end)
 
         -- targetedSpellsGlow
@@ -1939,7 +1939,7 @@ local function ShowIndicatorSettings(id)
         elseif currentSetting == "glowOptions" then
             w:SetDBValue(indicatorTable["glowOptions"], true)
             w:SetFunc(function(value)
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
             end)
 
         -- size-border
@@ -1949,7 +1949,7 @@ local function ShowIndicatorSettings(id)
                 indicatorTable["size"][1] = value[1]
                 indicatorTable["size"][2] = value[2]
                 indicatorTable["border"] = value[3]
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
             end)
 
         -- colors
@@ -1957,14 +1957,14 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(indicatorTable["colors"], indicatorTable["auraType"])
             w:SetFunc(function(value)
                 -- NOTE: already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "colors", value)
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "colors", value)
             end)
 
         -- statusColors
         elseif currentSetting == "statusColors" then
             w:SetDBValue(indicatorTable["colors"])
             w:SetFunc(function()
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "statusColors")
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "statusColors")
             end)
 
         -- num:X
@@ -1972,7 +1972,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(indicatorTable["num"], tonumber(select(2,string.split(":", currentSetting))))
             w:SetFunc(function(value)
                 indicatorTable["num"] = value
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "num", value)
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "num", value)
             end)
 
         -- numPerLine:X
@@ -1980,7 +1980,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(indicatorTable["numPerLine"], tonumber(select(2,string.split(":", currentSetting))))
             w:SetFunc(function(value)
                 indicatorTable["numPerLine"] = value
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "numPerLine", value)
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "numPerLine", value)
             end)
 
         -- frameLevel:X
@@ -1988,7 +1988,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(indicatorTable["frameLevel"], tonumber(select(2,string.split(":", currentSetting)) or 100))
             w:SetFunc(function(value)
                 indicatorTable["frameLevel"] = value
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "frameLevel", value)
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "frameLevel", value)
             end)
 
         -- missingBuffsFilters / targetCounterFilters / dispelFilters
@@ -1997,7 +1997,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(indicatorTable["filters"])
             w:SetFunc(function()
                 -- NOTE: already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting)
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting)
             end)
 
         -- iconStyle
@@ -2005,7 +2005,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(indicatorTable[currentSetting], indicatorName)
             w:SetFunc(function(value)
                 indicatorTable[currentSetting] = value
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
             end)
 
         -- healthFormat
@@ -2013,7 +2013,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(indicatorTable["format"])
             w:SetFunc(function(value)
                 -- NOTE: already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "format", indicatorTable["format"])
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "format", indicatorTable["format"])
             end)
 
         -- common
@@ -2023,12 +2023,12 @@ local function ShowIndicatorSettings(id)
                 if value ~= nil then
                 indicatorTable[currentSetting] = value
                 end
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, indicatorTable[currentSetting])
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, indicatorTable[currentSetting])
             end)
         end
     end
 
-    Cell:UpdateIndicatorSettingsHeight()
+    Cell.UpdateIndicatorSettingsHeight()
 
     if string.find(indicatorName, "indicator") then
         renameBtn:SetEnabled(true)
@@ -2044,7 +2044,7 @@ local function MoveIndicator(from, to)
     local scroll = listFrame.scrollFrame:GetVerticalScroll()
 
     if to and from ~= to then
-        F:Debug(from, "->", to)
+        F.Debug(from, "->", to)
 
         if selected == from then
             selected = to
@@ -2071,16 +2071,16 @@ local function MoveIndicator(from, to)
 end
 
 LoadIndicatorList = function()
-    F:Debug("|cffff7777LoadIndicatorList:|r", currentLayout)
+    F.Debug("|cffff7777LoadIndicatorList:|r", currentLayout)
     listFrame.scrollFrame:Reset()
 
     local n = 0
     for i, t in pairs(currentLayoutTable["indicators"]) do
         if not listButtons[i] then
-            listButtons[i] = Cell:CreateButton(listFrame.scrollFrame.content, " ", "transparent-accent", {20, 20})
+            listButtons[i] = Cell.CreateButton(listFrame.scrollFrame.content, " ", "transparent-accent", {20, 20})
             listButtons[i].typeIcon = listButtons[i]:CreateTexture(nil, "ARTWORK")
             listButtons[i].typeIcon:SetPoint("RIGHT", -2, 0)
-            P:Size(listButtons[i].typeIcon, 16, 16)
+            P.Size(listButtons[i].typeIcon, 16, 16)
 
             listButtons[i].ShowTooltip = function()
                 if listButtons[i]:GetFontString():IsTruncated() then
@@ -2115,7 +2115,7 @@ LoadIndicatorList = function()
                 self:SetFrameStrata("LOW")
                 -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
                 C_Timer.After(0.05, function()
-                    local b = F:GetMouseFocus()
+                    local b = F.GetMouseFocus()
                     self:SetFrameStrata(self.oldStrata)
                     self.oldStrata = nil
                     MoveIndicator(self.id, (b and b.typeIcon and not b.isBuiltIn) and b.id)
@@ -2164,13 +2164,13 @@ LoadIndicatorList = function()
         if i == 1 then
             b:SetPoint("TOPLEFT")
         else
-            b:SetPoint("TOPLEFT", listButtons[i - 1], "BOTTOMLEFT", 0, P:Scale(1))
+            b:SetPoint("TOPLEFT", listButtons[i - 1], "BOTTOMLEFT", 0, P.Scale(1))
         end
         b:Show()
     end
-    listFrame.scrollFrame:SetContentHeight(P:Scale(20), n, -P:Scale(1))
+    listFrame.scrollFrame:SetContentHeight(P.Scale(20), n, -P.Scale(1))
 
-    ListHighlightFn = Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
+    ListHighlightFn = Cell.CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
 
         -- always show selected indicator
@@ -2288,9 +2288,9 @@ local function ShowTab(tab)
         indicatorsTab:Hide()
     end
 end
-Cell:RegisterCallback("ShowOptionsTab", "IndicatorsTab_ShowTab", ShowTab)
+Cell.RegisterCallback("ShowOptionsTab", "IndicatorsTab_ShowTab", ShowTab)
 
-function F:ReloadIndicatorList()
+function F.ReloadIndicatorList()
     if not init then return end
     if indicatorsTab:IsShown() then
         LoadIndicatorList()
@@ -2306,7 +2306,7 @@ function F:ReloadIndicatorList()
     end
 end
 
-function F:ReloadIndicatorOptions(index)
+function F.ReloadIndicatorOptions(index)
     if not init then return end
     if selected == index then
         listButtons[index]:Click()
@@ -2319,19 +2319,19 @@ local function UpdateLayout()
         UpdatePreviewButton()
     end
 end
-Cell:RegisterCallback("UpdateLayout", "IndicatorsTab_UpdateLayout", UpdateLayout)
+Cell.RegisterCallback("UpdateLayout", "IndicatorsTab_UpdateLayout", UpdateLayout)
 
 local function UpdateAppearance()
     if previewButton and currentLayout == Cell.vars.currentLayout then
         UpdatePreviewButton()
     end
 end
-Cell:RegisterCallback("UpdateAppearance", "IndicatorsTab_UpdateAppearance", UpdateAppearance)
+Cell.RegisterCallback("UpdateAppearance", "IndicatorsTab_UpdateAppearance", UpdateAppearance)
 
 local function IndicatorsChanged(layout)
     -- reload after indicator copy
     if currentLayout == layout then
-        F:Debug("Reload Indicator List:", layout)
+        F.Debug("Reload Indicator List:", layout)
         -- update indicators for preview button
         UpdateIndicators(true)
         -- reload list
@@ -2339,4 +2339,4 @@ local function IndicatorsChanged(layout)
         listButtons[1]:Click()
     end
 end
-Cell:RegisterCallback("IndicatorsChanged", "IndicatorsTab_IndicatorsChanged", IndicatorsChanged)
+Cell.RegisterCallback("IndicatorsChanged", "IndicatorsTab_IndicatorsChanged", IndicatorsChanged)

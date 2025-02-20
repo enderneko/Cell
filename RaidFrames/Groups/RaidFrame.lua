@@ -10,7 +10,7 @@ raidFrame:SetAllPoints(Cell.frames.mainFrame)
 local npcFrameAnchor = CreateFrame("Frame", "CellNPCFrameAnchor", raidFrame, "SecureFrameTemplate,BackDropTemplate")
 raidFrame:SetFrameRef("npcAnchor", npcFrameAnchor)
 -- npcFrameAnchor:Hide()
--- Cell:StylizeFrame(npcFrameAnchor)
+-- Cell.StylizeFrame(npcFrameAnchor)
 
 raidFrame:SetAttribute("_onattributechanged", [[
     if not (name == "combinegroups" or name == "visibility") then
@@ -295,24 +295,24 @@ local function UpdateHeader(header, layout, which)
 
         for _, b in ipairs(header) do
             if not which or which == "header" or which == "main-size" or which == "groupFilter" then
-                P:Size(b, width, height)
+                P.Size(b, width, height)
                 b:ClearAllPoints()
             end
             -- NOTE: SetOrientation BEFORE SetPowerSize
             if not which or which == "header" or which == "barOrientation" then
-                B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
+                B.SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
             end
             if not which or which == "header" or which == "main-power" or which == "groupFilter" or which == "barOrientation" or which == "powerFilter" then
-                B:SetPowerSize(b, layout["main"]["powerSize"])
+                B.SetPowerSize(b, layout["main"]["powerSize"])
             end
         end
 
         if not which or which == "header" or which == "main-size" or which == "groupFilter" then
             -- 确保按钮在“一定程度上”对齐
-            header:SetAttribute("minWidth", P:Scale(width))
-            header:SetAttribute("minHeight", P:Scale(height))
+            header:SetAttribute("minWidth", P.Scale(width))
+            header:SetAttribute("minHeight", P.Scale(height))
 
-            P:Size(npcFrameAnchor, width, height) -- REVIEW: check same as main
+            P.Size(npcFrameAnchor, width, height) -- REVIEW: check same as main
         end
     end
 
@@ -429,7 +429,7 @@ local function RaidFrame_UpdateLayout(layout, which)
         end
 
         if not which or which == "header" or which == "groupFilter" then
-            combinedHeader:SetAttribute("groupFilter", F:TableToString(shownGroups, ","))
+            combinedHeader:SetAttribute("groupFilter", F.TableToString(shownGroups, ","))
         end
 
     else
@@ -532,19 +532,19 @@ local function RaidFrame_UpdateLayout(layout, which)
 
         for i, arenaPet in ipairs(arenaPetButtons) do
             -- NOTE: SetOrientation BEFORE SetPowerSize
-            B:SetOrientation(arenaPet, layout["barOrientation"][1], layout["barOrientation"][2])
+            B.SetOrientation(arenaPet, layout["barOrientation"][1], layout["barOrientation"][2])
 
             if layout["pet"]["sameSizeAsMain"] then
-                P:Size(arenaPet, width, height)
-                B:SetPowerSize(arenaPet, layout["main"]["powerSize"])
+                P.Size(arenaPet, width, height)
+                B.SetPowerSize(arenaPet, layout["main"]["powerSize"])
             else
-                P:Size(arenaPet, layout["pet"]["size"][1], layout["pet"]["size"][2])
-                B:SetPowerSize(arenaPet, layout["pet"]["powerSize"])
+                P.Size(arenaPet, layout["pet"]["size"][1], layout["pet"]["size"][2])
+                B.SetPowerSize(arenaPet, layout["pet"]["powerSize"])
             end
         end
     end
 end
-Cell:RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)
+Cell.RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)
 
 local function RaidFrame_UpdateVisibility(which)
     if not which or which == "raid" then
@@ -558,4 +558,4 @@ local function RaidFrame_UpdateVisibility(which)
         end
     end
 end
-Cell:RegisterCallback("UpdateVisibility", "RaidFrame_UpdateVisibility", RaidFrame_UpdateVisibility)
+Cell.RegisterCallback("UpdateVisibility", "RaidFrame_UpdateVisibility", RaidFrame_UpdateVisibility)

@@ -10,24 +10,24 @@ local selected, forceLoadSelected = 0, true
 local LoadList, LoadSnippet, RunSnippet
 
 local function CreateCodeSnippetsFrame()
-    codeSnippetsFrame = Cell:CreateMovableFrame("Cell "..L["Code Snippets"], "CellCodeSnippetsFrame", 641, 550, "DIALOG")
+    codeSnippetsFrame = Cell.CreateMovableFrame("Cell "..L["Code Snippets"], "CellCodeSnippetsFrame", 641, 550, "DIALOG")
     Cell.frames.codeSnippetsFrame = codeSnippetsFrame
     codeSnippetsFrame:SetToplevel(true)
     codeSnippetsFrame:SetPoint("CENTER")
 
-    P:SetEffectiveScale(codeSnippetsFrame)
+    P.SetEffectiveScale(codeSnippetsFrame)
 
-    local reloadBtn = Cell:CreateButton(codeSnippetsFrame.header, "Reload", "blue", {70, 20})
-    reloadBtn:SetPoint("TOPRIGHT", codeSnippetsFrame.header.closeBtn, "TOPLEFT", P:Scale(1), 0)
+    local reloadBtn = Cell.CreateButton(codeSnippetsFrame.header, "Reload", "blue", {70, 20})
+    reloadBtn:SetPoint("TOPRIGHT", codeSnippetsFrame.header.closeBtn, "TOPLEFT", P.Scale(1), 0)
     reloadBtn:SetScript("OnClick", ReloadUI)
 
-    local tips = Cell:CreateScrollTextFrame(codeSnippetsFrame, "|cffb7b7b7"..L["SNIPPETS_TIPS"])
+    local tips = Cell.CreateScrollTextFrame(codeSnippetsFrame, "|cffb7b7b7"..L["SNIPPETS_TIPS"])
     tips:SetPoint("TOPLEFT", 10, -10)
     tips:SetPoint("TOPRIGHT", -10, -10)
 
     -- rename box
-    renameEB = Cell:CreateEditBox(codeSnippetsFrame, 20, 20)
-    Cell:StylizeFrame(renameEB, {0.115, 0.115, 0.115, 0.9}, Cell:GetAccentColorTable())
+    renameEB = Cell.CreateEditBox(codeSnippetsFrame, 20, 20)
+    Cell.StylizeFrame(renameEB, {0.115, 0.115, 0.115, 0.9}, Cell.GetAccentColorTable())
     renameEB:Hide()
     renameEB:SetScript("OnEscapePressed", function()
         renameEB:Hide()
@@ -38,13 +38,13 @@ local function CreateCodeSnippetsFrame()
 
     -- top
     topPane = CreateFrame("Frame", nil, codeSnippetsFrame, "BackdropTemplate")
-    -- Cell:StylizeFrame(topPane, {0,1,0,0.1}, {0,0,0,0})
+    -- Cell.StylizeFrame(topPane, {0,1,0,0.1}, {0,0,0,0})
     topPane:SetPoint("TOPLEFT", 10, -40)
     topPane:SetPoint("TOPRIGHT", -10, -40)
     topPane:SetHeight(20)
 
     -- add
-    newBtn = Cell:CreateButton(topPane, "", "accent-hover", {156, 20})
+    newBtn = Cell.CreateButton(topPane, "", "accent-hover", {156, 20})
     newBtn.tex = newBtn:CreateTexture(nil, "ARTWORK")
     newBtn.tex:SetPoint("CENTER")
     newBtn.tex:SetSize(12, 12)
@@ -62,12 +62,12 @@ local function CreateCodeSnippetsFrame()
 
     -- bottom
     bottomPane = CreateFrame("Frame", nil, codeSnippetsFrame, "BackdropTemplate")
-    -- Cell:StylizeFrame(bottomPane, {0,1,0,0.1}, {0,0,0,0})
+    -- Cell.StylizeFrame(bottomPane, {0,1,0,0.1}, {0,0,0,0})
     bottomPane:SetPoint("BOTTOMLEFT", 10, 10)
     bottomPane:SetPoint("BOTTOMRIGHT", -10, 10)
     bottomPane:SetHeight(20)
 
-    local runBtn = Cell:CreateButton(bottomPane, L["Run"], "red", {200, 20})
+    local runBtn = Cell.CreateButton(bottomPane, L["Run"], "red", {200, 20})
     bottomPane.runBtn = runBtn
     runBtn:SetPoint("BOTTOMLEFT")
     runBtn:SetEnabled(false)
@@ -87,7 +87,7 @@ local function CreateCodeSnippetsFrame()
         end
     end)
 
-    local cancelBtn = Cell:CreateButton(bottomPane, L["Cancel"], "red", {200, 20})
+    local cancelBtn = Cell.CreateButton(bottomPane, L["Cancel"], "red", {200, 20})
     bottomPane.cancelBtn = cancelBtn
     cancelBtn:SetPoint("BOTTOMRIGHT")
     cancelBtn:SetEnabled(false)
@@ -97,7 +97,7 @@ local function CreateCodeSnippetsFrame()
         bottomPane.saveBtn:SetEnabled(false)
     end)
 
-    local saveBtn = Cell:CreateButton(bottomPane, L["Save"], "red", {200, 20})
+    local saveBtn = Cell.CreateButton(bottomPane, L["Save"], "red", {200, 20})
     bottomPane.saveBtn = saveBtn
     saveBtn:SetPoint("BOTTOMLEFT", runBtn, "BOTTOMRIGHT", 10, 0)
     saveBtn:SetPoint("BOTTOMRIGHT", cancelBtn, "BOTTOMLEFT", -10, 0)
@@ -113,11 +113,11 @@ local function CreateCodeSnippetsFrame()
     lineNumber:SetPoint("LEFT", 5, 0)
 
     -- code
-    codePane = Cell:CreateScrollEditBox(codeSnippetsFrame, nil, 3)
+    codePane = Cell.CreateScrollEditBox(codeSnippetsFrame, nil, 3)
     codePane.scrollFrame:SetScrollStep(1000)
     codePane.eb:SetEnabled(false)
     codePane.eb:SetFontObject(ChatFontNormal)
-    Cell:StylizeFrame(codePane.scrollFrame, {0.115, 0.115, 0.115, 0.9})
+    Cell.StylizeFrame(codePane.scrollFrame, {0.115, 0.115, 0.115, 0.9})
     codePane:SetPoint("TOPLEFT", topPane, "BOTTOMLEFT", 0, -10)
     codePane:SetPoint("BOTTOMRIGHT", bottomPane, "TOPRIGHT", 0, 10)
     -- codePane.eb:SetSpacing(3)
@@ -156,13 +156,13 @@ local function CreateCodeSnippetsFrame()
     -- errorPopup
     errorPopup = CreateFrame("Frame", nil, codePane, "BackdropTemplate")
     errorPopup:SetFrameStrata("TOOLTIP")
-    Cell:StylizeFrame(errorPopup, {0.15, 0.1, 0.1, 0.95})
+    Cell.StylizeFrame(errorPopup, {0.15, 0.1, 0.1, 0.95})
     errorPopup:SetWidth(200)
     errorPopup:SetPoint("BOTTOMLEFT")
     errorPopup:SetPoint("BOTTOMRIGHT")
     errorPopup:Hide()
 
-    errorPopup.close = Cell:CreateButton(errorPopup, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
+    errorPopup.close = Cell.CreateButton(errorPopup, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
     errorPopup.close:SetPoint("TOPRIGHT")
     errorPopup.close:SetScript("OnClick", function()
         errorPopup:Hide()
@@ -180,12 +180,12 @@ end
 LoadList = function()
     -- built-in
     if not buttons[0] then
-        buttons[0] = Cell:CreateButton(topPane, "", "accent-hover", {156, 20})
+        buttons[0] = Cell.CreateButton(topPane, "", "accent-hover", {156, 20})
         buttons[0].id = 0 -- for highlight
         buttons[0]:SetPoint("TOPLEFT")
 
         -- checkbox
-        buttons[0].cb = Cell:CreateCheckButton(buttons[0], "", function(checked)
+        buttons[0].cb = Cell.CreateCheckButton(buttons[0], "", function(checked)
             CellDB["snippets"][0]["autorun"] = checked
         end)
         buttons[0].cb:SetPoint("LEFT", 3, 0)
@@ -210,7 +210,7 @@ LoadList = function()
     -- user created
     for i, t in ipairs(CellDB["snippets"]) do
         if not buttons[i] then
-            buttons[i] = Cell:CreateButton(topPane, "", "accent-hover", {156, 20})
+            buttons[i] = Cell.CreateButton(topPane, "", "accent-hover", {156, 20})
             buttons[i].id = i -- for highlight
 
             -- rename
@@ -229,7 +229,7 @@ LoadList = function()
             end)
 
             -- checkbox
-            buttons[i].cb = Cell:CreateCheckButton(buttons[i], "", function(checked)
+            buttons[i].cb = Cell.CreateCheckButton(buttons[i], "", function(checked)
                 CellDB["snippets"][i]["autorun"] = checked
             end)
             buttons[i].cb:SetPoint("LEFT", 3, 0)
@@ -324,7 +324,7 @@ LoadList = function()
     end
 
     -- highlight
-    local Highlight = Cell:CreateButtonGroup(buttons, function(index)
+    local Highlight = Cell.CreateButtonGroup(buttons, function(index)
         LoadSnippet(index)
     end)
 
@@ -376,10 +376,10 @@ RunSnippet = function(snippet)
     end
 end
 
-function F:ShowCodeSnippets()
+function F.ShowCodeSnippets()
     if not codeSnippetsFrame then
         CreateCodeSnippetsFrame()
-        P:PixelPerfectPoint(codeSnippetsFrame)
+        P.PixelPerfectPoint(codeSnippetsFrame)
         LoadList()
     end
 
@@ -390,19 +390,19 @@ function F:ShowCodeSnippets()
     end
 end
 
-function F:RunSnippets()
+function F.RunSnippets()
     for i = 0, #CellDB["snippets"] do
         local t = CellDB["snippets"][i]
         if t["autorun"] then
             local errorMsg = RunSnippet(t["code"])
             if errorMsg then
-                F:Print("|cFFFF3030Snippet Error ("..i.."."..(t["name"] or "Cell").."):|r "..errorMsg)
+                F.Print("|cFFFF3030Snippet Error ("..i.."."..(t["name"] or "Cell").."):|r "..errorMsg)
             end
         end
     end
 end
 
-function F:GetDefaultSnippet()
+function F.GetDefaultSnippet()
     return {
         ["autorun"] = true,
         ["code"] = "-- snippets can be found at https://github.com/enderneko/Cell/tree/master/.snippets\n"..
@@ -430,12 +430,12 @@ function F:GetDefaultSnippet()
     }
 end
 
-function F:DisableSnippets()
+function F.DisableSnippets()
     for i = 1, #CellDB["snippets"] do
         CellDB["snippets"][i]["autorun"] = false
     end
 
-    local popup = Cell:CreateNotificationPopup(Cell.frames.anchorFrame, 200, L["All snippets have been disabled, due to the version update"])
+    local popup = Cell.CreateNotificationPopup(Cell.frames.anchorFrame, 200, L["All snippets have been disabled, due to the version update"])
     popup:RegisterEvent("PLAYER_ENTERING_WORLD")
     popup:SetScript("OnEvent", function()
         popup:UnregisterAllEvents()

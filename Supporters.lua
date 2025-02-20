@@ -238,7 +238,7 @@ end
 if addonName == "Cell" then -- Cell
     ns.supporters1 = supporters1
     ns.supporters2 = supporters2
-    ns.wowSupporters = Cell.funcs:TMergeOverwrite(wowSupporters, tests)
+    ns.wowSupporters = Cell.funcs.TMergeOverwrite(wowSupporters, tests)
 else -- other addons
     ns.cellSupporters = wowSupporters
 end

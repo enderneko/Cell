@@ -30,8 +30,8 @@ local pool
 --         ag:Play()
 --     end)
 
---     A:CreateFadeIn(f, 0, 1, 0.2)
---     A:CreateFadeOut(f, 1, 0, 0.2)
+--     A.CreateFadeIn(f, 0, 1, 0.2)
+--     A.CreateFadeOut(f, 1, 0, 0.2)
 
 -- 	return f
 -- end
@@ -172,7 +172,7 @@ end
 -- CellSupporterDisplay = Display
 
 -- local function StopRainbow(unit)
---     local b = F:GetUnitButtonByUnit(unit)
+--     local b = F.GetUnitButtonByUnit(unit)
 --     if b then
 --         local fs = b.indicators.nameText.name
 --         -- stop rainbow
@@ -190,10 +190,10 @@ end
 -- end
 
 -- local function StartRainbow(unit)
---     local b = F:GetUnitButtonByUnit(unit)
+--     local b = F.GetUnitButtonByUnit(unit)
 --     if b then
 --         local fs = b.indicators.nameText.name
---         Cell:StartRainbowText(fs)
+--         Cell.StartRainbowText(fs)
 --         -- reset timer
 --         if fs.timer then
 --             fs.timer:Cancel()
@@ -216,15 +216,15 @@ local function Check()
     -- Cell.wowSupporters[Cell.vars.playerNameFull] = true
 
     if IsInGroup() then
-        for unit in F:IterateGroupMembers() do
-            local fullName = F:UnitFullName(unit)
+        for unit in F.IterateGroupMembers() do
+            local fullName = F.UnitFullName(unit)
             if Cell.wowSupporters[fullName] then
-                F:HandleUnitButton("unit", unit, Display)
+                F.HandleUnitButton("unit", unit, Display)
             end
         end
     else
         if Cell.wowSupporters[Cell.vars.playerNameFull] then
-            F:HandleUnitButton("unit", "player", Display)
+            F.HandleUnitButton("unit", "player", Display)
         end
     end
 end

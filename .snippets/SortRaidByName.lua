@@ -29,5 +29,5 @@ function SlashCmdList.CELLSORT()
         header:SetAttribute("nameList", nameList[i])
     end
 
-    F:Print("re-sorted.")
+    F.Print("re-sorted.")
 end

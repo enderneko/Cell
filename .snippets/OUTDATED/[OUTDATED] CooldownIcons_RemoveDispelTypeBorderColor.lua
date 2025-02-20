@@ -94,15 +94,15 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
         if isBigDebuff then
             local debuffs = frame:GetParent()
             if isBigDebuff then
-                P:Size(frame, debuffs.bigSize[1], debuffs.bigSize[2])
+                P.Size(frame, debuffs.bigSize[1], debuffs.bigSize[2])
             else
-                P:Size(frame, debuffs.normalSize[1], debuffs.normalSize[2])
+                P.Size(frame, debuffs.normalSize[1], debuffs.normalSize[2])
             end
         end
     end
 end
 
-F:IterateAllUnitButtons(function(b)
+F.IterateAllUnitButtons(function(b)
     local debuffs = b.indicators.debuffs
     for i = 1, 10 do
         debuffs[i].SetCooldown = BarIcon_SetCooldown

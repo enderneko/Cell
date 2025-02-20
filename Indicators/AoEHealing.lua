@@ -35,7 +35,7 @@ eventFrame:SetScript("OnEvent", function()
         if destGUID then
             -- print(sourceGUID, playerSummoned[sourceGUID])
             if (sourceGUID == Cell.vars.playerGUID and I.IsAoEHealing(spellName, spellId)) or playerSummoned[sourceGUID] then
-                F:HandleUnitButton("guid", destGUID, Display)
+                F.HandleUnitButton("guid", destGUID, Display)
             end
         end
     end

@@ -8,7 +8,6 @@ Cell.funcs = {}
 Cell.iFuncs = {}
 Cell.bFuncs = {}
 Cell.uFuncs = {}
--- Cell.wFuncs = {} -- TODO: move widget functions
 Cell.animations = {}
 
 local F = Cell.funcs
@@ -27,7 +26,7 @@ Cell.MIN_QUICKASSIST_VERSION = 239
 --@debug@
 local debugMode = true
 --@end-debug@
-function F:Debug(arg, ...)
+function F.Debug(arg, ...)
     if debugMode then
         if type(arg) == "string" or type(arg) == "number" then
             print(arg, ...)
@@ -41,7 +40,7 @@ function F:Debug(arg, ...)
     end
 end
 
-function F:Print(msg)
+function F.Print(msg)
     print("|cFFFF3030[Cell]|r " .. msg)
 end
 
@@ -59,16 +58,16 @@ local delayedLayoutGroupType
 local delayedFrame = CreateFrame("Frame")
 delayedFrame:SetScript("OnEvent", function()
     delayedFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    F:UpdateLayout(delayedLayoutGroupType)
+    F.UpdateLayout(delayedLayoutGroupType)
 end)
 
-function F:UpdateLayout(layoutGroupType)
+function F.UpdateLayout(layoutGroupType)
     if InCombatLockdown() then
-        F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\") DELAYED")
+        F.Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\") DELAYED")
         delayedLayoutGroupType = layoutGroupType
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
-        F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
+        F.Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
 
         if CellDB["layoutAutoSwitch"][Cell.vars.playerClass][Cell.vars.playerSpecID] then
             Cell.vars.layoutAutoSwitchBy = "spec"
@@ -83,12 +82,12 @@ function F:UpdateLayout(layoutGroupType)
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell.vars.layoutGroupType = layoutGroupType
 
-        F:IterateAllUnitButtons(function(b)
+        F.IterateAllUnitButtons(function(b)
             b._indicatorsReady = nil
         end, true)
 
-        Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
-        Cell:Fire("UpdateIndicators")
+        Cell.Fire("UpdateLayout", Cell.vars.currentLayout)
+        Cell.Fire("UpdateIndicators")
     end
 end
 
@@ -106,38 +105,38 @@ local function PreUpdateLayout()
         if bgMaxPlayers[id] then
             if bgMaxPlayers[id] <= 15 then
                 Cell.vars.inBattleground = 15
-                F:UpdateLayout("battleground15", true)
+                F.UpdateLayout("battleground15", true)
             else
                 Cell.vars.inBattleground = 40
-                F:UpdateLayout("battleground40", true)
+                F.UpdateLayout("battleground40", true)
             end
         else
             Cell.vars.inBattleground = 15
-            F:UpdateLayout("battleground15", true)
+            F.UpdateLayout("battleground15", true)
         end
     elseif instanceType == "arena" then
         Cell.vars.inBattleground = 5 -- treat as bg 5
-        F:UpdateLayout("arena", true)
+        F.UpdateLayout("arena", true)
     else
         Cell.vars.inBattleground = false
         if Cell.vars.groupType == "solo" then
-            F:UpdateLayout("solo", true)
+            F.UpdateLayout("solo", true)
         elseif Cell.vars.groupType == "party" then
-            F:UpdateLayout("party", true)
+            F.UpdateLayout("party", true)
         else -- raid
             if Cell.vars.inMythic then
-                F:UpdateLayout("raid_mythic", true)
+                F.UpdateLayout("raid_mythic", true)
             elseif Cell.vars.inInstance then
-                F:UpdateLayout("raid_instance", true)
+                F.UpdateLayout("raid_instance", true)
             else
-                F:UpdateLayout("raid_outdoor", true)
+                F.UpdateLayout("raid_outdoor", true)
             end
         end
     end
 end
-Cell:RegisterCallback("GroupTypeChanged", "Core_GroupTypeChanged", PreUpdateLayout)
-Cell:RegisterCallback("SpecChanged", "Core_SpecChanged", PreUpdateLayout)
-Cell:RegisterCallback("LayoutAutoSwitchChanged", "Core_LayoutAutoSwitchChanged", PreUpdateLayout)
+Cell.RegisterCallback("GroupTypeChanged", "Core_GroupTypeChanged", PreUpdateLayout)
+Cell.RegisterCallback("SpecChanged", "Core_SpecChanged", PreUpdateLayout)
+Cell.RegisterCallback("LayoutAutoSwitchChanged", "Core_LayoutAutoSwitchChanged", PreUpdateLayout)
 
 -------------------------------------------------
 -- events
@@ -150,7 +149,7 @@ eventFrame:RegisterEvent("PLAYER_LOGIN")
 
 -- function eventFrame:LOADING_SCREEN_DISABLED()
 --     if not InCombatLockdown() and not UnitAffectingCombat("player") then
---         F:Debug("|cffbbbbbbLOADING_SCREEN_DISABLED: |cffff7777collectgarbage")
+--         F.Debug("|cffbbbbbbLOADING_SCREEN_DISABLED: |cffff7777collectgarbage")
 --         collectgarbage("collect")
 --     end
 -- end
@@ -182,7 +181,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["customTextures"]) ~= "table" then CellDB["customTextures"] = {} end
 
         if type(CellDB["snippets"]) ~= "table" then CellDB["snippets"] = {} end
-        if not CellDB["snippets"][0] then CellDB["snippets"][0] = F:GetDefaultSnippet() end
+        if not CellDB["snippets"][0] then CellDB["snippets"][0] = F.GetDefaultSnippet() end
 
         Cell.vars.playerClass, Cell.vars.playerClassID = UnitClassBase("player")
 
@@ -236,8 +235,8 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- spellRequest ---------------------------------------------------------------------------
         if type(CellDB["spellRequest"]) ~= "table" then
-            local POWER_INFUSION, POWER_INFUSION_ICON = F:GetSpellInfo(10060)
-            local INNERVATE, INNERVATE_ICON = F:GetSpellInfo(29166)
+            local POWER_INFUSION, POWER_INFUSION_ICON = F.GetSpellInfo(10060)
+            local INNERVATE, INNERVATE_ICON = F.GetSpellInfo(29166)
 
             CellDB["spellRequest"] = {
                 ["enabled"] = false,
@@ -347,7 +346,7 @@ function eventFrame:ADDON_LOADED(arg1)
                     ct[s] = nil
                 end
             end
-            if F:Getn(ct) == 0 then
+            if F.Getn(ct) == 0 then
                 CellDB["quickCast"][c] = nil
             end
         end
@@ -355,7 +354,7 @@ function eventFrame:ADDON_LOADED(arg1)
         -- appearance -----------------------------------------------------------------------------
         if type(CellDB["appearance"]) ~= "table" then
             -- get recommended scale
-            local pScale = P:GetPixelPerfectScale()
+            local pScale = P.GetPixelPerfectScale()
             local scale
             if pScale >= 0.7 then
                 scale = 1
@@ -365,16 +364,16 @@ function eventFrame:ADDON_LOADED(arg1)
                 scale = 2
             end
 
-            CellDB["appearance"] = F:Copy(Cell.defaults.appearance)
+            CellDB["appearance"] = F.Copy(Cell.defaults.appearance)
             -- update recommended scale
             CellDB["appearance"]["scale"] = scale
         end
-        P:SetRelativeScale(CellDB["appearance"]["scale"])
+        P.SetRelativeScale(CellDB["appearance"]["scale"])
 
         -- color ---------------------------------------------------------------------------------
         if CellDB["appearance"]["accentColor"] then -- version < r103
             if CellDB["appearance"]["accentColor"][1] == "custom" then
-                Cell:OverrideAccentColor(CellDB["appearance"]["accentColor"][2])
+                Cell.OverrideAccentColor(CellDB["appearance"]["accentColor"][2])
             end
         end
 
@@ -395,7 +394,7 @@ function eventFrame:ADDON_LOADED(arg1)
             }
 
             -- add resurrections for "common"
-            for _, t in pairs(F:GetResurrectionClickCastings(Cell.vars.playerClass)) do
+            for _, t in pairs(F.GetResurrectionClickCastings(Cell.vars.playerClass)) do
                 tinsert(CellDB["clickCastings"][Cell.vars.playerClass]["common"], t)
             end
 
@@ -419,7 +418,7 @@ function eventFrame:ADDON_LOADED(arg1)
                     {"type2", "togglemenu"},
                 }
                 -- add resurrections for each spec
-                for _, t in pairs(F:GetResurrectionClickCastings(Cell.vars.playerClass)) do
+                for _, t in pairs(F.GetResurrectionClickCastings(Cell.vars.playerClass)) do
                     tinsert(CellDB["clickCastings"][Cell.vars.playerClass][specID], t)
                 end
             end
@@ -429,7 +428,7 @@ function eventFrame:ADDON_LOADED(arg1)
         -- layouts --------------------------------------------------------------------------------
         if type(CellDB["layouts"]) ~= "table" then
             CellDB["layouts"] = {
-                ["default"] = F:Copy(Cell.defaults.layout)
+                ["default"] = F.Copy(Cell.defaults.layout)
             }
         end
 
@@ -437,9 +436,9 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["layoutAutoSwitch"]) ~= "table" then
             CellDB["layoutAutoSwitch"] = {
                 ["role"] = {
-                    ["TANK"] = F:Copy(Cell.defaults.layoutAutoSwitch),
-                    ["HEALER"] = F:Copy(Cell.defaults.layoutAutoSwitch),
-                    ["DAMAGER"] = F:Copy(Cell.defaults.layoutAutoSwitch),
+                    ["TANK"] = F.Copy(Cell.defaults.layoutAutoSwitch),
+                    ["HEALER"] = F.Copy(Cell.defaults.layoutAutoSwitch),
+                    ["DAMAGER"] = F.Copy(Cell.defaults.layoutAutoSwitch),
                 }
             }
         end
@@ -452,19 +451,19 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["dispelBlacklist"]) ~= "table" then
             CellDB["dispelBlacklist"] = I.GetDefaultDispelBlacklist()
         end
-        Cell.vars.dispelBlacklist = F:ConvertTable(CellDB["dispelBlacklist"])
+        Cell.vars.dispelBlacklist = F.ConvertTable(CellDB["dispelBlacklist"])
 
         -- debuffBlacklist ------------------------------------------------------------------------
         if type(CellDB["debuffBlacklist"]) ~= "table" then
             CellDB["debuffBlacklist"] = I.GetDefaultDebuffBlacklist()
         end
-        Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
+        Cell.vars.debuffBlacklist = F.ConvertTable(CellDB["debuffBlacklist"])
 
         -- bigDebuffs -----------------------------------------------------------------------------
         if type(CellDB["bigDebuffs"]) ~= "table" then
             CellDB["bigDebuffs"] = I.GetDefaultBigDebuffs()
         end
-        Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
+        Cell.vars.bigDebuffs = F.ConvertTable(CellDB["bigDebuffs"])
 
         -- debuffTypeColor ------------------------------------------------------------------------
         if type(CellDB["debuffTypeColor"]) ~= "table" then
@@ -502,7 +501,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["targetedSpellsList"]) ~= "table" then
             CellDB["targetedSpellsList"] = I.GetDefaultTargetedSpellsList()
         end
-        Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
+        Cell.vars.targetedSpellsList = F.ConvertTable(CellDB["targetedSpellsList"])
 
         if type(CellDB["targetedSpellsGlow"]) ~= "table" then
             CellDB["targetedSpellsGlow"] = I.GetDefaultTargetedSpellsGlow()
@@ -522,9 +521,9 @@ function eventFrame:ADDON_LOADED(arg1)
         Cell.version = GetAddOnMetadata(addonName, "version")
         Cell.versionNum = tonumber(string.match(Cell.version, "%d+"))
         if not CellDB["revise"] then CellDB["firstRun"] = true end
-        F:Revise()
-        F:CheckWhatsNew()
-        F:RunSnippets()
+        F.Revise()
+        F.CheckWhatsNew()
+        F.RunSnippets()
 
         -- validation -----------------------------------------------------------------------------
         -- validate layout
@@ -539,7 +538,7 @@ function eventFrame:ADDON_LOADED(arg1)
         end
 
         Cell.loaded = true
-        Cell:Fire("AddonLoaded")
+        Cell.Fire("AddonLoaded")
     end
 
     -- omnicd -------------------------------------------------------------------------------------
@@ -582,8 +581,8 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     if IsInRaid() then
         if Cell.vars.groupType ~= "raid" then
             Cell.vars.groupType = "raid"
-            F:Debug("|cffffbb77GroupTypeChanged:|r raid")
-            Cell:Fire("GroupTypeChanged", "raid")
+            F.Debug("|cffffbb77GroupTypeChanged:|r raid")
+            Cell.Fire("GroupTypeChanged", "raid")
         end
 
         -- reset raid setup
@@ -619,7 +618,7 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             Cell.unitButtons.raid.units["raid"..i] = nil
             _G["CellRaidFrameMember"..i] = nil
         end
-        F:UpdateRaidSetup()
+        F.UpdateRaidSetup()
 
         -- update Cell.unitButtons.party.units
         Cell.unitButtons.party.units["player"] = nil
@@ -632,8 +631,8 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     elseif IsInGroup() then
         if Cell.vars.groupType ~= "party" then
             Cell.vars.groupType = "party"
-            F:Debug("|cffffbb77GroupTypeChanged:|r party")
-            Cell:Fire("GroupTypeChanged", "party")
+            F.Debug("|cffffbb77GroupTypeChanged:|r party")
+            Cell.Fire("GroupTypeChanged", "party")
         end
 
         -- update Cell.unitButtons.raid.units
@@ -651,8 +650,8 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     else
         if Cell.vars.groupType ~= "solo" then
             Cell.vars.groupType = "solo"
-            F:Debug("|cffffbb77GroupTypeChanged:|r solo")
-            Cell:Fire("GroupTypeChanged", "solo")
+            F.Debug("|cffffbb77GroupTypeChanged:|r solo")
+            Cell.Fire("GroupTypeChanged", "solo")
         end
 
         -- update Cell.unitButtons.raid.units
@@ -670,18 +669,18 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         end
     end
 
-    if Cell.vars.hasPermission ~= F:HasPermission() or Cell.vars.hasPartyMarkPermission ~= F:HasPermission(true) then
-        Cell.vars.hasPermission = F:HasPermission()
-        Cell.vars.hasPartyMarkPermission = F:HasPermission(true)
-        Cell:Fire("PermissionChanged")
-        F:Debug("|cffbb00bbPermissionChanged")
+    if Cell.vars.hasPermission ~= F.HasPermission() or Cell.vars.hasPartyMarkPermission ~= F.HasPermission(true) then
+        Cell.vars.hasPermission = F.HasPermission()
+        Cell.vars.hasPartyMarkPermission = F.HasPermission(true)
+        Cell.Fire("PermissionChanged")
+        F.Debug("|cffbb00bbPermissionChanged")
     end
 end
 
 local inInstance
 function eventFrame:PLAYER_ENTERING_WORLD()
     -- eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
-    F:Debug("|cffbbbbbb=== PLAYER_ENTERING_WORLD ===")
+    F.Debug("|cffbbbbbb=== PLAYER_ENTERING_WORLD ===")
     Cell.vars.inMythic = false
 
     local isIn, iType = IsInInstance()
@@ -690,8 +689,8 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     Cell.vars.instanceType = iType
 
     if isIn then
-        F:Debug("|cffff1111*** Entered Instance:|r", iType)
-        Cell:Fire("EnterInstance", iType)
+        F.Debug("|cffff1111*** Entered Instance:|r", iType)
+        Cell.Fire("EnterInstance", iType)
         PreUpdateLayout()
         inInstance = true
 
@@ -701,27 +700,27 @@ function eventFrame:PLAYER_ENTERING_WORLD()
                 local difficultyID, difficultyName = select(3, GetInstanceInfo()) --! can't get difficultyID, difficultyName immediately after entering an instance
                 Cell.vars.inMythic = difficultyID == 16
                 if Cell.vars.inMythic then
-                    F:Debug("|cffff1111*** Entered Instance:|r", "raid-mythic")
-                    Cell:Fire("EnterInstance", iType)
+                    F.Debug("|cffff1111*** Entered Instance:|r", "raid-mythic")
+                    Cell.Fire("EnterInstance", iType)
                     PreUpdateLayout()
                 end
             end)
         end
 
     elseif inInstance then -- left insntance
-        F:Debug("|cffff1111*** Left Instance|r")
-        Cell:Fire("LeaveInstance")
+        F.Debug("|cffff1111*** Left Instance|r")
+        Cell.Fire("LeaveInstance")
         PreUpdateLayout()
         inInstance = false
 
         if not InCombatLockdown() and not UnitAffectingCombat("player") then
-            F:Debug("|cffbbbbbb--- LeftInstance: |cffff7777collectgarbage")
+            F.Debug("|cffbbbbbb--- LeftInstance: |cffff7777collectgarbage")
             collectgarbage("collect")
         end
     end
 
     if CellDB["firstRun"] then
-        F:FirstRun()
+        F.FirstRun()
     end
 end
 
@@ -731,19 +730,19 @@ end
 
 --     if ClickCastFrames then
 --         for frame, options in pairs(ClickCastFrames) do
---             F:RegisterFrame(frame)
+--             F.RegisterFrame(frame)
 --         end
 --     end
 
 --     ClickCastFrames = setmetatable({}, {__newindex = function(t, k, v)
 --         if v == nil or v == false then
---             F:UnregisterFrame(k)
+--             F.UnregisterFrame(k)
 --         else
---             F:RegisterFrame(k)
+--             F.RegisterFrame(k)
 --         end
 --     end})
 
---     F:IterateAllUnitButtons(function (b)
+--     F.IterateAllUnitButtons(function (b)
 --         ClickCastFrames[b] = true
 --     end)
 -- end
@@ -757,14 +756,14 @@ local function UpdateSpecVars()
 end
 
 function eventFrame:PLAYER_LOGIN()
-    F:Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
+    F.Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     eventFrame:RegisterEvent("UI_SCALE_CHANGED")
 
     Cell.vars.playerNameShort = GetUnitName("player")
-    Cell.vars.playerNameFull = F:UnitFullName("player")
+    Cell.vars.playerNameFull = F.UnitFullName("player")
 
     --! init bgMaxPlayers
     for i = 1, GetNumBattlegroundTypes() do
@@ -780,50 +779,50 @@ function eventFrame:PLAYER_LOGIN()
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable
     eventFrame:GROUP_ROSTER_UPDATE()
     -- update visibility
-    Cell:Fire("UpdateVisibility")
+    Cell.Fire("UpdateVisibility")
     -- REVIEW: register unitframes for click casting
     -- RegisterGlobalClickCastings()
     -- update click-castings
-    Cell:Fire("UpdateClickCastings")
+    Cell.Fire("UpdateClickCastings")
     -- update indicators
-    -- Cell:Fire("UpdateIndicators") -- NOTE: already update in GROUP_ROSTER_UPDATE -> GroupTypeChanged -> F:UpdateLayout
+    -- Cell.Fire("UpdateIndicators") -- NOTE: already update in GROUP_ROSTER_UPDATE -> GroupTypeChanged -> F.UpdateLayout
     -- update texture and font
-    Cell:Fire("UpdateAppearance")
-    Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], CellDB["appearance"]["useGameFont"])
-    Cell:UpdateAboutFont(CellDB["appearance"]["optionsFontSizeOffset"])
+    Cell.Fire("UpdateAppearance")
+    Cell.UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], CellDB["appearance"]["useGameFont"])
+    Cell.UpdateAboutFont(CellDB["appearance"]["optionsFontSizeOffset"])
     -- update tools
-    Cell:Fire("UpdateTools")
+    Cell.Fire("UpdateTools")
     -- update requests
-    Cell:Fire("UpdateRequests")
+    Cell.Fire("UpdateRequests")
     -- update quick assist
-    -- Cell:Fire("UpdateQuickAssist") -- NOTE: update in GroupTypeChanged/SpecChanged
+    -- Cell.Fire("UpdateQuickAssist") -- NOTE: update in GroupTypeChanged/SpecChanged
     -- update quick cast
-    Cell:Fire("UpdateQuickCast")
+    Cell.Fire("UpdateQuickCast")
     -- update raid debuff list
-    Cell:Fire("UpdateRaidDebuffs")
+    Cell.Fire("UpdateRaidDebuffs")
     -- hide blizzard
-    if CellDB["general"]["hideBlizzardParty"] then F:HideBlizzardParty() end
-    if CellDB["general"]["hideBlizzardRaid"] then F:HideBlizzardRaid() end
+    if CellDB["general"]["hideBlizzardParty"] then F.HideBlizzardParty() end
+    if CellDB["general"]["hideBlizzardRaid"] then F.HideBlizzardRaid() end
     -- lock & menu
-    Cell:Fire("UpdateMenu")
+    Cell.Fire("UpdateMenu")
     -- update CLEU health
-    Cell:Fire("UpdateCLEU")
+    Cell.Fire("UpdateCLEU")
     -- update builtIns and customs
     I.UpdateAoEHealings(CellDB["aoeHealings"])
     I.UpdateDefensives(CellDB["defensives"])
     I.UpdateExternals(CellDB["externals"])
     I.UpdateCrowdControls(CellDB["crowdControls"])
     -- update pixel perfect
-    Cell:Fire("UpdatePixelPerfect")
+    Cell.Fire("UpdatePixelPerfect")
     -- update LGF
-    F:UpdateFramePriority()
+    F.UpdateFramePriority()
 end
 
 function eventFrame:UI_SCALE_CHANGED()
     if not InCombatLockdown() then
-        F:Debug("UI_SCALE_CHANGED: ", "effectiveScale:", P:GetEffectiveScale(), "uiScale:", UIParent:GetScale())
-        Cell:Fire("UpdatePixelPerfect")
-        Cell:Fire("UpdateAppearance", "scale")
+        F.Debug("UI_SCALE_CHANGED: ", "effectiveScale:", P.GetEffectiveScale(), "uiScale:", UIParent:GetScale())
+        Cell.Fire("UpdatePixelPerfect")
+        Cell.Fire("UpdateAppearance", "scale")
         PreUpdateLayout()
     end
 end
@@ -852,7 +851,7 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
     local spec = GetSpecialization()
     if prevSpec ~= spec then
         prevSpec = spec
-        F:Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")
+        F.Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")
 
         -- update spec vars
         UpdateSpecVars()
@@ -861,15 +860,15 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
             -- NOTE: when join in battleground, spec auto switched, during loading, can't get info from GetSpecializationInfo, until PLAYER_ENTERING_WORLD
             prevSpec = nil
             checkSpecFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-            F:Debug("|cffffbb77SpecChanged:|r FAILED")
+            F.Debug("|cffffbb77SpecChanged:|r FAILED")
         else
             checkSpecFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
             checkSpecFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-            F:Debug("|cffffbb77SpecChanged:|r", Cell.vars.playerSpecID, Cell.vars.playerSpecRole)
+            F.Debug("|cffffbb77SpecChanged:|r", Cell.vars.playerSpecID, Cell.vars.playerSpecRole)
             if not CellDB["clickCastings"][Cell.vars.playerClass]["useCommon"] then
-                Cell:Fire("UpdateClickCastings")
+                Cell.Fire("UpdateClickCastings")
             end
-            Cell:Fire("SpecChanged", Cell.vars.playerSpecID, Cell.vars.playerSpecRole)
+            Cell.Fire("SpecChanged", Cell.vars.playerSpecID, Cell.vars.playerSpecRole)
         end
     end
 end
@@ -888,23 +887,23 @@ function SlashCmdList.CELL(msg, editbox)
     rest = strlower(rest or "")
 
     if command == "options" or command == "opt" then
-        F:ShowOptionsFrame()
+        F.ShowOptionsFrame()
 
     elseif command == "healers" then
-        F:FirstRun()
+        F.FirstRun()
 
     elseif command == "reset" then
         if rest == "position" then
             Cell.frames.anchorFrame:ClearAllPoints()
             Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
             Cell.vars.currentLayoutTable["position"] = {}
-            P:ClearPoints(Cell.frames.readyAndPullFrame)
+            P.ClearPoints(Cell.frames.readyAndPullFrame)
             Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
             CellDB["tools"]["readyAndPull"][4] = {}
-            P:ClearPoints(Cell.frames.raidMarksFrame)
+            P.ClearPoints(Cell.frames.raidMarksFrame)
             Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
             CellDB["tools"]["marks"][4] = {}
-            P:ClearPoints(Cell.frames.buffTrackerFrame)
+            P.ClearPoints(Cell.frames.buffTrackerFrame)
             Cell.frames.buffTrackerFrame:SetPoint("BOTTOMLEFT", UIParent, "CENTER")
             CellDB["tools"]["buffTracker"][4] = {}
 
@@ -934,7 +933,7 @@ function SlashCmdList.CELL(msg, editbox)
 
         elseif rest == "snippets" then
             CellDB["snippets"] = {}
-            CellDB["snippets"][0] = F:GetDefaultSnippet()
+            CellDB["snippets"][0] = F.GetDefaultSnippet()
             ReloadUI()
 
         elseif rest == "quickassist" then
@@ -946,28 +945,28 @@ function SlashCmdList.CELL(msg, editbox)
         rest = tonumber(rest:format("%d"))
         if rest and rest >= 0 and rest <= 40 then
             if rest == 0 then
-                F:Print(L["Cell will report all deaths during a raid encounter."])
+                F.Print(L["Cell will report all deaths during a raid encounter."])
             else
-                F:Print(string.format(L["Cell will report first %d deaths during a raid encounter."], rest))
+                F.Print(string.format(L["Cell will report first %d deaths during a raid encounter."], rest))
             end
             CellDB["tools"]["deathReport"][2] = rest
-            Cell:Fire("UpdateTools", "deathReport")
+            Cell.Fire("UpdateTools", "deathReport")
         else
-            F:Print(L["A 0-40 integer is required."])
+            F.Print(L["A 0-40 integer is required."])
         end
 
     -- elseif command == "buff" then
     --     rest = tonumber(rest:format("%d"))
     --     if rest and rest > 0 then
     --         CellDB["tools"]["buffTracker"][3] = rest
-    --         F:Print(string.format(L["Buff Tracker icon size is set to %d."], rest))
-    --         Cell:Fire("UpdateTools", "buffTracker")
+    --         F.Print(string.format(L["Buff Tracker icon size is set to %d."], rest))
+    --         Cell.Fire("UpdateTools", "buffTracker")
     --     else
-    --         F:Print(L["A positive integer is required."])
+    --         F.Print(L["A positive integer is required."])
     --     end
 
     else
-        F:Print(L["Available slash commands"]..":\n"..
+        F.Print(L["Available slash commands"]..":\n"..
             "|cFFFFB5C5/cell options|r, |cFFFFB5C5/cell opt|r: "..L["show Cell options frame"]..".\n"..
             "|cFFFFB5C5/cell healers|r: "..L["create a \"Healers\" indicator"]..".\n"..
             "|cFFFF7777"..L["These \"reset\" commands below affect all your characters in this account"]..".|r\n"..
@@ -983,5 +982,5 @@ function SlashCmdList.CELL(msg, editbox)
 end
 
 function Cell_OnAddonCompartmentClick()
-    F:ShowOptionsFrame()
+    F.ShowOptionsFrame()
 end

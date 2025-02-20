@@ -1,8 +1,8 @@
-local addonName, addon = ...
-local L = addon.L
-local F = addon.funcs
-local I = addon.iFuncs
-local P = addon.pixelPerfectFuncs
+local addonName, Cell = ...
+local L = Cell.L
+local F = Cell.funcs
+local I = Cell.iFuncs
+local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
 -----------------------------------------
@@ -44,10 +44,10 @@ local function CreateSetting_Enabled(parent)
     local widget
 
     if not settingWidgets["enabled"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Enabled", parent, 240, 30)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Enabled", parent, 240, 30)
         settingWidgets["enabled"] = widget
 
-        widget.cb = addon:CreateCheckButton(widget, L["Enabled"])
+        widget.cb = Cell.CreateCheckButton(widget, L["Enabled"])
         widget.cb:SetPoint("TOPLEFT", 5, -8)
 
         -- callback
@@ -72,10 +72,10 @@ local function CreateSetting_Position(parent, relativeToText)
     local widget
 
     if not settingWidgets["position"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Position", parent, 240, 95)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Position", parent, 240, 95)
         settingWidgets["position"] = widget
 
-        widget.anchor = addon:CreateDropdown(widget, 110)
+        widget.anchor = Cell.CreateDropdown(widget, 110)
         widget.anchor:SetPoint("TOPLEFT", 5, -20)
         local items = {}
         for _, point in pairs(anchorPoints) do
@@ -93,7 +93,7 @@ local function CreateSetting_Position(parent, relativeToText)
         widget.anchorText:SetText(L["Anchor Point"])
         widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
 
-        widget.relativeTo = addon:CreateDropdown(widget, 110)
+        widget.relativeTo = Cell.CreateDropdown(widget, 110)
         widget.relativeTo:SetPoint("LEFT", widget.anchor, "RIGHT", 25, 0)
         items = {}
         for _, point in pairs(anchorPoints) do
@@ -111,13 +111,13 @@ local function CreateSetting_Position(parent, relativeToText)
         widget.relativeToText:SetText(L["To UnitButton's"])
         widget.relativeToText:SetPoint("BOTTOMLEFT", widget.relativeTo, "TOPLEFT", 0, 1)
 
-        widget.x = addon:CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
+        widget.x = Cell.CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
         widget.x:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
         widget.x.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), value, widget.y:GetValue()})
         end
 
-        widget.y = addon:CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
+        widget.y = Cell.CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
         widget.y:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
         widget.y.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
@@ -149,10 +149,10 @@ local function CreateSetting_PositionNoHCenter(parent, relativeToText)
     local widget
 
     if not settingWidgets["position_noHCenter"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_PositionNoHCenter", parent, 240, 95)
+        widget = Cell.CreateFrame("CellIndicatorSettings_PositionNoHCenter", parent, 240, 95)
         settingWidgets["position_noHCenter"] = widget
 
-        widget.anchor = addon:CreateDropdown(widget, 110)
+        widget.anchor = Cell.CreateDropdown(widget, 110)
         widget.anchor:SetPoint("TOPLEFT", 5, -20)
         local items = {}
         for _, point in pairs(anchorPoints_noHCenter) do
@@ -170,7 +170,7 @@ local function CreateSetting_PositionNoHCenter(parent, relativeToText)
         widget.anchorText:SetText(L["Anchor Point"])
         widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
 
-        widget.relativeTo = addon:CreateDropdown(widget, 110)
+        widget.relativeTo = Cell.CreateDropdown(widget, 110)
         widget.relativeTo:SetPoint("LEFT", widget.anchor, "RIGHT", 25, 0)
         items = {}
         for _, point in pairs(anchorPoints_noHCenter) do
@@ -188,13 +188,13 @@ local function CreateSetting_PositionNoHCenter(parent, relativeToText)
         widget.relativeToText:SetText(L["To UnitButton's"])
         widget.relativeToText:SetPoint("BOTTOMLEFT", widget.relativeTo, "TOPLEFT", 0, 1)
 
-        widget.x = addon:CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
+        widget.x = Cell.CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
         widget.x:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
         widget.x.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), value, widget.y:GetValue()})
         end
 
-        widget.y = addon:CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
+        widget.y = Cell.CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
         widget.y:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
         widget.y.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
@@ -225,10 +225,10 @@ local function CreateSetting_ShieldBarPosition(parent)
     local widget
 
     if not settingWidgets["shieldBarPosition"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_PositionNoHCenter", parent, 240, 95)
+        widget = Cell.CreateFrame("CellIndicatorSettings_PositionNoHCenter", parent, 240, 95)
         settingWidgets["shieldBarPosition"] = widget
 
-        widget.anchor = addon:CreateDropdown(widget, 110)
+        widget.anchor = Cell.CreateDropdown(widget, 110)
         widget.anchor:SetPoint("TOPLEFT", 5, -20)
         local items = {}
         for _, point in pairs(anchorPoints_noHCenter) do
@@ -237,7 +237,7 @@ local function CreateSetting_ShieldBarPosition(parent)
                 ["value"] = point,
                 ["onClick"] = function()
                     widget.func({point, widget.relativeTo:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
-                    addon:SetEnabled(true, widget.relativeToText, widget.relativeTo, widget.x, widget.y)
+                    Cell.SetEnabled(true, widget.relativeToText, widget.relativeTo, widget.x, widget.y)
                 end,
             })
         end
@@ -246,7 +246,7 @@ local function CreateSetting_ShieldBarPosition(parent)
             ["value"] = "HEALTH_BAR",
             ["onClick"] = function()
                 widget.func({"HEALTH_BAR", widget.relativeTo:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
-                addon:SetEnabled(false, widget.relativeToText, widget.relativeTo, widget.x, widget.y)
+                Cell.SetEnabled(false, widget.relativeToText, widget.relativeTo, widget.x, widget.y)
             end,
         })
         widget.anchor:SetItems(items)
@@ -255,7 +255,7 @@ local function CreateSetting_ShieldBarPosition(parent)
         widget.anchorText:SetText(L["Anchor Point"])
         widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
 
-        widget.relativeTo = addon:CreateDropdown(widget, 110)
+        widget.relativeTo = Cell.CreateDropdown(widget, 110)
         widget.relativeTo:SetPoint("LEFT", widget.anchor, "RIGHT", 25, 0)
         items = {}
         for _, point in pairs(anchorPoints_noHCenter) do
@@ -273,13 +273,13 @@ local function CreateSetting_ShieldBarPosition(parent)
         widget.relativeToText:SetText(L["To UnitButton's"])
         widget.relativeToText:SetPoint("BOTTOMLEFT", widget.relativeTo, "TOPLEFT", 0, 1)
 
-        widget.x = addon:CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
+        widget.x = Cell.CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
         widget.x:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
         widget.x.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), value, widget.y:GetValue()})
         end
 
-        widget.y = addon:CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
+        widget.y = Cell.CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
         widget.y:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
         widget.y.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
@@ -297,7 +297,7 @@ local function CreateSetting_ShieldBarPosition(parent)
             widget.x:SetValue(positionTable[3])
             widget.y:SetValue(positionTable[4])
 
-            addon:SetEnabled(positionTable[1] ~= "HEALTH_BAR", widget.relativeToText, widget.relativeTo, widget.x, widget.y)
+            Cell.SetEnabled(positionTable[1] ~= "HEALTH_BAR", widget.relativeToText, widget.relativeTo, widget.x, widget.y)
         end
     else
         widget = settingWidgets["shieldBarPosition"]
@@ -311,10 +311,10 @@ local function CreateSetting_Anchor(parent)
     local widget
 
     if not settingWidgets["anchor"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Anchor", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Anchor", parent, 240, 50)
         settingWidgets["anchor"] = widget
 
-        widget.anchor = addon:CreateDropdown(widget, 170)
+        widget.anchor = Cell.CreateDropdown(widget, 170)
         widget.anchor:SetPoint("TOPLEFT", 5, -20)
 
         widget.anchor:SetItems({
@@ -373,10 +373,10 @@ local function CreateSetting_FrameLevel(parent)
     local widget
 
     if not settingWidgets["frameLevel"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_FrameLevel", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_FrameLevel", parent, 240, 50)
         settingWidgets["frameLevel"] = widget
 
-        widget.frameLevel = addon:CreateSlider(L["Frame Level"], widget, 1, 100, 110, 1)
+        widget.frameLevel = Cell.CreateSlider(L["Frame Level"], widget, 1, 100, 110, 1)
         widget.frameLevel:SetPoint("TOPLEFT", widget, 5, -20)
         widget.frameLevel.afterValueChangedFn = function(value)
             widget.func(value)
@@ -404,16 +404,16 @@ local function CreateSetting_Size(parent)
     local widget
 
     if not settingWidgets["size"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Size", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Size", parent, 240, 50)
         settingWidgets["size"] = widget
 
-        widget.width = addon:CreateSlider(L["Width"], widget, 3, 500, 110, 1)
+        widget.width = Cell.CreateSlider(L["Width"], widget, 3, 500, 110, 1)
         widget.width:SetPoint("TOPLEFT", widget, 5, -20)
         widget.width.afterValueChangedFn = function(value)
             widget.func({value, widget.height:GetValue()})
         end
 
-        widget.height = addon:CreateSlider(L["Height"], widget, 3, 500, 110, 1)
+        widget.height = Cell.CreateSlider(L["Height"], widget, 3, 500, 110, 1)
         widget.height:SetPoint("LEFT", widget.width, "RIGHT", 25, 0)
         widget.height.afterValueChangedFn = function(value)
             widget.func({widget.width:GetValue(), value})
@@ -441,16 +441,16 @@ end
 --     local widget
 
 --     if not settingWidgets["size-bar"] then
---         widget = addon:CreateFrame("CellIndicatorSettings_SizeBar", parent, 240, 50)
+--         widget = Cell.CreateFrame("CellIndicatorSettings_SizeBar", parent, 240, 50)
 --         settingWidgets["size-bar"] = widget
 
---         widget.width = addon:CreateSlider(L["Width"], widget, 3, 500, 110, 1)
+--         widget.width = Cell.CreateSlider(L["Width"], widget, 3, 500, 110, 1)
 --         widget.width:SetPoint("TOPLEFT", widget, 5, -20)
 --         widget.width.afterValueChangedFn = function(value)
 --             widget.func({value, widget.height:GetValue()})
 --         end
 
---         widget.height = addon:CreateSlider(L["Height"], widget, 3, 500, 110, 1)
+--         widget.height = Cell.CreateSlider(L["Height"], widget, 3, 500, 110, 1)
 --         widget.height:SetPoint("LEFT", widget.width, "RIGHT", 25, 0)
 --         widget.height.afterValueChangedFn = function(value)
 --             widget.func({widget.width:GetValue(), value})
@@ -478,10 +478,10 @@ local function CreateSetting_SizeSquare(parent)
     local widget
 
     if not settingWidgets["size-square"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_SizeSquare", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_SizeSquare", parent, 240, 50)
         settingWidgets["size-square"] = widget
 
-        widget.size = addon:CreateSlider(L["Size"], widget, 1, 200, 110, 1)
+        widget.size = Cell.CreateSlider(L["Size"], widget, 1, 200, 110, 1)
         widget.size:SetPoint("TOPLEFT", widget, 5, -20)
         widget.size.afterValueChangedFn = function(value)
             widget.func({value, value})
@@ -508,17 +508,17 @@ local function CreateSetting_Spacing(parent)
     local widget
 
     if not settingWidgets["spacing"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Spacing", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Spacing", parent, 240, 50)
         settingWidgets["spacing"] = widget
 
-        widget.x = addon:CreateSlider(L["Spacing"].." X", widget, -1, 50, 110, 1)
+        widget.x = Cell.CreateSlider(L["Spacing"].." X", widget, -1, 50, 110, 1)
         widget.x:SetPoint("TOPLEFT", widget, 5, -20)
         widget.x.afterValueChangedFn = function(value)
             widget.spacing[1] = value
             widget.func(widget.spacing)
         end
 
-        widget.y = addon:CreateSlider(L["Spacing"].." Y", widget, -1, 50, 110, 1)
+        widget.y = Cell.CreateSlider(L["Spacing"].." Y", widget, -1, 50, 110, 1)
         widget.y:SetPoint("LEFT", widget.x, "RIGHT", 25, 0)
         widget.y.afterValueChangedFn = function(value)
             widget.spacing[2] = value
@@ -548,10 +548,10 @@ local function CreateSetting_Thickness(parent)
     local widget
 
     if not settingWidgets["thickness"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Thickness", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Thickness", parent, 240, 50)
         settingWidgets["thickness"] = widget
 
-        widget.size = addon:CreateSlider(L["Size"], widget, 1, 15, 110, 1)
+        widget.size = Cell.CreateSlider(L["Size"], widget, 1, 15, 110, 1)
         widget.size:SetPoint("TOPLEFT", widget, 5, -20)
         widget.size.afterValueChangedFn = function(value)
             widget.func(value)
@@ -578,16 +578,16 @@ local function CreateSetting_SizeNormalBig(parent)
     local widget
 
     if not settingWidgets["size-normal-big"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_SizeNormalBig", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_SizeNormalBig", parent, 240, 50)
         settingWidgets["size-normal-big"] = widget
 
-        widget.sizeNormal = addon:CreateSlider(L["Size"], widget, 1, 200, 110, 1)
+        widget.sizeNormal = Cell.CreateSlider(L["Size"], widget, 1, 200, 110, 1)
         widget.sizeNormal:SetPoint("TOPLEFT", widget, 5, -20)
         widget.sizeNormal.afterValueChangedFn = function(value)
             widget.func({{value, value}, {widget.sizeBig:GetValue(), widget.sizeBig:GetValue()}})
         end
 
-        widget.sizeBig = addon:CreateSlider(L["Size (Big)"], widget, 1, 200, 110, 1)
+        widget.sizeBig = Cell.CreateSlider(L["Size (Big)"], widget, 1, 200, 110, 1)
         widget.sizeBig:SetPoint("LEFT", widget.sizeNormal, "RIGHT", 25, 0)
         widget.sizeBig.afterValueChangedFn = function(value)
             widget.func({{widget.sizeNormal:GetValue(), widget.sizeNormal:GetValue()}, {value, value}})
@@ -615,16 +615,16 @@ local function CreateSetting_SizeAndBorder(parent)
     local widget
 
     if not settingWidgets["size-border"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_SizeAndBorder", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_SizeAndBorder", parent, 240, 50)
         settingWidgets["size-border"] = widget
 
-        widget.size = addon:CreateSlider(L["Size"], widget, 1, 200, 110, 1)
+        widget.size = Cell.CreateSlider(L["Size"], widget, 1, 200, 110, 1)
         widget.size:SetPoint("TOPLEFT", widget, 5, -20)
         widget.size.afterValueChangedFn = function(value)
             widget.func({value, value, widget.border:GetValue()})
         end
 
-        widget.border = addon:CreateSlider(L["Border"], widget, 1, 10, 110, 1)
+        widget.border = Cell.CreateSlider(L["Border"], widget, 1, 10, 110, 1)
         widget.border:SetPoint("LEFT", widget.size, "RIGHT", 25, 0)
         widget.border.afterValueChangedFn = function(value)
             widget.func({widget.size:GetValue(), widget.size:GetValue(), value})
@@ -652,10 +652,10 @@ local function CreateSetting_Height(parent)
     local widget
 
     if not settingWidgets["height"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Height", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Height", parent, 240, 50)
         settingWidgets["height"] = widget
 
-        widget.height = addon:CreateSlider(L["Height"], widget, 1, 300, 110, 1)
+        widget.height = Cell.CreateSlider(L["Height"], widget, 1, 300, 110, 1)
         widget.height:SetPoint("TOPLEFT", widget, 5, -20)
         widget.height.afterValueChangedFn = function(value)
             widget.func(value)
@@ -682,10 +682,10 @@ local function CreateSetting_TextWidth(parent)
     local widget
 
     if not settingWidgets["textWidth"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_TextWidth", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_TextWidth", parent, 240, 50)
         settingWidgets["textWidth"] = widget
 
-        widget.textWidth = addon:CreateDropdown(widget, 110)
+        widget.textWidth = Cell.CreateDropdown(widget, 110)
         widget.textWidth:SetPoint("TOPLEFT", 5, -20)
         widget.textWidth:SetItems({
             {
@@ -726,9 +726,9 @@ local function CreateSetting_TextWidth(parent)
             },
         })
 
-        widget.percent = addon:CreateDropdown(widget, 75)
+        widget.percent = Cell.CreateDropdown(widget, 75)
         widget.percent:SetPoint("TOPLEFT", widget.textWidth, "TOPRIGHT", 25, 0)
-        addon:SetTooltips(widget.percent.button, "ANCHOR_TOP", 0, 3, L["Name Width / UnitButton Width"])
+        Cell.SetTooltips(widget.percent.button, "ANCHOR_TOP", 0, 3, L["Name Width / UnitButton Width"])
         widget.percent:SetItems({
             {
                 ["text"] = "100%",
@@ -760,14 +760,14 @@ local function CreateSetting_TextWidth(parent)
             },
         })
 
-        widget.length = addon:CreateEditBox(widget, 34, 20, false, false, true)
+        widget.length = Cell.CreateEditBox(widget, 34, 20, false, false, true)
         widget.length:SetPoint("TOPLEFT", widget.textWidth, "TOPRIGHT", 25, 0)
 
         widget.enText = widget.length:CreateFontString(nil, "OVERLAY", font_name)
         widget.enText:SetText(L["En"])
         widget.enText:SetPoint("BOTTOMLEFT", widget.length, "TOPLEFT", 0, 1)
 
-        widget.length.confirmBtn = addon:CreateButton(widget.length, "OK", "accent", {27, 20})
+        widget.length.confirmBtn = Cell.CreateButton(widget.length, "OK", "accent", {27, 20})
         widget.length.confirmBtn:SetPoint("TOPLEFT", widget.length, "TOPRIGHT", -1, 0)
         widget.length.confirmBtn:Hide()
         widget.length.confirmBtn:SetScript("OnHide", function()
@@ -794,14 +794,14 @@ local function CreateSetting_TextWidth(parent)
             end
         end)
 
-        widget.length2 = addon:CreateEditBox(widget, 33, 20, false, false, true)
+        widget.length2 = Cell.CreateEditBox(widget, 33, 20, false, false, true)
         widget.length2:SetPoint("TOPLEFT", widget.length, "TOPRIGHT", 25, 0)
 
         widget.nonEnText = widget.length2:CreateFontString(nil, "OVERLAY", font_name)
         widget.nonEnText:SetText(L["Non-En"])
         widget.nonEnText:SetPoint("BOTTOMLEFT", widget.length2, "TOPLEFT", 0, 1)
 
-        widget.length2.confirmBtn = addon:CreateButton(widget.length2, "OK", "accent", {27, 20})
+        widget.length2.confirmBtn = Cell.CreateButton(widget.length2, "OK", "accent", {27, 20})
         widget.length2.confirmBtn:SetPoint("TOPLEFT", widget.length2, "TOPRIGHT", -1, 0)
         widget.length2.confirmBtn:Hide()
         widget.length2.confirmBtn:SetScript("OnHide", function()
@@ -875,10 +875,10 @@ local function CreateSetting_Alpha(parent)
     local widget
 
     if not settingWidgets["alpha"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Alpha", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Alpha", parent, 240, 50)
         settingWidgets["alpha"] = widget
 
-        widget.alpha = addon:CreateSlider(L["Alpha"], widget, 0, 1, 110, 0.01)
+        widget.alpha = Cell.CreateSlider(L["Alpha"], widget, 0, 1, 110, 0.01)
         widget.alpha:SetPoint("TOPLEFT", widget, 5, -20)
         widget.alpha.afterValueChangedFn = function(value)
             widget.func(value)
@@ -905,10 +905,10 @@ local function CreateSetting_Num(parent)
     local widget
 
     if not settingWidgets["num"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Num", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Num", parent, 240, 50)
         settingWidgets["num"] = widget
 
-        widget.num = addon:CreateSlider(L["Max Displayed"], widget, 1, 5, 110, 1)
+        widget.num = Cell.CreateSlider(L["Max Displayed"], widget, 1, 5, 110, 1)
         widget.num:SetPoint("TOPLEFT", 5, -20)
         widget.num.afterValueChangedFn = function(value)
             widget.func(value)
@@ -936,10 +936,10 @@ local function CreateSetting_NumPerLine(parent)
     local widget
 
     if not settingWidgets["numPerLine"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_NumPerLine", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_NumPerLine", parent, 240, 50)
         settingWidgets["numPerLine"] = widget
 
-        widget.num = addon:CreateSlider(L["Displayed Per Line"], widget, 1, 5, 110, 1)
+        widget.num = Cell.CreateSlider(L["Displayed Per Line"], widget, 1, 5, 110, 1)
         widget.num:SetPoint("TOPLEFT", 5, -20)
         widget.num.afterValueChangedFn = function(value)
             widget.func(value)
@@ -967,7 +967,7 @@ local function CreateSetting_HealthFormat(parent)
     local widget
 
     if not settingWidgets["healthFormat"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_HealthFormat", parent, 240, 270)
+        widget = Cell.CreateFrame("CellIndicatorSettings_HealthFormat", parent, 240, 270)
         settingWidgets["healthFormat"] = widget
 
         local health, healthMax = 213777, 300000
@@ -1065,20 +1065,20 @@ local function CreateSetting_HealthFormat(parent)
         local healthList = {
             {L["None"], "none"},
             {(health + shield - healAbsorb) .. effective, "effective"},
-            {F:FormatNumber(health + shield - healAbsorb) .. effective, "effective_short"},
-            {F:Round((health + shield - healAbsorb) / healthMax * 100) .. "%" .. effective, "effective_percent"},
-            {F:Round((health + shield - healAbsorb) / healthMax * 100) .. effective, "effective_percent_no_sign"},
+            {F.FormatNumber(health + shield - healAbsorb) .. effective, "effective_short"},
+            {F.Round((health + shield - healAbsorb) / healthMax * 100) .. "%" .. effective, "effective_percent"},
+            {F.Round((health + shield - healAbsorb) / healthMax * 100) .. effective, "effective_percent_no_sign"},
             {health, "health"},
-            {F:FormatNumber(health), "health_short"},
-            {F:Round(health / healthMax * 100) .. "%", "health_percent"},
-            {F:Round(health / healthMax * 100), "health_percent_no_sign"},
+            {F.FormatNumber(health), "health_short"},
+            {F.Round(health / healthMax * 100) .. "%", "health_percent"},
+            {F.Round(health / healthMax * 100), "health_percent_no_sign"},
             {health - healthMax, "deficit"},
-            {F:FormatNumber(health - healthMax), "deficit_short"},
-            {F:Round((health - healthMax) / healthMax * 100) .. "%", "deficit_percent"},
-            {F:Round((health - healthMax) / healthMax * 100), "deficit_percent_no_sign"},
+            {F.FormatNumber(health - healthMax), "deficit_short"},
+            {F.Round((health - healthMax) / healthMax * 100) .. "%", "deficit_percent"},
+            {F.Round((health - healthMax) / healthMax * 100), "deficit_percent_no_sign"},
         }
 
-        widget.healthFormatDropdown = addon:CreateDropdown(widget, 127)
+        widget.healthFormatDropdown = Cell.CreateDropdown(widget, 127)
         widget.healthFormatDropdown:SetPoint("TOPLEFT", 5, -20)
         widget.healthFormatDropdown:SetItems(GetItems("health", healthList))
 
@@ -1087,14 +1087,14 @@ local function CreateSetting_HealthFormat(parent)
         healthText:SetText(L["Health"])
 
         -- hideIfEmptyOrFull
-        widget.hideIfEmptyOrFullCB = addon:CreateCheckButton(widget, L["hideIfEmptyOrFull"], function(checked)
+        widget.hideIfEmptyOrFullCB = Cell.CreateCheckButton(widget, L["hideIfEmptyOrFull"], function(checked)
             widget.format.health.hideIfEmptyOrFull = checked
             widget.func()
         end)
         widget.hideIfEmptyOrFullCB:SetPoint("TOPLEFT", widget.healthFormatDropdown, "BOTTOMLEFT", 0, -10)
 
         -- color
-        widget.healthColorDropdown = addon:CreateDropdown(widget, 127)
+        widget.healthColorDropdown = Cell.CreateDropdown(widget, 127)
         widget.healthColorDropdown:SetPoint("TOPLEFT", widget.hideIfEmptyOrFullCB, "BOTTOMLEFT", 0, -10)
         widget.healthColorDropdown:SetItems({
             {
@@ -1117,7 +1117,7 @@ local function CreateSetting_HealthFormat(parent)
             },
         })
 
-        widget.healthColorPicker = addon:CreateColorPicker(widget, "", false, function(r, g, b)
+        widget.healthColorPicker = Cell.CreateColorPicker(widget, "", false, function(r, g, b)
             widget.format.health.color[2][1] = r
             widget.format.health.color[2][2] = g
             widget.format.health.color[2][3] = b
@@ -1129,12 +1129,12 @@ local function CreateSetting_HealthFormat(parent)
         local shieldList = {
             {L["None"], "none"},
             {shield, "shields"},
-            {F:FormatNumber(shield), "shields_short"},
-            {F:Round(shield / healthMax * 100) .. "%", "shields_percent"},
-            {F:Round(shield / healthMax * 100), "shields_percent_no_sign"},
+            {F.FormatNumber(shield), "shields_short"},
+            {F.Round(shield / healthMax * 100) .. "%", "shields_percent"},
+            {F.Round(shield / healthMax * 100), "shields_percent_no_sign"},
         }
 
-        widget.shieldFormatDropdown = addon:CreateDropdown(widget, 127)
+        widget.shieldFormatDropdown = Cell.CreateDropdown(widget, 127)
         widget.shieldFormatDropdown:SetPoint("TOPLEFT", widget.healthColorDropdown, "BOTTOMLEFT", 0, -35)
         widget.shieldFormatDropdown:SetItems(GetItems("shields", shieldList))
 
@@ -1143,7 +1143,7 @@ local function CreateSetting_HealthFormat(parent)
         shieldText:SetText(L["Shields"])
 
         -- delimiter
-        widget.shieldDelimiterDropdown = addon:CreateDropdown(widget, 70)
+        widget.shieldDelimiterDropdown = Cell.CreateDropdown(widget, 70)
         widget.shieldDelimiterDropdown:SetPoint("TOPLEFT", widget.shieldFormatDropdown, "TOPRIGHT", 25, 0)
         widget.shieldDelimiterDropdown:SetItems(GetDelimiterItems("shields"))
 
@@ -1152,7 +1152,7 @@ local function CreateSetting_HealthFormat(parent)
         shieldDelimiterText:SetText(L["Delimiter"])
 
         -- color
-        widget.shieldColorDropdown = addon:CreateDropdown(widget, 127)
+        widget.shieldColorDropdown = Cell.CreateDropdown(widget, 127)
         widget.shieldColorDropdown:SetPoint("TOPLEFT", widget.shieldFormatDropdown, "BOTTOMLEFT", 0, -10)
         widget.shieldColorDropdown:SetItems({
             {
@@ -1175,7 +1175,7 @@ local function CreateSetting_HealthFormat(parent)
             },
         })
 
-        widget.shieldColorPicker = addon:CreateColorPicker(widget, "", false, function(r, g, b)
+        widget.shieldColorPicker = Cell.CreateColorPicker(widget, "", false, function(r, g, b)
             widget.format.shields.color[2][1] = r
             widget.format.shields.color[2][2] = g
             widget.format.shields.color[2][3] = b
@@ -1187,12 +1187,12 @@ local function CreateSetting_HealthFormat(parent)
         local healAbsorbList = {
             {L["None"], "none"},
             {healAbsorb, "healabsorbs"},
-            {F:FormatNumber(healAbsorb), "healabsorbs_short"},
-            {F:Round(healAbsorb / healthMax * 100) .. "%", "healabsorbs_percent"},
-            {F:Round(healAbsorb / healthMax * 100), "healabsorbs_percent_no_sign"},
+            {F.FormatNumber(healAbsorb), "healabsorbs_short"},
+            {F.Round(healAbsorb / healthMax * 100) .. "%", "healabsorbs_percent"},
+            {F.Round(healAbsorb / healthMax * 100), "healabsorbs_percent_no_sign"},
         }
 
-        widget.healAbsorbFormatDropdown = addon:CreateDropdown(widget, 127)
+        widget.healAbsorbFormatDropdown = Cell.CreateDropdown(widget, 127)
         widget.healAbsorbFormatDropdown:SetPoint("TOPLEFT", widget.shieldColorDropdown, "BOTTOMLEFT", 0, -35)
         widget.healAbsorbFormatDropdown:SetItems(GetItems("healAbsorbs", healAbsorbList))
 
@@ -1201,7 +1201,7 @@ local function CreateSetting_HealthFormat(parent)
         healAbsorbText:SetText(L["Heal Absorbs"])
 
         -- delimiter
-        widget.healAbsorbDelimiterDropdown = addon:CreateDropdown(widget, 70)
+        widget.healAbsorbDelimiterDropdown = Cell.CreateDropdown(widget, 70)
         widget.healAbsorbDelimiterDropdown:SetPoint("TOPLEFT", widget.healAbsorbFormatDropdown, "TOPRIGHT", 25, 0)
         widget.healAbsorbDelimiterDropdown:SetItems(GetDelimiterItems("healAbsorbs"))
 
@@ -1210,7 +1210,7 @@ local function CreateSetting_HealthFormat(parent)
         healAbsorbDelimiterText:SetText(L["Delimiter"])
 
         -- color
-        widget.healAbsorbColorDropdown = addon:CreateDropdown(widget, 127)
+        widget.healAbsorbColorDropdown = Cell.CreateDropdown(widget, 127)
         widget.healAbsorbColorDropdown:SetPoint("TOPLEFT", widget.healAbsorbFormatDropdown, "BOTTOMLEFT", 0, -10)
         widget.healAbsorbColorDropdown:SetItems({
             {
@@ -1233,7 +1233,7 @@ local function CreateSetting_HealthFormat(parent)
             }
         })
 
-        widget.healAbsorbColorPicker = addon:CreateColorPicker(widget, "", false, function(r, g, b)
+        widget.healAbsorbColorPicker = Cell.CreateColorPicker(widget, "", false, function(r, g, b)
             widget.format.healAbsorbs.color[2][1] = r
             widget.format.healAbsorbs.color[2][2] = g
             widget.format.healAbsorbs.color[2][3] = b
@@ -1281,10 +1281,10 @@ local function CreateSetting_PowerFormat(parent)
     local widget
 
     if not settingWidgets["powerFormat"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_PowerFormat", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_PowerFormat", parent, 240, 50)
         settingWidgets["powerFormat"] = widget
 
-        widget.format = addon:CreateDropdown(widget, 127)
+        widget.format = Cell.CreateDropdown(widget, 127)
         widget.format:SetPoint("TOPLEFT", 5, -20)
         widget.format:SetItems({
             {
@@ -1302,7 +1302,7 @@ local function CreateSetting_PowerFormat(parent)
                 end,
             },
             {
-                ["text"] = F:FormatNumber(25000),
+                ["text"] = F.FormatNumber(25000),
                 ["value"] = "number-short",
                 ["onClick"] = function()
                     widget.func("number-short")
@@ -1335,10 +1335,10 @@ local function CreateSetting_DurationVisibility(parent)
     local widget
 
     if not settingWidgets["durationVisibility"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_DurationVisibility", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_DurationVisibility", parent, 240, 50)
         settingWidgets["durationVisibility"] = widget
 
-        widget.durationVisibility = addon:CreateDropdown(widget, 245)
+        widget.durationVisibility = Cell.CreateDropdown(widget, 245)
         widget.durationVisibility:SetPoint("TOPLEFT", 5, -20)
         widget.durationVisibility:SetItems({
             {
@@ -1431,10 +1431,10 @@ local function CreateSetting_Orientation(parent)
     local widget
 
     if not settingWidgets["orientation"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Orientation", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Orientation", parent, 240, 50)
         settingWidgets["orientation"] = widget
 
-        widget.orientation = addon:CreateDropdown(widget, 245)
+        widget.orientation = Cell.CreateDropdown(widget, 245)
         widget.orientation:SetPoint("TOPLEFT", 5, -20)
         widget.orientation:SetItems({
             {
@@ -1488,10 +1488,10 @@ local function CreateSetting_BarOrientation(parent)
     local widget
 
     if not settingWidgets["barOrientation"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_BarOrientation", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_BarOrientation", parent, 240, 50)
         settingWidgets["barOrientation"] = widget
 
-        widget.orientation = addon:CreateDropdown(widget, 153)
+        widget.orientation = Cell.CreateDropdown(widget, 153)
         widget.orientation:SetPoint("TOPLEFT", 5, -20)
         widget.orientation:SetItems({
             {
@@ -1535,10 +1535,10 @@ local function CreateSetting_VehicleNamePosition(parent)
     local widget
 
     if not settingWidgets["vehicleNamePosition"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_VehicleNamePosition", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_VehicleNamePosition", parent, 240, 50)
         settingWidgets["vehicleNamePosition"] = widget
 
-        widget.position = addon:CreateDropdown(widget, 110)
+        widget.position = Cell.CreateDropdown(widget, 110)
         widget.position:SetPoint("TOPLEFT", 5, -20)
         widget.position:SetItems({
             {
@@ -1568,7 +1568,7 @@ local function CreateSetting_VehicleNamePosition(parent)
         widget.positionText:SetText(L["Vehicle Name Position"])
         widget.positionText:SetPoint("BOTTOMLEFT", widget.position, "TOPLEFT", 0, 1)
 
-        widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -50, 50, 110, 1)
+        widget.yOffset = Cell.CreateSlider(L["Y Offset"], widget, -50, 50, 110, 1)
         widget.yOffset:SetPoint("TOPLEFT", widget.position, "TOPRIGHT", 25, 0)
         widget.yOffset.afterValueChangedFn = function(value)
             widget.func({widget.position:GetSelected(), value})
@@ -1596,10 +1596,10 @@ local function CreateSetting_StatusPosition(parent)
     local widget
 
     if not settingWidgets["statusPosition"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_StatusPosition", parent, 240, 95)
+        widget = Cell.CreateFrame("CellIndicatorSettings_StatusPosition", parent, 240, 95)
         settingWidgets["statusPosition"] = widget
 
-        widget.position = addon:CreateDropdown(widget, 110)
+        widget.position = Cell.CreateDropdown(widget, 110)
         widget.position:SetPoint("TOPLEFT", 5, -20)
         widget.position:SetItems({
             {
@@ -1622,7 +1622,7 @@ local function CreateSetting_StatusPosition(parent)
         widget.positionText:SetText(L["Status Text Position"])
         widget.positionText:SetPoint("BOTTOMLEFT", widget.position, "TOPLEFT", 0, 1)
 
-        widget.justify = addon:CreateDropdown(widget, 110)
+        widget.justify = Cell.CreateDropdown(widget, 110)
         widget.justify:SetPoint("TOPLEFT", widget.position, "TOPRIGHT", 25, 0)
         widget.justify:SetItems({
             {
@@ -1648,7 +1648,7 @@ local function CreateSetting_StatusPosition(parent)
             },
         })
 
-        widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
+        widget.yOffset = Cell.CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
         widget.yOffset:SetPoint("TOPLEFT", widget.position, "BOTTOMLEFT", 0, -25)
         widget.yOffset.afterValueChangedFn = function(value)
             widget.func({widget.position:GetSelected(), value, widget.justify:GetSelected()})
@@ -1677,7 +1677,7 @@ local function CreateSetting_FontNoOffset(parent)
     local widget
 
     if not settingWidgets["font-noOffset"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_FontNoOffset", parent, 240, 95)
+        widget = Cell.CreateFrame("CellIndicatorSettings_FontNoOffset", parent, 240, 95)
         settingWidgets["font-noOffset"] = widget
 
         widget.Update = function()
@@ -1688,9 +1688,9 @@ local function CreateSetting_FontNoOffset(parent)
             widget.func()
         end
 
-        widget.font = addon:CreateDropdown(widget, 110, "font")
+        widget.font = Cell.CreateDropdown(widget, 110, "font")
         widget.font:SetPoint("TOPLEFT", 5, -20)
-        local items, fonts, defaultFontName, defaultFont = F:GetFontItems()
+        local items, fonts, defaultFontName, defaultFont = F.GetFontItems()
         for _, item in pairs(items) do
             item["onClick"] = widget.Update
         end
@@ -1700,7 +1700,7 @@ local function CreateSetting_FontNoOffset(parent)
         widget.fontText:SetText(L["Font"])
         widget.fontText:SetPoint("BOTTOMLEFT", widget.font, "TOPLEFT", 0, 1)
 
-        widget.outline = addon:CreateDropdown(widget, 110)
+        widget.outline = Cell.CreateDropdown(widget, 110)
         widget.outline:SetPoint("LEFT", widget.font, "RIGHT", 25, 0)
         widget.outline:SetItems({
             {
@@ -1724,11 +1724,11 @@ local function CreateSetting_FontNoOffset(parent)
         widget.outlineText:SetText(L["Outline"])
         widget.outlineText:SetPoint("BOTTOMLEFT", widget.outline, "TOPLEFT", 0, 1)
 
-        widget.fontSize = addon:CreateSlider(L["Size"], widget, 5, 50, 110, 1)
+        widget.fontSize = Cell.CreateSlider(L["Size"], widget, 5, 50, 110, 1)
         widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
         widget.fontSize.afterValueChangedFn = widget.Update
 
-        widget.shadow = addon:CreateCheckButton(widget, L["Shadow"], widget.Update)
+        widget.shadow = Cell.CreateCheckButton(widget, L["Shadow"], widget.Update)
         widget.shadow:SetPoint("TOPLEFT", widget.fontSize, "TOPRIGHT", 25, -3)
 
         -- callback
@@ -1756,7 +1756,7 @@ local function CreateSetting_Font(parent, index)
     local widget
 
     if not settingWidgets[index] then
-        widget = addon:CreateFrame("CellIndicatorSettings_"..F:UpperFirst(index), parent, 240, 145)
+        widget = Cell.CreateFrame("CellIndicatorSettings_"..F.UpperFirst(index), parent, 240, 145)
         settingWidgets[index] = widget
 
         widget.Update = function()
@@ -1775,9 +1775,9 @@ local function CreateSetting_Font(parent, index)
         widget.title:SetPoint("TOPLEFT", 5, -5)
 
         -- font
-        widget.font = addon:CreateDropdown(widget, 110, "font")
+        widget.font = Cell.CreateDropdown(widget, 110, "font")
         -- widget.font:SetPoint("TOPLEFT", 5, -40)
-        local items, fonts, defaultFontName, defaultFont = F:GetFontItems()
+        local items, fonts, defaultFontName, defaultFont = F.GetFontItems()
         for _, item in pairs(items) do
             item["onClick"] = widget.Update
         end
@@ -1788,7 +1788,7 @@ local function CreateSetting_Font(parent, index)
         widget.fontText:SetPoint("BOTTOMLEFT", widget.font, "TOPLEFT", 0, 1)
 
         -- outline
-        widget.outline = addon:CreateDropdown(widget, 110)
+        widget.outline = Cell.CreateDropdown(widget, 110)
         widget.outline:SetPoint("TOPLEFT", widget.font, "TOPRIGHT", 25, 0)
         widget.outline:SetItems({
             {
@@ -1813,16 +1813,16 @@ local function CreateSetting_Font(parent, index)
         widget.outlineText:SetPoint("BOTTOMLEFT", widget.outline, "TOPLEFT", 0, 1)
 
         -- size
-        widget.fontSize = addon:CreateSlider(L["Size"], widget, 5, 50, 110, 1)
+        widget.fontSize = Cell.CreateSlider(L["Size"], widget, 5, 50, 110, 1)
         widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
         widget.fontSize.afterValueChangedFn = widget.Update
 
         -- shadow
-        widget.shadow = addon:CreateCheckButton(widget, L["Shadow"], widget.Update)
+        widget.shadow = Cell.CreateCheckButton(widget, L["Shadow"], widget.Update)
         widget.shadow:SetPoint("TOPLEFT", widget.fontSize, "TOPRIGHT", 25, -3)
 
         -- anchor
-        widget.anchor = addon:CreateDropdown(widget, 110)
+        widget.anchor = Cell.CreateDropdown(widget, 110)
         widget.anchor:SetPoint("TOPLEFT", widget.fontSize, "BOTTOMLEFT", 0, -45)
         local items = {}
         for _, point in pairs(anchorPoints) do
@@ -1839,17 +1839,17 @@ local function CreateSetting_Font(parent, index)
         widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
 
         -- x
-        widget.xOffset = addon:CreateSlider(L["X Offset"], widget, -50, 50, 110, 1)
+        widget.xOffset = Cell.CreateSlider(L["X Offset"], widget, -50, 50, 110, 1)
         widget.xOffset:SetPoint("TOPLEFT", widget.anchor, "TOPRIGHT", 25, 0)
         widget.xOffset.afterValueChangedFn = widget.Update
 
         -- y
-        widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -50, 50, 110, 1)
+        widget.yOffset = Cell.CreateSlider(L["Y Offset"], widget, -50, 50, 110, 1)
         widget.yOffset:SetPoint("TOPLEFT", widget.xOffset, "BOTTOMLEFT", 0, -40)
         widget.yOffset.afterValueChangedFn = widget.Update
 
         -- color
-        widget.color = addon:CreateColorPicker(widget, L["Color"], false, function(r, g, b)
+        widget.color = Cell.CreateColorPicker(widget, L["Color"], false, function(r, g, b)
             widget.fontTable[8][1] = r
             widget.fontTable[8][2] = g
             widget.fontTable[8][3] = b
@@ -1892,12 +1892,12 @@ local function CreateSetting_Font(parent, index)
                 widget.color:Hide()
             end
 
-            P:Height(widget, height)
+            P.Height(widget, height)
 
             if title == "durationFont" then
-                addon:SetTooltips(widget.color, "ANCHOR_TOPLEFT", 0, 3, L["Color"], L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"]:format(addon:GetAccentColorString().."\""..L["Color Duration Text"].."\"|r", L["Appearance"]))
+                Cell.SetTooltips(widget.color, "ANCHOR_TOPLEFT", 0, 3, L["Color"], L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"]:format(Cell.GetAccentColorString().."\""..L["Color Duration Text"].."\"|r", L["Appearance"]))
             else
-                addon:ClearTooltips(widget.color)
+                Cell.ClearTooltips(widget.color)
             end
         end
     else
@@ -1912,10 +1912,10 @@ local function CreateSetting_Color(parent)
     local widget
 
     if not settingWidgets["color"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Color", parent, 240, 30)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Color", parent, 240, 30)
         settingWidgets["color"] = widget
 
-        local colorPicker = addon:CreateColorPicker(widget, L["Color"], false, function(r, g, b, a)
+        local colorPicker = Cell.CreateColorPicker(widget, L["Color"], false, function(r, g, b, a)
             widget.colorTable[1] = r
             widget.colorTable[2] = g
             widget.colorTable[3] = b
@@ -1945,10 +1945,10 @@ local function CreateSetting_ColorAlpha(parent)
     local widget
 
     if not settingWidgets["color-alpha"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_ColorAlpha", parent, 240, 30)
+        widget = Cell.CreateFrame("CellIndicatorSettings_ColorAlpha", parent, 240, 30)
         settingWidgets["color-alpha"] = widget
 
-        local colorPicker = addon:CreateColorPicker(widget, L["Color"], true, function(r, g, b, a)
+        local colorPicker = Cell.CreateColorPicker(widget, L["Color"], true, function(r, g, b, a)
             widget.colorTable[1] = r
             widget.colorTable[2] = g
             widget.colorTable[3] = b
@@ -1979,10 +1979,10 @@ local function CreateSetting_Colors(parent)
     local widget
 
     if not settingWidgets["colors"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Colors", parent, 240, 96)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Colors", parent, 240, 96)
         settingWidgets["colors"] = widget
 
-        local normalColor = addon:CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
+        local normalColor = Cell.CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
             widget.colorsTable[1][1] = r
             widget.colorsTable[1][2] = g
             widget.colorsTable[1][3] = b
@@ -1993,13 +1993,13 @@ local function CreateSetting_Colors(parent)
 
         local percentColor, percentDropdown
 
-        local percentCB = addon:CreateCheckButton(widget, "", function(checked)
+        local percentCB = Cell.CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[2][1] = checked
-            addon:SetEnabled(checked, percentColor, percentDropdown)
+            Cell.SetEnabled(checked, percentColor, percentDropdown)
         end)
         percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
-        percentColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
+        percentColor = Cell.CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[2][3][1] = r
             widget.colorsTable[2][3][2] = g
             widget.colorsTable[2][3][3] = b
@@ -2010,13 +2010,13 @@ local function CreateSetting_Colors(parent)
 
         local secColor, secEditBox, secText
 
-        local secCB = addon:CreateCheckButton(widget, "", function(checked)
+        local secCB = Cell.CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[3][1] = checked
-            addon:SetEnabled(checked, secColor, secEditBox, secText)
+            Cell.SetEnabled(checked, secColor, secEditBox, secText)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
-        secColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
+        secColor = Cell.CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[3][3][1] = r
             widget.colorsTable[3][3][2] = g
             widget.colorsTable[3][3][3] = b
@@ -2025,7 +2025,7 @@ local function CreateSetting_Colors(parent)
         end)
         secColor:SetPoint("TOPLEFT", secCB, "TOPRIGHT", 2, 0)
 
-        local borderColor = addon:CreateColorPicker(widget, L["Border Color"], true, function(r, g, b, a)
+        local borderColor = Cell.CreateColorPicker(widget, L["Border Color"], true, function(r, g, b, a)
             widget.colorsTable[4][1] = r
             widget.colorsTable[4][2] = g
             widget.colorsTable[4][3] = b
@@ -2034,7 +2034,7 @@ local function CreateSetting_Colors(parent)
         end)
         borderColor:SetPoint("TOPLEFT", secCB, "BOTTOMLEFT", 0, -8)
 
-        local bgColor = addon:CreateColorPicker(widget, L["Background Color"], true, function(r, g, b, a)
+        local bgColor = Cell.CreateColorPicker(widget, L["Background Color"], true, function(r, g, b, a)
             widget.colorsTable[5][1] = r
             widget.colorsTable[5][2] = g
             widget.colorsTable[5][3] = b
@@ -2044,7 +2044,7 @@ local function CreateSetting_Colors(parent)
         bgColor:SetPoint("TOPLEFT", borderColor, "BOTTOMLEFT", 0, -8)
 
 
-        percentDropdown = addon:CreateDropdown(widget, 60)
+        percentDropdown = Cell.CreateDropdown(widget, 60)
         percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
         percentDropdown:SetItems({
             {
@@ -2081,11 +2081,11 @@ local function CreateSetting_Colors(parent)
             },
         })
 
-        secEditBox = addon:CreateEditBox(widget, 43, 20, false, false, true)
+        secEditBox = Cell.CreateEditBox(widget, 43, 20, false, false, true)
         secEditBox:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
         secEditBox:SetMaxLetters(4)
 
-        secEditBox.confirmBtn = addon:CreateButton(widget, "OK", "accent", {27, 20})
+        secEditBox.confirmBtn = Cell.CreateButton(widget, "OK", "accent", {27, 20})
         secEditBox.confirmBtn:SetPoint("LEFT", secEditBox, "RIGHT", -1, 0)
         secEditBox.confirmBtn:Hide()
         secEditBox.confirmBtn:SetScript("OnHide", function()
@@ -2125,27 +2125,27 @@ local function CreateSetting_Colors(parent)
             widget.colorsTable = colorsTable
 
             percentCB:SetChecked(colorsTable[2][1])
-            addon:SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
+            Cell.SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
             secCB:SetChecked(colorsTable[3][1])
-            addon:SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
+            Cell.SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
 
             normalColor:SetColor(colorsTable[1])
             percentColor:SetColor(colorsTable[2][3])
             secColor:SetColor(colorsTable[3][3])
 
             if colorsTable[4] and colorsTable[5] then
-                P:Height(widget, 118)
+                P.Height(widget, 118)
                 borderColor:SetColor(colorsTable[4])
                 borderColor:Show()
                 bgColor:SetColor(colorsTable[5])
                 bgColor:Show()
             elseif colorsTable[4] then
-                P:Height(widget, 96)
+                P.Height(widget, 96)
                 borderColor:SetColor(colorsTable[4])
                 borderColor:Show()
                 bgColor:Hide()
             else
-                P:Height(widget, 75)
+                P.Height(widget, 75)
                 borderColor:Hide()
                 bgColor:Hide()
             end
@@ -2165,18 +2165,18 @@ local function CreateSetting_BlockColors(parent)
     local widget
 
     if not settingWidgets["blockColors"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_BlockColors", parent, 240, 136)
+        widget = Cell.CreateFrame("CellIndicatorSettings_BlockColors", parent, 240, 136)
         settingWidgets["blockColors"] = widget
 
         -- colorBy
-        local colorBy = addon:CreateDropdown(widget, 260)
+        local colorBy = Cell.CreateDropdown(widget, 260)
         colorBy:SetPoint("TOPLEFT", 5, -20)
 
         colorByText = widget:CreateFontString(nil, "OVERLAY", font_name)
         colorByText:SetText(L["Color By"])
         colorByText:SetPoint("BOTTOMLEFT", colorBy, "TOPLEFT", 0, 1)
 
-        local normalColor = addon:CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
+        local normalColor = Cell.CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
             widget.colorsTable[2][1] = r
             widget.colorsTable[2][2] = g
             widget.colorsTable[2][3] = b
@@ -2187,18 +2187,18 @@ local function CreateSetting_BlockColors(parent)
 
         -- duration pane --------------------------------------------------------------------------
         local durationPane = CreateFrame("Frame", nil, widget)
-        P:Size(durationPane, 260, 36)
+        P.Size(durationPane, 260, 36)
         durationPane:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
         local percentColor, percentDropdown
 
-        local percentCB = addon:CreateCheckButton(durationPane, "", function(checked)
+        local percentCB = Cell.CreateCheckButton(durationPane, "", function(checked)
             widget.colorsTable[3][1] = checked
-            addon:SetEnabled(checked, percentColor, percentDropdown)
+            Cell.SetEnabled(checked, percentColor, percentDropdown)
         end)
         percentCB:SetPoint("TOPLEFT")
 
-        percentColor = addon:CreateColorPicker(durationPane, L["Remaining Time"].." <", true, function(r, g, b, a)
+        percentColor = Cell.CreateColorPicker(durationPane, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[3][3][1] = r
             widget.colorsTable[3][3][2] = g
             widget.colorsTable[3][3][3] = b
@@ -2209,13 +2209,13 @@ local function CreateSetting_BlockColors(parent)
 
         local secColor, secEditBox, secText
 
-        local secCB = addon:CreateCheckButton(durationPane, "", function(checked)
+        local secCB = Cell.CreateCheckButton(durationPane, "", function(checked)
             widget.colorsTable[4][1] = checked
-            addon:SetEnabled(checked, secColor, secEditBox, secText)
+            Cell.SetEnabled(checked, secColor, secEditBox, secText)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
-        secColor = addon:CreateColorPicker(durationPane, L["Remaining Time"].." <", true, function(r, g, b, a)
+        secColor = Cell.CreateColorPicker(durationPane, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[4][3][1] = r
             widget.colorsTable[4][3][2] = g
             widget.colorsTable[4][3][3] = b
@@ -2224,7 +2224,7 @@ local function CreateSetting_BlockColors(parent)
         end)
         secColor:SetPoint("TOPLEFT", secCB, "TOPRIGHT", 2, 0)
 
-        percentDropdown = addon:CreateDropdown(durationPane, 60)
+        percentDropdown = Cell.CreateDropdown(durationPane, 60)
         percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
         percentDropdown:SetItems({
             {
@@ -2261,11 +2261,11 @@ local function CreateSetting_BlockColors(parent)
             },
         })
 
-        secEditBox = addon:CreateEditBox(durationPane, 43, 20, false, false, true)
+        secEditBox = Cell.CreateEditBox(durationPane, 43, 20, false, false, true)
         secEditBox:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
         secEditBox:SetMaxLetters(4)
 
-        secEditBox.confirmBtn = addon:CreateButton(durationPane, "OK", "accent", {27, 20})
+        secEditBox.confirmBtn = Cell.CreateButton(durationPane, "OK", "accent", {27, 20})
         secEditBox.confirmBtn:SetPoint("LEFT", secEditBox, "RIGHT", -1, 0)
         secEditBox.confirmBtn:Hide()
         secEditBox.confirmBtn:SetScript("OnHide", function()
@@ -2297,19 +2297,19 @@ local function CreateSetting_BlockColors(parent)
 
         -- stack pane -----------------------------------------------------------------------------
         local stackPane = CreateFrame("Frame", nil, widget)
-        P:Size(stackPane, 260, 36)
+        P.Size(stackPane, 260, 36)
         stackPane:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
         local stackColor1, stackEB1
 
-        local stackCB1 = addon:CreateCheckButton(stackPane, "", function(checked)
+        local stackCB1 = Cell.CreateCheckButton(stackPane, "", function(checked)
             widget.colorsTable[3][1] = checked
-            addon:SetEnabled(checked, stackColor1, stackEB1)
+            Cell.SetEnabled(checked, stackColor1, stackEB1)
             widget.func(widget.colorsTable)
         end)
         stackCB1:SetPoint("TOPLEFT")
 
-        stackColor1 = addon:CreateColorPicker(stackPane, L["Stack"].." >=", true, function(r, g, b, a)
+        stackColor1 = Cell.CreateColorPicker(stackPane, L["Stack"].." >=", true, function(r, g, b, a)
             widget.colorsTable[3][3][1] = r
             widget.colorsTable[3][3][2] = g
             widget.colorsTable[3][3][3] = b
@@ -2320,14 +2320,14 @@ local function CreateSetting_BlockColors(parent)
 
         local stackColor2, stackEB2
 
-        local stackCB2 = addon:CreateCheckButton(stackPane, "", function(checked)
+        local stackCB2 = Cell.CreateCheckButton(stackPane, "", function(checked)
             widget.colorsTable[4][1] = checked
-            addon:SetEnabled(checked, stackColor2, stackEB2)
+            Cell.SetEnabled(checked, stackColor2, stackEB2)
             widget.func(widget.colorsTable)
         end)
         stackCB2:SetPoint("TOPLEFT", stackCB1, "BOTTOMLEFT", 0, -8)
 
-        stackColor2 = addon:CreateColorPicker(stackPane, L["Stack"].." >=", true, function(r, g, b, a)
+        stackColor2 = Cell.CreateColorPicker(stackPane, L["Stack"].." >=", true, function(r, g, b, a)
             widget.colorsTable[4][3][1] = r
             widget.colorsTable[4][3][2] = g
             widget.colorsTable[4][3][3] = b
@@ -2337,11 +2337,11 @@ local function CreateSetting_BlockColors(parent)
         stackColor2:SetPoint("TOPLEFT", stackCB2, "TOPRIGHT", 2, 0)
 
         -- eb
-        stackEB1 = addon:CreateEditBox(stackPane, 43, 20, false, false, true)
+        stackEB1 = Cell.CreateEditBox(stackPane, 43, 20, false, false, true)
         stackEB1:SetPoint("LEFT", stackColor1.label, "RIGHT", 5, 0)
         stackEB1:SetMaxLetters(3)
 
-        stackEB1.confirmBtn = addon:CreateButton(stackPane, "OK", "accent", {27, 20})
+        stackEB1.confirmBtn = Cell.CreateButton(stackPane, "OK", "accent", {27, 20})
         stackEB1.confirmBtn:SetPoint("LEFT", stackEB1, "RIGHT", -1, 0)
         stackEB1.confirmBtn:Hide()
         stackEB1.confirmBtn:SetScript("OnHide", function()
@@ -2367,11 +2367,11 @@ local function CreateSetting_BlockColors(parent)
             end
         end)
 
-        stackEB2 = addon:CreateEditBox(stackPane, 43, 20, false, false, true)
+        stackEB2 = Cell.CreateEditBox(stackPane, 43, 20, false, false, true)
         stackEB2:SetPoint("LEFT", stackColor2.label, "RIGHT", 5, 0)
         stackEB2:SetMaxLetters(3)
 
-        stackEB2.confirmBtn = addon:CreateButton(stackPane, "OK", "accent", {27, 20})
+        stackEB2.confirmBtn = Cell.CreateButton(stackPane, "OK", "accent", {27, 20})
         stackEB2.confirmBtn:SetPoint("LEFT", stackEB2, "RIGHT", -1, 0)
         stackEB2.confirmBtn:Hide()
         stackEB2.confirmBtn:SetScript("OnHide", function()
@@ -2434,7 +2434,7 @@ local function CreateSetting_BlockColors(parent)
         })
 
         -- border color
-        local borderColor = addon:CreateColorPicker(widget, L["Border Color"], true, function(r, g, b, a)
+        local borderColor = Cell.CreateColorPicker(widget, L["Border Color"], true, function(r, g, b, a)
             widget.colorsTable[5][1] = r
             widget.colorsTable[5][2] = g
             widget.colorsTable[5][3] = b
@@ -2464,8 +2464,8 @@ local function CreateSetting_BlockColors(parent)
             normalColor:SetColor(colorsTable[2])
             borderColor:SetColor(colorsTable[5])
 
-            addon:SetEnabled(colorsTable[3][1], percentColor, percentDropdown, stackColor1, stackEB1)
-            addon:SetEnabled(colorsTable[4][1], secColor, secEditBox, secText, stackColor2, stackEB2)
+            Cell.SetEnabled(colorsTable[3][1], percentColor, percentDropdown, stackColor1, stackEB1)
+            Cell.SetEnabled(colorsTable[4][1], secColor, secEditBox, secText, stackColor2, stackEB2)
 
             percentCB:SetChecked(colorsTable[3][1])
             percentColor:SetColor(colorsTable[3][3])
@@ -2493,10 +2493,10 @@ local function CreateSetting_OverlayColors(parent)
     local widget
 
     if not settingWidgets["overlayColors"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_ColorsWithBG", parent, 240, 74)
+        widget = Cell.CreateFrame("CellIndicatorSettings_ColorsWithBG", parent, 240, 74)
         settingWidgets["overlayColors"] = widget
 
-        local normalColor = addon:CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
+        local normalColor = Cell.CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
             widget.colorsTable[1][1] = r
             widget.colorsTable[1][2] = g
             widget.colorsTable[1][3] = b
@@ -2507,14 +2507,14 @@ local function CreateSetting_OverlayColors(parent)
 
         local percentColor, percentDropdown
 
-        local percentCB = addon:CreateCheckButton(widget, "", function(checked)
+        local percentCB = Cell.CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[2][1] = checked
-            addon:SetEnabled(checked, percentColor, percentDropdown)
+            Cell.SetEnabled(checked, percentColor, percentDropdown)
             widget.func(widget.colorsTable)
         end)
         percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
-        percentColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
+        percentColor = Cell.CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[2][3][1] = r
             widget.colorsTable[2][3][2] = g
             widget.colorsTable[2][3][3] = b
@@ -2525,14 +2525,14 @@ local function CreateSetting_OverlayColors(parent)
 
         local secColor, secEditBox, secText
 
-        local secCB = addon:CreateCheckButton(widget, "", function(checked)
+        local secCB = Cell.CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[3][1] = checked
-            addon:SetEnabled(checked, secColor, secEditBox, secText)
+            Cell.SetEnabled(checked, secColor, secEditBox, secText)
             widget.func(widget.colorsTable)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
-        secColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
+        secColor = Cell.CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[3][3][1] = r
             widget.colorsTable[3][3][2] = g
             widget.colorsTable[3][3][3] = b
@@ -2541,7 +2541,7 @@ local function CreateSetting_OverlayColors(parent)
         end)
         secColor:SetPoint("TOPLEFT", secCB, "TOPRIGHT", 2, 0)
 
-        percentDropdown = addon:CreateDropdown(widget, 60)
+        percentDropdown = Cell.CreateDropdown(widget, 60)
         percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
         percentDropdown:SetItems({
             {
@@ -2578,11 +2578,11 @@ local function CreateSetting_OverlayColors(parent)
             },
         })
 
-        secEditBox = addon:CreateEditBox(widget, 43, 20, false, false, true)
+        secEditBox = Cell.CreateEditBox(widget, 43, 20, false, false, true)
         secEditBox:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
         secEditBox:SetMaxLetters(4)
 
-        secEditBox.confirmBtn = addon:CreateButton(widget, "OK", "accent", {27, 20})
+        secEditBox.confirmBtn = Cell.CreateButton(widget, "OK", "accent", {27, 20})
         secEditBox.confirmBtn:SetPoint("LEFT", secEditBox, "RIGHT", -1, 0)
         secEditBox.confirmBtn:Hide()
         secEditBox.confirmBtn:SetScript("OnHide", function()
@@ -2622,9 +2622,9 @@ local function CreateSetting_OverlayColors(parent)
             widget.colorsTable = colorsTable
 
             percentCB:SetChecked(colorsTable[2][1])
-            addon:SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
+            Cell.SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
             secCB:SetChecked(colorsTable[3][1])
-            addon:SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
+            Cell.SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
 
             normalColor:SetColor(colorsTable[1])
             percentColor:SetColor(colorsTable[2][3])
@@ -2645,11 +2645,11 @@ local function CreateSetting_CustomColors(parent)
     local widget
 
     if not settingWidgets["customColors"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_CustomColors", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_CustomColors", parent, 240, 50)
         settingWidgets["customColors"] = widget
 
         -- dropdown
-        widget.color = addon:CreateDropdown(widget, 170)
+        widget.color = Cell.CreateDropdown(widget, 170)
         widget.color:SetPoint("TOPLEFT", 5, -20)
 
         widget.buffItems = {
@@ -2657,7 +2657,7 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = L["Solid"],
                 ["value"] = "solid",
                 ["onClick"] = function()
-                    P:Height(widget, 50)
+                    P.Height(widget, 50)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Hide()
@@ -2669,7 +2669,7 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = L["Vertical Gradient"],
                 ["value"] = "gradient-vertical",
                 ["onClick"] = function()
-                    P:Height(widget, 50)
+                    P.Height(widget, 50)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Show()
                     widget.cotFrame:Hide()
@@ -2681,7 +2681,7 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = L["Horizontal Gradient"],
                 ["value"] = "gradient-horizontal",
                 ["onClick"] = function()
-                    P:Height(widget, 50)
+                    P.Height(widget, 50)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Show()
                     widget.cotFrame:Hide()
@@ -2693,7 +2693,7 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = L["Change Over Time"],
                 ["value"] = "change-over-time",
                 ["onClick"] = function()
-                    P:Height(widget, 117)
+                    P.Height(widget, 117)
                     widget.colorPicker1:Hide()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Show()
@@ -2705,7 +2705,7 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = L["Class Color"],
                 ["value"] = "class-color",
                 ["onClick"] = function()
-                    P:Height(widget, 50)
+                    P.Height(widget, 50)
                     widget.colorPicker1:Hide()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Hide()
@@ -2720,7 +2720,7 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = L["Solid"],
                 ["value"] = "solid",
                 ["onClick"] = function()
-                    P:Height(widget, 50)
+                    P.Height(widget, 50)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Hide()
@@ -2732,7 +2732,7 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = L["Vertical Gradient"],
                 ["value"] = "gradient-vertical",
                 ["onClick"] = function()
-                    P:Height(widget, 50)
+                    P.Height(widget, 50)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Show()
                     widget.cotFrame:Hide()
@@ -2744,7 +2744,7 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = L["Horizontal Gradient"],
                 ["value"] = "gradient-horizontal",
                 ["onClick"] = function()
-                    P:Height(widget, 50)
+                    P.Height(widget, 50)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Show()
                     widget.cotFrame:Hide()
@@ -2756,7 +2756,7 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = L["Debuff Type"],
                 ["value"] = "debuff-type",
                 ["onClick"] = function()
-                    P:Height(widget, 50)
+                    P.Height(widget, 50)
                     widget.colorPicker1:Hide()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Hide()
@@ -2768,7 +2768,7 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = L["Change Over Time"],
                 ["value"] = "change-over-time",
                 ["onClick"] = function()
-                    P:Height(widget, 117)
+                    P.Height(widget, 117)
                     widget.colorPicker1:Hide()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Show()
@@ -2780,7 +2780,7 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = L["Class Color"],
                 ["value"] = "class-color",
                 ["onClick"] = function()
-                    P:Height(widget, 50)
+                    P.Height(widget, 50)
                     widget.colorPicker1:Hide()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Hide()
@@ -2794,7 +2794,7 @@ local function CreateSetting_CustomColors(parent)
         widget.colorText:SetText(L["Color"])
         widget.colorText:SetPoint("BOTTOMLEFT", widget.color, "TOPLEFT", 0, 1)
 
-        widget.colorPicker1 = addon:CreateColorPicker(widget, "", true, function(r, g, b, a)
+        widget.colorPicker1 = Cell.CreateColorPicker(widget, "", true, function(r, g, b, a)
             widget.colorsTable[2][1] = r
             widget.colorsTable[2][2] = g
             widget.colorsTable[2][3] = b
@@ -2803,7 +2803,7 @@ local function CreateSetting_CustomColors(parent)
         end)
         widget.colorPicker1:SetPoint("LEFT", widget.color, "RIGHT", 5, 0)
 
-        widget.colorPicker2 = addon:CreateColorPicker(widget, "", true, function(r, g, b, a)
+        widget.colorPicker2 = Cell.CreateColorPicker(widget, "", true, function(r, g, b, a)
             widget.colorsTable[3][1] = r
             widget.colorsTable[3][2] = g
             widget.colorsTable[3][3] = b
@@ -2816,7 +2816,7 @@ local function CreateSetting_CustomColors(parent)
         widget.cotFrame:SetSize(170, 50)
         widget.cotFrame:SetPoint("TOPLEFT", widget.color, "BOTTOMLEFT", 0, -8)
 
-        local normalColor = addon:CreateColorPicker(widget.cotFrame, L["Normal"], true, function(r, g, b, a)
+        local normalColor = Cell.CreateColorPicker(widget.cotFrame, L["Normal"], true, function(r, g, b, a)
             widget.colorsTable[4][1] = r
             widget.colorsTable[4][2] = g
             widget.colorsTable[4][3] = b
@@ -2825,7 +2825,7 @@ local function CreateSetting_CustomColors(parent)
         end)
         normalColor:SetPoint("TOPLEFT")
 
-        local percentColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time"].." <", true, function(r, g, b, a)
+        local percentColor = Cell.CreateColorPicker(widget.cotFrame, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[5][2][1] = r
             widget.colorsTable[5][2][2] = g
             widget.colorsTable[5][2][3] = b
@@ -2834,7 +2834,7 @@ local function CreateSetting_CustomColors(parent)
         end)
         percentColor:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
-        local secColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time"].." <", true, function(r, g, b, a)
+        local secColor = Cell.CreateColorPicker(widget.cotFrame, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[6][2][1] = r
             widget.colorsTable[6][2][2] = g
             widget.colorsTable[6][2][3] = b
@@ -2843,7 +2843,7 @@ local function CreateSetting_CustomColors(parent)
         end)
         secColor:SetPoint("TOPLEFT", percentColor, "BOTTOMLEFT", 0, -8)
 
-        local percentDropdown = addon:CreateDropdown(widget.cotFrame, 60)
+        local percentDropdown = Cell.CreateDropdown(widget.cotFrame, 60)
         percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
         percentDropdown:SetItems({
             {
@@ -2888,11 +2888,11 @@ local function CreateSetting_CustomColors(parent)
             },
         })
 
-        local secEditBox = addon:CreateEditBox(widget.cotFrame, 43, 20, false, false, true)
+        local secEditBox = Cell.CreateEditBox(widget.cotFrame, 43, 20, false, false, true)
         secEditBox:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
         secEditBox:SetMaxLetters(4)
 
-        secEditBox.confirmBtn = addon:CreateButton(widget.cotFrame, "OK", "accent", {27, 20})
+        secEditBox.confirmBtn = Cell.CreateButton(widget.cotFrame, "OK", "accent", {27, 20})
         secEditBox.confirmBtn:SetPoint("LEFT", secEditBox, "RIGHT", -1, 0)
         secEditBox.confirmBtn:Hide()
         secEditBox.confirmBtn:SetScript("OnHide", function()
@@ -2939,27 +2939,27 @@ local function CreateSetting_CustomColors(parent)
             widget.color:SetSelectedValue(colorsTable[1])
 
             if colorsTable[1] == "solid" then
-                P:Height(widget, 50)
+                P.Height(widget, 50)
                 widget.colorPicker1:Show()
                 widget.colorPicker2:Hide()
                 widget.cotFrame:Hide()
             elseif colorsTable[1] == "debuff-type" then
-                P:Height(widget, 50)
+                P.Height(widget, 50)
                 widget.colorPicker1:Hide()
                 widget.colorPicker2:Hide()
                 widget.cotFrame:Hide()
             elseif colorsTable[1] == "change-over-time" then
-                P:Height(widget, 117)
+                P.Height(widget, 117)
                 widget.colorPicker1:Hide()
                 widget.colorPicker2:Hide()
                 widget.cotFrame:Show()
             elseif colorsTable[1] == "class-color" then
-                P:Height(widget, 50)
+                P.Height(widget, 50)
                 widget.colorPicker1:Hide()
                 widget.colorPicker2:Hide()
                 widget.cotFrame:Hide()
             else -- gradient
-                P:Height(widget, 50)
+                P.Height(widget, 50)
                 widget.colorPicker1:Show()
                 widget.colorPicker2:Show()
                 widget.cotFrame:Hide()
@@ -2987,10 +2987,10 @@ local function CreateSetting_ClassColor(parent)
     local widget
 
     if not settingWidgets["classColor"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_ClassColor", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_ClassColor", parent, 240, 50)
         settingWidgets["classColor"] = widget
 
-        widget.colorDropdown = addon:CreateDropdown(widget, 127)
+        widget.colorDropdown = Cell.CreateDropdown(widget, 127)
         widget.colorDropdown:SetPoint("TOPLEFT", 5, -20)
         widget.colorDropdown:SetItems({
             {
@@ -3015,7 +3015,7 @@ local function CreateSetting_ClassColor(parent)
         text:SetPoint("BOTTOMLEFT", widget.colorDropdown, "TOPLEFT", 0, 1)
         text:SetText(L["Color"])
 
-        widget.colorPicker = addon:CreateColorPicker(widget, "", false, function(r, g, b)
+        widget.colorPicker = Cell.CreateColorPicker(widget, "", false, function(r, g, b)
             widget.func({widget.colorDropdown:GetSelected(), {r, g, b}})
         end)
         widget.colorPicker:SetPoint("LEFT", widget.colorDropdown, "RIGHT", 5, 0)
@@ -3047,10 +3047,10 @@ local function CreateSetting_PowerColor(parent)
     local widget
 
     if not settingWidgets["powerColor"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_PowerColor", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_PowerColor", parent, 240, 50)
         settingWidgets["powerColor"] = widget
 
-        widget.colorDropdown = addon:CreateDropdown(widget, 127)
+        widget.colorDropdown = Cell.CreateDropdown(widget, 127)
         widget.colorDropdown:SetPoint("TOPLEFT", 5, -20)
         widget.colorDropdown:SetItems({
             {
@@ -3083,7 +3083,7 @@ local function CreateSetting_PowerColor(parent)
         text:SetPoint("BOTTOMLEFT", widget.colorDropdown, "TOPLEFT", 0, 1)
         text:SetText(L["Color"])
 
-        widget.colorPicker = addon:CreateColorPicker(widget, "", false, function(r, g, b)
+        widget.colorPicker = Cell.CreateColorPicker(widget, "", false, function(r, g, b)
             widget.func({widget.colorDropdown:GetSelected(), {r, g, b}})
         end)
         widget.colorPicker:SetPoint("LEFT", widget.colorDropdown, "RIGHT", 5, 0)
@@ -3115,10 +3115,10 @@ local function CreateSetting_StatusColors(parent)
     local widget
 
     if not settingWidgets["statusColors"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_StatusColors", parent, 240, 100)
+        widget = Cell.CreateFrame("CellIndicatorSettings_StatusColors", parent, 240, 100)
         settingWidgets["statusColors"] = widget
 
-        local afkColor = addon:CreateColorPicker(widget, L["AFK"], true, function(r, g, b, a)
+        local afkColor = Cell.CreateColorPicker(widget, L["AFK"], true, function(r, g, b, a)
             widget.colorsTable["AFK"][1] = r
             widget.colorsTable["AFK"][2] = g
             widget.colorsTable["AFK"][3] = b
@@ -3127,7 +3127,7 @@ local function CreateSetting_StatusColors(parent)
         end)
         afkColor:SetPoint("TOPLEFT", 5, -7)
 
-        local offlineColor = addon:CreateColorPicker(widget, L["OFFLINE"], true, function(r, g, b, a)
+        local offlineColor = Cell.CreateColorPicker(widget, L["OFFLINE"], true, function(r, g, b, a)
             widget.colorsTable["OFFLINE"][1] = r
             widget.colorsTable["OFFLINE"][2] = g
             widget.colorsTable["OFFLINE"][3] = b
@@ -3136,7 +3136,7 @@ local function CreateSetting_StatusColors(parent)
         end)
         offlineColor:SetPoint("TOPLEFT", afkColor, "TOPRIGHT", 70, 0)
 
-        local deadColor = addon:CreateColorPicker(widget, L["DEAD"], true, function(r, g, b, a)
+        local deadColor = Cell.CreateColorPicker(widget, L["DEAD"], true, function(r, g, b, a)
             widget.colorsTable["DEAD"][1] = r
             widget.colorsTable["DEAD"][2] = g
             widget.colorsTable["DEAD"][3] = b
@@ -3145,7 +3145,7 @@ local function CreateSetting_StatusColors(parent)
         end)
         deadColor:SetPoint("TOPLEFT", offlineColor, "TOPRIGHT", 70, 0)
 
-        local ghostColor = addon:CreateColorPicker(widget, L["GHOST"], true, function(r, g, b, a)
+        local ghostColor = Cell.CreateColorPicker(widget, L["GHOST"], true, function(r, g, b, a)
             widget.colorsTable["GHOST"][1] = r
             widget.colorsTable["GHOST"][2] = g
             widget.colorsTable["GHOST"][3] = b
@@ -3154,7 +3154,7 @@ local function CreateSetting_StatusColors(parent)
         end)
         ghostColor:SetPoint("TOPLEFT", afkColor, "BOTTOMLEFT", 0, -8)
 
-        local feignColor = addon:CreateColorPicker(widget, L["FEIGN"], true, function(r, g, b, a)
+        local feignColor = Cell.CreateColorPicker(widget, L["FEIGN"], true, function(r, g, b, a)
             widget.colorsTable["FEIGN"][1] = r
             widget.colorsTable["FEIGN"][2] = g
             widget.colorsTable["FEIGN"][3] = b
@@ -3163,7 +3163,7 @@ local function CreateSetting_StatusColors(parent)
         end)
         feignColor:SetPoint("TOPLEFT", ghostColor, "TOPRIGHT", 70, 0)
 
-        local drinkingColor = addon:CreateColorPicker(widget, L["DRINKING"], true, function(r, g, b, a)
+        local drinkingColor = Cell.CreateColorPicker(widget, L["DRINKING"], true, function(r, g, b, a)
             widget.colorsTable["DRINKING"][1] = r
             widget.colorsTable["DRINKING"][2] = g
             widget.colorsTable["DRINKING"][3] = b
@@ -3172,7 +3172,7 @@ local function CreateSetting_StatusColors(parent)
         end)
         drinkingColor:SetPoint("TOPLEFT", feignColor, "TOPRIGHT", 70, 0)
 
-        local pendingColor = addon:CreateColorPicker(widget, L["PENDING"], true, function(r, g, b, a)
+        local pendingColor = Cell.CreateColorPicker(widget, L["PENDING"], true, function(r, g, b, a)
             widget.colorsTable["PENDING"][1] = r
             widget.colorsTable["PENDING"][2] = g
             widget.colorsTable["PENDING"][3] = b
@@ -3182,7 +3182,7 @@ local function CreateSetting_StatusColors(parent)
         pendingColor:SetPoint("TOPLEFT", ghostColor, "BOTTOMLEFT", 0, -8)
         pendingColor:SetEnabled(Cell.isRetail)
 
-        local acceptedColor = addon:CreateColorPicker(widget, L["ACCEPTED"], true, function(r, g, b, a)
+        local acceptedColor = Cell.CreateColorPicker(widget, L["ACCEPTED"], true, function(r, g, b, a)
             widget.colorsTable["ACCEPTED"][1] = r
             widget.colorsTable["ACCEPTED"][2] = g
             widget.colorsTable["ACCEPTED"][3] = b
@@ -3192,7 +3192,7 @@ local function CreateSetting_StatusColors(parent)
         acceptedColor:SetPoint("TOPLEFT", pendingColor, "TOPRIGHT", 70, 0)
         acceptedColor:SetEnabled(Cell.isRetail)
 
-        local declinedColor = addon:CreateColorPicker(widget, L["DECLINED"], true, function(r, g, b, a)
+        local declinedColor = Cell.CreateColorPicker(widget, L["DECLINED"], true, function(r, g, b, a)
             widget.colorsTable["DECLINED"][1] = r
             widget.colorsTable["DECLINED"][2] = g
             widget.colorsTable["DECLINED"][3] = b
@@ -3202,7 +3202,7 @@ local function CreateSetting_StatusColors(parent)
         declinedColor:SetPoint("TOPLEFT", acceptedColor, "TOPRIGHT", 70, 0)
         declinedColor:SetEnabled(Cell.isRetail)
 
-        local resetBtn = addon:CreateButton(widget, L["Reset All"], "accent", {70, 20})
+        local resetBtn = Cell.CreateButton(widget, L["Reset All"], "accent", {70, 20})
         resetBtn:SetPoint("TOPLEFT", pendingColor, "BOTTOMLEFT", 0, -8)
         resetBtn:SetScript("OnClick", function()
             widget.colorsTable["AFK"] = {1, 0.19, 0.19, 1}
@@ -3259,10 +3259,10 @@ local function CreateSetting_CheckButton(parent)
     local widget
 
     if not settingWidgets["checkbutton"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_CheckButton", parent, 240, 30)
+        widget = Cell.CreateFrame("CellIndicatorSettings_CheckButton", parent, 240, 30)
         settingWidgets["checkbutton"] = widget
 
-        widget.cb = addon:CreateCheckButton(widget, "checkbutton")
+        widget.cb = Cell.CreateCheckButton(widget, "checkbutton")
         widget.cb:SetPoint("TOPLEFT", 5, -8)
 
         -- callback
@@ -3277,9 +3277,9 @@ local function CreateSetting_CheckButton(parent)
             widget.cb:SetChecked(checked)
             widget.cb:SetText(L[settingName])
             if tooltip then
-                addon:SetTooltips(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
+                Cell.SetTooltips(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
             else
-                addon:ClearTooltips(widget.cb)
+                Cell.ClearTooltips(widget.cb)
             end
         end
     else
@@ -3294,10 +3294,10 @@ local function CreateSetting_CheckButton2(parent)
     local widget
 
     if not settingWidgets["checkbutton2"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_CheckButton2", parent, 240, 30)
+        widget = Cell.CreateFrame("CellIndicatorSettings_CheckButton2", parent, 240, 30)
         settingWidgets["checkbutton2"] = widget
 
-        widget.cb = addon:CreateCheckButton(widget, "checkbutton2")
+        widget.cb = Cell.CreateCheckButton(widget, "checkbutton2")
         widget.cb:SetPoint("TOPLEFT", 5, -8)
 
         -- callback
@@ -3312,9 +3312,9 @@ local function CreateSetting_CheckButton2(parent)
             widget.cb:SetChecked(checked)
             widget.cb:SetText(L[settingName])
             if tooltip then
-                addon:SetTooltips(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
+                Cell.SetTooltips(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
             else
-                addon:ClearTooltips(widget.cb)
+                Cell.ClearTooltips(widget.cb)
             end
         end
     else
@@ -3329,10 +3329,10 @@ local function CreateSetting_CheckButton3(parent)
     local widget
 
     if not settingWidgets["checkbutton3"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_CheckButton3", parent, 240, 30)
+        widget = Cell.CreateFrame("CellIndicatorSettings_CheckButton3", parent, 240, 30)
         settingWidgets["checkbutton3"] = widget
 
-        widget.cb = addon:CreateCheckButton(widget, "checkbutton3")
+        widget.cb = Cell.CreateCheckButton(widget, "checkbutton3")
         widget.cb:SetPoint("TOPLEFT", 5, -8)
 
         -- callback
@@ -3347,9 +3347,9 @@ local function CreateSetting_CheckButton3(parent)
             widget.cb:SetChecked(checked)
             widget.cb:SetText(L[settingName])
             if tooltip then
-                addon:SetTooltips(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
+                Cell.SetTooltips(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
             else
-                addon:ClearTooltips(widget.cb)
+                Cell.ClearTooltips(widget.cb)
             end
         end
     else
@@ -3364,10 +3364,10 @@ local function CreateSetting_CheckButton4(parent)
     local widget
 
     if not settingWidgets["checkbutton4"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_CheckButton4", parent, 240, 30)
+        widget = Cell.CreateFrame("CellIndicatorSettings_CheckButton4", parent, 240, 30)
         settingWidgets["checkbutton4"] = widget
 
-        widget.cb = addon:CreateCheckButton(widget, "checkbutton4")
+        widget.cb = Cell.CreateCheckButton(widget, "checkbutton4")
         widget.cb:SetPoint("TOPLEFT", 5, -8)
 
         -- callback
@@ -3382,9 +3382,9 @@ local function CreateSetting_CheckButton4(parent)
             widget.cb:SetChecked(checked)
             widget.cb:SetText(L[settingName])
             if tooltip then
-                addon:SetTooltips(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
+                Cell.SetTooltips(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
             else
-                addon:ClearTooltips(widget.cb)
+                Cell.ClearTooltips(widget.cb)
             end
         end
     else
@@ -3399,21 +3399,21 @@ local function CreateSetting_Duration(parent)
     local widget
 
     if not settingWidgets["duration"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Duration", parent, 240, 97)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Duration", parent, 240, 97)
         settingWidgets["duration"] = widget
 
         -- duration
-        widget.durationCB = addon:CreateCheckButton(widget, L["showDuration"], function(checked, self)
+        widget.durationCB = Cell.CreateCheckButton(widget, L["showDuration"], function(checked, self)
             widget.durationTbl[1] = checked
             widget.func(widget.durationTbl)
         end)
         widget.durationCB:SetPoint("TOPLEFT", 5, -8)
 
         -- duration round up
-        widget.durationRoundUpCB = addon:CreateCheckButton(widget, L["Round Up Duration Text"], function(checked, self)
+        widget.durationRoundUpCB = Cell.CreateCheckButton(widget, L["Round Up Duration Text"], function(checked, self)
             CellDropdownList:Hide()
             widget.durationTbl[2] = checked
-            addon:SetEnabled(not checked, widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
+            Cell.SetEnabled(not checked, widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
             widget.func(widget.durationTbl)
         end)
         widget.durationRoundUpCB:SetPoint("TOPLEFT", widget.durationCB, "BOTTOMLEFT", 0, -8)
@@ -3427,7 +3427,7 @@ local function CreateSetting_Duration(parent)
         widget.durationDecimalText2:SetPoint("TOPLEFT", widget.durationDecimalText1, "BOTTOMLEFT", 0, -5)
         widget.durationDecimalText2:SetText(L["Remaining Time"].." <")
 
-        widget.durationDecimalDropdown = addon:CreateDropdown(widget, 60)
+        widget.durationDecimalDropdown = Cell.CreateDropdown(widget, 60)
         widget.durationDecimalDropdown:SetPoint("LEFT", widget.durationDecimalText2, "RIGHT", 5, 0)
 
         local items = {}
@@ -3454,7 +3454,7 @@ local function CreateSetting_Duration(parent)
             widget.durationTbl = durationTbl
             widget.durationCB:SetChecked(durationTbl[1])
             widget.durationRoundUpCB:SetChecked(durationTbl[2])
-            addon:SetEnabled(not durationTbl[2], widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
+            Cell.SetEnabled(not durationTbl[2], widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
             widget.durationDecimalDropdown:SetSelectedValue(durationTbl[3])
         end
     else
@@ -3469,11 +3469,11 @@ local function CreateSetting_Stack(parent)
     local widget
 
     if not settingWidgets["stack"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Stack", parent, 240, 52)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Stack", parent, 240, 52)
         settingWidgets["stack"] = widget
 
         -- show stack
-        widget.stackCB = addon:CreateCheckButton(widget, L["showStack"], function(checked, self)
+        widget.stackCB = Cell.CreateCheckButton(widget, L["showStack"], function(checked, self)
             widget.stackTbl[1] = checked
             widget.func(widget.stackTbl)
             -- widget.circledStackCB:SetEnabled(checked)
@@ -3481,10 +3481,10 @@ local function CreateSetting_Stack(parent)
         widget.stackCB:SetPoint("TOPLEFT", 5, -8)
 
         -- circled stack nums
-        widget.circledStackCB = addon:CreateCheckButton(widget, L["circledStackNums"], function(checked, self)
+        widget.circledStackCB = Cell.CreateCheckButton(widget, L["circledStackNums"], function(checked, self)
             CellDropdownList:Hide()
             widget.stackTbl[2] = checked
-            addon:SetEnabled(not checked, widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
+            Cell.SetEnabled(not checked, widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
             widget.func(widget.stackTbl)
         end, L["circledStackNums"], L["Require font support"])
         widget.circledStackCB:SetPoint("TOPLEFT", widget.stackCB, "BOTTOMLEFT", 0, -8)
@@ -3514,13 +3514,13 @@ local function CreateSetting_RoleTexture(parent)
     local widget
 
     if not settingWidgets["roleTexture"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_RoleTexture", parent, 240, 180)
+        widget = Cell.CreateFrame("CellIndicatorSettings_RoleTexture", parent, 240, 180)
         settingWidgets["roleTexture"] = widget
 
-        widget.texture = addon:CreateDropdown(widget, 260)
+        widget.texture = Cell.CreateDropdown(widget, 260)
         widget.texture:SetPoint("TOPLEFT", 5, -20)
 
-        local blizzard = F:UpperFirst(SLASH_TEXTTOSPEECH_BLIZZARD)
+        local blizzard = F.UpperFirst(SLASH_TEXTTOSPEECH_BLIZZARD)
         local indices = {"default", "default2", "blizzard", "blizzard2", "blizzard3", "blizzard4", "ffxiv", "miirgui", "mattui", "custom"}
         local ICON_PATH = " |TInterface\\AddOns\\Cell\\Media\\Roles\\Preview_%s:0:4|t"
         local options = {
@@ -3543,7 +3543,7 @@ local function CreateSetting_RoleTexture(parent)
                 ["value"] = v,
                 ["onClick"] = function()
                     widget.func({v, widget.eb1:GetText(), widget.eb2:GetText(), widget.eb3:GetText()})
-                    addon:SetEnabled(v == "custom",
+                    Cell.SetEnabled(v == "custom",
                         widget.text1, widget.text2, widget.text3,
                         widget.texture1, widget.texture2, widget.texture3,
                         widget.eb1, widget.eb2, widget.eb3
@@ -3557,7 +3557,7 @@ local function CreateSetting_RoleTexture(parent)
         widget.textureText:SetText(L["Texture"])
         widget.textureText:SetPoint("BOTTOMLEFT", widget.texture, "TOPLEFT", 0, 1)
 
-        widget.eb1 = addon:CreateEditBox(widget, 260, 20)
+        widget.eb1 = Cell.CreateEditBox(widget, 260, 20)
         widget.eb1:SetPoint("TOPLEFT", widget.texture, "BOTTOMLEFT", 0, -25)
         widget.eb1:SetScript("OnEnterPressed", function(self)
             self:ClearFocus()
@@ -3573,7 +3573,7 @@ local function CreateSetting_RoleTexture(parent)
         widget.texture1:SetPoint("BOTTOMLEFT", widget.text1, "BOTTOMRIGHT", 3, 0)
         widget.texture1:SetSize(16, 16)
 
-        widget.eb2 = addon:CreateEditBox(widget, 260, 20)
+        widget.eb2 = Cell.CreateEditBox(widget, 260, 20)
         widget.eb2:SetPoint("TOPLEFT", widget.eb1, "BOTTOMLEFT", 0, -25)
         widget.eb2:SetScript("OnEnterPressed", function(self)
             self:ClearFocus()
@@ -3589,7 +3589,7 @@ local function CreateSetting_RoleTexture(parent)
         widget.texture2:SetPoint("BOTTOMLEFT", widget.text2, "BOTTOMRIGHT", 3, 0)
         widget.texture2:SetSize(16, 16)
 
-        widget.eb3 = addon:CreateEditBox(widget, 260, 20)
+        widget.eb3 = Cell.CreateEditBox(widget, 260, 20)
         widget.eb3:SetPoint("TOPLEFT", widget.eb2, "BOTTOMLEFT", 0, -25)
         widget.eb3:SetScript("OnEnterPressed", function(self)
             self:ClearFocus()
@@ -3613,7 +3613,7 @@ local function CreateSetting_RoleTexture(parent)
         -- show db value
         function widget:SetDBValue(t)
             widget.texture:SetSelectedValue(t[1])
-            addon:SetEnabled(t[1] == "custom",
+            Cell.SetEnabled(t[1] == "custom",
                 widget.text1, widget.text2, widget.text3,
                 widget.texture1, widget.texture2, widget.texture3,
                 widget.eb1, widget.eb2, widget.eb3
@@ -3641,10 +3641,10 @@ local function CreateSetting_Glow(parent)
     local widget
 
     if not settingWidgets["glow"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Glow", parent, 240, 145)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Glow", parent, 240, 145)
         settingWidgets["glow"] = widget
 
-        widget.glowType = addon:CreateDropdown(widget, 110)
+        widget.glowType = Cell.CreateDropdown(widget, 110)
         widget.glowType:SetPoint("TOPLEFT", 5, -20)
         widget.glowType:SetItems({
             {
@@ -3652,7 +3652,7 @@ local function CreateSetting_Glow(parent)
                 ["value"] = "None",
                 ["onClick"] = function()
                     widget:SetHeight(50)
-                    addon:UpdateIndicatorSettingsHeight()
+                    Cell.UpdateIndicatorSettingsHeight()
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
                     widget.glowLines:Hide()
                     widget.glowParticles:Hide()
@@ -3675,7 +3675,7 @@ local function CreateSetting_Glow(parent)
                 ["value"] = "Normal",
                 ["onClick"] = function()
                     widget:SetHeight(50)
-                    addon:UpdateIndicatorSettingsHeight()
+                    Cell.UpdateIndicatorSettingsHeight()
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
                     widget.glowLines:Hide()
                     widget.glowParticles:Hide()
@@ -3698,7 +3698,7 @@ local function CreateSetting_Glow(parent)
                 ["value"] = "Pixel",
                 ["onClick"] = function()
                     widget:SetHeight(145)
-                    addon:UpdateIndicatorSettingsHeight()
+                    Cell.UpdateIndicatorSettingsHeight()
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
                     widget.glowLines:Show()
                     widget.glowLines:SetValue(9)
@@ -3725,7 +3725,7 @@ local function CreateSetting_Glow(parent)
                 ["value"] = "Shine",
                 ["onClick"] = function()
                     widget:SetHeight(145)
-                    addon:UpdateIndicatorSettingsHeight()
+                    Cell.UpdateIndicatorSettingsHeight()
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
                     widget.glowParticles:Show()
                     widget.glowParticles:SetValue(9)
@@ -3751,7 +3751,7 @@ local function CreateSetting_Glow(parent)
                 ["value"] = "Proc",
                 ["onClick"] = function()
                     widget:SetHeight(95)
-                    addon:UpdateIndicatorSettingsHeight()
+                    Cell.UpdateIndicatorSettingsHeight()
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
                     widget.glowDuration:Show()
                     widget.glowDuration:SetValue(1)
@@ -3776,55 +3776,55 @@ local function CreateSetting_Glow(parent)
         widget.glowTypeText:SetText(L["Glow Type"])
         widget.glowTypeText:SetPoint("BOTTOMLEFT", widget.glowType, "TOPLEFT", 0, 1)
 
-        widget.glowColor = addon:CreateColorPicker(widget, L["Glow Color"], false, function(r, g, b)
+        widget.glowColor = Cell.CreateColorPicker(widget, L["Glow Color"], false, function(r, g, b)
             widget.glow[2] = {r, g, b, 1}
             widget.func(widget.glow)
         end)
         widget.glowColor:SetPoint("LEFT", widget.glowType, "RIGHT", 25, 0)
 
         -- glowNumber
-        widget.glowLines = addon:CreateSlider(L["Lines"], widget, 1, 30, 110, 1, function(value)
+        widget.glowLines = Cell.CreateSlider(L["Lines"], widget, 1, 30, 110, 1, function(value)
             widget.glow[3] = value
             widget.func(widget.glow)
         end)
         widget.glowLines:SetPoint("TOPLEFT", widget.glowType, "BOTTOMLEFT", 0, -25)
 
-        widget.glowParticles = addon:CreateSlider(L["Particles"], widget, 1, 30, 110, 1, function(value)
+        widget.glowParticles = Cell.CreateSlider(L["Particles"], widget, 1, 30, 110, 1, function(value)
             widget.glow[3] = value
             widget.func(widget.glow)
         end)
         widget.glowParticles:SetPoint("TOPLEFT", widget.glowType, "BOTTOMLEFT", 0, -25)
 
         -- glowDuration
-        widget.glowDuration = addon:CreateSlider(L["Duration"], widget, 0.1, 3, 110, 0.1, function(value)
+        widget.glowDuration = Cell.CreateSlider(L["Duration"], widget, 0.1, 3, 110, 0.1, function(value)
             widget.glow[3] = value
             widget.func(widget.glow)
         end)
         widget.glowDuration:SetPoint("TOPLEFT", widget.glowType, "BOTTOMLEFT", 0, -25)
 
         -- glowFrequency
-        widget.glowFrequency = addon:CreateSlider(L["Frequency"], widget, -2, 2, 110, 0.01, function(value)
+        widget.glowFrequency = Cell.CreateSlider(L["Frequency"], widget, -2, 2, 110, 0.01, function(value)
             widget.glow[4] = value
             widget.func(widget.glow)
         end)
         widget.glowFrequency:SetPoint("TOPLEFT", widget.glowLines, "TOPRIGHT", 25, 0)
 
         -- glowLength
-        widget.glowLength = addon:CreateSlider(L["Length"], widget, 1, 50, 110, 1, function(value)
+        widget.glowLength = Cell.CreateSlider(L["Length"], widget, 1, 50, 110, 1, function(value)
             widget.glow[5] = value
             widget.func(widget.glow)
         end)
         widget.glowLength:SetPoint("TOPLEFT", widget.glowLines, "BOTTOMLEFT", 0, -40)
 
         -- glowThickness
-        widget.glowThickness = addon:CreateSlider(L["Thickness"], widget, 1, 20, 110, 1, function(value)
+        widget.glowThickness = Cell.CreateSlider(L["Thickness"], widget, 1, 20, 110, 1, function(value)
             widget.glow[6] = value
             widget.func(widget.glow)
         end)
         widget.glowThickness:SetPoint("TOPLEFT", widget.glowLength, "TOPRIGHT", 25, 0)
 
         -- glowScale
-        widget.glowScale = addon:CreateSlider(L["Scale"], widget, 50, 500, 110, 1, function(value)
+        widget.glowScale = Cell.CreateSlider(L["Scale"], widget, 50, 500, 110, 1, function(value)
             widget.glow[5] = value/100
             widget.func(widget.glow)
         end, nil, true)
@@ -3910,11 +3910,11 @@ local function CreateSetting_Texture(parent)
     local widget
 
     if not settingWidgets["texture"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Texture", parent, 240, 100)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Texture", parent, 240, 100)
         settingWidgets["texture"] = widget
 
-        widget.pathBox = addon:CreateFrame(nil, widget, 216, 20)
-        addon:StylizeFrame(widget.pathBox, {0.115, 0.115, 0.115, 1}, {0, 0, 0, 1})
+        widget.pathBox = Cell.CreateFrame(nil, widget, 216, 20)
+        Cell.StylizeFrame(widget.pathBox, {0.115, 0.115, 0.115, 1}, {0, 0, 0, 1})
         widget.pathBox:SetPoint("TOPLEFT", 5, -20)
         widget.pathBox:Show()
 
@@ -3924,12 +3924,12 @@ local function CreateSetting_Texture(parent)
         widget.path:SetJustifyH("LEFT")
         widget.path:SetWordWrap(false)
 
-        widget.button = addon:CreateButton(widget, "...", "accent", {30, 20})
-        widget.button:SetPoint("TOPLEFT", widget.pathBox, "TOPRIGHT", P:Scale(-1), 0)
+        widget.button = Cell.CreateButton(widget, "...", "accent", {30, 20})
+        widget.button:SetPoint("TOPLEFT", widget.pathBox, "TOPRIGHT", P.Scale(-1), 0)
         widget.button:SetScript("OnClick", function()
-            F:ShowTextureSelector(widget.selected, function(path)
+            F.ShowTextureSelector(widget.selected, function(path)
                 widget.selected = path
-                F:FitWidth(widget.path, path, "right")
+                F.FitWidth(widget.path, path, "right")
                 widget.func({path, widget.rotation:GetValue(), widget.colorPicker:GetColor()})
             end)
         end)
@@ -3938,13 +3938,13 @@ local function CreateSetting_Texture(parent)
         widget.pathText:SetText(L["Texture"])
         widget.pathText:SetPoint("BOTTOMLEFT", widget.pathBox, "TOPLEFT", 0, 1)
 
-        widget.rotation = addon:CreateSlider(L["Rotation"], widget, -180, 180, 110, 1)
+        widget.rotation = Cell.CreateSlider(L["Rotation"], widget, -180, 180, 110, 1)
         widget.rotation:SetPoint("TOPLEFT", widget.pathBox, "BOTTOMLEFT", 0, -25)
         widget.rotation.afterValueChangedFn = function(value)
             widget.func({widget.selected, value, widget.colorPicker:GetColor()})
         end
 
-        widget.colorPicker = addon:CreateColorPicker(widget, L["Color"], true, function(r, g, b, a)
+        widget.colorPicker = Cell.CreateColorPicker(widget, L["Color"], true, function(r, g, b, a)
             widget.func({widget.selected, widget.rotation:GetValue(), {r, g, b, a}})
         end)
         widget.colorPicker:SetPoint("TOPLEFT", widget.rotation, "TOPRIGHT", 25, 0)
@@ -3957,7 +3957,7 @@ local function CreateSetting_Texture(parent)
         -- show db value
         function widget:SetDBValue(t)
             widget.selected = t[1]
-            F:FitWidth(widget.path, t[1], "right")
+            F.FitWidth(widget.path, t[1], "right")
             widget.rotation:SetValue(t[2])
             widget.colorPicker:SetColor(t[3])
         end
@@ -3974,7 +3974,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
 
     -- tooltip
     if not parent.popupEditBox then
-        local popup = addon:CreatePopupEditBox(parent)
+        local popup = Cell.CreatePopupEditBox(parent)
         popup:SetNumeric(true)
 
         popup:SetScript("OnTextChanged", function()
@@ -3984,7 +3984,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                 return
             end
 
-            local name, tex = F:GetSpellInfo(spellId)
+            local name, tex = F.GetSpellInfo(spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 return
@@ -4003,16 +4003,16 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
 
     -- new
     if not auraButtons[0] then
-        auraButtons[0] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+        auraButtons[0] = Cell.CreateButton(parent, "", "transparent-accent", {20, 20})
         auraButtons[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\new", {16, 16}, {"RIGHT", -1, 0})
         auraButtons[0]:SetPoint("BOTTOMLEFT")
         auraButtons[0]:SetPoint("RIGHT")
     end
 
     auraButtons[0]:SetScript("OnClick", function(self)
-        local popup = addon:CreatePopupEditBox(parent, function(text)
+        local popup = Cell.CreatePopupEditBox(parent, function(text)
             local spellId = tonumber(text)
-            local spellName = F:GetSpellInfo(spellId)
+            local spellName = F.GetSpellInfo(spellId)
             if (spellId and spellName) or (spellId == 0 and isZeroValid) then
                 -- update db
                 if hasColorPicker then
@@ -4024,7 +4024,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                 CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, hasColorPicker, updateHeightFunc)
                 updateHeightFunc(19)
             else
-                F:Print(L["Invalid spell id."])
+                F.Print(L["Invalid spell id."])
             end
         end)
         popup:SetPoint("TOPLEFT", self)
@@ -4041,7 +4041,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
     for i, spell in ipairs(auraTable) do
         -- creation
         if not auraButtons[i] then
-            auraButtons[i] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+            auraButtons[i] = Cell.CreateButton(parent, "", "transparent-accent", {20, 20})
 
             -- spellIcon
             auraButtons[i].spellIconBg = auraButtons[i]:CreateTexture(nil, "BORDER")
@@ -4071,7 +4071,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraButtons[i].spellNameText:SetJustifyH("LEFT")
 
             -- del
-            auraButtons[i].del = addon:CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
+            auraButtons[i].del = Cell.CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
             auraButtons[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
             auraButtons[i].del:SetPoint("RIGHT")
             auraButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
@@ -4085,7 +4085,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             end)
 
             -- edit
-            -- auraButtons[i].edit = addon:CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
+            -- auraButtons[i].edit = Cell.CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
             -- auraButtons[i].edit:SetPoint("RIGHT", auraButtons[i].del, "LEFT", 1, 0)
             -- auraButtons[i].edit:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info", {16, 16}, {"CENTER", 0, 0})
             -- auraButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
@@ -4099,7 +4099,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             -- end)
 
             -- down
-            auraButtons[i].down = addon:CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
+            auraButtons[i].down = Cell.CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
             auraButtons[i].down:SetPoint("RIGHT", auraButtons[i].del, "LEFT", 1, 0)
             auraButtons[i].down:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\down", {16, 16}, {"CENTER", 0, 0})
             auraButtons[i].down.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
@@ -4113,7 +4113,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             end)
 
             -- up
-            auraButtons[i].up = addon:CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
+            auraButtons[i].up = Cell.CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
             auraButtons[i].up:SetPoint("RIGHT", auraButtons[i].down, "LEFT", 1, 0)
             auraButtons[i].up:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\up", {16, 16}, {"CENTER", 0, 0})
             auraButtons[i].up.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
@@ -4127,7 +4127,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             end)
 
             -- color
-            auraButtons[i].colorPicker = addon:CreateColorPicker(auraButtons[i], "", true)
+            auraButtons[i].colorPicker = Cell.CreateColorPicker(auraButtons[i], "", true)
             auraButtons[i].colorPicker:SetPoint("RIGHT", auraButtons[i].up, "LEFT", -1, 0)
             auraButtons[i].colorPicker:SetPoint("TOP", 0, -3)
             auraButtons[i].colorPicker:HookScript("OnEnter", function()
@@ -4141,7 +4141,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraButtons[i]:HookScript("OnEnter", function(self)
                 if parent.popupEditBox:IsShown() then return end
 
-                local name = F:GetSpellInfo(self.spellId)
+                local name = F.GetSpellInfo(self.spellId)
                 if not name then
                     CellSpellTooltip:Hide()
                     return
@@ -4172,7 +4172,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraButtons[i].spellIconBg:Hide()
             auraButtons[i].spellIcon:Hide()
         else
-            local name, icon = F:GetSpellInfo(spell)
+            local name, icon = F.GetSpellInfo(spell)
             auraButtons[i].spellIdText:SetText(spell)
             auraButtons[i].spellId = spell
             auraButtons[i].spellTex = icon
@@ -4235,7 +4235,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
 
         -- functions
         auraButtons[i]:SetScript("OnClick", function()
-            local popup = addon:CreatePopupEditBox(parent, function(text)
+            local popup = Cell.CreatePopupEditBox(parent, function(text)
                 local spellId = tonumber(text)
                 if spellId == 0 then
                     if isZeroValid then
@@ -4245,10 +4245,10 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                         auraButtons[i].spellIconBg:Hide()
                         auraButtons[i].spellIcon:Hide()
                     else
-                        F:Print(L["Invalid spell id."])
+                        F.Print(L["Invalid spell id."])
                     end
                 else
-                    local spellName, spellIcon = F:GetSpellInfo(spellId)
+                    local spellName, spellIcon = F.GetSpellInfo(spellId)
                     if spellId and spellName then
                         -- update text
                         auraButtons[i].spellIdText:SetText(spellId)
@@ -4271,7 +4271,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                             auraButtons[i].spellIcon:Hide()
                         end
                     else
-                        F:Print(L["Invalid spell id."])
+                        F.Print(L["Invalid spell id."])
                     end
                 end
 
@@ -4340,7 +4340,7 @@ local function GetExportString(t)
         if type(id) == "table" then
             color = " {"
             for j, c in pairs(id[2]) do
-                color = color .. F:Round(c, 3)
+                color = color .. F.Round(c, 3)
                 if j ~= 4 then
                     color = color .. ","
                 end
@@ -4348,7 +4348,7 @@ local function GetExportString(t)
             color = color .. "}"
             id = id[1]
         end
-        local name = F:GetSpellInfo(id)
+        local name = F.GetSpellInfo(id)
         if name then
             s = s .. (i == 1 and "" or "\n") .. id .. ", -- " .. name .. color
             n = n + 1
@@ -4374,7 +4374,7 @@ local function ConvertAuraData(text)
                 if id then
                     local color = strmatch(line, "^%d+, %-%- .+ %{(.+)%}$")
                     if color then
-                        color = F:StringToTable(color, ",", true)
+                        color = F.StringToTable(color, ",", true)
                     else
                         color = {1, 0.26667, 0.4, 1}
                     end
@@ -4400,8 +4400,8 @@ local function CreateSetting_Auras(parent, index)
     local widget
 
     if not auraImportExportFrame then
-        auraImportExportFrame = addon:CreateFrame(nil, parent, 1, 200)
-        auraImportExportFrame:SetBackdropBorderColor(addon:GetAccentColorRGB())
+        auraImportExportFrame = Cell.CreateFrame(nil, parent, 1, 200)
+        auraImportExportFrame:SetBackdropBorderColor(Cell.GetAccentColorRGB())
         auraImportExportFrame:EnableMouse(true)
         auraImportExportFrame:Hide()
 
@@ -4417,16 +4417,16 @@ local function CreateSetting_Auras(parent, index)
             auraImportExportFrame:Hide()
         end)
 
-        auraImportExportFrame.textArea = addon:CreateScrollEditBox(auraImportExportFrame, function(eb, userChanged)
+        auraImportExportFrame.textArea = Cell.CreateScrollEditBox(auraImportExportFrame, function(eb, userChanged)
             if userChanged then
                 if auraImportExportFrame.isImport then
                     local data = ConvertAuraData(eb:GetText())
                     if data and #data ~= 0 then
                         auraImportExportFrame.data = data
-                        auraImportExportFrame.info:SetText(addon:GetAccentColorString()..L["Spells"]..":|r "..#data)
+                        auraImportExportFrame.info:SetText(Cell.GetAccentColorString()..L["Spells"]..":|r "..#data)
                         auraImportExportFrame.importBtn:SetEnabled(true)
                     else
-                        auraImportExportFrame.info:SetText(addon:GetAccentColorString()..L["Spells"]..":|r 0")
+                        auraImportExportFrame.info:SetText(Cell.GetAccentColorString()..L["Spells"]..":|r 0")
                         auraImportExportFrame.importBtn:SetEnabled(false)
                     end
                 else
@@ -4436,7 +4436,7 @@ local function CreateSetting_Auras(parent, index)
                 end
             end
         end)
-        addon:StylizeFrame(auraImportExportFrame.textArea.scrollFrame, {0, 0, 0, 0}, addon:GetAccentColorTable())
+        Cell.StylizeFrame(auraImportExportFrame.textArea.scrollFrame, {0, 0, 0, 0}, Cell.GetAccentColorTable())
         auraImportExportFrame.textArea:SetPoint("TOPLEFT", 5, -22)
         auraImportExportFrame.textArea:SetPoint("BOTTOMRIGHT", -5, 5)
         auraImportExportFrame.textArea.eb:SetAutoFocus(true)
@@ -4451,12 +4451,12 @@ local function CreateSetting_Auras(parent, index)
         auraImportExportFrame.info = auraImportExportFrame:CreateFontString(nil, "OVERLAY", font_name)
         auraImportExportFrame.info:SetPoint("BOTTOMLEFT", auraImportExportFrame.textArea, "TOPLEFT", 0, 3)
 
-        auraImportExportFrame.closeBtn = addon:CreateButton(auraImportExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
+        auraImportExportFrame.closeBtn = Cell.CreateButton(auraImportExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
         auraImportExportFrame.closeBtn:SetPoint("BOTTOMRIGHT", auraImportExportFrame.textArea, "TOPRIGHT", 0, 1)
         auraImportExportFrame.closeBtn:SetScript("OnClick", function() auraImportExportFrame:Hide() end)
 
-        auraImportExportFrame.importBtn = addon:CreateButton(auraImportExportFrame, L["Import"], "green", {57, 18})
-        auraImportExportFrame.importBtn:SetPoint("TOPRIGHT", auraImportExportFrame.closeBtn, "TOPLEFT", P:Scale(1), 0)
+        auraImportExportFrame.importBtn = Cell.CreateButton(auraImportExportFrame, L["Import"], "green", {57, 18})
+        auraImportExportFrame.importBtn:SetPoint("TOPRIGHT", auraImportExportFrame.closeBtn, "TOPLEFT", P.Scale(1), 0)
         auraImportExportFrame.importBtn:SetScript("OnClick", function()
             -- replace old
             wipe(auraImportExportFrame.parent.t)
@@ -4472,26 +4472,26 @@ local function CreateSetting_Auras(parent, index)
             )
             auraImportExportFrame:Hide()
             -- update height
-            addon:UpdateIndicatorSettingsHeight()
+            Cell.UpdateIndicatorSettingsHeight()
             -- event
             auraImportExportFrame.parent.frame.func(auraImportExportFrame.parent.t)
         end)
     end
 
     if not settingWidgets["auras"..index] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Auras"..index, parent, 240, 128)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Auras"..index, parent, 240, 128)
         settingWidgets["auras"..index] = widget
 
-        widget.frame = addon:CreateFrame(nil, widget, 20, 20)
+        widget.frame = Cell.CreateFrame(nil, widget, 20, 20)
         widget.frame:SetPoint("TOPLEFT", 5, -22)
         widget.frame:SetPoint("RIGHT", -5, 0)
         widget.frame:Show()
-        addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
+        Cell.StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
 
         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
         widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 3)
 
-        widget.export = addon:CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Export"])
+        widget.export = Cell.CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Export"])
         widget.export:SetPoint("BOTTOMRIGHT", widget.frame, "TOPRIGHT", 0, 1)
         widget.export:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export", {15, 15}, {"CENTER", 0, 0})
         widget.export:SetScript("OnClick", function()
@@ -4499,7 +4499,7 @@ local function CreateSetting_Auras(parent, index)
             auraImportExportFrame.parent = widget
             local n
             auraImportExportFrame.exported, n = GetExportString(widget.t)
-            auraImportExportFrame.info:SetText(addon:GetAccentColorString()..L["Spells"]..":|r "..n)
+            auraImportExportFrame.info:SetText(Cell.GetAccentColorString()..L["Spells"]..":|r "..n)
             auraImportExportFrame.textArea:SetText(auraImportExportFrame.exported)
             auraImportExportFrame.importBtn:Hide()
             auraImportExportFrame:ShowUp()
@@ -4509,14 +4509,14 @@ local function CreateSetting_Auras(parent, index)
             end
         end)
 
-        widget.import = addon:CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Import"])
+        widget.import = Cell.CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Import"])
         widget.import:SetPoint("BOTTOMRIGHT", widget.export, "BOTTOMLEFT", -1, 0)
         widget.import:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import", {15, 15}, {"CENTER", 0, 0})
         widget.import:SetScript("OnClick", function()
             auraImportExportFrame.isImport = true
             auraImportExportFrame.parent = widget
             auraImportExportFrame.textArea:SetText("")
-            auraImportExportFrame.info:SetText(addon:GetAccentColorString()..L["Spells"]..":|r 0")
+            auraImportExportFrame.info:SetText(Cell.GetAccentColorString()..L["Spells"]..":|r 0")
             auraImportExportFrame.importBtn:Show()
             auraImportExportFrame.importBtn:SetEnabled(false)
             auraImportExportFrame:ShowUp()
@@ -4526,7 +4526,7 @@ local function CreateSetting_Auras(parent, index)
             end
         end)
 
-        widget.clear = addon:CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Clear"], "|cffffb5c5Ctrl+"..L["Left-Click"])
+        widget.clear = Cell.CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Clear"], "|cffffb5c5Ctrl+"..L["Left-Click"])
         widget.clear:SetPoint("BOTTOMRIGHT", widget.import, "BOTTOMLEFT", -1, 0)
         widget.clear:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\trash", {15, 15}, {"CENTER", 0, 0})
         widget.clear:SetScript("OnClick", function(self, button)
@@ -4535,7 +4535,7 @@ local function CreateSetting_Auras(parent, index)
                 -- update list
                 widget:SetDBValue(widget.title, widget.t, widget.noUpDownButtons, widget.isZeroValid, widget.hasColorPicker)
                 -- update height
-                addon:UpdateIndicatorSettingsHeight()
+                Cell.UpdateIndicatorSettingsHeight()
                 -- event
                 widget.frame.func(widget.t)
                 -- hide editbox
@@ -4587,7 +4587,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
     -- tooltip
     if not parent.inputs then
         local inputs = CreateFrame("Frame", nil, parent, "BackdropTemplate")
-        addon:StylizeFrame(inputs, {0.115, 0.115, 0.115, 1})
+        Cell.StylizeFrame(inputs, {0.115, 0.115, 0.115, 1})
         inputs:SetFrameStrata("DIALOG")
         inputs:Hide()
         inputs:SetScript("OnHide", function()
@@ -4604,7 +4604,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             inputs.okBtn:SetEnabled(inputs.spellEB.isValid and inputs.durationEB.isValid)
         end
 
-        local spellEB = addon:CreateEditBox(inputs, 20, 20, false, false, true)
+        local spellEB = Cell.CreateEditBox(inputs, 20, 20, false, false, true)
         spellEB:SetAutoFocus(true)
         spellEB.tip = spellEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
         spellEB.tip:SetTextColor(0.4, 0.4, 0.4, 1)
@@ -4619,7 +4619,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
                 return
             end
 
-            local name = F:GetSpellInfo(spellId)
+            local name = F.GetSpellInfo(spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 Validate()
@@ -4640,7 +4640,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             inputs:Hide()
         end)
 
-        local durationEB = addon:CreateEditBox(inputs, 20, 20, false, false, true)
+        local durationEB = Cell.CreateEditBox(inputs, 20, 20, false, false, true)
         durationEB:SetAutoFocus(true)
         durationEB:SetMaxLetters(2)
         durationEB.tip = durationEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
@@ -4668,7 +4668,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             spellEB:SetFocus(true)
         end)
 
-        local okBtn = addon:CreateButton(inputs, "OK", "green", {40, 20})
+        local okBtn = Cell.CreateButton(inputs, "OK", "green", {40, 20})
         okBtn:SetEnabled(false)
 
         spellEB:SetPoint("TOPLEFT")
@@ -4686,7 +4686,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
 
     -- new
     if not cleuAuraButtons[0] then
-        cleuAuraButtons[0] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+        cleuAuraButtons[0] = Cell.CreateButton(parent, "", "transparent-accent", {20, 20})
         cleuAuraButtons[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\new", {16, 16}, {"RIGHT", -1, 0})
         cleuAuraButtons[0]:SetPoint("BOTTOMLEFT")
         cleuAuraButtons[0]:SetPoint("RIGHT")
@@ -4714,7 +4714,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
     for i, t in ipairs(auraTable) do
         -- creation
         if not cleuAuraButtons[i] then
-            cleuAuraButtons[i] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+            cleuAuraButtons[i] = Cell.CreateButton(parent, "", "transparent-accent", {20, 20})
 
             -- spellIcon
             cleuAuraButtons[i].spellIconBg = cleuAuraButtons[i]:CreateTexture(nil, "BORDER")
@@ -4751,7 +4751,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             cleuAuraButtons[i].durationText:SetJustifyH("LEFT")
 
             -- del
-            cleuAuraButtons[i].del = addon:CreateButton(cleuAuraButtons[i], "", "none", {18, 20}, true, true)
+            cleuAuraButtons[i].del = Cell.CreateButton(cleuAuraButtons[i], "", "none", {18, 20}, true, true)
             cleuAuraButtons[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
             cleuAuraButtons[i].del:SetPoint("RIGHT")
             cleuAuraButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
@@ -4765,7 +4765,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             end)
 
             -- edit
-            cleuAuraButtons[i].edit = addon:CreateButton(cleuAuraButtons[i], "", "none", {18, 20}, true, true)
+            cleuAuraButtons[i].edit = Cell.CreateButton(cleuAuraButtons[i], "", "none", {18, 20}, true, true)
             cleuAuraButtons[i].edit:SetPoint("RIGHT", cleuAuraButtons[i].del, "LEFT", 1, 0)
             cleuAuraButtons[i].edit:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info", {16, 16}, {"CENTER", 0, 0})
             cleuAuraButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
@@ -4782,7 +4782,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             cleuAuraButtons[i]:HookScript("OnEnter", function(self)
                 if parent.inputs:IsShown() then return end
 
-                local name = F:GetSpellInfo(self.spellId)
+                local name = F.GetSpellInfo(self.spellId)
                 if not name then
                     CellSpellTooltip:Hide()
                     return
@@ -4799,7 +4799,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             end)
         end
 
-        local name, icon = F:GetSpellInfo(t[1])
+        local name, icon = F.GetSpellInfo(t[1])
         cleuAuraButtons[i].spellIdText:SetText(t[1])
         cleuAuraButtons[i].spellNameText:SetText(name or L["Invalid"])
         cleuAuraButtons[i].durationText:SetText(t[2])
@@ -4835,7 +4835,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             parent.inputs.okBtn:SetScript("OnClick", function()
                 local spellId = tonumber(parent.inputs.spellEB:GetText())
                 local duration = tonumber(parent.inputs.durationEB:GetText())
-                local spellName, spellIcon = F:GetSpellInfo(spellId)
+                local spellName, spellIcon = F.GetSpellInfo(spellId)
                 -- update text
                 cleuAuraButtons[i].spellIdText:SetText(spellId)
                 cleuAuraButtons[i].spellNameText:SetText(spellName)
@@ -4875,14 +4875,14 @@ local function CreateSetting_CleuAuras(parent)
     local widget
 
     if not settingWidgets["cleuAuras"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_CleuAuras", parent, 240, 128)
+        widget = Cell.CreateFrame("CellIndicatorSettings_CleuAuras", parent, 240, 128)
         settingWidgets["cleuAuras"] = widget
 
-        widget.frame = addon:CreateFrame(nil, widget, 20, 20)
+        widget.frame = Cell.CreateFrame(nil, widget, 20, 20)
         widget.frame:SetPoint("TOPLEFT", 5, -20)
         widget.frame:SetPoint("RIGHT", -5, 0)
         widget.frame:Show()
-        addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
+        Cell.StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
 
         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
         widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
@@ -4930,7 +4930,7 @@ local function UpdateSpellButton(btn, class, isDisabled)
         if class == "UNCATEGORIZED" then
             btn:SetBackdropColor(0.75, 0.75, 0.75, 0.85)
         else
-            local r, g, b = F:GetClassColor(class)
+            local r, g, b = F.GetClassColor(class)
             btn:SetBackdropColor(r, g, b, 0.85)
         end
         btn.icon:SetDesaturated(false)
@@ -4944,12 +4944,12 @@ local function CreateSpellButtons(parent, class, spells, disableds)
         if not spellButtons[buttonIndex] then
             spellButtons[buttonIndex] = CreateFrame("Button", "CellIndicatorSettings_BuiltIns_SpellButton"..buttonIndex, parent:GetParent(), "BackdropTemplate")
             spellButtons[buttonIndex]:SetBackdrop({bgFile = Cell.vars.whiteTexture})
-            P:Size(spellButtons[buttonIndex], 20, 20)
+            P.Size(spellButtons[buttonIndex], 20, 20)
 
             spellButtons[buttonIndex].icon = spellButtons[buttonIndex]:CreateTexture(nil, "ARTWORK")
             spellButtons[buttonIndex].icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
-            P:Point(spellButtons[buttonIndex].icon, "TOPLEFT", 2, -2)
-            P:Point(spellButtons[buttonIndex].icon, "BOTTOMRIGHT", -2, 2)
+            P.Point(spellButtons[buttonIndex].icon, "TOPLEFT", 2, -2)
+            P.Point(spellButtons[buttonIndex].icon, "BOTTOMRIGHT", -2, 2)
         end
 
         spellButtons[buttonIndex]:SetParent(parent)
@@ -4958,7 +4958,7 @@ local function CreateSpellButtons(parent, class, spells, disableds)
         -- tooltips
         spellButtons[buttonIndex]:SetScript("OnEnter", function(self)
             CellSpellTooltip:SetOwner(self, "ANCHOR_NONE")
-            CellSpellTooltip:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, P:Scale(3))
+            CellSpellTooltip:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, P.Scale(3))
             CellSpellTooltip:SetSpellByID(spellId)
             CellSpellTooltip:Show()
         end)
@@ -4981,7 +4981,7 @@ local function CreateSpellButtons(parent, class, spells, disableds)
             -- 深寒凝冰 覆盖了 寒冰屏障
             spellButtons[buttonIndex].icon:SetTexture(135841)
         else
-            local icon = select(2, F:GetSpellInfo(spellId))
+            local icon = select(2, F.GetSpellInfo(spellId))
             spellButtons[buttonIndex].icon:SetTexture(icon)
         end
 
@@ -5010,7 +5010,7 @@ local function CreateClassFrames(parent, builtIns, disableds)
 
     for _, class in pairs(classOrder) do
         if not classFrames[class] then
-            classFrames[class] = addon:CreateFrame("CellIndicatorSettings_BuiltIns_"..class, parent, nil, nil, true)
+            classFrames[class] = Cell.CreateFrame("CellIndicatorSettings_BuiltIns_"..class, parent, nil, nil, true)
             classFrames[class].text = classFrames[class]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
             classFrames[class].text:SetPoint("TOPLEFT", 5, -5)
         end
@@ -5033,7 +5033,7 @@ local function CreateClassFrames(parent, builtIns, disableds)
             if class == "UNCATEGORIZED" then
                 f.text:SetText("|cffbababa"..L["Uncategorized"])
             else
-                f.text:SetText(F:GetClassColorStr(class)..F:GetLocalizedClassName(class))
+                f.text:SetText(F.GetClassColorStr(class)..F.GetLocalizedClassName(class))
             end
 
             -- create buttons
@@ -5059,14 +5059,14 @@ local function CreateSetting_BuiltIns(parent)
     local widget
 
     if not settingWidgets["builtIns"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_BuiltIns", parent, 240, 128)
+        widget = Cell.CreateFrame("CellIndicatorSettings_BuiltIns", parent, 240, 128)
         settingWidgets["builtIns"] = widget
 
-        widget.frame = addon:CreateFrame(nil, widget, 20, 20)
+        widget.frame = Cell.CreateFrame(nil, widget, 20, 20)
         widget.frame:SetPoint("TOPLEFT", 5, -20)
         widget.frame:SetPoint("RIGHT", -5, 0)
         widget.frame:Show()
-        addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
+        Cell.StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
 
         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
         widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
@@ -5095,7 +5095,7 @@ end
 
 local function CreateActionPreview(parent, style)
     local f = CreateFrame("Frame", "CellIndicatorSettings_ActionsPreview_Type"..style, parent, "BackdropTemplate")
-    f:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
+    f:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
     f:SetBackdropColor(0.2, 0.2, 0.2, 1)
     f:SetBackdropBorderColor(0, 0, 0, 1)
 
@@ -5128,7 +5128,7 @@ local function CreateSetting_ActionsPreview(parent)
     local widget
 
     if not settingWidgets["actionsPreview"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_ActionsPreview", parent, 240, 220)
+        widget = Cell.CreateFrame("CellIndicatorSettings_ActionsPreview", parent, 240, 220)
         settingWidgets["actionsPreview"] = widget
 
         local typeA = CreateActionPreview(widget, "A")
@@ -5179,7 +5179,7 @@ local function CreateSetting_ActionsPreview(parent)
             G = typeG,
         }
 
-        local speedSlider = addon:CreateSlider(_G.SPEED, widget, 0.5, 1.5, 145, 0.01)
+        local speedSlider = Cell.CreateSlider(_G.SPEED, widget, 0.5, 1.5, 145, 0.01)
         speedSlider:SetPoint("TOPLEFT", typeE, "BOTTOMLEFT", 0, -25)
         speedSlider.afterValueChangedFn = function(value)
             widget.func(value)
@@ -5220,7 +5220,7 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
 
     -- tooltip
     if not parent.popupEditBox then
-        local popup = addon:CreatePopupEditBox(parent)
+        local popup = Cell.CreatePopupEditBox(parent)
         popup:SetNumeric(true)
 
         popup:SetScript("OnTextChanged", function()
@@ -5230,7 +5230,7 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
                 return
             end
 
-            local name = F:GetSpellInfo(spellId)
+            local name = F.GetSpellInfo(spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 return
@@ -5249,16 +5249,16 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
 
     -- new
     if not actionButtons[0] then
-        actionButtons[0] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+        actionButtons[0] = Cell.CreateButton(parent, "", "transparent-accent", {20, 20})
         actionButtons[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\new", {16, 16}, {"RIGHT", -1, 0})
         actionButtons[0]:SetPoint("BOTTOMLEFT")
         actionButtons[0]:SetPoint("RIGHT")
     end
 
     actionButtons[0]:SetScript("OnClick", function(self)
-        local popup = addon:CreatePopupEditBox(parent, function(text)
+        local popup = Cell.CreatePopupEditBox(parent, function(text)
             local spellId = tonumber(text)
-            local spellName = F:GetSpellInfo(spellId)
+            local spellName = F.GetSpellInfo(spellId)
             if spellId and spellName then
                 -- update db
                 tinsert(spellTable, {
@@ -5269,7 +5269,7 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
                 CreateActionButtons(parent, spellTable, updateHeightFunc)
                 updateHeightFunc(19)
             else
-                F:Print(L["Invalid spell id."])
+                F.Print(L["Invalid spell id."])
             end
         end)
         popup:SetPoint("TOPLEFT", self)
@@ -5282,7 +5282,7 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
     for i, spell in ipairs(spellTable) do
         -- creation
         if not actionButtons[i] then
-            actionButtons[i] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+            actionButtons[i] = Cell.CreateButton(parent, "", "transparent-accent", {20, 20})
 
             -- spellIcon
             actionButtons[i].spellIconBg = actionButtons[i]:CreateTexture(nil, "BORDER")
@@ -5312,8 +5312,8 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
             actionButtons[i].spellNameText:SetJustifyH("LEFT")
 
             -- style dropdown
-            actionButtons[i].styleDropdown = addon:CreateDropdown(actionButtons[i], 30, nil, true)
-            P:Height(actionButtons[i].styleDropdown, 16)
+            actionButtons[i].styleDropdown = Cell.CreateDropdown(actionButtons[i], 30, nil, true)
+            P.Height(actionButtons[i].styleDropdown, 16)
             actionButtons[i].styleDropdown:SetPoint("TOPLEFT", actionButtons[i], 180, -2)
             actionButtons[i].styleDropdown.button:HookScript("OnEnter", function()
                 actionButtons[i]:GetScript("OnEnter")(actionButtons[i])
@@ -5338,7 +5338,7 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
             actionButtons[i].styleDropdown:SetItems(items)
 
             -- color
-            actionButtons[i].colorPicker = addon:CreateColorPicker(actionButtons[i], "", false, nil, function(r, g, b, a)
+            actionButtons[i].colorPicker = Cell.CreateColorPicker(actionButtons[i], "", false, nil, function(r, g, b, a)
                 spellTable[i][2][2][1] = r
                 spellTable[i][2][2][2] = g
                 spellTable[i][2][2][3] = b
@@ -5355,7 +5355,7 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
             end)
 
             -- del
-            actionButtons[i].del = addon:CreateButton(actionButtons[i], "", "none", {18, 20}, true, true)
+            actionButtons[i].del = Cell.CreateButton(actionButtons[i], "", "none", {18, 20}, true, true)
             actionButtons[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
             actionButtons[i].del:SetPoint("RIGHT")
             actionButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
@@ -5369,7 +5369,7 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
             end)
 
             -- edit
-            actionButtons[i].edit = addon:CreateButton(actionButtons[i], "", "none", {18, 20}, true, true)
+            actionButtons[i].edit = Cell.CreateButton(actionButtons[i], "", "none", {18, 20}, true, true)
             actionButtons[i].edit:SetPoint("RIGHT", actionButtons[i].del, "LEFT", 1, 0)
             actionButtons[i].edit:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info", {16, 16}, {"CENTER", 0, 0})
             actionButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
@@ -5390,7 +5390,7 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
             -- spell tooltip
             actionButtons[i]:HookScript("OnEnter", function(self)
                 if not parent.popupEditBox:IsShown() then
-                    local name = F:GetSpellInfo(self.spellId)
+                    local name = F.GetSpellInfo(self.spellId)
                     if not name then
                         CellSpellTooltip:Hide()
                         return
@@ -5410,7 +5410,7 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
         end
 
         -- fill data
-        local name, icon = F:GetSpellInfo(spell[1])
+        local name, icon = F.GetSpellInfo(spell[1])
         actionButtons[i].spellIdText:SetText(spell[1])
         actionButtons[i].spellId = spell[1]
         actionButtons[i].spellNameText:SetText(name or L["Invalid"])
@@ -5440,9 +5440,9 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
 
         -- functions
         actionButtons[i].edit:SetScript("OnClick", function()
-            local popup = addon:CreatePopupEditBox(parent, function(text)
+            local popup = Cell.CreatePopupEditBox(parent, function(text)
                 local spellId = tonumber(text)
-                local spellName, spellIcon = F:GetSpellInfo(spellId)
+                local spellName, spellIcon = F.GetSpellInfo(spellId)
                 if spellId and spellName then
                     -- update text
                     actionButtons[i].spellIdText:SetText(spellId)
@@ -5460,7 +5460,7 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
                         actionButtons[i].spellIcon:Hide()
                     end
                 else
-                    F:Print(L["Invalid spell id."])
+                    F.Print(L["Invalid spell id."])
                 end
             end)
             popup:SetPoint("TOPLEFT", actionButtons[i])
@@ -5487,14 +5487,14 @@ local function CreateSetting_ActionsList(parent)
     local widget
 
     if not settingWidgets["actionsList"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_ActionsList", parent, 240, 128)
+        widget = Cell.CreateFrame("CellIndicatorSettings_ActionsList", parent, 240, 128)
         settingWidgets["actionsList"] = widget
 
         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
         widget.text:SetPoint("TOPLEFT", 7, -7)
         widget.text:SetText(L["Click to preview"])
 
-        widget.debug = addon:CreateButton(widget, L["Debug Mode"], "accent", {100, 17})
+        widget.debug = Cell.CreateButton(widget, L["Debug Mode"], "accent", {100, 17})
         widget.debug:SetPoint("TOPRIGHT", -5, -5)
         widget.debug.enabled = false
         widget.debug:SetScript("OnClick", function(self)
@@ -5508,11 +5508,11 @@ local function CreateSetting_ActionsList(parent)
             Cell.vars.actionsDebugModeEnabled = self.enabled
         end)
 
-        widget.frame = addon:CreateFrame(nil, widget, 20, 20)
+        widget.frame = Cell.CreateFrame(nil, widget, 20, 20)
         widget.frame:SetPoint("TOPLEFT", 5, -27)
         widget.frame:SetPoint("RIGHT", -5, 0)
         widget.frame:Show()
-        addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
+        Cell.StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
 
         -- callback
         function widget:SetFunc(func)
@@ -5543,7 +5543,7 @@ local function CreateThresholdButtons(parent, thresholdTable, updateHeightFunc)
 
     -- new
     if not thresholdButtons[0] then
-        thresholdButtons[0] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+        thresholdButtons[0] = Cell.CreateButton(parent, "", "transparent-accent", {20, 20})
         thresholdButtons[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\new", {16, 16}, {"RIGHT", -1, 0})
         thresholdButtons[0]:SetPoint("BOTTOMLEFT")
         thresholdButtons[0]:SetPoint("RIGHT")
@@ -5560,10 +5560,10 @@ local function CreateThresholdButtons(parent, thresholdTable, updateHeightFunc)
     for i, t in ipairs(thresholdTable) do
         -- creation
         if not thresholdButtons[i] then
-            thresholdButtons[i] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+            thresholdButtons[i] = Cell.CreateButton(parent, "", "transparent-accent", {20, 20})
 
             -- threshold
-            thresholdButtons[i].eb = addon:CreateEditBox(thresholdButtons[i], 35, 16, false, false, true)
+            thresholdButtons[i].eb = Cell.CreateEditBox(thresholdButtons[i], 35, 16, false, false, true)
             thresholdButtons[i].eb:SetPoint("TOPLEFT", 2, -2)
             thresholdButtons[i].eb:SetMaxLetters(2)
             thresholdButtons[i].eb:HookScript("OnEnter", function()
@@ -5573,8 +5573,8 @@ local function CreateThresholdButtons(parent, thresholdTable, updateHeightFunc)
                 thresholdButtons[i]:GetScript("OnLeave")(thresholdButtons[i])
             end)
 
-            thresholdButtons[i].confirmBtn = addon:CreateButton(thresholdButtons[i], "OK", "accent", {27, 16})
-            thresholdButtons[i].confirmBtn:SetPoint("TOPLEFT", thresholdButtons[i].eb, "TOPRIGHT", P:Scale(-1), 0)
+            thresholdButtons[i].confirmBtn = Cell.CreateButton(thresholdButtons[i], "OK", "accent", {27, 16})
+            thresholdButtons[i].confirmBtn:SetPoint("TOPLEFT", thresholdButtons[i].eb, "TOPRIGHT", P.Scale(-1), 0)
             thresholdButtons[i].confirmBtn:Hide()
             thresholdButtons[i].confirmBtn:SetScript("OnHide", function()
                 thresholdButtons[i].confirmBtn:Hide()
@@ -5611,14 +5611,14 @@ local function CreateThresholdButtons(parent, thresholdTable, updateHeightFunc)
             thresholdButtons[i].percentSign:SetText("%")
 
             -- color
-            thresholdButtons[i].colorPicker = addon:CreateColorPicker(thresholdButtons[i], "", true, nil, function(r, g, b, a)
+            thresholdButtons[i].colorPicker = Cell.CreateColorPicker(thresholdButtons[i], "", true, nil, function(r, g, b, a)
                 thresholdTable[i][2][1] = r
                 thresholdTable[i][2][2] = g
                 thresholdTable[i][2][3] = b
                 thresholdTable[i][2][4] = a
                 parent.func(thresholdTable)
             end)
-            thresholdButtons[i].colorPicker:SetPoint("TOPLEFT", thresholdButtons[i].eb, "TOPRIGHT", P:Scale(30), P:Scale(-1))
+            thresholdButtons[i].colorPicker:SetPoint("TOPLEFT", thresholdButtons[i].eb, "TOPRIGHT", P.Scale(30), P.Scale(-1))
             thresholdButtons[i].colorPicker:HookScript("OnEnter", function()
                 thresholdButtons[i]:GetScript("OnEnter")(thresholdButtons[i])
             end)
@@ -5627,7 +5627,7 @@ local function CreateThresholdButtons(parent, thresholdTable, updateHeightFunc)
             end)
 
             -- del
-            thresholdButtons[i].del = addon:CreateButton(thresholdButtons[i], "", "none", {18, 20}, true, true)
+            thresholdButtons[i].del = Cell.CreateButton(thresholdButtons[i], "", "none", {18, 20}, true, true)
             thresholdButtons[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
             thresholdButtons[i].del:SetPoint("RIGHT")
             thresholdButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
@@ -5650,7 +5650,7 @@ local function CreateThresholdButtons(parent, thresholdTable, updateHeightFunc)
         if i == 1 then -- first
             thresholdButtons[i]:SetPoint("TOPLEFT")
         else
-            thresholdButtons[i]:SetPoint("TOPLEFT", thresholdButtons[i-1], "BOTTOMLEFT", 0, P:Scale(1))
+            thresholdButtons[i]:SetPoint("TOPLEFT", thresholdButtons[i-1], "BOTTOMLEFT", 0, P.Scale(1))
         end
         thresholdButtons[i]:SetPoint("RIGHT")
         thresholdButtons[i]:Show()
@@ -5674,18 +5674,18 @@ local function CreateSetting_Thresholds(parent)
     local widget
 
     if not settingWidgets["thresholds"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Thresholds", parent, 240, 128)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Thresholds", parent, 240, 128)
         settingWidgets["thresholds"] = widget
 
         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
         widget.text:SetPoint("TOPLEFT", 7, -7)
         widget.text:SetText(L["Only one threshold is displayed at a time"])
 
-        widget.frame = addon:CreateFrame(nil, widget, 100, 20)
+        widget.frame = Cell.CreateFrame(nil, widget, 100, 20)
         widget.frame:SetPoint("TOPLEFT", 5, -27)
         -- widget.frame:SetPoint("RIGHT", -5, 0)
         widget.frame:Show()
-        addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
+        Cell.StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
 
         -- callback
         function widget:SetFunc(func)
@@ -5714,11 +5714,11 @@ local function CreateSetting_HighlightType(parent)
     local widget
 
     if not settingWidgets["highlightType"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_HighlightType", parent, 240, 50)
-        -- widget = addon:CreateFrame("CellIndicatorSettings_HighlightType", parent, 240, 117)
+        widget = Cell.CreateFrame("CellIndicatorSettings_HighlightType", parent, 240, 50)
+        -- widget = Cell.CreateFrame("CellIndicatorSettings_HighlightType", parent, 240, 117)
         settingWidgets["highlightType"] = widget
 
-        widget.highlightType = addon:CreateDropdown(widget, 245)
+        widget.highlightType = Cell.CreateDropdown(widget, 245)
         widget.highlightType:SetPoint("TOPLEFT", 5, -20)
         widget.highlightType:SetItems({
             {
@@ -5771,35 +5771,35 @@ local function CreateSetting_HighlightType(parent)
 
         --[[
         -- curse
-        widget.curseCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t "..L["Curse"], false, nil, function(r, g, b)
+        widget.curseCP = Cell.CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t "..L["Curse"], false, nil, function(r, g, b)
             I.SetDebuffTypeColor("Curse", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.curseCP:SetPoint("TOPLEFT", widget.highlightType, "BOTTOMLEFT", 0, -7)
 
         -- disease
-        widget.diseaseCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Disease:0|t "..L["Disease"], false, nil, function(r, g, b)
+        widget.diseaseCP = Cell.CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Disease:0|t "..L["Disease"], false, nil, function(r, g, b)
             I.SetDebuffTypeColor("Disease", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.diseaseCP:SetPoint("TOPLEFT", widget.curseCP, "TOPRIGHT", 110, 0)
 
         -- magic
-        widget.magicCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Magic:0|t "..L["Magic"], false, nil, function(r, g, b)
+        widget.magicCP = Cell.CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Magic:0|t "..L["Magic"], false, nil, function(r, g, b)
             I.SetDebuffTypeColor("Magic", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.magicCP:SetPoint("TOPLEFT", widget.curseCP, "BOTTOMLEFT", 0, -7)
 
         -- poison
-        widget.poisonCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Poison:0|t "..L["Poison"], false, nil, function(r, g, b)
+        widget.poisonCP = Cell.CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Poison:0|t "..L["Poison"], false, nil, function(r, g, b)
             I.SetDebuffTypeColor("Poison", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.poisonCP:SetPoint("TOPLEFT", widget.magicCP, "TOPRIGHT", 110, 0)
 
         -- reset
-        widget.resetBtn = addon:CreateButton(widget, L["Reset All"], "accent-hover", {70, 20})
+        widget.resetBtn = Cell.CreateButton(widget, L["Reset All"], "accent-hover", {70, 20})
         widget.resetBtn:SetPoint("TOPLEFT", widget.magicCP, "BOTTOMLEFT", 0, -7)
         widget.resetBtn:SetScript("OnClick", function()
             I.ResetDebuffTypeColor()
@@ -5836,12 +5836,12 @@ local function CreateSetting_PrivateAuraOptions(parent)
     local widget
 
     if not settingWidgets["privateAuraOptions"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_PrivateAuraOptions", parent, 240, 55)
+        widget = Cell.CreateFrame("CellIndicatorSettings_PrivateAuraOptions", parent, 240, 55)
         settingWidgets["privateAuraOptions"] = widget
 
-        widget.cb1 = addon:CreateCheckButton(widget, L["Show countdown swipe"])
+        widget.cb1 = Cell.CreateCheckButton(widget, L["Show countdown swipe"])
         widget.cb1:SetPoint("TOPLEFT", 5, -8)
-        widget.cb2 = addon:CreateCheckButton(widget, L["Show countdown number"])
+        widget.cb2 = Cell.CreateCheckButton(widget, L["Show countdown number"])
         widget.cb2:SetPoint("TOPLEFT", widget.cb1, "BOTTOMLEFT", 0, -7)
 
         -- callback
@@ -5873,14 +5873,14 @@ local function CreateSetting_Tips(parent, text)
     local widget
 
     if not settingWidgets["tips"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Tips", parent, 240, 30)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Tips", parent, 240, 30)
         settingWidgets["tips"] = widget
 
         -- widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
         -- widget.text:SetPoint("LEFT", 5, 0)
         -- widget.text:SetPoint("RIGHT", -5, 0)
         -- widget.text:SetJustifyH("LEFT")
-        widget.text = addon:CreateScrollTextFrame(widget, "", 0.02, nil, nil, true)
+        widget.text = Cell.CreateScrollTextFrame(widget, "", 0.02, nil, nil, true)
         widget.text:SetPoint("LEFT", 5, 0)
         widget.text:SetPoint("RIGHT", -5, 0)
 
@@ -5901,7 +5901,7 @@ local function CreateSetting_Shape(parent)
     local widget
 
     if not settingWidgets["shape"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Shape", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Shape", parent, 240, 50)
         settingWidgets["shape"] = widget
 
         local shapes = {"circle", "square", "rhombus", "hexagon", "octagon"}
@@ -5909,7 +5909,7 @@ local function CreateSetting_Shape(parent)
         widget.buttons = {}
 
         for i, s in pairs(shapes) do
-            widget.buttons[s] = addon:CreateButton(widget, nil, "accent-hover", {22, 22})
+            widget.buttons[s] = Cell.CreateButton(widget, nil, "accent-hover", {22, 22})
             widget.buttons[s]:SetTexture("Interface\\AddOns\\Cell\\Media\\Shapes\\"..shapes[i].."_filled", {18, 18}, {"CENTER", 0, 0})
 
             -- button group
@@ -5922,11 +5922,11 @@ local function CreateSetting_Shape(parent)
             end
         end
 
-        widget.highlight = addon:CreateButtonGroup(widget.buttons, function(shape)
+        widget.highlight = Cell.CreateButtonGroup(widget.buttons, function(shape)
             widget.func(shape)
         end)
 
-        -- widget.shape = addon:CreateDropdown(widget, 153)
+        -- widget.shape = Cell.CreateDropdown(widget, 153)
         -- widget.shape:SetPoint("TOPLEFT", 5, -20)
         -- widget.shape:SetItems({
         --     {
@@ -5999,17 +5999,17 @@ local function CreateSetting_MissingBuffsFilters(parent)
     local widget
 
     if not settingWidgets["missingBuffsFilters"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_MissingBuffsFilters", parent, 240, 30)
+        widget = Cell.CreateFrame("CellIndicatorSettings_MissingBuffsFilters", parent, 240, 30)
         settingWidgets["missingBuffsFilters"] = widget
 
-        widget.buffByMe = addon:CreateCheckButton(widget, L["buffByMe"])
+        widget.buffByMe = Cell.CreateCheckButton(widget, L["buffByMe"])
         widget.buffByMe:SetPoint("TOPLEFT", 5, -8)
 
         local buffs = I.GetMissingBuffsFilters()
         local indexToCB = {}
 
         for i, t in ipairs(buffs) do
-            widget[i] = addon:CreateCheckButton(widget, t[1])
+            widget[i] = Cell.CreateCheckButton(widget, t[1])
             indexToCB[t[2]] = widget[i]
 
             if i == 1 then
@@ -6019,7 +6019,7 @@ local function CreateSetting_MissingBuffsFilters(parent)
             end
         end
 
-        P:Height(widget, (#buffs+1)*(14+8)+8+8)
+        P.Height(widget, (#buffs+1)*(14+8)+8+8)
 
         -- callback
         function widget:SetFunc(func)
@@ -6056,16 +6056,16 @@ local function CreateSetting_TargetCounterFilters(parent)
     local widget
 
     if not settingWidgets["targetCounterFilters"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_TargetCounterFilters", parent, 240, 74)
+        widget = Cell.CreateFrame("CellIndicatorSettings_TargetCounterFilters", parent, 240, 74)
         settingWidgets["targetCounterFilters"] = widget
 
-        widget.outdoor = addon:CreateCheckButton(widget, L["Outdoor"])
+        widget.outdoor = Cell.CreateCheckButton(widget, L["Outdoor"])
         widget.outdoor:SetPoint("TOPLEFT", 5, -8)
 
-        widget.pve = addon:CreateCheckButton(widget, "PvE")
+        widget.pve = Cell.CreateCheckButton(widget, "PvE")
         widget.pve:SetPoint("TOPLEFT", widget.outdoor, "BOTTOMLEFT", 0, -8)
 
-        widget.pvp = addon:CreateCheckButton(widget, "PvP")
+        widget.pvp = Cell.CreateCheckButton(widget, "PvP")
         widget.pvp:SetPoint("TOPLEFT", widget.pve, "BOTTOMLEFT", 0, -8)
 
         -- callback
@@ -6103,25 +6103,25 @@ local function CreateSetting_DispelFilters(parent)
     local widget
 
     if not settingWidgets["dispelFilters"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_DispelFilters", parent, 240, 96)
+        widget = Cell.CreateFrame("CellIndicatorSettings_DispelFilters", parent, 240, 96)
         settingWidgets["dispelFilters"] = widget
 
-        widget.dispellableByMe = addon:CreateCheckButton(widget, L["dispellableByMe"])
+        widget.dispellableByMe = Cell.CreateCheckButton(widget, L["dispellableByMe"])
         widget.dispellableByMe:SetPoint("TOPLEFT", 5, -8)
 
-        widget.curse = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t"..L["Curse"])
+        widget.curse = Cell.CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t"..L["Curse"])
         widget.curse:SetPoint("TOPLEFT", widget.dispellableByMe, "BOTTOMLEFT", 0, -8)
 
-        widget.disease = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Disease:0|t"..L["Disease"])
+        widget.disease = Cell.CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Disease:0|t"..L["Disease"])
         widget.disease:SetPoint("TOPLEFT", widget.curse, 135, 0)
 
-        widget.magic = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Magic:0|t"..L["Magic"])
+        widget.magic = Cell.CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Magic:0|t"..L["Magic"])
         widget.magic:SetPoint("TOPLEFT", widget.curse, "BOTTOMLEFT", 0, -8)
 
-        widget.poison = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Poison:0|t"..L["Poison"])
+        widget.poison = Cell.CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Poison:0|t"..L["Poison"])
         widget.poison:SetPoint("TOPLEFT", widget.magic, 135, 0)
 
-        widget.bleed = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Bleed:0|t"..L["Bleed"])
+        widget.bleed = Cell.CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Bleed:0|t"..L["Bleed"])
         widget.bleed:SetPoint("TOPLEFT", widget.magic, "BOTTOMLEFT", 0, -8)
 
         -- callback
@@ -6174,10 +6174,10 @@ local function CreateSetting_CastBy(parent)
     local widget
 
     if not settingWidgets["castBy"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_CastBy", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_CastBy", parent, 240, 50)
         settingWidgets["castBy"] = widget
 
-        widget.castBy = addon:CreateDropdown(widget, 245)
+        widget.castBy = Cell.CreateDropdown(widget, 245)
         widget.castBy:SetPoint("TOPLEFT", 5, -20)
         widget.castBy:SetItems({
             {
@@ -6228,10 +6228,10 @@ end
 --     local widget
 
 --     if not settingWidgets["showOn"] then
---         widget = addon:CreateFrame("CellIndicatorSettings_ShowOn", parent, 240, 50)
+--         widget = Cell.CreateFrame("CellIndicatorSettings_ShowOn", parent, 240, 50)
 --         settingWidgets["showOn"] = widget
 
---         widget.showOn = addon:CreateDropdown(widget, 245)
+--         widget.showOn = Cell.CreateDropdown(widget, 245)
 --         widget.showOn:SetPoint("TOPLEFT", 5, -20)
 --         widget.showOn:SetItems({
 --             {
@@ -6296,10 +6296,10 @@ local function CreateSetting_MaxValue(parent)
     local widget
 
     if not settingWidgets["maxValue"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_MaxValue", parent, 240, 70)
+        widget = Cell.CreateFrame("CellIndicatorSettings_MaxValue", parent, 240, 70)
         settingWidgets["maxValue"] = widget
 
-        widget.maxValue = addon:CreateDropdown(widget, 245)
+        widget.maxValue = Cell.CreateDropdown(widget, 245)
         widget.maxValue:SetPoint("TOPLEFT", 5, -20)
         local items = {
             {
@@ -6328,7 +6328,7 @@ local function CreateSetting_MaxValue(parent)
         widget.maxValueText:SetText(L["Set Bar Max Value"])
         widget.maxValueText:SetPoint("BOTTOMLEFT", widget.maxValue, "TOPLEFT", 0, 1)
 
-        widget.allowSmaller = addon:CreateCheckButton(widget, L["Allow smaller value"], function(checked)
+        widget.allowSmaller = Cell.CreateCheckButton(widget, L["Allow smaller value"], function(checked)
             widget.func({widget.maxValue:GetSelected(), checked})
         end)
         widget.allowSmaller:SetPoint("TOPLEFT", widget.maxValue, "BOTTOMLEFT", 0, -8)
@@ -6356,10 +6356,10 @@ local function CreateSetting_IconStyle(parent)
     local widget
 
     if not settingWidgets["iconStyle"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_IconStyle", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_IconStyle", parent, 240, 50)
         settingWidgets["iconStyle"] = widget
 
-        widget.iconStyle = addon:CreateDropdown(widget, 245)
+        widget.iconStyle = Cell.CreateDropdown(widget, 245)
         widget.iconStyle:SetPoint("TOPLEFT", 5, -20)
 
         -- dispels
@@ -6402,7 +6402,7 @@ local function CreateSetting_IconStyle(parent)
             for _, t in pairs(types) do
                 blizzard = blizzard .. blizzard_icon:format(t) .. " "
 
-                local r, g, b = F:ConvertRGB_256(I.GetDebuffTypeColor(t))
+                local r, g, b = F.ConvertRGB_256(I.GetDebuffTypeColor(t))
                 rhombus = rhombus .. rhombus_icon:format(r, g, b) .. " "
             end
 
@@ -6471,26 +6471,26 @@ end
 
 local function CreateRoleFilter(parent, class, roles)
     local filter = CreateFrame("Frame", nil, parent, "BackdropTemplate")
-    Cell:StylizeFrame(filter)
-    P:Size(filter, 170, 20)
+    Cell.StylizeFrame(filter)
+    P.Size(filter, 170, 20)
 
     filter.text = filter:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     filter.text:SetPoint("LEFT", 5, 0)
     if class == "VEHICLE" or class == "PET" or class == "NPC" then
         filter.text:SetText("|cff00ff33"..L[class])
     else
-        filter.text:SetText(F:GetClassColorStr(class)..F:GetLocalizedClassName(class))
+        filter.text:SetText(F.GetClassColorStr(class)..F.GetLocalizedClassName(class))
     end
 
     filter.buttons = {}
     local last
     for i = #roles, 1, -1 do
-        local b = Cell:CreateButton(filter, nil, "accent-hover", {20, 20})
+        local b = Cell.CreateButton(filter, nil, "accent-hover", {20, 20})
         filter.buttons[roles[i]] = b
-        b:SetTexture(F:GetDefaultRoleIcon(roles[i]), {16, 16}, {"CENTER", 0, 0})
+        b:SetTexture(F.GetDefaultRoleIcon(roles[i]), {16, 16}, {"CENTER", 0, 0})
 
         if last then
-            b:SetPoint("BOTTOMRIGHT", last, "BOTTOMLEFT", P:Scale(1), 0)
+            b:SetPoint("BOTTOMRIGHT", last, "BOTTOMLEFT", P.Scale(1), 0)
         else
             b:SetPoint("BOTTOMRIGHT", filter)
         end
@@ -6528,14 +6528,14 @@ local function CreateSetting_RoleFilters(parent)
     local widget
 
     if not settingWidgets["roleFilters"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_RoleFilters", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_RoleFilters", parent, 240, 50)
         settingWidgets["roleFilters"] = widget
 
         -- filters
         widget.filters = {}
 
         local last
-        for class in F:IterateClasses() do
+        for class in F.IterateClasses() do
             widget.filters[class] = CreateRoleFilter(widget, class, CLASS_ROLES[class])
             if last then
                 widget.filters[class]:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -5)
@@ -6551,8 +6551,8 @@ local function CreateSetting_RoleFilters(parent)
             last = widget.filters[class]
         end
 
-        local n = F:Getn(widget.filters)
-        P:Height(widget, 10 + 20 * n + 5 * (n - 1))
+        local n = F.Getn(widget.filters)
+        P.Height(widget, 10 + 20 * n + 5 * (n - 1))
 
         -- callback
         function widget:SetFunc(func)
@@ -6584,7 +6584,7 @@ local function ClassFilter_UpdateButton(b, enabled)
 end
 
 local function CreateClassFilter(parent, class)
-    local filter = addon:CreateButton(parent, class, "accent-hover", {120, 20})
+    local filter = Cell.CreateButton(parent, class, "accent-hover", {120, 20})
     filter:SetTexture("classicon-"..strlower(class), {16, 16}, {"LEFT", 2, 0}, true, true)
 
 
@@ -6592,8 +6592,8 @@ local function CreateClassFilter(parent, class)
         filter.classColor = {0, 1, 0.2}
         filter:SetText(L[class])
     else
-        filter.classColor = {F:GetClassColor(class)}
-        filter:SetText(F:GetLocalizedClassName(class))
+        filter.classColor = {F.GetClassColor(class)}
+        filter:SetText(F.GetLocalizedClassName(class))
     end
 
     filter:SetScript("OnClick", function()
@@ -6614,14 +6614,14 @@ local function CreateSetting_ClassFilters(parent)
     local widget
 
     if not settingWidgets["classFilters"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_ClassFilters", parent, 240, 50)
+        widget = Cell.CreateFrame("CellIndicatorSettings_ClassFilters", parent, 240, 50)
         settingWidgets["classFilters"] = widget
 
         -- filters
         widget.filters = {}
 
         local classes = {}
-        for class in F:IterateClasses() do
+        for class in F.IterateClasses() do
             tinsert(classes, class)
         end
         tinsert(classes, "PET")
@@ -6646,8 +6646,8 @@ local function CreateSetting_ClassFilters(parent)
             last = widget.filters[class]
         end
 
-        local n = ceil(F:Getn(widget.filters) / 2)
-        P:Height(widget, 10 + 20 * n + 5 * (n - 1))
+        local n = ceil(F.Getn(widget.filters) / 2)
+        P.Height(widget, 10 + 20 * n + 5 * (n - 1))
 
         -- callback
         function widget:SetFunc(func)
@@ -6673,7 +6673,7 @@ end
 -- update parent height
 -----------------------------------------
 local settingsParent
-function addon:UpdateIndicatorSettingsHeight()
+function Cell.UpdateIndicatorSettingsHeight()
     local count, height = 0, 0
     for _, w in pairs(settingWidgets) do
         if w:IsShown() then
@@ -6681,7 +6681,7 @@ function addon:UpdateIndicatorSettingsHeight()
             height = height + w:GetHeight()
         end
     end
-    settingsParent:SetHeight(height + (count-1)*P:Scale(10))
+    settingsParent:SetHeight(height + (count-1)*P.Scale(10))
 end
 
 -----------------------------------------
@@ -6742,10 +6742,10 @@ local builders = {
     -- ["showOn"] = CreateSetting_ShowOn,
     ["maxValue"] = CreateSetting_MaxValue,
     ["iconStyle"] = CreateSetting_IconStyle,
-    ["powerTextFilters"] = addon.isVanilla and CreateSetting_ClassFilters or CreateSetting_RoleFilters,
+    ["powerTextFilters"] = Cell.isVanilla and CreateSetting_ClassFilters or CreateSetting_RoleFilters,
 }
 
-function addon:CreateIndicatorSettings(parent, settingsTable)
+function Cell.CreateIndicatorSettings(parent, settingsTable)
     settingsParent = parent
 
     local widgetsTable = {}

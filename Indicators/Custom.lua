@@ -26,27 +26,27 @@ function I.UpdateIndicatorTable(indicatorTable)
     -- NOTE: icons is different from other custom indicators, more like the Debuffs indicator
     if indicatorTable["type"] == "icons" then
         customIndicators[auraType][indicatorName] = {
-            ["auras"] = F:ConvertSpellTable(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
+            ["auras"] = F.ConvertSpellTable(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
             ["found"] = {},
             ["num"] = indicatorTable["num"],
         }
     elseif indicatorTable["type"] == "bars" or indicatorTable["type"] == "blocks" then
         customIndicators[auraType][indicatorName] = {
-            ["auras"] = F:ConvertSpellTable_WithColor(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
+            ["auras"] = F.ConvertSpellTable_WithColor(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
             ["hasColor"] = true,
             ["found"] = {},
             ["num"] = indicatorTable["num"],
         }
     elseif indicatorTable["type"] == "border" then
         customIndicators[auraType][indicatorName] = {
-            ["auras"] = F:ConvertSpellTable_WithColor(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
+            ["auras"] = F.ConvertSpellTable_WithColor(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
             ["hasColor"] = true,
             ["top"] = {},
             ["topOrder"] = {},
         }
     else
         customIndicators[auraType][indicatorName] = {
-            ["auras"] = F:ConvertSpellTable(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
+            ["auras"] = F.ConvertSpellTable(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
             ["top"] = {}, -- top aura details
             ["topOrder"] = {}, -- top aura order
         }
@@ -57,7 +57,7 @@ function I.UpdateIndicatorTable(indicatorTable)
 
     if auraType == "buff" then
         customIndicators[auraType][indicatorName]["castBy"] = indicatorTable["castBy"]
-        customIndicators[auraType][indicatorName]["_auras"] = F:Copy(indicatorTable["auras"]) --* save ids
+        customIndicators[auraType][indicatorName]["_auras"] = F.Copy(indicatorTable["auras"]) --* save ids
         customIndicators[auraType][indicatorName]["trackByName"] = indicatorTable["trackByName"]
     end
 end
@@ -149,20 +149,20 @@ local function UpdateCustomIndicators(layout, indicatorName, setting, value, val
             enabledIndicators[indicatorName] = nil
         end
     elseif setting == "auras" then
-        customIndicators[value][indicatorName]["_auras"] = F:Copy(value2) --* save ids
+        customIndicators[value][indicatorName]["_auras"] = F.Copy(value2) --* save ids
         if customIndicators[value][indicatorName]["hasColor"] then
-            customIndicators[value][indicatorName]["auras"] = F:ConvertSpellTable_WithColor(value2, customIndicators[value][indicatorName]["trackByName"])
+            customIndicators[value][indicatorName]["auras"] = F.ConvertSpellTable_WithColor(value2, customIndicators[value][indicatorName]["trackByName"])
         else
-            customIndicators[value][indicatorName]["auras"] = F:ConvertSpellTable(value2, customIndicators[value][indicatorName]["trackByName"])
+            customIndicators[value][indicatorName]["auras"] = F.ConvertSpellTable(value2, customIndicators[value][indicatorName]["trackByName"])
         end
     elseif setting == "checkbutton" then
         if customIndicators["buff"][indicatorName] then
             customIndicators["buff"][indicatorName][value] = value2
             if value == "trackByName" then
                 if customIndicators["buff"][indicatorName]["hasColor"] then
-                    customIndicators["buff"][indicatorName]["auras"] = F:ConvertSpellTable_WithColor(customIndicators["buff"][indicatorName]["_auras"], value2)
+                    customIndicators["buff"][indicatorName]["auras"] = F.ConvertSpellTable_WithColor(customIndicators["buff"][indicatorName]["_auras"], value2)
                 else
-                    customIndicators["buff"][indicatorName]["auras"] = F:ConvertSpellTable(customIndicators["buff"][indicatorName]["_auras"], value2)
+                    customIndicators["buff"][indicatorName]["auras"] = F.ConvertSpellTable(customIndicators["buff"][indicatorName]["_auras"], value2)
                 end
             end
         elseif customIndicators["debuff"][indicatorName] then
@@ -176,7 +176,7 @@ local function UpdateCustomIndicators(layout, indicatorName, setting, value, val
         end
     end
 end
-Cell:RegisterCallback("UpdateIndicators", "UpdateCustomIndicators", UpdateCustomIndicators)
+Cell.RegisterCallback("UpdateIndicators", "UpdateCustomIndicators", UpdateCustomIndicators)
 
 -------------------------------------------------
 -- reset

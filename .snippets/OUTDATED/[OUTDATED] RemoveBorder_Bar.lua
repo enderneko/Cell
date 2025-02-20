@@ -38,7 +38,7 @@ end
 function I.CreateAura_Bar(name, parent)
     local bar = CreateFrame("StatusBar", name, parent, "BackdropTemplate")
     bar:SetStatusBarTexture(Cell.vars.whiteTexture)
-    P:Size(bar, 18, 4)
+    P.Size(bar, 18, 4)
     bar:SetBackdrop({bgFile=Cell.vars.whiteTexture})
     bar:SetBackdropColor(0.07, 0.07, 0.07, 0.7)
     bar:Hide()
@@ -62,8 +62,8 @@ function I.CreateAura_Bar(name, parent)
     end
 
     function bar:UpdatePixelPerfect()
-        P:Resize(bar)
-        P:Repoint(bar)
+        P.Resize(bar)
+        P.Repoint(bar)
     end
 
     return bar

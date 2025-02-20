@@ -8,7 +8,7 @@ local readyBtn, pullBtn
 
 local buttonsFrame = CreateFrame("Frame", "CellReadyAndPullFrame", Cell.frames.mainFrame, "SecureFrameTemplate,BackdropTemplate")
 Cell.frames.readyAndPullFrame = buttonsFrame
-P:Size(buttonsFrame, 60, 55)
+P.Size(buttonsFrame, 60, 55)
 PixelUtil.SetPoint(buttonsFrame, "TOPRIGHT", UIParent, "CENTER", -1, -1)
 buttonsFrame:SetClampedToScreen(true)
 buttonsFrame:SetMovable(true)
@@ -19,7 +19,7 @@ buttonsFrame:SetScript("OnDragStart", function()
 end)
 buttonsFrame:SetScript("OnDragStop", function()
     buttonsFrame:StopMovingOrSizing()
-    P:SavePosition(buttonsFrame, CellDB["tools"]["readyAndPull"][4])
+    P.SavePosition(buttonsFrame, CellDB["tools"]["readyAndPull"][4])
 end)
 
 -------------------------------------------------
@@ -35,8 +35,8 @@ local function ShowMover(show)
         if not CellDB["tools"]["readyAndPull"][1] then return end
         buttonsFrame:EnableMouse(true)
         buttonsFrame.moverText:Show()
-        Cell:StylizeFrame(buttonsFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
-        if not F:HasPermission() then -- button not shown
+        Cell.StylizeFrame(buttonsFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
+        if not F.HasPermission() then -- button not shown
             readyBtn:Show()
             pullBtn:Show()
         end
@@ -44,20 +44,20 @@ local function ShowMover(show)
     else
         buttonsFrame:EnableMouse(false)
         buttonsFrame.moverText:Hide()
-        Cell:StylizeFrame(buttonsFrame, {0, 0, 0, 0}, {0, 0, 0, 0})
-        if not F:HasPermission() then -- button should not shown
+        Cell.StylizeFrame(buttonsFrame, {0, 0, 0, 0}, {0, 0, 0, 0})
+        if not F.HasPermission() then -- button should not shown
             readyBtn:Hide()
             pullBtn:Hide()
         end
         buttonsFrame:SetAlpha(CellDB["tools"]["fadeOut"] and 0 or 1)
     end
 end
-Cell:RegisterCallback("ShowMover", "RaidButtons_ShowMover", ShowMover)
+Cell.RegisterCallback("ShowMover", "RaidButtons_ShowMover", ShowMover)
 
 -------------------------------------------------
 -- pull
 -------------------------------------------------
-pullBtn = Cell:CreateStatusBarButton(buttonsFrame, L["Pull"], {60, 17}, 7, "SecureActionButtonTemplate")
+pullBtn = Cell.CreateStatusBarButton(buttonsFrame, L["Pull"], {60, 17}, 7, "SecureActionButtonTemplate")
 pullBtn:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
 pullBtn:Hide()
 
@@ -146,8 +146,8 @@ end
 -------------------------------------------------
 -- ready
 -------------------------------------------------
-readyBtn = Cell:CreateStatusBarButton(buttonsFrame, L["Ready"], {60, 17}, 35)
--- P:Point(readyBtn, "BOTTOMLEFT", pullBtn, "TOPLEFT", 0, 3)
+readyBtn = Cell.CreateStatusBarButton(buttonsFrame, L["Ready"], {60, 17}, 35)
+-- P.Point(readyBtn, "BOTTOMLEFT", pullBtn, "TOPLEFT", 0, 3)
 readyBtn:Hide()
 
 readyBtn:RegisterForClicks("LeftButtonDown", "RightButtonDown")
@@ -188,7 +188,7 @@ end)
 local function CreateTexture(b, tex)
     b.tex = b:CreateTexture(nil, "ARTWORK")
     b.tex:SetPoint("CENTER")
-    P:Size(b.tex, 16, 16)
+    P.Size(b.tex, 16, 16)
     b.tex:SetTexture(tex)
 
     -- push effect
@@ -217,20 +217,20 @@ local function CreateTexture(b, tex)
 end
 
 local function UpdateStyle()
-    P:ClearPoints(pullBtn)
-    P:ClearPoints(readyBtn)
+    P.ClearPoints(pullBtn)
+    P.ClearPoints(readyBtn)
 
     if CellDB["tools"]["readyAndPull"][2] == "text_button" then
         readyBtn:RegisterEvent("READY_CHECK")
         readyBtn:RegisterEvent("READY_CHECK_FINISHED")
         readyBtn:RegisterEvent("READY_CHECK_CONFIRM")
 
-        P:Size(buttonsFrame, 60, 55)
-        P:Size(pullBtn, 60, 17)
-        P:Size(readyBtn, 60, 17)
+        P.Size(buttonsFrame, 60, 55)
+        P.Size(pullBtn, 60, 17)
+        P.Size(readyBtn, 60, 17)
 
-        P:Point(pullBtn, "BOTTOMLEFT")
-        P:Point(readyBtn, "BOTTOMLEFT", pullBtn, "TOPLEFT", 0, 3)
+        P.Point(pullBtn, "BOTTOMLEFT")
+        P.Point(readyBtn, "BOTTOMLEFT", pullBtn, "TOPLEFT", 0, 3)
 
         pullBtn.tex:Hide()
         pullBtn:SetText(L["Pull"])
@@ -244,19 +244,19 @@ local function UpdateStyle()
         readyBtn:UnregisterAllEvents()
 
         if CellDB["tools"]["readyAndPull"][2] == "icon_button_h" then -- horizontal
-            buttonsFrame:SetSize(P:Scale(40)+P:Scale(2), P:Scale(40))
-            P:Size(pullBtn, 20, 20)
-            P:Size(readyBtn, 20, 20)
+            buttonsFrame:SetSize(P.Scale(40)+P.Scale(2), P.Scale(40))
+            P.Size(pullBtn, 20, 20)
+            P.Size(readyBtn, 20, 20)
 
-            P:Point(readyBtn, "BOTTOMLEFT")
-            P:Point(pullBtn, "BOTTOMLEFT", readyBtn, "BOTTOMRIGHT", 2, 0)
+            P.Point(readyBtn, "BOTTOMLEFT")
+            P.Point(pullBtn, "BOTTOMLEFT", readyBtn, "BOTTOMRIGHT", 2, 0)
         else -- vertical
-            P:Size(buttonsFrame, 20, 62)
-            P:Size(pullBtn, 20, 20)
-            P:Size(readyBtn, 20, 20)
+            P.Size(buttonsFrame, 20, 62)
+            P.Size(pullBtn, 20, 20)
+            P.Size(readyBtn, 20, 20)
 
-            P:Point(pullBtn, "BOTTOMLEFT")
-            P:Point(readyBtn, "BOTTOMLEFT", pullBtn, "TOPLEFT", 0, 2)
+            P.Point(pullBtn, "BOTTOMLEFT")
+            P.Point(readyBtn, "BOTTOMLEFT", pullBtn, "TOPLEFT", 0, 2)
         end
 
         pullBtn.tex:Show()
@@ -269,7 +269,7 @@ end
 -------------------------------------------------
 -- fade out
 -------------------------------------------------
-A:ApplyFadeInOutToParent(buttonsFrame, function()
+A.ApplyFadeInOutToParent(buttonsFrame, function()
     return CellDB["tools"]["fadeOut"] and not buttonsFrame.moverText:IsShown()
 end, readyBtn, pullBtn)
 
@@ -281,7 +281,7 @@ local function CheckPermission()
         buttonsFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
         buttonsFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-        if F:HasPermission() and CellDB["tools"]["readyAndPull"][1] then
+        if F.HasPermission() and CellDB["tools"]["readyAndPull"][1] then
             readyBtn:Show()
             readyBtn:SetEnabled(true)
             pullBtn:Show()
@@ -299,7 +299,7 @@ buttonsFrame:SetScript("OnEvent", function()
     CheckPermission()
 end)
 
-Cell:RegisterCallback("PermissionChanged", "RaidButtons_PermissionChanged", CheckPermission)
+Cell.RegisterCallback("PermissionChanged", "RaidButtons_PermissionChanged", CheckPermission)
 
 local function UpdateTools(which)
     if not which or which == "buttons" then
@@ -364,14 +364,14 @@ local function UpdateTools(which)
     end
 
     if not which then -- position
-        P:LoadPosition(buttonsFrame, CellDB["tools"]["readyAndPull"][4])
+        P.LoadPosition(buttonsFrame, CellDB["tools"]["readyAndPull"][4])
     end
 end
-Cell:RegisterCallback("UpdateTools", "RaidButtons_UpdateTools", UpdateTools)
+Cell.RegisterCallback("UpdateTools", "RaidButtons_UpdateTools", UpdateTools)
 
 local function UpdatePixelPerfect()
-    -- P:Resize(buttonsFrame)
+    -- P.Resize(buttonsFrame)
     readyBtn:UpdatePixelPerfect()
     pullBtn:UpdatePixelPerfect()
 end
-Cell:RegisterCallback("UpdatePixelPerfect", "RaidButtons_UpdatePixelPerfect", UpdatePixelPerfect)
+Cell.RegisterCallback("UpdatePixelPerfect", "RaidButtons_UpdatePixelPerfect", UpdatePixelPerfect)

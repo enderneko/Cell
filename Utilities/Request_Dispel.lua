@@ -15,8 +15,8 @@ local drEnabledCB, drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, d
 local drType
 
 local function UpdateDRWidgets()
-    Cell:SetEnabled(CellDB["dispelRequest"]["enabled"], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drTypeDD, drTypeText, drTypeOptionsBtn)
-    Cell:SetEnabled(CellDB["dispelRequest"]["enabled"] and CellDB["dispelRequest"]["responseType"] == "specific", drDebuffsText)
+    Cell.SetEnabled(CellDB["dispelRequest"]["enabled"], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drTypeDD, drTypeText, drTypeOptionsBtn)
+    Cell.SetEnabled(CellDB["dispelRequest"]["enabled"] and CellDB["dispelRequest"]["responseType"] == "specific", drDebuffsText)
     if CellDB["dispelRequest"]["enabled"] and CellDB["dispelRequest"]["responseType"] == "specific" then
         drDebuffsList.mask:Hide()
     else
@@ -25,44 +25,44 @@ local function UpdateDRWidgets()
 end
 
 local function CreateDRPane()
-    drPane = Cell:CreateTitledPane(Cell.frames.utilitiesTab, L["Dispel Request"], 422, 183)
+    drPane = Cell.CreateTitledPane(Cell.frames.utilitiesTab, L["Dispel Request"], 422, 183)
     drPane:SetPoint("TOPLEFT", 5, -5)
     drPane:SetPoint("BOTTOMRIGHT", -5, 5)
     drPane:SetScript("OnHide", function()
-        U:HideGlowOptions()
-        U:HideTextOptions()
+        U.HideGlowOptions()
+        U.HideTextOptions()
     end)
 
     local drTips = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     drTips:SetPoint("TOPLEFT", 5, -25)
     drTips:SetJustifyH("LEFT")
     drTips:SetSpacing(5)
-    drTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["DISPEL"].."|r"))
+    drTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell.GetAccentColorString()..L["DISPEL"].."|r"))
 
     -- enabled ----------------------------------------------------------------------
-    drEnabledCB = Cell:CreateCheckButton(drPane, L["Enabled"], function(checked, self)
+    drEnabledCB = Cell.CreateCheckButton(drPane, L["Enabled"], function(checked, self)
         CellDB["dispelRequest"]["enabled"] = checked
         UpdateDRWidgets()
-        Cell:Fire("UpdateRequests", "dispelRequest")
+        Cell.Fire("UpdateRequests", "dispelRequest")
         CellDropdownList:Hide()
 
-        U:HideGlowOptions()
-        U:HideTextOptions()
-        Cell:StopRainbowText(drTypeOptionsBtn:GetFontString())
+        U.HideGlowOptions()
+        U.HideTextOptions()
+        Cell.StopRainbowText(drTypeOptionsBtn:GetFontString())
     end)
     drEnabledCB:SetPoint("TOPLEFT", drPane, "TOPLEFT", 5, -80)
     ---------------------------------------------------------------------------------
 
     -- dispellable ------------------------------------------------------------------
-    drDispellableCB = Cell:CreateCheckButton(drPane, L["Dispellable By Me"], function(checked, self)
+    drDispellableCB = Cell.CreateCheckButton(drPane, L["Dispellable By Me"], function(checked, self)
         CellDB["dispelRequest"]["dispellableByMe"] = checked
-        Cell:Fire("UpdateRequests", "dispelRequest")
+        Cell.Fire("UpdateRequests", "dispelRequest")
     end)
     drDispellableCB:SetPoint("TOPLEFT", drEnabledCB, "TOPLEFT", 200, 0)
     ---------------------------------------------------------------------------------
 
     -- response ---------------------------------------------------------------------
-    drResponseDD = Cell:CreateDropdown(drPane, 345)
+    drResponseDD = Cell.CreateDropdown(drPane, 345)
     drResponseDD:SetPoint("TOPLEFT", drEnabledCB, "BOTTOMLEFT", 0, -37)
     drResponseDD:SetItems({
         {
@@ -71,7 +71,7 @@ local function CreateDRPane()
             ["onClick"] = function()
                 CellDB["dispelRequest"]["responseType"] = "all"
                 UpdateDRWidgets()
-                Cell:Fire("UpdateRequests", "dispelRequest")
+                Cell.Fire("UpdateRequests", "dispelRequest")
             end
         },
         {
@@ -80,7 +80,7 @@ local function CreateDRPane()
             ["onClick"] = function()
                 CellDB["dispelRequest"]["responseType"] = "specific"
                 UpdateDRWidgets()
-                Cell:Fire("UpdateRequests", "dispelRequest")
+                Cell.Fire("UpdateRequests", "dispelRequest")
             end
         },
     })
@@ -91,7 +91,7 @@ local function CreateDRPane()
     ---------------------------------------------------------------------------------
 
     -- timeout ----------------------------------------------------------------------
-    drTimeoutDD = Cell:CreateDropdown(drPane, 60)
+    drTimeoutDD = Cell.CreateDropdown(drPane, 60)
     drTimeoutDD:SetPoint("TOPLEFT", drResponseDD, "TOPRIGHT", 7, 0)
 
     local items = {}
@@ -102,7 +102,7 @@ local function CreateDRPane()
             ["value"] = s,
             ["onClick"] = function()
                 CellDB["dispelRequest"]["timeout"] = s
-                Cell:Fire("UpdateRequests", "dispelRequest")
+                Cell.Fire("UpdateRequests", "dispelRequest")
             end
         })
     end
@@ -114,7 +114,7 @@ local function CreateDRPane()
     ---------------------------------------------------------------------------------
 
     -- macro ------------------------------------------------------------------------
-    drMacroEB = Cell:CreateEditBox(drPane, 412, 20)
+    drMacroEB = Cell.CreateEditBox(drPane, 412, 20)
     drMacroEB:SetPoint("TOPLEFT", drResponseDD, "BOTTOMLEFT", 0, -27)
 
     drMacroEB:SetText("/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_D\",\"D\",\"RAID\")")
@@ -134,13 +134,13 @@ local function CreateDRPane()
     drMacroEB:SetScript("OnEditFocusGained", function()
         local requiredWidth = drMacroEB.gauge:GetStringWidth()
         if requiredWidth > drMacroEB:GetWidth() then
-            P:Width(drMacroEB, requiredWidth + 20)
+            P.Width(drMacroEB, requiredWidth + 20)
         end
         drMacroEB:HighlightText()
     end)
 
     drMacroEB:SetScript("OnEditFocusLost", function()
-        P:Width(drMacroEB, 412)
+        P.Width(drMacroEB, 412)
         drMacroEB:SetCursorPosition(0)
         drMacroEB:HighlightText(0, 0)
     end)
@@ -155,14 +155,14 @@ local function CreateDRPane()
     drDebuffsList = CreateFrame("Frame", nil, drPane)
     drDebuffsList:SetPoint("TOPLEFT", drMacroEB, "BOTTOMLEFT", 0, -35)
     drDebuffsList:SetSize(270, 172)
-    Cell:CreateScrollFrame(drDebuffsList)
-    Cell:StylizeFrame(drDebuffsList.scrollFrame)
+    Cell.CreateScrollFrame(drDebuffsList)
+    Cell.StylizeFrame(drDebuffsList.scrollFrame)
     drDebuffsList.scrollFrame:SetScrollStep(19)
 
-    Cell:CreateMask(drDebuffsList)
+    Cell.CreateMask(drDebuffsList)
     drDebuffsList.mask:Hide()
 
-    local popup = Cell:CreatePopupEditBox(drDebuffsList)
+    local popup = Cell.CreatePopupEditBox(drDebuffsList)
     popup:SetNumeric(true)
     popup:SetScript("OnTextChanged", function()
         local spellId = tonumber(popup:GetText())
@@ -171,7 +171,7 @@ local function CreateDRPane()
             return
         end
 
-        local name, tex = F:GetSpellInfo(spellId)
+        local name, tex = F.GetSpellInfo(spellId)
         if not name then
             CellSpellTooltip:Hide()
             return
@@ -187,18 +187,18 @@ local function CreateDRPane()
         CellSpellTooltip:Hide()
     end)
 
-    debuffItems[0] = Cell:CreateButton(drDebuffsList.scrollFrame.content, "", "transparent-accent", {20, 20})
+    debuffItems[0] = Cell.CreateButton(drDebuffsList.scrollFrame.content, "", "transparent-accent", {20, 20})
     debuffItems[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\new", {16, 16}, {"RIGHT", -1, 0})
     debuffItems[0]:SetScript("OnClick", function(self)
-        local popup = Cell:CreatePopupEditBox(drDebuffsList, function(text)
+        local popup = Cell.CreatePopupEditBox(drDebuffsList, function(text)
             local spellId = tonumber(text)
-            local spellName = F:GetSpellInfo(spellId)
+            local spellName = F.GetSpellInfo(spellId)
             if spellId and spellName then
                 -- update db
                 tinsert(CellDB["dispelRequest"]["debuffs"], spellId)
                 LoadList(true)
             else
-                F:Print(L["Invalid spell id."])
+                F.Print(L["Invalid spell id."])
             end
         end)
         popup:SetPoint("TOPLEFT", self)
@@ -214,33 +214,33 @@ local function CreateDRPane()
     ---------------------------------------------------------------------------------
 
     -- type -------------------------------------------------------------------------
-    drTypeDD = Cell:CreateDropdown(drPane, 135)
+    drTypeDD = Cell.CreateDropdown(drPane, 135)
     drTypeDD:SetPoint("TOPLEFT", drDebuffsList, "TOPRIGHT", 7, 0)
     drTypeDD:SetItems({
         {
             ["text"] = L["Text"],
             ["value"] = "text",
             ["onClick"] = function()
-                U:HideGlowOptions()
-                U:HideTextOptions()
-                Cell:StopRainbowText(drTypeOptionsBtn:GetFontString())
+                U.HideGlowOptions()
+                U.HideTextOptions()
+                Cell.StopRainbowText(drTypeOptionsBtn:GetFontString())
                 drTypeOptionsBtn:SetText(L["Text Options"])
                 CellDB["dispelRequest"]["type"] = "text"
                 drType = "text"
-                Cell:Fire("UpdateRequests", "dispelRequest")
+                Cell.Fire("UpdateRequests", "dispelRequest")
             end
         },
         {
             ["text"] = L["Glow"],
             ["value"] = "glow",
             ["onClick"] = function()
-                U:HideGlowOptions()
-                U:HideTextOptions()
-                Cell:StopRainbowText(drTypeOptionsBtn:GetFontString())
+                U.HideGlowOptions()
+                U.HideTextOptions()
+                Cell.StopRainbowText(drTypeOptionsBtn:GetFontString())
                 drTypeOptionsBtn:SetText(L["Glow Options"])
                 CellDB["dispelRequest"]["type"] = "glow"
                 drType = "glow"
-                Cell:Fire("UpdateRequests", "dispelRequest")
+                Cell.Fire("UpdateRequests", "dispelRequest")
             end
         },
     })
@@ -252,26 +252,26 @@ local function CreateDRPane()
     ---------------------------------------------------------------------------------
 
     -- type option ------------------------------------------------------------------
-    drTypeOptionsBtn = Cell:CreateButton(drPane, L["Glow Options"], "accent", {135, 20})
+    drTypeOptionsBtn = Cell.CreateButton(drPane, L["Glow Options"], "accent", {135, 20})
     drTypeOptionsBtn:SetPoint("TOPLEFT", drTypeDD, "BOTTOMLEFT", 0, -15)
     drTypeOptionsBtn:SetScript("OnClick", function()
         local fs = drTypeOptionsBtn:GetFontString()
         if fs.rainbow then
-            Cell:StopRainbowText(fs)
+            Cell.StopRainbowText(fs)
         else
-            Cell:StartRainbowText(fs)
+            Cell.StartRainbowText(fs)
         end
 
         if drType == "text" then
-            U:ShowTextOptions(Cell.frames.utilitiesTab)
+            U.ShowTextOptions(Cell.frames.utilitiesTab)
         else
-            U:ShowGlowOptions(Cell.frames.utilitiesTab, CellDB["dispelRequest"]["glowOptions"])
+            U.ShowGlowOptions(Cell.frames.utilitiesTab, CellDB["dispelRequest"]["glowOptions"])
         end
     end)
     drTypeOptionsBtn:SetScript("OnHide", function()
-        Cell:StopRainbowText(drTypeOptionsBtn:GetFontString())
+        Cell.StopRainbowText(drTypeOptionsBtn:GetFontString())
     end)
-    Cell:RegisterForCloseDropdown(drTypeOptionsBtn)
+    Cell.RegisterForCloseDropdown(drTypeOptionsBtn)
     ---------------------------------------------------------------------------------
 end
 
@@ -285,7 +285,7 @@ LoadList = function(scrollToBottom)
 
     for i, id in ipairs(CellDB["dispelRequest"]["debuffs"]) do
         if not debuffItems[i] then
-            debuffItems[i] = Cell:CreateButton(drDebuffsList.scrollFrame.content, "", "transparent-accent", {20, 20})
+            debuffItems[i] = Cell.CreateButton(drDebuffsList.scrollFrame.content, "", "transparent-accent", {20, 20})
 
             -- icon
             debuffItems[i].spellIconBg = debuffItems[i]:CreateTexture(nil, "BORDER")
@@ -315,7 +315,7 @@ LoadList = function(scrollToBottom)
             debuffItems[i].spellNameText:SetJustifyH("LEFT")
 
             -- del
-            debuffItems[i].del = Cell:CreateButton(debuffItems[i], "", "none", {18, 20}, true, true)
+            debuffItems[i].del = Cell.CreateButton(debuffItems[i], "", "none", {18, 20}, true, true)
             debuffItems[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
             debuffItems[i].del:SetPoint("RIGHT")
             debuffItems[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
@@ -331,7 +331,7 @@ LoadList = function(scrollToBottom)
             -- tooltip
             debuffItems[i]:HookScript("OnEnter", function(self)
                 if not drDebuffsList.popupEditBox:IsShown() then
-                    local name, icon = F:GetSpellInfo(self.spellId)
+                    local name, icon = F.GetSpellInfo(self.spellId)
                     if not name then
                         CellSpellTooltip:Hide()
                         return
@@ -350,7 +350,7 @@ LoadList = function(scrollToBottom)
             end)
         end
 
-        local name, icon = F:GetSpellInfo(id)
+        local name, icon = F.GetSpellInfo(id)
 
         debuffItems[i].spellId = id
         debuffItems[i].spellIdText:SetText(id)
@@ -368,7 +368,7 @@ LoadList = function(scrollToBottom)
 
         debuffItems[i].del:SetScript("OnClick", function()
             tremove(CellDB["dispelRequest"]["debuffs"], i)
-            Cell:Fire("UpdateRequests", "dispelRequest")
+            Cell.Fire("UpdateRequests", "dispelRequest")
             LoadList()
         end)
 
@@ -399,7 +399,7 @@ local flipBookFrames = {
     ["C"] = 25,
 }
 
-function U:CreateDispelRequestText(parent)
+function U.CreateDispelRequestText(parent)
     local drText = CreateFrame("Frame", parent:GetName().."DispelRequestText", parent.widgets.indicatorFrame)
     parent.widgets.drText = drText
     drText:SetIgnoreParentAlpha(true)
@@ -476,4 +476,4 @@ local function ShowUtilitySettings(which)
         drPane:Hide()
     end
 end
-Cell:RegisterCallback("ShowUtilitySettings", "DispelRequest_ShowUtilitySettings", ShowUtilitySettings)
+Cell.RegisterCallback("ShowUtilitySettings", "DispelRequest_ShowUtilitySettings", ShowUtilitySettings)

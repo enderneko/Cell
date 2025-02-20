@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-26 04:40:40 +08:00
--- Modified: 2024-07-05 14:34 +08:00
+-- Modified: 2025-02-20 16:12 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -17,7 +17,7 @@ Cell_ExpansionData = {
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-Cell:RegisterCallback("AddonLoaded", "UpdateExpansionData", function()
+Cell.RegisterCallback("AddonLoaded", "UpdateExpansionData", function()
     local index
     if Cell.isVanilla then
         index = 1
@@ -36,14 +36,14 @@ Cell:RegisterCallback("AddonLoaded", "UpdateExpansionData", function()
     end
 end)
 
-function F:GetExpansionList()
+function F.GetExpansionList()
     if Cell_ExpansionData["locale"] ~= GetLocale() then
-        F:Print("Missing localized expansion data for "..GetLocale()..", Raid Debuffs may not work properly, please report to author.")
+        F.Print("Missing localized expansion data for "..GetLocale()..", Raid Debuffs may not work properly, please report to author.")
     end
     return Cell_ExpansionData["expansions"]
 end
 
-function F:GetExpansionData()
+function F.GetExpansionData()
     return Cell_ExpansionData["data"]
 end
 

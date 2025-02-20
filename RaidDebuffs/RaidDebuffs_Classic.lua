@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\RaidDebuffs_Classic.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-05 17:46:11 +08:00
--- Modified: 2023-07-16 15:34:29 +08:00
+-- Modified: 2025-02-20 16:08 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -514,4 +514,4 @@ local debuffs = {
     },
 }
 
-F:LoadBuiltInDebuffs(debuffs)
+F.LoadBuiltInDebuffs(debuffs)

@@ -126,10 +126,10 @@ local function UpdateCastsOnUnit(guid)
     local n = #sortedCastsOnUnit[guid]
 
     if n == 0 then
-        F:HandleUnitButton("guid", guid, HideCasts)
+        F.HandleUnitButton("guid", guid, HideCasts)
     else
         table.sort(sortedCastsOnUnit[guid], Comparator)
-        F:HandleUnitButton("guid", guid, ShowCasts, showGlow, sortedCastsOnUnit[guid], n)
+        F.HandleUnitButton("guid", guid, ShowCasts, showGlow, sortedCastsOnUnit[guid], n)
     end
 end
 
@@ -184,7 +184,7 @@ local function CheckUnitCast(sourceUnit, isRecheck)
         end
 
         local targetUnit = sourceUnit.."target"
-        targetUnit = F:GetTargetUnitID(targetUnit) -- units in group (players/pets), no npcs
+        targetUnit = F.GetTargetUnitID(targetUnit) -- units in group (players/pets), no npcs
         if targetUnit then targetGUID = UnitGUID(targetUnit) end
 
         -- update spell target
@@ -248,7 +248,7 @@ end)
 eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
     if event == "ENCOUNTER_END" then
         Reset()
-        F:IterateAllUnitButtons(HideCasts, true)
+        F.IterateAllUnitButtons(HideCasts, true)
         return
     end
 
@@ -383,12 +383,12 @@ end
 -- NOTE: in case there's a casting spell, hide!
 local function EnterLeaveInstance()
     Reset()
-    F:IterateAllUnitButtons(HideCasts, true)
+    F.IterateAllUnitButtons(HideCasts, true)
 end
 
 function I.EnableTargetedSpells(enabled)
     if enabled then
-        F:IterateAllUnitButtons(function(b)
+        F.IterateAllUnitButtons(function(b)
             b.indicators.targetedSpells:Show()
         end, true)
 
@@ -411,17 +411,17 @@ function I.EnableTargetedSpells(enabled)
 
         eventFrame:RegisterEvent("ENCOUNTER_END")
 
-        Cell:RegisterCallback("EnterInstance", "TargetedSpells_EnterInstance", EnterLeaveInstance)
-        Cell:RegisterCallback("LeaveInstance", "TargetedSpells_LeaveInstance", EnterLeaveInstance)
+        Cell.RegisterCallback("EnterInstance", "TargetedSpells_EnterInstance", EnterLeaveInstance)
+        Cell.RegisterCallback("LeaveInstance", "TargetedSpells_LeaveInstance", EnterLeaveInstance)
     else
         Reset()
         eventFrame:Hide()
         eventFrame:UnregisterAllEvents()
 
-        Cell:UnregisterCallback("EnterInstance", "TargetedSpells_EnterInstance")
-        Cell:UnregisterCallback("LeaveInstance", "TargetedSpells_LeaveInstance")
+        Cell.UnregisterCallback("EnterInstance", "TargetedSpells_EnterInstance")
+        Cell.UnregisterCallback("LeaveInstance", "TargetedSpells_LeaveInstance")
 
-        F:IterateAllUnitButtons(function(b)
+        F.IterateAllUnitButtons(function(b)
             HideCasts(b)
             b.indicators.targetedSpells:Hide()
         end, true)

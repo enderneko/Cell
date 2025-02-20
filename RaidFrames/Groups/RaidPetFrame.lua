@@ -18,7 +18,7 @@ Cell.frames.raidPetFrameAnchor = anchorFrame
 anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
 anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
--- Cell:StylizeFrame(anchorFrame, {1, 0, 0, 0.4})
+-- Cell.StylizeFrame(anchorFrame, {1, 0, 0, 0.4})
 
 local hoverFrame = CreateFrame("Frame", nil, raidPetFrame)
 hoverFrame:SetPoint("TOP", anchorFrame, 0, 1)
@@ -26,9 +26,9 @@ hoverFrame:SetPoint("BOTTOM", anchorFrame, 0, -1)
 hoverFrame:SetPoint("LEFT", anchorFrame, -1, 0)
 hoverFrame:SetPoint("RIGHT", anchorFrame, 1, 0)
 
-A:ApplyFadeInOutToMenu(anchorFrame, hoverFrame)
+A.ApplyFadeInOutToMenu(anchorFrame, hoverFrame)
 
-local dumb = Cell:CreateButton(anchorFrame, nil, "accent", {20, 10}, false, true)
+local dumb = Cell.CreateButton(anchorFrame, nil, "accent", {20, 10}, false, true)
 dumb:Hide()
 dumb:SetFrameStrata("MEDIUM")
 dumb:SetAllPoints(anchorFrame)
@@ -38,7 +38,7 @@ dumb:SetScript("OnDragStart", function()
 end)
 dumb:SetScript("OnDragStop", function()
     anchorFrame:StopMovingOrSizing()
-    P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["pet"]["position"])
+    P.SavePosition(anchorFrame, Cell.vars.currentLayoutTable["pet"]["position"])
 end)
 dumb:HookScript("OnEnter", function()
     hoverFrame:GetScript("OnEnter")(hoverFrame)
@@ -137,7 +137,7 @@ end)
 local function UpdatePosition()
     raidPetFrame:ClearAllPoints()
     -- NOTE: detach from spotlightPreviewAnchor
-    P:LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["pet"]["position"])
+    P.LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["pet"]["position"])
 
     local anchor
     if Cell.vars.currentLayoutTable["pet"]["sameArrangementAsMain"] then
@@ -147,7 +147,7 @@ local function UpdatePosition()
     end
 
     if CellDB["general"]["menuPosition"] == "top_bottom" then
-        P:Size(anchorFrame, 20, 10)
+        P.Size(anchorFrame, 20, 10)
         if anchor == "BOTTOMLEFT" then
             raidPetFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "BOTTOMLEFT", 0, -3
@@ -162,7 +162,7 @@ local function UpdatePosition()
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
         end
     else
-        P:Size(anchorFrame, 10, 20)
+        P.Size(anchorFrame, 10, 20)
         if anchor == "BOTTOMLEFT" then
             raidPetFrame:SetPoint("BOTTOMLEFT", anchorFrame, "BOTTOMRIGHT", 4, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "BOTTOMLEFT", -3, 0
@@ -202,7 +202,7 @@ local function UpdateMenu(which)
         UpdatePosition()
     end
 end
-Cell:RegisterCallback("UpdateMenu", "RaidPetFrame_UpdateMenu", UpdateMenu)
+Cell.RegisterCallback("UpdateMenu", "RaidPetFrame_UpdateMenu", UpdateMenu)
 
 local init, previousLayout
 local function RaidPetFrame_UpdateLayout(layout, which)
@@ -225,23 +225,23 @@ local function RaidPetFrame_UpdateLayout(layout, which)
             powerSize = layout["pet"]["powerSize"]
         end
 
-        P:Size(raidPetFrame, width, height)
+        P.Size(raidPetFrame, width, height)
 
-        -- header:SetAttribute("buttonWidth", P:Scale(width))
-        -- header:SetAttribute("buttonHeight", P:Scale(height))
+        -- header:SetAttribute("buttonWidth", P.Scale(width))
+        -- header:SetAttribute("buttonHeight", P.Scale(height))
 
         for i, b in ipairs(header) do
             if not which or strfind(which, "size$") then
-                P:Size(b, width, height)
+                P.Size(b, width, height)
             end
 
             -- NOTE: SetOrientation BEFORE SetPowerSize
             if not which or which == "barOrientation" then
-                B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
+                B.SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
             end
 
             if not which or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
-                B:SetPowerSize(b, powerSize)
+                B.SetPowerSize(b, powerSize)
             end
         end
     end
@@ -337,4 +337,4 @@ local function RaidPetFrame_UpdateLayout(layout, which)
         end
     end
 end
-Cell:RegisterCallback("UpdateLayout", "RaidPetFrame_UpdateLayout", RaidPetFrame_UpdateLayout)
+Cell.RegisterCallback("UpdateLayout", "RaidPetFrame_UpdateLayout", RaidPetFrame_UpdateLayout)

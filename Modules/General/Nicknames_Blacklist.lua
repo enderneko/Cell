@@ -10,7 +10,7 @@ local customs = {}
 
 local function CreateNicknameBlacklistFrame()
     nicknameBlacklistFrame = CreateFrame("Frame", "CellOptionsFrame_Nicknames", Cell.frames.generalTab, "BackdropTemplate")
-    Cell:StylizeFrame(nicknameBlacklistFrame, nil, Cell:GetAccentColorTable())
+    Cell.StylizeFrame(nicknameBlacklistFrame, nil, Cell.GetAccentColorTable())
     nicknameBlacklistFrame:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)
     nicknameBlacklistFrame:Hide()
 
@@ -25,26 +25,26 @@ local function CreateNicknameBlacklistFrame()
     end)
 
     -- button
-    local button = Cell:CreateButton(nicknameBlacklistFrame, L["Blacklist Target Player"], "red", {20, 20})
+    local button = Cell.CreateButton(nicknameBlacklistFrame, L["Blacklist Target Player"], "red", {20, 20})
     button:SetPoint("TOPLEFT", 10, -10)
     button:SetPoint("TOPRIGHT", -10, -10)
     button:SetScript("OnClick", function()
-        local name = F:UnitFullName("target")
-        if name and not F:TContains(CellDB["nicknames"]["blacklist"], name) then
+        local name = F.UnitFullName("target")
+        if name and not F.TContains(CellDB["nicknames"]["blacklist"], name) then
             tinsert(CellDB["nicknames"]["blacklist"], name)
-            Cell:Fire("UpdateNicknames", "blacklist-add", name)
+            Cell.Fire("UpdateNicknames", "blacklist-add", name)
             LoadList()
         end
     end)
 
     -- list
-    list = Cell:CreateFrame(nil, nicknameBlacklistFrame)
+    list = Cell.CreateFrame(nil, nicknameBlacklistFrame)
     list:SetPoint("TOPLEFT", button, "BOTTOMLEFT", 0, -10)
     list:SetPoint("BOTTOMRIGHT", -10, 10)
     list:Show()
 
     -- list scroll
-    Cell:CreateScrollFrame(list)
+    Cell.CreateScrollFrame(list)
     list.scrollFrame:SetScrollStep(19)
 end
 
@@ -56,10 +56,10 @@ LoadList = function()
 
     for i, name in ipairs(CellDB["nicknames"]["blacklist"]) do
         if not customs[i] then
-            customs[i] = Cell:CreateButton(list.scrollFrame.content, "", "accent-hover", {20, 20})
+            customs[i] = Cell.CreateButton(list.scrollFrame.content, "", "accent-hover", {20, 20})
 
             -- del
-            customs[i].del = Cell:CreateButton(customs[i], "", "none", {18, 20}, true, true)
+            customs[i].del = Cell.CreateButton(customs[i], "", "none", {18, 20}, true, true)
             customs[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
             customs[i].del:SetPoint("RIGHT")
             customs[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
@@ -84,7 +84,7 @@ LoadList = function()
 
         customs[i].del:SetScript("OnClick", function()
             tremove(CellDB["nicknames"]["blacklist"], i)
-            Cell:Fire("UpdateNicknames", "blacklist-delete", name)
+            Cell.Fire("UpdateNicknames", "blacklist-delete", name)
             LoadList()
         end)
 
@@ -102,7 +102,7 @@ LoadList = function()
     list.scrollFrame:SetContentHeight(20, #CellDB["nicknames"]["blacklist"], -1)
 end
 
-function F:ShowNicknameBlacklist()
+function F.ShowNicknameBlacklist()
     if not nicknameBlacklistFrame then
         CreateNicknameBlacklistFrame()
     end

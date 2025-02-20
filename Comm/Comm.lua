@@ -17,12 +17,12 @@ local function Deserialize(encoded)
     local decoded = LibDeflate:DecodeForWoWAddonChannel(encoded) -- decode
     local decompressed = LibDeflate:DecompressDeflate(decoded) -- decompress
     if not decompressed then
-        F:Debug("Error decompressing: " .. errorMsg)
+        F.Debug("Error decompressing: " .. errorMsg)
         return
     end
     local success, data = Serializer:Deserialize(decompressed) -- deserialize
     if not success then
-        F:Debug("Error deserializing: " .. data)
+        F.Debug("Error deserializing: " .. data)
         return
     end
     return data
@@ -31,7 +31,7 @@ end
 -----------------------------------------
 -- for WA
 -----------------------------------------
-function F:Notify(type, ...)
+function F.Notify(type, ...)
     if WeakAuras then
         WeakAuras.ScanEvents("CELL_NOTIFY", type, ...)
     end
@@ -81,7 +81,7 @@ Comm:RegisterComm("CELL_VERSION", function(prefix, message, channel, sender)
     local myVersion = tonumber(string.match(Cell.version, "%d+"))
     if (not CellDB["lastVersionCheck"] or time()-CellDB["lastVersionCheck"]>=25200) and version and myVersion and myVersion < version then
         CellDB["lastVersionCheck"] = time()
-        F:Print(L["New version found (%s). Please visit %s to get the latest version."]:format(message, "|cFF00CCFFhttps://www.curseforge.com/wow/addons/cell|r"))
+        F.Print(L["New version found (%s). Please visit %s to get the latest version."]:format(message, "|cFF00CCFFhttps://www.curseforge.com/wow/addons/cell|r"))
     end
 end)
 
@@ -92,27 +92,27 @@ Comm:RegisterComm("CELL_MARKS", function(prefix, message, channel, sender)
     if sender == UnitName("player") then return end
     local data = Deserialize(message)
     if Cell.vars.hasPartyMarkPermission and CellDB["tools"]["marks"][1] and (strfind(CellDB["tools"]["marks"][3], "^target") or strfind(CellDB["tools"]["marks"][3], "^both")) and data then
-        sender = F:GetClassColorStr(select(2, UnitClass(sender)))..sender.."|r"
+        sender = F.GetClassColorStr(select(2, UnitClass(sender)))..sender.."|r"
 
         if data[1] then -- lock
-            F:Print(L["%s lock %s on %s."]:format(sender, F:GetMarkEscapeSequence(data[2]), data[3]))
+            F.Print(L["%s lock %s on %s."]:format(sender, F.GetMarkEscapeSequence(data[2]), data[3]))
         else
-            F:Print(L["%s unlock %s from %s."]:format(sender, F:GetMarkEscapeSequence(data[2]), data[3]))
+            F.Print(L["%s unlock %s from %s."]:format(sender, F.GetMarkEscapeSequence(data[2]), data[3]))
         end
     end
 end)
 
-function F:NotifyMarkLock(mark, name, class)
-    name = F:GetClassColorStr(class)..name.."|r"
-    F:Print(L["%s lock %s on %s."]:format(L["You"], F:GetMarkEscapeSequence(mark), name))
+function F.NotifyMarkLock(mark, name, class)
+    name = F.GetClassColorStr(class)..name.."|r"
+    F.Print(L["%s lock %s on %s."]:format(L["You"], F.GetMarkEscapeSequence(mark), name))
 
     UpdateSendChannel()
     Comm:SendCommMessage("CELL_MARKS", Serialize({true, mark, name}), sendChannel, nil, "ALERT")
 end
 
-function F:NotifyMarkUnlock(mark, name, class)
-    name = F:GetClassColorStr(class)..name.."|r"
-    F:Print(L["%s unlock %s from %s."]:format(L["You"], F:GetMarkEscapeSequence(mark), name))
+function F.NotifyMarkUnlock(mark, name, class)
+    name = F.GetClassColorStr(class)..name.."|r"
+    F.Print(L["%s unlock %s from %s."]:format(L["You"], F.GetMarkEscapeSequence(mark), name))
 
     UpdateSendChannel()
     Comm:SendCommMessage("CELL_MARKS", Serialize({false, mark, name}), sendChannel, nil, "ALERT")
@@ -162,7 +162,7 @@ local function UpdatePriority()
 end
 
 local t_check, t_send, t_update
-function F:CheckPriority()
+function F.CheckPriority()
     UpdatePriority()
     -- NOTE: needs time to calc myPriority
     C_Timer.After(1, function()
@@ -198,8 +198,8 @@ Comm:RegisterComm("CELL_PRIO", function(prefix, message, channel, sender)
         if t_update then t_update:Cancel() end
         t_update = C_Timer.NewTimer(2, function()
             Cell.hasHighestPriority = myPriority <= highestPriority
-            Cell:Fire("UpdatePriority", Cell.hasHighestPriority)
-            F:Debug("|cff00ff00UpdatePriority:|r", Cell.hasHighestPriority)
+            Cell.Fire("UpdatePriority", Cell.hasHighestPriority)
+            F.Debug("|cff00ff00UpdatePriority:|r", Cell.hasHighestPriority)
         end)
     end
 end)
@@ -332,7 +332,7 @@ Comm:RegisterComm("CELL_REQ", function(prefix, message, channel, requester)
 
     -- print(type, name1, name2)
     if type == "Debuffs" then
-        local instanceId, bossId = F:GetInstanceAndBossId(name1, name2)
+        local instanceId, bossId = F.GetInstanceAndBossId(name1, name2)
         if not instanceId then return end -- invalid instanceName
 
         requestData = {
@@ -378,7 +378,7 @@ end)
 
 local function ShowReceivingFrame(type, playerName, name1, name2)
     if not Cell.frames.receivingFrame then
-        Cell.frames.receivingFrame = Cell:CreateReceivingFrame(Cell.frames.mainFrame)
+        Cell.frames.receivingFrame = Cell.CreateReceivingFrame(Cell.frames.mainFrame)
         Cell.frames.receivingFrame:SetOnCancel(function(b)
             isRequesting = false
         end)

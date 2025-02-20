@@ -29,6 +29,6 @@ local function CreateServerName(parent)
     end)
 end
 
-F:IterateAllUnitButtons(function(b)
+F.IterateAllUnitButtons(function(b)
     CreateServerName(b)
 end)

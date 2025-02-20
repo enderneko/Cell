@@ -1,4 +1,4 @@
-Cell.funcs:IterateAllUnitButtons(function(b)
+Cell.funcs.IterateAllUnitButtons(function(b)
     b:HookScript("OnAttributeChanged", function(self, name, value)
         if name == "unit" and type(value) == "string" then
             if not b.indicators.nameText.highlight then

@@ -10,7 +10,7 @@ CELL_SUMMON_ICONS_ENABLED = false
 -------------------------------------------------
 local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function(self, event, unit)
-    F:HandleUnitButton("unit", unit, I.UpdateStatusIcon)
+    F.HandleUnitButton("unit", unit, I.UpdateStatusIcon)
 end)
 
 local function DiedWithSoulstone(b)
@@ -20,8 +20,8 @@ end
 
 local rez = {}
 local soulstones = {}
-local SOULSTONE = F:GetSpellInfo(20707)
-local RESURRECTING = F:GetSpellInfo(160029)
+local SOULSTONE = F.GetSpellInfo(20707)
+local RESURRECTING = F.GetSpellInfo(160029)
 
 local cleuFrame = CreateFrame("Frame")
 cleuFrame:SetScript("OnEvent", function()
@@ -36,19 +36,19 @@ cleuFrame:SetScript("OnEvent", function()
             end)
         elseif spellName == RESURRECTING then
             rez[destGUID] = nil
-            F:HandleUnitButton("guid", destGUID, I.UpdateStatusIcon_Resurrection)
+            F.HandleUnitButton("guid", destGUID, I.UpdateStatusIcon_Resurrection)
         end
     elseif subEvent == "UNIT_DIED" then
         -- print("died", timestamp, destName)
         if soulstones[destGUID] then
-            F:HandleUnitButton("guid", destGUID, DiedWithSoulstone)
+            F.HandleUnitButton("guid", destGUID, DiedWithSoulstone)
         end
         soulstones[destGUID] = nil
     elseif subEvent == "SPELL_RESURRECT" then
         local start, duration = GetTime(), 60
         rez[destGUID] = {start, duration}
 
-        F:HandleUnitButton("guid", destGUID, I.UpdateStatusIcon_Resurrection, start, duration)
+        F.HandleUnitButton("guid", destGUID, I.UpdateStatusIcon_Resurrection, start, duration)
     end
 end)
 
@@ -154,7 +154,7 @@ function I.UpdateStatusIcon_Resurrection(button, start, duration)
     end
 
     if not start then
-        local dur, expir = select(5, F:FindAuraById(unit, "DEBUFF", 160029)) -- battle res
+        local dur, expir = select(5, F.FindAuraById(unit, "DEBUFF", 160029)) -- battle res
         if dur then --! check Resurrecting debuff
             start = expir - dur
             duration = dur
@@ -324,7 +324,7 @@ function I.EnableStatusIcon(enabled)
     else
         eventFrame:UnregisterAllEvents()
         cleuFrame:UnregisterAllEvents()
-        F:IterateAllUnitButtons(function(b)
+        F.IterateAllUnitButtons(function(b)
             b.indicators.statusIcon:Hide()
             b.indicators.resurrectionIcon:Hide()
         end)

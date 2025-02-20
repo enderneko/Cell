@@ -24,12 +24,12 @@ local function DoImport(overwriteExisting)
                 tremove(layout["indicators"], i)
             end
         else -- remove invalid spells from custom indicators
-            F:FilterInvalidSpells(layout["indicators"][i]["auras"])
+            F.FilterInvalidSpells(layout["indicators"][i]["auras"])
         end
     end
 
     -- add missing indicators
-    if F:Getn(builtInFound) ~= Cell.defaults.builtIns then
+    if F.Getn(builtInFound) ~= Cell.defaults.builtIns then
         for indicatorName, index in pairs(Cell.defaults.indicatorIndices) do
             if not builtInFound[indicatorName] then
                 tinsert(layout["indicators"], index, Cell.defaults.layout.indicators[index])
@@ -42,7 +42,7 @@ local function DoImport(overwriteExisting)
     if overwriteExisting then
         --! overwrite if exists
         CellDB["layouts"][name] = layout
-        Cell:Fire("LayoutImported", name)
+        Cell.Fire("LayoutImported", name)
         if importExportFrame then
             importExportFrame:Hide()
         end
@@ -55,37 +55,37 @@ local function DoImport(overwriteExisting)
         until not CellDB["layouts"][name]
 
         CellDB["layouts"][name] = layout
-        Cell:Fire("LayoutImported", name)
+        Cell.Fire("LayoutImported", name)
         if importExportFrame then
             importExportFrame:Hide()
         end
     end
-    F:Print(L["Layout imported: %s."]:format(name))
+    F.Print(L["Layout imported: %s."]:format(name))
 end
 
 local function CreateLayoutImportExportFrame()
     importExportFrame = CreateFrame("Frame", "CellOptionsFrame_LayoutsImportExport", Cell.frames.layoutsTab, "BackdropTemplate")
     importExportFrame:Hide()
-    Cell:StylizeFrame(importExportFrame, nil, Cell:GetAccentColorTable())
+    Cell.StylizeFrame(importExportFrame, nil, Cell.GetAccentColorTable())
     importExportFrame:EnableMouse(true)
     importExportFrame:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)
-    P:Size(importExportFrame, 430, 170)
-    importExportFrame:SetPoint("TOPLEFT", P:Scale(1), -100)
+    P.Size(importExportFrame, 430, 170)
+    importExportFrame:SetPoint("TOPLEFT", P.Scale(1), -100)
 
     if not Cell.frames.layoutsTab.mask then
-        Cell:CreateMask(Cell.frames.layoutsTab, nil, {1, -1, -1, 1})
+        Cell.CreateMask(Cell.frames.layoutsTab, nil, {1, -1, -1, 1})
         Cell.frames.layoutsTab.mask:Hide()
     end
 
     -- close
-    local closeBtn = Cell:CreateButton(importExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
-    closeBtn:SetPoint("TOPRIGHT", P:Scale(-5), P:Scale(-1))
+    local closeBtn = Cell.CreateButton(importExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
+    closeBtn:SetPoint("TOPRIGHT", P.Scale(-5), P.Scale(-1))
     closeBtn:SetScript("OnClick", function() importExportFrame:Hide() end)
 
     -- import
-    importBtn = Cell:CreateButton(importExportFrame, L["Import"], "green", {57, 18})
+    importBtn = Cell.CreateButton(importExportFrame, L["Import"], "green", {57, 18})
     importBtn:Hide()
-    importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", P:Scale(1), 0)
+    importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", P.Scale(1), 0)
     importBtn:SetScript("OnClick", function()
         -- lower frame level
         importExportFrame:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 20)
@@ -93,7 +93,7 @@ local function CreateLayoutImportExportFrame()
         if CellDB["layouts"][imported["name"]] then
             local text = L["Overwrite Layout"]..": "..(imported["name"] == "default" and _G.DEFAULT or imported["name"]).."?\n"..
                 L["|cff1Aff1AYes|r - Overwrite"].."\n"..L["|cffff1A1ANo|r - Create New"]
-            local popup = Cell:CreateConfirmPopup(Cell.frames.layoutsTab, 200, text, function(self)
+            local popup = Cell.CreateConfirmPopup(Cell.frames.layoutsTab, 200, text, function(self)
                 DoImport(true)
             end, function(self)
                 DoImport(false)
@@ -110,7 +110,7 @@ local function CreateLayoutImportExportFrame()
     title:SetPoint("TOPLEFT", 5, -5)
 
     -- textArea
-    textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userChanged)
+    textArea = Cell.CreateScrollEditBox(importExportFrame, function(eb, userChanged)
         if userChanged then
             if isImport then
                 imported = {}
@@ -150,9 +150,9 @@ local function CreateLayoutImportExportFrame()
             end
         end
     end)
-    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
-    textArea:SetPoint("TOPLEFT", P:Scale(5), P:Scale(-20))
-    textArea:SetPoint("BOTTOMRIGHT", P:Scale(-5), P:Scale(5))
+    Cell.StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell.GetAccentColorTable())
+    textArea:SetPoint("TOPLEFT", P.Scale(5), P.Scale(-20))
+    textArea:SetPoint("BOTTOMRIGHT", P.Scale(-5), P.Scale(5))
 
     -- highlight text
     textArea.eb:SetScript("OnEditFocusGained", function() textArea.eb:HighlightText() end)
@@ -179,7 +179,7 @@ local function CreateLayoutImportExportFrame()
 end
 
 local init
-function F:ShowLayoutImportFrame()
+function F.ShowLayoutImportFrame()
     if not init then
         init = true
         CreateLayoutImportExportFrame()
@@ -196,7 +196,7 @@ function F:ShowLayoutImportFrame()
     textArea.eb:SetFocus(true)
 end
 
-function F:ShowLayoutExportFrame(layoutName, layoutTable)
+function F.ShowLayoutExportFrame(layoutName, layoutTable)
     if not init then
         init = true
         CreateLayoutImportExportFrame()

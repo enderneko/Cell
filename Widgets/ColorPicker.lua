@@ -1,7 +1,7 @@
-local addonName, addon = ...
-local L = addon.L
-local F = addon.funcs
-local P = addon.pixelPerfectFuncs
+local addonName, Cell = ...
+local L = Cell.L
+local F = Cell.funcs
+local P = Cell.pixelPerfectFuncs
 
 local colorPicker
 local current, original, hueSaturationBG, hueSaturation, brightness, alpha, picker
@@ -27,7 +27,7 @@ local function UpdateColor_RGBA(r, g, b, a)
     gEB:SetText(g)
     bEB:SetText(b)
     aEB:SetText(math.floor(a * 100))
-    hexEB:SetText(F:ConvertRGBToHEX(r, g, b))
+    hexEB:SetText(F.ConvertRGBToHEX(r, g, b))
 end
 
 local function UpdateColor_HSBA(h, s, b, a, updateBrightness, updatePickers)
@@ -36,7 +36,7 @@ local function UpdateColor_HSBA(h, s, b, a, updateBrightness, updatePickers)
     b_EB:SetText(math.floor(b * 100))
 
     if updateBrightness then
-        local _r, _g, _b = F:ConvertHSBToRGB(h, s, 1)
+        local _r, _g, _b = F.ConvertHSBToRGB(h, s, 1)
         brightness.tex:SetGradient("VERTICAL", CreateColor(0, 0, 0, 1), CreateColor(_r, _g, _b, 1))
     end
 
@@ -50,12 +50,12 @@ end
 local function UpdateAll(use, v1, v2, v3, a, updateBrightness, updatePickers)
     if use == "rgb" then
         UpdateColor_RGBA(v1, v2, v3, a)
-        local h, s, b = F:ConvertRGBToHSB(v1, v2, v3)
+        local h, s, b = F.ConvertRGBToHSB(v1, v2, v3)
         UpdateColor_HSBA(h, s, b, a, updateBrightness, updatePickers)
         if Callback then Callback(v1, v2, v3, a) end
     elseif use == "hsb" then
         UpdateColor_HSBA(v1, v2, v3, a, updateBrightness, updatePickers)
-        local r, g, b = F:ConvertHSBToRGB(v1, v2, v3)
+        local r, g, b = F.ConvertHSBToRGB(v1, v2, v3)
         UpdateColor_RGBA(r, g, b, a)
         if Callback then Callback(r, g, b, a) end
     end
@@ -65,7 +65,7 @@ end
 -- create color picker
 -------------------------------------------------
 local function CreateEB(label, width, height, isNumeric, group)
-    local eb = addon:CreateEditBox(colorPicker, width, height, false, false, isNumeric)
+    local eb = Cell.CreateEditBox(colorPicker, width, height, false, false, isNumeric)
     eb.label = eb:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     eb.label:SetPoint("BOTTOMLEFT", eb, "TOPLEFT", 0, 1)
     eb.label:SetText(label)
@@ -95,8 +95,8 @@ local function CreateEB(label, width, height, isNumeric, group)
                     bEB:SetText(255)
                 end
 
-                local r, g, b = F:ConvertRGB(rEB:GetNumber(), gEB:GetNumber(), bEB:GetNumber())
-                H, S, B = F:ConvertRGBToHSB(r, g, b)
+                local r, g, b = F.ConvertRGB(rEB:GetNumber(), gEB:GetNumber(), bEB:GetNumber())
+                H, S, B = F.ConvertRGBToHSB(r, g, b)
                 UpdateAll("rgb", r, g, b, A, true, true)
 
             elseif group == "hsb" then
@@ -130,8 +130,8 @@ local function CreateEB(label, width, height, isNumeric, group)
                 hexEB:SetText(hexEB.oldText)
             end
 
-            local r, g, b = F:ConvertRGB(F:ConvertHEXToRGB(hexEB:GetText()))
-            H, S, B = F:ConvertRGBToHSB(r, g, b)
+            local r, g, b = F.ConvertRGB(F.ConvertHEXToRGB(hexEB:GetText()))
+            H, S, B = F.ConvertRGBToHSB(r, g, b)
             UpdateAll("rgb", r, g, b, A, true, true)
         end
 
@@ -144,29 +144,29 @@ end
 local function CreateColorPicker()
     local name = addonName.."ColorPicker"
 
-    colorPicker = addon:CreateMovableFrame(_G.COLOR_PICKER, name, 216, 295, "DIALOG", 1, true)
+    colorPicker = Cell.CreateMovableFrame(_G.COLOR_PICKER, name, 216, 295, "DIALOG", 1, true)
     colorPicker:SetToplevel(true)
     colorPicker:SetIgnoreParentScale(true)
     colorPicker:SetPoint("CENTER")
     colorPicker.header.closeBtn:Hide()
 
-    P:SetEffectiveScale(colorPicker)
+    P.SetEffectiveScale(colorPicker)
 
     --------------------------------------------------
     -- current
     --------------------------------------------------
     current = CreateFrame("Frame", name.."Current", colorPicker, "BackdropTemplate")
-    addon:StylizeFrame(current)
-    P:Size(current, 97, 27)
+    Cell.StylizeFrame(current)
+    P.Size(current, 97, 27)
     current:SetPoint("TOPLEFT", 7, -7)
 
     current.solid = current:CreateTexture(nil, "ARTWORK")
-    current.solid:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
-    current.solid:SetPoint("BOTTOMRIGHT", current, "BOTTOMLEFT", current:GetWidth()/2, P:Scale(1))
+    current.solid:SetPoint("TOPLEFT", P.Scale(1), P.Scale(-1))
+    current.solid:SetPoint("BOTTOMRIGHT", current, "BOTTOMLEFT", current:GetWidth()/2, P.Scale(1))
 
     current.alpha = current:CreateTexture(nil, "ARTWORK")
     current.alpha:SetPoint("TOPLEFT", current.solid, "TOPRIGHT")
-    current.alpha:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
+    current.alpha:SetPoint("BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
 
     function current:SetColor(r, g, b, a)
         current.solid:SetColorTexture(r, g, b)
@@ -177,17 +177,17 @@ local function CreateColorPicker()
     -- original
     --------------------------------------------------
     original = CreateFrame("Frame", name.."Original", colorPicker, "BackdropTemplate")
-    addon:StylizeFrame(original)
-    P:Size(original, 97, 27)
+    Cell.StylizeFrame(original)
+    P.Size(original, 97, 27)
     original:SetPoint("TOPRIGHT", -7, -7)
 
     original.solid = original:CreateTexture(nil, "ARTWORK")
-    original.solid:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
-    original.solid:SetPoint("BOTTOMRIGHT", original, "BOTTOMLEFT", original:GetWidth()/2, P:Scale(1))
+    original.solid:SetPoint("TOPLEFT", P.Scale(1), P.Scale(-1))
+    original.solid:SetPoint("BOTTOMRIGHT", original, "BOTTOMLEFT", original:GetWidth()/2, P.Scale(1))
 
     original.alpha = original:CreateTexture(nil, "ARTWORK")
     original.alpha:SetPoint("TOPLEFT", original.solid, "TOPRIGHT")
-    original.alpha:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
+    original.alpha:SetPoint("BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
 
     function original:SetColor(r, g, b, a)
         original.solid:SetColorTexture(r, g, b)
@@ -198,13 +198,13 @@ local function CreateColorPicker()
     -- hue, saturation
     --------------------------------------------------
     hueSaturationBG = CreateFrame("Frame", name.."HueSaturation", colorPicker, "BackdropTemplate")
-    addon:StylizeFrame(hueSaturationBG)
-    P:Size(hueSaturationBG, 130, 130)
+    Cell.StylizeFrame(hueSaturationBG)
+    P.Size(hueSaturationBG, 130, 130)
     hueSaturationBG:SetPoint("TOPLEFT", current, "BOTTOMLEFT", 0, -7)
 
     hueSaturation = CreateFrame("Frame", nil, hueSaturationBG)
-    hueSaturation:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
-    hueSaturation:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
+    hueSaturation:SetPoint("TOPLEFT", P.Scale(1), P.Scale(-1))
+    hueSaturation:SetPoint("BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
 
     -- fill color
     local sectionSize = hueSaturation:GetWidth() / 6
@@ -247,12 +247,12 @@ local function CreateColorPicker()
     -- brightness
     --------------------------------------------------
     brightness = CreateFrame("Slider", nil, colorPicker, "BackdropTemplate")
-    addon:StylizeFrame(brightness)
+    Cell.StylizeFrame(brightness)
     brightness:SetValueStep(0.01)
     brightness:SetMinMaxValues(0, 1)
     brightness:SetObeyStepOnDrag(true)
     brightness:SetOrientation("VERTICAL")
-    P:Size(brightness, 17, 130)
+    P.Size(brightness, 17, 130)
     brightness:SetPoint("TOPLEFT", hueSaturation, "TOPRIGHT", 15, 0)
 
     brightness:SetScript("OnValueChanged", function(self, value, userChanged)
@@ -267,30 +267,30 @@ local function CreateColorPicker()
     end)
 
     brightness.tex = brightness:CreateTexture(nil, "ARTWORK")
-    brightness.tex:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
-    brightness.tex:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
+    brightness.tex:SetPoint("TOPLEFT", P.Scale(1), P.Scale(-1))
+    brightness.tex:SetPoint("BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
     brightness.tex:SetTexture(Cell.vars.whiteTexture)
 
     brightness.thumb1 = brightness:CreateTexture(nil, "ARTWORK")
     -- brightness.thumb1:SetColorTexture(0, 1, 0, 1)
-    P:Size(brightness.thumb1, 17, 1)
+    P.Size(brightness.thumb1, 17, 1)
     brightness:SetThumbTexture(brightness.thumb1)
 
     brightness.thumb2 = brightness:CreateTexture(nil, "ARTWORK")
     brightness.thumb2:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\thumb.tga")
-    P:Size(brightness.thumb2, 16, 16)
+    P.Size(brightness.thumb2, 16, 16)
     brightness.thumb2:SetPoint("LEFT", brightness.thumb1, "RIGHT", -5, 0)
 
     --------------------------------------------------
     -- alpha
     --------------------------------------------------
     alpha = CreateFrame("Slider", nil, colorPicker, "BackdropTemplate")
-    addon:StylizeFrame(alpha)
+    Cell.StylizeFrame(alpha)
     alpha:SetValueStep(0.01)
     alpha:SetMinMaxValues(0, 1)
     alpha:SetObeyStepOnDrag(true)
     alpha:SetOrientation("VERTICAL")
-    P:Size(alpha, 17, 130)
+    P.Size(alpha, 17, 130)
     alpha:SetPoint("TOPLEFT", brightness, "TOPRIGHT", 15, 0)
 
     alpha:SetScript("OnEnable", function()
@@ -313,25 +313,25 @@ local function CreateColorPicker()
     end)
 
     alpha.tex = alpha:CreateTexture(nil, "ARTWORK")
-    alpha.tex:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
-    alpha.tex:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
+    alpha.tex:SetPoint("TOPLEFT", P.Scale(1), P.Scale(-1))
+    alpha.tex:SetPoint("BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
     alpha.tex:SetTexture(Cell.vars.whiteTexture)
     alpha.tex:SetGradient("VERTICAL", CreateColor(0, 0, 0, 1), CreateColor(1, 1, 1, 1))
 
     alpha.thumb1 = alpha:CreateTexture(nil, "ARTWORK")
-    P:Size(alpha.thumb1, 17, 1)
+    P.Size(alpha.thumb1, 17, 1)
     alpha:SetThumbTexture(alpha.thumb1)
 
     alpha.thumb2 = brightness:CreateTexture(nil, "ARTWORK")
     alpha.thumb2:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\thumb.tga")
-    P:Size(alpha.thumb2, 16, 16)
+    P.Size(alpha.thumb2, 16, 16)
     alpha.thumb2:SetPoint("LEFT", alpha.thumb1, "RIGHT", -5, 0)
 
     --------------------------------------------------
     -- picker
     --------------------------------------------------
     picker = CreateFrame("Frame", name.."HSPicker", hueSaturation, "BackdropTemplate")
-    P:Size(picker, 10, 10)
+    P.Size(picker, 10, 10)
     picker:SetPoint("CENTER", hueSaturation, "BOTTOMLEFT")
 
     picker.tex = picker:CreateTexture(nil, "ARTWORK")
@@ -343,7 +343,7 @@ local function CreateColorPicker()
     picker:SetMovable(true)
 
     function picker:StartMoving(x, y, mouseX, mouseY)
-        local scale = P:GetEffectiveScale()
+        local scale = P.GetEffectiveScale()
 
         local lastX, lastY
         self:SetScript("OnUpdate", function(self)
@@ -395,7 +395,7 @@ local function CreateColorPicker()
         local hueSaturationX, hueSaturationY = hueSaturation:GetLeft(), hueSaturation:GetBottom()
         local mouseX, mouseY = GetCursorPosition()
 
-        local scale = P:GetEffectiveScale()
+        local scale = P.GetEffectiveScale()
         mouseX, mouseY = mouseX/scale, mouseY/scale
 
         -- start dragging
@@ -445,17 +445,17 @@ local function CreateColorPicker()
     --------------------------------------------------
     -- buttons
     --------------------------------------------------
-    confirmBtn = addon:CreateButton(colorPicker, L["Confirm"], "green", {97, 20})
+    confirmBtn = Cell.CreateButton(colorPicker, L["Confirm"], "green", {97, 20})
     confirmBtn:SetPoint("BOTTOMLEFT", 7, 7)
 
-    cancelBtn = addon:CreateButton(colorPicker, L["Cancel"], "red", {97, 20})
+    cancelBtn = Cell.CreateButton(colorPicker, L["Cancel"], "red", {97, 20})
     cancelBtn:SetPoint("BOTTOMRIGHT", -7, 7)
 end
 
 -------------------------------------------------
 -- show
 -------------------------------------------------
-function addon:ShowColorPicker(callback, onConfirm, hasAlpha, r, g, b, a)
+function Cell.ShowColorPicker(callback, onConfirm, hasAlpha, r, g, b, a)
     if not colorPicker then
         CreateColorPicker()
     end
@@ -475,14 +475,14 @@ function addon:ShowColorPicker(callback, onConfirm, hasAlpha, r, g, b, a)
     oR, oG, oB, oA = r or 1, g or 1, b or 1, a or 1
 
     -- data & callback
-    H, S, B = F:ConvertRGBToHSB(oR, oG, oB)
+    H, S, B = F.ConvertRGBToHSB(oR, oG, oB)
     A = oA
     Callback = callback
 
     confirmBtn:SetScript("OnClick", function()
         colorPicker:Hide()
         if onConfirm then
-            local r, g, b = F:ConvertHSBToRGB(H, S, B)
+            local r, g, b = F.ConvertHSBToRGB(H, S, B)
             onConfirm(r, g, b, A)
         end
     end)
@@ -497,13 +497,13 @@ function addon:ShowColorPicker(callback, onConfirm, hasAlpha, r, g, b, a)
 
     -- update all
     UpdateAll("rgb", oR, oG, oB, oA, true, true)
-    addon:SetEnabled(hasAlpha, alpha, aEB, aEB.label)
+    Cell.SetEnabled(hasAlpha, alpha, aEB, aEB.label)
 
-    P:PixelPerfectPoint(colorPicker)
+    P.PixelPerfectPoint(colorPicker)
     colorPicker:Show()
 end
 
-function addon:HideColorPicker()
+function Cell.HideColorPicker()
     if colorPicker then
         colorPicker:Hide()
     end

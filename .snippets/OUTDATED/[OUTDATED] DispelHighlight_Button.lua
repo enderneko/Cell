@@ -4,7 +4,7 @@ local ALPHA = 0.6
 
 local F = Cell.funcs
 
-F:IterateAllUnitButtons(function(b)
+F.IterateAllUnitButtons(function(b)
     local dispels = b.indicators.dispels
 
     dispels.highlight:ClearAllPoints()

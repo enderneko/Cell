@@ -44,22 +44,22 @@ hoverFrame:SetPoint("TOP", anchorFrame, 0, 1)
 hoverFrame:SetPoint("BOTTOM", anchorFrame, 0, -1)
 hoverFrame:SetPoint("LEFT", anchorFrame, -1, 0)
 hoverFrame:SetPoint("RIGHT", anchorFrame, 1, 0)
--- Cell:StylizeFrame(hoverFrame, {1,0,0,0.3}, {0,0,0,0})
+-- Cell.StylizeFrame(hoverFrame, {1,0,0,0.3}, {0,0,0,0})
 
-A:ApplyFadeInOutToMenu(anchorFrame, hoverFrame)
+A.ApplyFadeInOutToMenu(anchorFrame, hoverFrame)
 
-local config = Cell:CreateButton(anchorFrame, nil, "accent", {20, 10}, false, true)
+local config = Cell.CreateButton(anchorFrame, nil, "accent", {20, 10}, false, true)
 config:SetFrameStrata("MEDIUM")
 config:SetAllPoints(anchorFrame)
 config:RegisterForDrag("LeftButton")
 config:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 config:SetScript("OnClick", function(self, button)
     if button == "LeftButton" then
-        F:ShowUtilitiesTab()
-        F:ShowQuickAssistTab()
+        F.ShowUtilitiesTab()
+        F.ShowQuickAssistTab()
     elseif button == "RightButton" then
         if not InCombatLockdown() then
-            F:Print(L["Refreshing unit buttons (%s)..."]:format(L["Quick Assist"]))
+            F.Print(L["Refreshing unit buttons (%s)..."]:format(L["Quick Assist"]))
             LGI:ForceUpdate()
         end
     end
@@ -72,7 +72,7 @@ end)
 
 config:SetScript("OnDragStop", function()
     anchorFrame:StopMovingOrSizing()
-    P:SavePosition(anchorFrame, layoutTable["position"])
+    P.SavePosition(anchorFrame, layoutTable["position"])
 end)
 
 config:HookScript("OnEnter", function()
@@ -125,7 +125,7 @@ end
 --         if t[1] == 0 then
 --             b:SetAttribute("type"..i, "target")
 --         elseif t[1] ~= -1 then
---             local spellName = F:GetSpellInfo(t[1])
+--             local spellName = F.GetSpellInfo(t[1])
 
 --             b:SetAttribute("type"..i, "macro")
 --             b:SetAttribute("macrotext"..i, "/cast [@mouseover] "..spellName)
@@ -315,7 +315,7 @@ local function QuickAssist_UpdateName(self)
     if not self.unit then return end
 
     self.name = UnitName(self.unit)
-    self.fullName = F:UnitFullName(self.unit)
+    self.fullName = F.UnitFullName(self.unit)
 
     self.nameText:UpdateName()
 end
@@ -331,10 +331,10 @@ local function QuickAssist_UpdateNameColor(self)
     end
 
     if not UnitIsConnected(self.unit) then
-        self.nameText:SetTextColor(F:GetClassColor(self.class))
+        self.nameText:SetTextColor(F.GetClassColor(self.class))
     else
         if styleTable["name"]["color"][1] == "class_color" then
-            self.nameText:SetTextColor(F:GetClassColor(self.class))
+            self.nameText:SetTextColor(F.GetClassColor(self.class))
         else
             self.nameText:SetTextColor(unpack(styleTable["name"]["color"][2]))
         end
@@ -390,7 +390,7 @@ local function QuickAssist_UpdateHealthColor(self)
         hpR, hpG, hpB = 0.4, 0.4, 0.4
         lossR, lossG, lossB = 0.4, 0.4, 0.4
     else
-        hpR, hpG, hpB, hpA, lossR, lossG, lossB, lossA = GetHealthColor(F:GetClassColor(self.class))
+        hpR, hpG, hpB, hpA, lossR, lossG, lossB, lossA = GetHealthColor(F.GetClassColor(self.class))
     end
 
     self.healthBar:SetStatusBarColor(hpR, hpG, hpB, hpA)
@@ -430,9 +430,9 @@ local function QuickAssist_UpdateInRange(self, ir)
     if not self.unit then return end
 
     if ir then
-        A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
+        A.FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
     else
-        A:FrameFadeOut(self, 0.25, self:GetAlpha(), styleTable["oorAlpha"] or 0.25)
+        A.FrameFadeOut(self, 0.25, self:GetAlpha(), styleTable["oorAlpha"] or 0.25)
     end
 end
 
@@ -446,9 +446,9 @@ local function QuickAssist_UpdateInRange_OnTick(self)
     if Cell.loaded then
         if self.inRange ~= self.wasInRange then
             if inRange then
-                A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
+                A.FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
             else
-                A:FrameFadeOut(self, 0.25, self:GetAlpha(), styleTable["oorAlpha"] or 0.25)
+                A.FrameFadeOut(self, 0.25, self:GetAlpha(), styleTable["oorAlpha"] or 0.25)
             end
         end
         self.wasInRange = inRange
@@ -650,13 +650,13 @@ function CellQuickAssist_OnLoad(button)
         if CELL_NICKTAG_ENABLED and Cell.NickTag then
             name = Cell.NickTag:GetNickname(button.name, nil, true)
         end
-        name = name or F:GetNickname(button.name, button.fullName)
+        name = name or F.GetNickname(button.name, button.fullName)
 
         if Cell.loaded and CellDB["general"]["translit"] then
             name = LibTranslit:Transliterate(name)
         end
 
-        F:UpdateTextWidth(nameText, name, nameText.width, button)
+        F.UpdateTextWidth(nameText, name, nameText.width, button)
 
         -- nameText:SetSize(nameText:GetWidth(), nameText:GetHeight())
     end
@@ -827,7 +827,7 @@ local function UpdateAllUnits()
     wipe(nameList)
     wipe(nameToPriority)
 
-    for unit in F:IterateGroupMembers() do
+    for unit in F.IterateGroupMembers() do
         if UnitIsConnected(unit) then
             local name = GetUnitName(unit, true)
             local guid = UnitGUID(unit)
@@ -844,7 +844,7 @@ local function UpdateAllUnits()
 
     -- check hide self
     if specFilter[3] then
-        F:TRemove(nameList, Cell.vars.playerNameShort)
+        F.TRemove(nameList, Cell.vars.playerNameShort)
         nameToPriority[Cell.vars.playerNameShort] = nil
     end
 
@@ -863,7 +863,7 @@ local function UpdateAllUnits()
     header:SetAttribute("groupingOrder", "")
     header:SetAttribute("groupFilter", nil)
     header:SetAttribute("groupBy", nil)
-    header:SetAttribute("nameList", F:TableToString(nameList, ","))
+    header:SetAttribute("nameList", F.TableToString(nameList, ","))
     header:SetAttribute("sortMethod", "NAMELIST")
 end
 
@@ -896,10 +896,10 @@ local function UpdatePosition()
     local anchor = layoutTable["anchor"]
 
     quickAssistFrame:ClearAllPoints()
-    P:LoadPosition(anchorFrame, layoutTable["position"])
+    P.LoadPosition(anchorFrame, layoutTable["position"])
 
     if CellDB["general"]["menuPosition"] == "top_bottom" then
-        P:Size(anchorFrame, 20, 10)
+        P.Size(anchorFrame, 20, 10)
 
         if anchor == "BOTTOMLEFT" then
             quickAssistFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
@@ -915,7 +915,7 @@ local function UpdatePosition()
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
         end
     else -- left_right
-        P:Size(anchorFrame, 10, 20)
+        P.Size(anchorFrame, 10, 20)
 
         if anchor == "BOTTOMLEFT" then
             quickAssistFrame:SetPoint("BOTTOMLEFT", anchorFrame, "BOTTOMRIGHT", 4, 0)
@@ -955,10 +955,10 @@ local function UpdateMenu(which)
         UpdatePosition()
     end
 end
-Cell:RegisterCallback("UpdateMenu", "QuickAssist_UpdateMenu", UpdateMenu)
+Cell.RegisterCallback("UpdateMenu", "QuickAssist_UpdateMenu", UpdateMenu)
 
 local function UpdateQuickAssist(which)
-    F:Debug("|cff33937FUpdateQuickAssist:|r", which)
+    F.Debug("|cff33937FUpdateQuickAssist:|r", which)
 
     quickAssistTable = CellDB["quickAssist"][Cell.vars.playerSpecID]
     local groupType = Cell.vars.quickAssistGroupType
@@ -969,7 +969,7 @@ local function UpdateQuickAssist(which)
         styleTable = nil
         spellTable = nil
         quickAssistReady = nil
-        F:UpdateOmniCDPosition("Cell-QuickAssist")
+        F.UpdateOmniCDPosition("Cell-QuickAssist")
         return
     end
 
@@ -985,12 +985,12 @@ local function UpdateQuickAssist(which)
         header:SetPoint(layoutTable["anchor"])
 
         local width, height = layoutTable["size"][1], layoutTable["size"][2]
-        P:Size(quickAssistFrame, width, height)
+        P.Size(quickAssistFrame, width, height)
 
         header:SetAttribute("_ignore", true) --! NOTE: prevent multi-invoke SecureGroupHeader_OnAttributeChanged
 
-        header:SetAttribute("minWidth", P:Scale(width))
-        header:SetAttribute("minHeight", P:Scale(height))
+        header:SetAttribute("minWidth", P.Scale(width))
+        header:SetAttribute("minHeight", P.Scale(height))
 
         local point, groupRelativePoint, unitSpacing, groupSpacing
         local spacing, x, y = layoutTable["spacingX"], layoutTable["spacingY"]
@@ -1014,7 +1014,7 @@ local function UpdateQuickAssist(which)
                 groupSpacing = layoutTable["spacingY"]
             end
 
-            header:SetAttribute("xOffset", P:Scale(unitSpacing))
+            header:SetAttribute("xOffset", P.Scale(unitSpacing))
             header:SetAttribute("yOffset", 0)
         else
             if layoutTable["anchor"] == "BOTTOMLEFT" then
@@ -1036,18 +1036,18 @@ local function UpdateQuickAssist(which)
             end
 
             header:SetAttribute("xOffset", 0)
-            header:SetAttribute("yOffset", P:Scale(unitSpacing))
+            header:SetAttribute("yOffset", P.Scale(unitSpacing))
         end
 
         for i = 1, 40 do
-            P:Size(header[i], width, height)
+            P.Size(header[i], width, height)
             header[i]:ClearAllPoints()
             header[i]:Hide()
         end
 
         header:SetAttribute("point", point)
         header:SetAttribute("columnAnchorPoint", groupRelativePoint)
-        header:SetAttribute("columnSpacing", P:Scale(groupSpacing))
+        header:SetAttribute("columnSpacing", P.Scale(groupSpacing))
         header:SetAttribute("maxColumns", layoutTable["maxColumns"])
 
         header:SetAttribute("_ignore", false) --! NOTE: restore SecureGroupHeader_OnAttributeChanged
@@ -1118,7 +1118,7 @@ local function UpdateQuickAssist(which)
             end
         end
 
-        F:UpdateOmniCDPosition("Cell-QuickAssist")
+        F.UpdateOmniCDPosition("Cell-QuickAssist")
     end
 
     if not which or which == "style" then
@@ -1128,7 +1128,7 @@ local function UpdateQuickAssist(which)
             -- end
 
             -- color ----------------------------------------------------------------- --
-            local tex = F:GetBarTextureByName(styleTable["texture"])
+            local tex = F.GetBarTextureByName(styleTable["texture"])
             header[i].healthBar:SetStatusBarTexture(tex)
             header[i].healthLoss:SetTexture(tex)
             QuickAssist_UpdateHealthColor(header[i])
@@ -1139,7 +1139,7 @@ local function UpdateQuickAssist(which)
             header[i].nameText:SetPoint(unpack(styleTable["name"]["position"]))
 
             local font, fontSize, fontOutline, fontShadow = unpack(styleTable["name"]["font"])
-            font = F:GetFont(font)
+            font = F.GetFont(font)
 
             local fontFlags
             if fontOutline == "None" then
@@ -1173,28 +1173,28 @@ local function UpdateQuickAssist(which)
                 targetHighlight:Hide()
                 mouseoverHighlight:Hide()
             else
-                P:ClearPoints(targetHighlight)
-                P:ClearPoints(mouseoverHighlight)
+                P.ClearPoints(targetHighlight)
+                P.ClearPoints(mouseoverHighlight)
 
                 if size < 0 then
                     size = abs(size)
-                    P:Point(targetHighlight, "TOPLEFT", header[i], "TOPLEFT")
-                    P:Point(targetHighlight, "BOTTOMRIGHT", header[i], "BOTTOMRIGHT")
-                    P:Point(mouseoverHighlight, "TOPLEFT", header[i], "TOPLEFT")
-                    P:Point(mouseoverHighlight, "BOTTOMRIGHT", header[i], "BOTTOMRIGHT")
+                    P.Point(targetHighlight, "TOPLEFT", header[i], "TOPLEFT")
+                    P.Point(targetHighlight, "BOTTOMRIGHT", header[i], "BOTTOMRIGHT")
+                    P.Point(mouseoverHighlight, "TOPLEFT", header[i], "TOPLEFT")
+                    P.Point(mouseoverHighlight, "BOTTOMRIGHT", header[i], "BOTTOMRIGHT")
                 else
-                    P:Point(targetHighlight, "TOPLEFT", header[i], "TOPLEFT", -size, size)
-                    P:Point(targetHighlight, "BOTTOMRIGHT", header[i], "BOTTOMRIGHT", size, -size)
-                    P:Point(mouseoverHighlight, "TOPLEFT", header[i], "TOPLEFT", -size, size)
-                    P:Point(mouseoverHighlight, "BOTTOMRIGHT", header[i], "BOTTOMRIGHT", size, -size)
+                    P.Point(targetHighlight, "TOPLEFT", header[i], "TOPLEFT", -size, size)
+                    P.Point(targetHighlight, "BOTTOMRIGHT", header[i], "BOTTOMRIGHT", size, -size)
+                    P.Point(mouseoverHighlight, "TOPLEFT", header[i], "TOPLEFT", -size, size)
+                    P.Point(mouseoverHighlight, "BOTTOMRIGHT", header[i], "BOTTOMRIGHT", size, -size)
                 end
 
                 QuickAssist_UpdateTarget(header[i])
             end
 
             -- update thickness
-            targetHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(size)})
-            mouseoverHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(size)})
+            targetHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(size)})
+            mouseoverHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(size)})
 
             -- update color
             targetHighlight:SetBackdropBorderColor(unpack(styleTable["targetColor"]))
@@ -1208,7 +1208,7 @@ local function UpdateQuickAssist(which)
 
         for _, t in pairs(spellTable["mine"]["buffs"]) do
             if t[1] > 0 then
-                local spellName = F:GetSpellInfo(t[1])
+                local spellName = F.GetSpellInfo(t[1])
                 if spellName then
                     if t[2] == "icon" then
                         myBuffs_icon[spellName] = t[3]
@@ -1235,10 +1235,10 @@ local function UpdateQuickAssist(which)
             -- icon
             local indicator = header[i].buffIcons
             -- point
-            P:ClearPoints(indicator)
-            P:Point(indicator, bit["position"][1], header[i], bit["position"][2], bit["position"][3], bit["position"][4])
+            P.ClearPoints(indicator)
+            P.Point(indicator, bit["position"][1], header[i], bit["position"][2], bit["position"][3], bit["position"][4])
             -- size
-            P:Size(indicator, bit["size"][1], bit["size"][2])
+            P.Size(indicator, bit["size"][1], bit["size"][2])
             -- orientation
             indicator:SetOrientation(bit["orientation"])
             -- font
@@ -1250,10 +1250,10 @@ local function UpdateQuickAssist(which)
             -- bar
             indicator = header[i].buffBars
             -- point
-            P:ClearPoints(indicator)
-            P:Point(indicator, bbt["position"][1], header[i], bbt["position"][2], bbt["position"][3], bbt["position"][4])
+            P.ClearPoints(indicator)
+            P.Point(indicator, bbt["position"][1], header[i], bbt["position"][2], bbt["position"][3], bbt["position"][4])
             -- size
-            P:Size(indicator, bbt["size"][1], bbt["size"][2])
+            P.Size(indicator, bbt["size"][1], bbt["size"][2])
             -- orientation
             indicator:SetOrientation(bbt["orientation"])
         end
@@ -1264,8 +1264,8 @@ local function UpdateQuickAssist(which)
         wipe(offensiveCasts)
 
         if spellTable["offensives"]["enabled"] then
-            offensiveBuffs = F:ConvertSpellTable_WithClass(spellTable["offensives"]["buffs"], true)
-            offensiveCasts = F:ConvertSpellDurationTable_WithClass(spellTable["offensives"]["casts"])
+            offensiveBuffs = F.ConvertSpellTable_WithClass(spellTable["offensives"]["buffs"], true)
+            offensiveCasts = F.ConvertSpellDurationTable_WithClass(spellTable["offensives"]["casts"])
         end
 
         offensivesEnabled = spellTable["offensives"]["enabled"]
@@ -1282,10 +1282,10 @@ local function UpdateQuickAssist(which)
             -- icon
             local indicator = header[i].offensiveIcons
             -- point
-            P:ClearPoints(indicator)
-            P:Point(indicator, oit["position"][1], header[i], oit["position"][2], oit["position"][3], oit["position"][4])
+            P.ClearPoints(indicator)
+            P.Point(indicator, oit["position"][1], header[i], oit["position"][2], oit["position"][3], oit["position"][4])
             -- size
-            P:Size(indicator, oit["size"][1], oit["size"][2])
+            P.Size(indicator, oit["size"][1], oit["size"][2])
             -- orientation
             indicator:SetOrientation(oit["orientation"])
             -- font
@@ -1307,7 +1307,7 @@ local function UpdateQuickAssist(which)
         end
     end
 end
-Cell:RegisterCallback("UpdateQuickAssist", "UpdateQuickAssist", UpdateQuickAssist)
+Cell.RegisterCallback("UpdateQuickAssist", "UpdateQuickAssist", UpdateQuickAssist)
 
 local function QuickAssist_CreateIndicators(button)
     -- buffs indicator (icon)
@@ -1358,18 +1358,18 @@ local function AddonLoaded()
         QuickAssist_CreateIndicators(header[i])
     end
 end
-Cell:RegisterCallback("AddonLoaded", "QuickAssist_AddonLoaded", AddonLoaded)
+Cell.RegisterCallback("AddonLoaded", "QuickAssist_AddonLoaded", AddonLoaded)
 
 local function UpdatePixelPerfect()
     for i = 1, 40 do
-        header[i]:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(CELL_BORDER_SIZE)})
+        header[i]:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
         header[i]:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
 
-        header[i].healthBar:SetPoint("TOPLEFT", header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))
-        header[i].healthBar:SetPoint("BOTTOMRIGHT", header[i], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
+        header[i].healthBar:SetPoint("TOPLEFT", header[i], "TOPLEFT", P.Scale(1), P.Scale(-1))
+        header[i].healthBar:SetPoint("BOTTOMRIGHT", header[i], "BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
     end
 end
-Cell:RegisterCallback("UpdatePixelPerfect", "QuickAssist_UpdatePixelPerfect", UpdatePixelPerfect)
+Cell.RegisterCallback("UpdatePixelPerfect", "QuickAssist_UpdatePixelPerfect", UpdatePixelPerfect)
 
 -- ----------------------------------------------------------------------- --
 --                            filter auto switch                           --
@@ -1377,7 +1377,7 @@ Cell:RegisterCallback("UpdatePixelPerfect", "QuickAssist_UpdatePixelPerfect", Up
 local delayedFrame = CreateFrame("Frame")
 delayedFrame:SetScript("OnEvent", function()
     delayedFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    Cell:Fire("UpdateQuickAssist")
+    Cell.Fire("UpdateQuickAssist")
 end)
 
 local function PreUpdateQuickAssist()
@@ -1402,10 +1402,10 @@ local function PreUpdateQuickAssist()
     if InCombatLockdown() then
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
-        Cell:Fire("UpdateQuickAssist")
+        Cell.Fire("UpdateQuickAssist")
     end
 end
-Cell:RegisterCallback("EnterInstance", "QuickAssist_EnterInstance", PreUpdateQuickAssist)
-Cell:RegisterCallback("LeaveInstance", "QuickAssist_LeaveInstance", PreUpdateQuickAssist)
-Cell:RegisterCallback("GroupTypeChanged", "QuickAssist_GroupTypeChanged", PreUpdateQuickAssist)
-Cell:RegisterCallback("SpecChanged", "QuickAssist_SpecChanged", PreUpdateQuickAssist)
+Cell.RegisterCallback("EnterInstance", "QuickAssist_EnterInstance", PreUpdateQuickAssist)
+Cell.RegisterCallback("LeaveInstance", "QuickAssist_LeaveInstance", PreUpdateQuickAssist)
+Cell.RegisterCallback("GroupTypeChanged", "QuickAssist_GroupTypeChanged", PreUpdateQuickAssist)
+Cell.RegisterCallback("SpecChanged", "QuickAssist_SpecChanged", PreUpdateQuickAssist)

@@ -1,8 +1,8 @@
-local addonName, addon = ...
-local L = addon.L
-local F = addon.funcs
-local P = addon.pixelPerfectFuncs
-local A = addon.animations
+local addonName, Cell = ...
+local L = Cell.L
+local F = Cell.funcs
+local P = Cell.pixelPerfectFuncs
+local A = Cell.animations
 
 -----------------------------------------
 -- forked from ElvUI
@@ -69,7 +69,7 @@ local function FrameFade(frame, info)
     end
 end
 
-function A:FrameFadeIn(frame, timeToFade, startAlpha, endAlpha)
+function A.FrameFadeIn(frame, timeToFade, startAlpha, endAlpha)
     if frame.fade then
         frame.fade.fadeTimer = nil
     else
@@ -85,7 +85,7 @@ function A:FrameFadeIn(frame, timeToFade, startAlpha, endAlpha)
     FrameFade(frame, frame.fade)
 end
 
-function A:FrameFadeOut(frame, timeToFade, startAlpha, endAlpha)
+function A.FrameFadeOut(frame, timeToFade, startAlpha, endAlpha)
     if frame.fade then
         frame.fade.fadeTimer = nil
     else
@@ -104,19 +104,19 @@ end
 -----------------------------------------
 -- fade in/out on mouseover/mouseout
 -----------------------------------------
-function A:ApplyFadeInOutToParent(parent, condition, ...)
+function A.ApplyFadeInOutToParent(parent, condition, ...)
     for _, f in pairs({...}) do
         f:SetHitRectInsets(-2, -2, -2, -2)
 
         f:HookScript("OnEnter", function()
             if condition() then
-                A:FrameFadeIn(parent, 0.25, parent:GetAlpha(), 1)
+                A.FrameFadeIn(parent, 0.25, parent:GetAlpha(), 1)
             end
         end)
 
         f:HookScript("OnLeave", function()
             if condition() then
-                A:FrameFadeOut(parent, 0.25, parent:GetAlpha(), 0)
+                A.FrameFadeOut(parent, 0.25, parent:GetAlpha(), 0)
             end
         end)
     end
@@ -125,7 +125,7 @@ end
 -----------------------------------------
 -- add fade in/out
 -----------------------------------------
-function A:CreateFadeIn(frame, fromAlpha, toAlpha, duration, delay, onFinished)
+function A.CreateFadeIn(frame, fromAlpha, toAlpha, duration, delay, onFinished)
     local fadeIn = frame:CreateAnimationGroup()
     frame.fadeIn = fadeIn
     fadeIn.alpha = fadeIn:CreateAnimation("Alpha")
@@ -150,7 +150,7 @@ function A:CreateFadeIn(frame, fromAlpha, toAlpha, duration, delay, onFinished)
     end
 end
 
-function A:CreateFadeOut(frame, fromAlpha, toAlpha, duration, delay, onFinished)
+function A.CreateFadeOut(frame, fromAlpha, toAlpha, duration, delay, onFinished)
     local fadeOut = frame:CreateAnimationGroup()
     frame.fadeOut = fadeOut
     fadeOut.alpha = fadeOut:CreateAnimation("Alpha")
@@ -181,7 +181,7 @@ end
 -----------------------------------------
 -- apply fade in/out to menu
 -----------------------------------------
-function A:ApplyFadeInOutToMenu(anchorFrame, hoverFrame)
+function A.ApplyFadeInOutToMenu(anchorFrame, hoverFrame)
     local fadingIn, fadedIn, fadingOut, fadedOut
     anchorFrame.fadeIn = anchorFrame:CreateAnimationGroup()
     anchorFrame.fadeIn.alpha = anchorFrame.fadeIn:CreateAnimation("alpha")

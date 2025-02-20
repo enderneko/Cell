@@ -17,9 +17,9 @@ local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
 local tooltip = CreateFrame("GameTooltip", "CellClickCastingTips", CellMainFrame, "CellTooltipTemplate,BackdropTemplate")
-tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
+tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
 tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
-tooltip:SetBackdropBorderColor(Cell:GetAccentColorRGB())
+tooltip:SetBackdropBorderColor(Cell.GetAccentColorRGB())
 tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 
 local mouseKeyIDs = {
@@ -100,7 +100,7 @@ local function DecodeDB(t)
                 modifier, bindKey = DecodeKeyboard(key)
             end
         else -- normal mouse button
-            bindKey = F:GetIndex(mouseKeyIDs, tonumber(key))
+            bindKey = F.GetIndex(mouseKeyIDs, tonumber(key))
         end
     else
         modifier, bindKey = "", "notBound"
@@ -127,7 +127,7 @@ local function ShowTips()
 
         if bindType == "spell" then
             local bindActionDisplay, icon
-            bindAction, icon = F:GetSpellInfo(bindAction)
+            bindAction, icon = F.GetSpellInfo(bindAction)
             if bindAction then
                 bindActionDisplay = bindAction.." |T"..icon..":0|t"
             else
@@ -145,7 +145,7 @@ local function HideTips()
     tooltip:Hide()
 end
 
-F:IterateAllUnitButtons(function(b)
+F.IterateAllUnitButtons(function(b)
     b:HookScript("OnEnter", ShowTips)
     b:HookScript("OnLeave", HideTips)
 end)
