@@ -2081,7 +2081,7 @@ local friendSpells = {
 }
 
 local deadSpells = {
-    ["EVOKER"] = 461526, -- resurrection range, need separately for evoker
+    ["EVOKER"] = 361227, -- resurrection range, need separately for evoker
 }
 
 local petSpells = {
@@ -2225,7 +2225,7 @@ end
 
 rc:SetScript("OnEvent", DELAYED_SPELLS_CHANGED)
 
-function F:IsInRange(unit)
+function F.IsInRange(unit, check)
     if not UnitIsVisible(unit) then
         return false
     end
@@ -2233,16 +2233,17 @@ function F:IsInRange(unit)
     if UnitIsUnit("player", unit) then
         return true
 
-    -- elseif not check and F:UnitInGroup(unit) then
-    --     -- NOTE: UnitInRange only works with group players/pets --! but not available for PLAYER PET when SOLO
-    --     local inRange, checked = UnitInRange(unit)
-    --     if not checked then
-    --         return F:IsInRange(unit, true)
-    --     end
-    --     return inRange
+    elseif not check and F:UnitInGroup(unit) then
+        -- NOTE: UnitInRange only works with group players/pets
+        --! but not available for PLAYER PET when SOLO
+        local inRange, checked = UnitInRange(unit)
+        if not checked then
+            return F.IsInRange(unit, true)
+        end
+        return inRange
 
     else
-        if UnitCanAssist("player", unit) or UnitCanCooperate("player", unit) then
+        if UnitCanAssist("player", unit) then -- or UnitCanCooperate("player", unit)
             if not (UnitIsConnected(unit) and UnitInSamePhase(unit)) then
                 return false
             end
@@ -2304,7 +2305,7 @@ local function GetResult1()
     local inRange, checked = UnitInRange("target")
 
     return "UnitID: " .. (F:GetTargetUnitID("target") or "target") ..
-        "\n|cffffff00F.IsInRange:|r " .. (F:IsInRange("target") and "true" or "false") ..
+        "\n|cffffff00F.IsInRange:|r " .. (F.IsInRange("target") and "true" or "false") ..
         "\nUnitInRange: " .. (checked and "checked" or "unchecked") .. " " .. (inRange and "true" or "false") ..
         "\nUnitIsVisible: " .. (UnitIsVisible("target") and "true" or "false") ..
         "\n\nUnitCanAssist: " .. (UnitCanAssist("player", "target") and "true" or "false") ..

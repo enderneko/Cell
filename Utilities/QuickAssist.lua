@@ -436,10 +436,11 @@ local function QuickAssist_UpdateInRange(self, ir)
     end
 end
 
+local IsInRange = F.IsInRange
 local function QuickAssist_UpdateInRange_OnTick(self)
     if not self.unit then return end
 
-    local inRange = F:IsInRange(self.unit)
+    local inRange = IsInRange(self.unit)
 
     self.inRange = inRange
     if Cell.loaded then
@@ -463,7 +464,7 @@ local function QuickAssist_UpdateAll(self)
     QuickAssist_UpdateHealth(self)
     QuickAssist_UpdateHealthColor(self)
     QuickAssist_UpdateTarget(self)
-    -- QuickAssist_UpdateInRange(self, F:IsInRange(self.unit))
+    -- QuickAssist_UpdateInRange(self, IsInRange(self.unit))
     QuickAssist_UpdateInRange_OnTick(self)
     QuickAssist_UpdateAuras(self)
 end
@@ -1123,7 +1124,7 @@ local function UpdateQuickAssist(which)
     if not which or which == "style" then
         for i = 1, 40 do
             -- if header[i]:IsVisible() then
-            --     QuickAssist_UpdateInRange(header[i], F:IsInRange(header[i].unit))
+            --     QuickAssist_UpdateInRange(header[i], IsInRange(header[i].unit))
             -- end
 
             -- color ----------------------------------------------------------------- --
