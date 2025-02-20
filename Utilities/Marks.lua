@@ -19,7 +19,7 @@ marksFrame:SetScript("OnDragStart", function()
 end)
 marksFrame:SetScript("OnDragStop", function()
     marksFrame:StopMovingOrSizing()
-    P:SavePosition(marksFrame, CellDB["tools"]["marks"][4])
+    P.SavePosition(marksFrame, CellDB["tools"]["marks"][4])
 end)
 
 -------------------------------------------------
@@ -35,8 +35,8 @@ local function ShowMover(show)
         if not CellDB["tools"]["marks"][1] then return end
         marksFrame:EnableMouse(true)
         marksFrame.moverText:Show()
-        Cell:StylizeFrame(marksFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
-        if not F:HasPermission(true) then -- button not shown
+        Cell.StylizeFrame(marksFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
+        if not F.HasPermission(true) then -- button not shown
             if strfind(CellDB["tools"]["marks"][3], "^target") then
                 marks:Show()
             elseif strfind(CellDB["tools"]["marks"][3], "^world") then
@@ -50,8 +50,8 @@ local function ShowMover(show)
     else
         marksFrame:EnableMouse(false)
         marksFrame.moverText:Hide()
-        Cell:StylizeFrame(marksFrame, {0, 0, 0, 0}, {0, 0, 0, 0})
-        if not F:HasPermission(true) then -- button should not shown
+        Cell.StylizeFrame(marksFrame, {0, 0, 0, 0}, {0, 0, 0, 0})
+        if not F.HasPermission(true) then -- button should not shown
             if not (Cell.vars.groupType == "solo" and CellDB["tools"]["marks"][2]) then
                 marks:Hide()
             end
@@ -60,7 +60,7 @@ local function ShowMover(show)
         marksFrame:SetAlpha(CellDB["tools"]["fadeOut"] and 0 or 1)
     end
 end
-Cell:RegisterCallback("ShowMover", "RaidMarks_ShowMover", ShowMover)
+Cell.RegisterCallback("ShowMover", "RaidMarks_ShowMover", ShowMover)
 
 -------------------------------------------------
 -- colors
@@ -80,17 +80,17 @@ local markColors = {
 -------------------------------------------------
 -- marks
 -------------------------------------------------
-marks = Cell:CreateFrame("CellRaidMarksFrame_Marks", marksFrame, 196, 20, true)
+marks = Cell.CreateFrame("CellRaidMarksFrame_Marks", marksFrame, 196, 20, true)
 marks:SetPoint("BOTTOMLEFT")
 marks:Hide()
 
 local ticker
 local markButtons = {}
 for i = 1, 9 do
-    markButtons[i] = Cell:CreateButton(marks, "", "accent-hover", {20, 20})
+    markButtons[i] = Cell.CreateButton(marks, "", "accent-hover", {20, 20})
     markButtons[i].texture = markButtons[i]:CreateTexture(nil, "ARTWORK")
-    P:Point(markButtons[i].texture, "TOPLEFT", markButtons[i], "TOPLEFT", 2, -2)
-    P:Point(markButtons[i].texture, "BOTTOMRIGHT", markButtons[i], "BOTTOMRIGHT", -2, 2)
+    P.Point(markButtons[i].texture, "TOPLEFT", markButtons[i], "TOPLEFT", 2, -2)
+    P.Point(markButtons[i].texture, "BOTTOMRIGHT", markButtons[i], "BOTTOMRIGHT", -2, 2)
 
     if i == 9 then
         -- clear all marks
@@ -121,10 +121,10 @@ for i = 1, 9 do
                 end
             elseif button == "RightButton" then
                 -- lock raid target icon
-                local unit, name, class = F:GetTargetUnitInfo()
+                local unit, name, class = F.GetTargetUnitInfo()
                 if unit and name then
                     if markButtons[i].locked then
-                        F:NotifyMarkUnlock(i, name, class)
+                        F.NotifyMarkUnlock(i, name, class)
                         SetRaidTarget(markButtons[i].locked, 0)
                         markButtons[i]:SetBackdropBorderColor(0, 0, 0, 1)
                         markButtons[i].locked = nil
@@ -133,7 +133,7 @@ for i = 1, 9 do
                             markButtons[i].ticker = nil
                         end
                     else
-                        F:NotifyMarkLock(i, name, class)
+                        F.NotifyMarkLock(i, name, class)
                         SetRaidTarget(unit, i)
                         markButtons[i]:SetBackdropBorderColor(markColors[i][1], markColors[i][2], markColors[i][3], 1)
                         markButtons[i].locked = unit
@@ -161,9 +161,9 @@ for i = 1, 9 do
     markButtons[i].hoverColor = {markColors[i][1], markColors[i][2], markColors[i][3], 0.35}
 
     -- if i == 1 then
-    --     P:Point(markButtons[i], "TOPLEFT")
+    --     P.Point(markButtons[i], "TOPLEFT")
     -- else
-    --     P:Point(markButtons[i], "LEFT", markButtons[i-1], "RIGHT", 2, 0)
+    --     P.Point(markButtons[i], "LEFT", markButtons[i-1], "RIGHT", 2, 0)
     -- end
 end
 
@@ -181,27 +181,27 @@ end)
 -------------------------------------------------
 -- world marks
 -------------------------------------------------
-worldMarks = Cell:CreateFrame("CellRaidMarksFrame_WorldMarks", marksFrame, 196, 20, true)
+worldMarks = Cell.CreateFrame("CellRaidMarksFrame_WorldMarks", marksFrame, 196, 20, true)
 worldMarks:SetPoint("BOTTOMLEFT")
 worldMarks:Hide()
 
 local worldMarkIndices = {5, 6, 3, 2, 7, 1, 4, 8}
 local worldMarkButtons = {}
 for i = 1, 9 do
-    worldMarkButtons[i] = Cell:CreateButton(worldMarks, "", "accent-hover", {20, 20}, false, false, nil, nil, "SecureActionButtonTemplate")
+    worldMarkButtons[i] = Cell.CreateButton(worldMarks, "", "accent-hover", {20, 20}, false, false, nil, nil, "SecureActionButtonTemplate")
     worldMarkButtons[i]:RegisterForClicks("LeftButtonUp", "LeftButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
     worldMarkButtons[i].texture = worldMarkButtons[i]:CreateTexture(nil, "ARTWORK")
 
     if i == 9 then
         -- clear all marks
-        P:Point(worldMarkButtons[i].texture, "TOPLEFT", worldMarkButtons[i], "TOPLEFT", 2, -2)
-        P:Point(worldMarkButtons[i].texture, "BOTTOMRIGHT", worldMarkButtons[i], "BOTTOMRIGHT", -2, 2)
+        P.Point(worldMarkButtons[i].texture, "TOPLEFT", worldMarkButtons[i], "TOPLEFT", 2, -2)
+        P.Point(worldMarkButtons[i].texture, "BOTTOMRIGHT", worldMarkButtons[i], "BOTTOMRIGHT", -2, 2)
         worldMarkButtons[i].texture:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
         worldMarkButtons[i]:SetAttribute("type", "worldmarker")
         worldMarkButtons[i]:SetAttribute("action", "clear")
     else
-        P:Point(worldMarkButtons[i].texture, "TOPLEFT", worldMarkButtons[i], "TOPLEFT", 1, -1)
-        P:Point(worldMarkButtons[i].texture, "BOTTOMRIGHT", worldMarkButtons[i], "BOTTOMRIGHT", -1, 1)
+        P.Point(worldMarkButtons[i].texture, "TOPLEFT", worldMarkButtons[i], "TOPLEFT", 1, -1)
+        P.Point(worldMarkButtons[i].texture, "BOTTOMRIGHT", worldMarkButtons[i], "BOTTOMRIGHT", -1, 1)
         worldMarkButtons[i].texture:SetColorTexture(markColors[i][1], markColors[i][2], markColors[i][3], 0.4)
         worldMarkButtons[i]:SetAttribute("type", "worldmarker")
         worldMarkButtons[i]:SetAttribute("marker", worldMarkIndices[i])
@@ -215,9 +215,9 @@ for i = 1, 9 do
     worldMarkButtons[i].hoverColor = {markColors[i][1], markColors[i][2], markColors[i][3], 0.35}
 
     -- if i == 1 then
-    --     P:Point(worldMarkButtons[i], "TOPLEFT")
+    --     P.Point(worldMarkButtons[i], "TOPLEFT")
     -- else
-    --     P:Point(worldMarkButtons[i], "LEFT", worldMarkButtons[i-1], "RIGHT", 2, 0)
+    --     P.Point(worldMarkButtons[i], "LEFT", worldMarkButtons[i-1], "RIGHT", 2, 0)
     -- end
 end
 
@@ -250,7 +250,7 @@ end
 for _, b in pairs(worldMarkButtons) do
     tinsert(buttons, b)
 end
-A:ApplyFadeInOutToParent(marksFrame, function()
+A.ApplyFadeInOutToParent(marksFrame, function()
     return CellDB["tools"]["fadeOut"] and not marksFrame.moverText:IsShown()
 end, unpack(buttons))
 
@@ -258,46 +258,46 @@ end, unpack(buttons))
 -- functions
 -------------------------------------------------
 local function Rearrange(marksConfig)
-    local scaled20 = P:Scale(20)
+    local scaled20 = P.Scale(20)
 
     if strfind(marksConfig, "_h$") then
-        local width = scaled20 * 9 + P:Scale(2) * 8
+        local width = scaled20 * 9 + P.Scale(2) * 8
 
         marks:SetSize(width, scaled20)
         worldMarks:SetSize(width, scaled20)
 
         if strfind(marksConfig, "^target") then
-            marksFrame:SetSize(width, P:Scale(40))
+            marksFrame:SetSize(width, P.Scale(40))
             worldMarks:Hide()
-            P:ClearPoints(marks)
-            P:Point(marks, "BOTTOMLEFT")
+            P.ClearPoints(marks)
+            P.Point(marks, "BOTTOMLEFT")
         elseif strfind(marksConfig, "^world") then
-            marksFrame:SetSize(width, P:Scale(40))
+            marksFrame:SetSize(width, P.Scale(40))
             marks:Hide()
-            P:ClearPoints(worldMarks)
-            P:Point(worldMarks, "BOTTOMLEFT")
+            P.ClearPoints(worldMarks)
+            P.Point(worldMarks, "BOTTOMLEFT")
         else -- both
-            marksFrame:SetSize(width, P:Scale(60))
-            P:ClearPoints(worldMarks)
-            P:Point(worldMarks, "BOTTOMLEFT")
-            P:ClearPoints(marks)
-            P:Point(marks, "BOTTOMLEFT", worldMarks, "TOPLEFT", 0, 2)
+            marksFrame:SetSize(width, P.Scale(60))
+            P.ClearPoints(worldMarks)
+            P.Point(worldMarks, "BOTTOMLEFT")
+            P.ClearPoints(marks)
+            P.Point(marks, "BOTTOMLEFT", worldMarks, "TOPLEFT", 0, 2)
         end
 
         -- repoint each button
         for i = 1, 9 do
-            P:ClearPoints(markButtons[i])
-            P:ClearPoints(worldMarkButtons[i])
+            P.ClearPoints(markButtons[i])
+            P.ClearPoints(worldMarkButtons[i])
             if i == 1 then
-                P:Point(markButtons[i], "TOPLEFT")
-                P:Point(worldMarkButtons[i], "TOPLEFT")
+                P.Point(markButtons[i], "TOPLEFT")
+                P.Point(worldMarkButtons[i], "TOPLEFT")
             else
-                P:Point(markButtons[i], "TOPLEFT", markButtons[i-1], "TOPRIGHT", 2, 0)
-                P:Point(worldMarkButtons[i], "TOPLEFT", worldMarkButtons[i-1], "TOPRIGHT", 2, 0)
+                P.Point(markButtons[i], "TOPLEFT", markButtons[i-1], "TOPRIGHT", 2, 0)
+                P.Point(worldMarkButtons[i], "TOPLEFT", worldMarkButtons[i-1], "TOPRIGHT", 2, 0)
             end
         end
     elseif strfind(marksConfig, "_v$") then
-        local height = scaled20 * 9 + P:Scale(2) * 8
+        local height = scaled20 * 9 + P.Scale(2) * 8
 
         marks:SetSize(scaled20, height)
         worldMarks:SetSize(scaled20, height)
@@ -305,31 +305,31 @@ local function Rearrange(marksConfig)
         if strfind(marksConfig, "^target") then
             marksFrame:SetSize(scaled20, height + scaled20)
             worldMarks:Hide()
-            P:ClearPoints(marks)
-            P:Point(marks, "BOTTOMLEFT")
+            P.ClearPoints(marks)
+            P.Point(marks, "BOTTOMLEFT")
         elseif strfind(marksConfig, "^world") then
             marksFrame:SetSize(scaled20, height + scaled20)
             marks:Hide()
-            P:ClearPoints(worldMarks)
-            P:Point(worldMarks, "BOTTOMLEFT")
+            P.ClearPoints(worldMarks)
+            P.Point(worldMarks, "BOTTOMLEFT")
         else -- both
-            marksFrame:SetSize(P:Scale(40) + P:Scale(2), height + scaled20)
-            P:ClearPoints(worldMarks)
-            P:Point(worldMarks, "BOTTOMLEFT")
-            P:ClearPoints(marks)
-            P:Point(marks, "BOTTOMLEFT", worldMarks, "BOTTOMRIGHT", 2, 0)
+            marksFrame:SetSize(P.Scale(40) + P.Scale(2), height + scaled20)
+            P.ClearPoints(worldMarks)
+            P.Point(worldMarks, "BOTTOMLEFT")
+            P.ClearPoints(marks)
+            P.Point(marks, "BOTTOMLEFT", worldMarks, "BOTTOMRIGHT", 2, 0)
         end
 
         -- repoint each button
         for i = 1, 9 do
-            P:ClearPoints(markButtons[i])
-            P:ClearPoints(worldMarkButtons[i])
+            P.ClearPoints(markButtons[i])
+            P.ClearPoints(worldMarkButtons[i])
             if i == 1 then
-                P:Point(markButtons[i], "TOPLEFT")
-                P:Point(worldMarkButtons[i], "TOPLEFT")
+                P.Point(markButtons[i], "TOPLEFT")
+                P.Point(worldMarkButtons[i], "TOPLEFT")
             else
-                P:Point(markButtons[i], "TOPLEFT", markButtons[i-1], "BOTTOMLEFT", 0, -2)
-                P:Point(worldMarkButtons[i], "TOPLEFT", worldMarkButtons[i-1], "BOTTOMLEFT", 0, -2)
+                P.Point(markButtons[i], "TOPLEFT", markButtons[i-1], "BOTTOMLEFT", 0, -2)
+                P.Point(worldMarkButtons[i], "TOPLEFT", worldMarkButtons[i-1], "BOTTOMLEFT", 0, -2)
             end
         end
     end
@@ -382,10 +382,10 @@ marksFrame:SetScript("OnEvent", function()
     CheckPermission()
 end)
 
-Cell:RegisterCallback("PermissionChanged", "RaidMarks_PermissionChanged", CheckPermission)
+Cell.RegisterCallback("PermissionChanged", "RaidMarks_PermissionChanged", CheckPermission)
 
 local function UpdateTools(which)
-    F:Debug("|cffBBFFFFUpdateTools:|r", which)
+    F.Debug("|cffBBFFFFUpdateTools:|r", which)
     if not which or which == "marks" then
         CheckPermission()
         ShowMover(Cell.vars.showMover and CellDB["tools"]["marks"][1])
@@ -400,22 +400,22 @@ local function UpdateTools(which)
     end
 
     if not which then -- position
-        P:LoadPosition(marksFrame, CellDB["tools"]["marks"][4])
+        P.LoadPosition(marksFrame, CellDB["tools"]["marks"][4])
     end
 end
-Cell:RegisterCallback("UpdateTools", "RaidMarks_UpdateTools", UpdateTools)
+Cell.RegisterCallback("UpdateTools", "RaidMarks_UpdateTools", UpdateTools)
 
 local function UpdatePixelPerfect()
-    -- P:Resize(marksFrame)
-    -- P:Resize(marks)
-    -- P:Resize(worldMarks)
-    P:Repoint(marks) -- only marks needs to repoint
+    -- P.Resize(marksFrame)
+    -- P.Resize(marks)
+    -- P.Resize(worldMarks)
+    P.Repoint(marks) -- only marks needs to repoint
 
     for i = 1, 9 do
         markButtons[i]:UpdatePixelPerfect()
         worldMarkButtons[i]:UpdatePixelPerfect()
-        P:Repoint(markButtons[i].texture)
-        P:Repoint(worldMarkButtons[i].texture)
+        P.Repoint(markButtons[i].texture)
+        P.Repoint(worldMarkButtons[i].texture)
     end
 end
-Cell:RegisterCallback("UpdatePixelPerfect", "Marks_UpdatePixelPerfect", UpdatePixelPerfect)
+Cell.RegisterCallback("UpdatePixelPerfect", "Marks_UpdatePixelPerfect", UpdatePixelPerfect)

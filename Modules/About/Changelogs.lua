@@ -6,17 +6,17 @@ local P = Cell.pixelPerfectFuncs
 local changelogsFrame
 
 local function CreateChangelogsFrame()
-    changelogsFrame = Cell:CreateMovableFrame("Cell "..L["Changelogs"], "CellChangelogsFrame", 400, 450, "DIALOG", 1, true)
+    changelogsFrame = Cell.CreateMovableFrame("Cell "..L["Changelogs"], "CellChangelogsFrame", 400, 450, "DIALOG", 1, true)
     Cell.frames.changelogsFrame = changelogsFrame
     changelogsFrame:SetToplevel(true)
 
-    P:SetEffectiveScale(changelogsFrame)
+    P.SetEffectiveScale(changelogsFrame)
 
     changelogsFrame.header.closeBtn:HookScript("OnClick", function()
         CellDB["changelogsViewed"] = Cell.version
     end)
 
-    Cell:CreateScrollFrame(changelogsFrame)
+    Cell.CreateScrollFrame(changelogsFrame)
     changelogsFrame.scrollFrame:SetScrollStep(37)
 
     local content = CreateFrame("SimpleHTML", "CellChangelogsContent", changelogsFrame.scrollFrame.content)
@@ -39,7 +39,7 @@ local function CreateChangelogsFrame()
         local height = content:GetContentHeight()
         content:SetHeight(height)
         changelogsFrame.scrollFrame.content:SetHeight(height + 30)
-        P:PixelPerfectPoint(changelogsFrame)
+        P.PixelPerfectPoint(changelogsFrame)
     end)
 
     content:SetScript("OnHyperlinkClick", function(self, linkData, link, button)
@@ -56,7 +56,7 @@ local function CreateChangelogsFrame()
     end)
 end
 
-function F:CheckWhatsNew(show)
+function F.CheckWhatsNew(show)
     if show or CellDB["changelogsViewed"] ~= Cell.version then
         if not init then
             init = true

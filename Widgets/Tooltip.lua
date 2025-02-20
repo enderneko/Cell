@@ -9,7 +9,7 @@ local function CreateTooltip(name, hasIcon)
     local tooltip = CreateFrame("GameTooltip", name, nil, "CellTooltipTemplate,BackdropTemplate")
     tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = 1})
     tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
-    tooltip:SetBackdropBorderColor(Cell:GetAccentColorRGB())
+    tooltip:SetBackdropBorderColor(Cell.GetAccentColorRGB())
     tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 
     if hasIcon then
@@ -17,13 +17,13 @@ local function CreateTooltip(name, hasIcon)
         tooltip.iconBG = iconBG
         iconBG:SetSize(35, 35)
         iconBG:SetPoint("TOPRIGHT", tooltip, "TOPLEFT", -1, 0)
-        iconBG:SetColorTexture(Cell:GetAccentColorRGB())
+        iconBG:SetColorTexture(Cell.GetAccentColorRGB())
         iconBG:Hide()
 
         local icon = tooltip:CreateTexture(nil, "ARTWORK")
         tooltip.icon = icon
-        P:Point(icon, "TOPLEFT", iconBG, 1, -1)
-        P:Point(icon, "BOTTOMRIGHT", iconBG, -1, 1)
+        P.Point(icon, "TOPLEFT", iconBG, 1, -1)
+        P.Point(icon, "BOTTOMRIGHT", iconBG, -1, 1)
         icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
         icon:Hide()
 
@@ -46,7 +46,7 @@ local function CreateTooltip(name, hasIcon)
 
     tooltip:SetScript("OnTooltipCleared", function()
         -- reset border color
-        tooltip:SetBackdropBorderColor(Cell:GetAccentColorRGB())
+        tooltip:SetBackdropBorderColor(Cell.GetAccentColorRGB())
     end)
 
     -- tooltip:SetScript("OnTooltipSetItem", function()
@@ -65,12 +65,12 @@ local function CreateTooltip(name, hasIcon)
     end)
 
     function tooltip:UpdatePixelPerfect()
-        tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
+        tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
         tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
-        tooltip:SetBackdropBorderColor(Cell:GetAccentColorRGB())
+        tooltip:SetBackdropBorderColor(Cell.GetAccentColorRGB())
         if hasIcon then
-            P:Repoint(tooltip.icon)
-            tooltip.iconBG:SetColorTexture(Cell:GetAccentColorRGB())
+            P.Repoint(tooltip.icon)
+            tooltip.iconBG:SetColorTexture(Cell.GetAccentColorRGB())
         end
     end
 end
@@ -79,13 +79,13 @@ CreateTooltip("CellTooltip")
 CreateTooltip("CellSpellTooltip", true)
 -- CreateTooltip("CellScanningTooltip")
 
-function F:ShowSpellTooltips(tooltip, spellID)
+function F.ShowSpellTooltips(tooltip, spellID)
     local tooltipInfo = CreateBaseTooltipInfo("GetSpellByID", spellID)
     tooltip:ProcessInfo(tooltipInfo)
     tooltip:Show()
 end
 
-function F:ShowTooltips(anchor, tooltipType, unit, aura, filter)
+function F.ShowTooltips(anchor, tooltipType, unit, aura, filter)
     if not CellDB["general"]["enableTooltips"] or (tooltipType == "unit" and CellDB["general"]["hideTooltipsInCombat"] and InCombatLockdown()) then return end
 
     if CellDB["general"]["tooltipsPosition"][2] == "Default" then

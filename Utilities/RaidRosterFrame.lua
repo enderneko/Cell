@@ -39,14 +39,14 @@ end
 -------------------------------------------------
 -- raid roster frame
 -------------------------------------------------
-local raidRosterFrame = Cell:CreateFrame("CellRaidRosterFrame", Cell.frames.mainFrame, 405, 230)
+local raidRosterFrame = Cell.CreateFrame("CellRaidRosterFrame", Cell.frames.mainFrame, 405, 230)
 Cell.frames.raidRosterFrame = raidRosterFrame
 raidRosterFrame:SetFrameStrata("DIALOG")
 raidRosterFrame:SetFrameLevel(5)
 
 local function CreateWidgets()
     -- mode
-    modeBtn = Cell:CreateButton(raidRosterFrame, L["Instant Mode"], "accent", {127, 17})
+    modeBtn = Cell.CreateButton(raidRosterFrame, L["Instant Mode"], "accent", {127, 17})
     modeBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\instant", {13, 13}, {"LEFT", 4, 0})
     modeBtn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     modeBtn:SetScript("OnClick", function(self, button)
@@ -70,7 +70,7 @@ local function CreateWidgets()
         end
     end)
 
-    Cell:SetTooltips(modeBtn, "ANCHOR_TOPRIGHT", 0, 2,
+    Cell.SetTooltips(modeBtn, "ANCHOR_TOPRIGHT", 0, 2,
         "|cffff2727EXPERIMENTAL|r",
         L["No support for rearrangement of members within a same subgroup"],
         L["No guarantee of the order of members in each subgroup"],
@@ -79,12 +79,12 @@ local function CreateWidgets()
     )
 
     -- SetEveryoneIsAssistant
-    assistantCB = Cell:CreateCheckButton(raidRosterFrame, "|TInterface\\GroupFrame\\UI-Group-AssistantIcon:16:16|t", function(checked)
+    assistantCB = Cell.CreateCheckButton(raidRosterFrame, "|TInterface\\GroupFrame\\UI-Group-AssistantIcon:16:16|t", function(checked)
         SetEveryoneIsAssistant(checked)
     end)
     assistantCB:SetPoint("BOTTOMRIGHT", -25, 5)
 
-    local tips = Cell:CreateScrollTextFrame(raidRosterFrame, "|cffb7b7b7"..L["raidRosterTips"], 0.02, nil, 2)
+    local tips = Cell.CreateScrollTextFrame(raidRosterFrame, "|cffb7b7b7"..L["raidRosterTips"], 0.02, nil, 2)
     tips:SetPoint("BOTTOMLEFT", raidRosterFrame, 5, 2)
     tips:SetPoint("RIGHT", assistantCB, "LEFT", -5, 0)
 end
@@ -114,16 +114,16 @@ UpdateMode = function()
         raidRosterFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
         modeBtn:SetText(L["Premade Mode"])
         modeBtn.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\premade")
-        LCG.PixelGlow_Start(modeBtn, Cell:GetAccentColorTable(1), 12, 0.25, 10, 1)
+        LCG.PixelGlow_Start(modeBtn, Cell.GetAccentColorTable(1), 12, 0.25, 10, 1)
     end
 end
 
 local function CreateProcessingFrame()
     -- processing
     processingFrame = CreateFrame("Frame", nil, raidRosterFrame, "BackdropTemplate")
-    processingFrame:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
-    processingFrame:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
-    Cell:StylizeFrame(processingFrame, {0.15, 0.15, 0.15, 0.7}, {0, 0, 0, 0})
+    processingFrame:SetPoint("TOPLEFT", P.Scale(1), P.Scale(-1))
+    processingFrame:SetPoint("BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
+    Cell.StylizeFrame(processingFrame, {0.15, 0.15, 0.15, 0.7}, {0, 0, 0, 0})
     processingFrame:SetFrameLevel(raidRosterFrame:GetFrameLevel()+30)
     processingFrame:EnableMouse(true)
     processingFrame:Hide()
@@ -147,10 +147,10 @@ local function CreateProcessingFrame()
         ProcessNext()
     end)
 
-    A:CreateFadeOut(processingFrame, 1, 0, 0.5, 0.5)
+    A.CreateFadeOut(processingFrame, 1, 0, 0.5, 0.5)
 
     -- progress bar
-    progressBar = Cell:CreateStatusBar(nil, processingFrame, 1, 1, 100, true, nil, true, "Interface\\AddOns\\Cell\\Media\\statusbar", Cell:GetAccentColorTable())
+    progressBar = Cell.CreateStatusBar(nil, processingFrame, 1, 1, 100, true, nil, true, "Interface\\AddOns\\Cell\\Media\\statusbar", Cell.GetAccentColorTable())
     progressBar:SetPoint("TOPLEFT", 10, -103)
     progressBar:SetPoint("BOTTOMRIGHT", -10, 102)
 
@@ -231,7 +231,7 @@ ProcessNext = function()
         local noAction = true
 
         local next = queue[1]
-        local fromIndex, fromSubgroup = F:GetRaidInfoByName(next)
+        local fromIndex, fromSubgroup = F.GetRaidInfoByName(next)
 
         local targetSubgroup = changes[next][1]
         local targetIndex = changes[next][2] -- index in subgroup, not raidIndex
@@ -239,7 +239,7 @@ ProcessNext = function()
 
         if fromIndex then -- "next" still in raid
             local targetPlayerTarget = changes[targetPlayer] and changes[targetPlayer][3] or nil
-            local toIndex, toName = F:GetRaidInfoBySubgroupIndex(targetSubgroup, targetIndex)
+            local toIndex, toName = F.GetRaidInfoBySubgroupIndex(targetSubgroup, targetIndex)
 
             -- print(next, "raidIndex:", fromIndex, "subgroup:", fromSubgroup.."->"..targetSubgroup, "targetIndex:", targetIndex, "targetPlayer:", targetPlayer, targetPlayerTarget)
 
@@ -255,7 +255,7 @@ ProcessNext = function()
                     end
                 end
             else  -- NOTE: non-full subgroup, set
-                if fromSubgroup ~= targetSubgroup and F:GetNumSubgroupMembers(targetSubgroup) < 5 then
+                if fromSubgroup ~= targetSubgroup and F.GetNumSubgroupMembers(targetSubgroup) < 5 then
                     if not InCombatLockdown() then
                         noAction = false
                         SetRaidSubgroup(fromIndex, targetSubgroup)
@@ -282,7 +282,7 @@ ProcessNext = function()
 end
 
 PremadeApply = function()
-    queue = F:GetKeys(changes)
+    queue = F.GetKeys(changes)
     local n = #queue
     if n ~= 0 then
         progressBar:SetMaxValue(n)
@@ -301,8 +301,8 @@ end
 local movingGrid
 local function CreateRaidRosterGrid(parent, index)
     local grid = CreateFrame("Button", parent:GetName().."Unit"..index, parent, "BackdropTemplate")
-    P:Size(grid, 100, 17)
-    Cell:StylizeFrame(grid, {0.1, 0.1, 0.1, 0.5})
+    P.Size(grid, 100, 17)
+    Cell.StylizeFrame(grid, {0.1, 0.1, 0.1, 0.5})
     grid.color = {0.5, 0.5, 0.5}
 
     grid:SetFrameLevel(7)
@@ -313,8 +313,8 @@ local function CreateRaidRosterGrid(parent, index)
     roleIconBg:SetColorTexture(0, 0, 0, 1)
 
     local roleIcon = grid:CreateTexture(nil, "ARTWORK")
-    roleIcon:SetPoint("TOPLEFT", roleIconBg, P:Scale(1), P:Scale(-1))
-    roleIcon:SetPoint("BOTTOMRIGHT", roleIconBg, P:Scale(-1), P:Scale(1))
+    roleIcon:SetPoint("TOPLEFT", roleIconBg, P.Scale(1), P.Scale(-1))
+    roleIcon:SetPoint("BOTTOMRIGHT", roleIconBg, P.Scale(-1), P.Scale(1))
     roleIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
     local nameText = grid:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
@@ -418,7 +418,7 @@ local function CreateRaidRosterGrid(parent, index)
         if role == "NONE" then
             roleIcon:SetTexture(134400)
         else
-            roleIcon:SetTexture(F:GetDefaultRoleIcon(grid.role))
+            roleIcon:SetTexture(F.GetDefaultRoleIcon(grid.role))
         end
 
         if grid.isLeader then
@@ -431,7 +431,7 @@ local function CreateRaidRosterGrid(parent, index)
     end
 
     function grid:Reset()
-        F:RemoveElementsByKeys(grid,
+        F.RemoveElementsByKeys(grid,
             "hasUnit", "raidIndex", "unit", "fullName", "name", "role", "isLeader", "isAssistant",
             "_subgroup", "_index", "_point1", "_point2", "_anchor" -- premade temps
         )
@@ -479,7 +479,7 @@ local function CreateRaidRosterGrid(parent, index)
         grid.unit = "raid"..raidIndex
         grid.name = name
         grid.role = combatRole
-        grid.color[1], grid.color[2], grid.color[3] = F:GetClassColor(classFileName)
+        grid.color[1], grid.color[2], grid.color[3] = F.GetClassColor(classFileName)
         grid.isLeader = UnitIsGroupLeader(grid.unit)
         grid.isAssistant = UnitIsGroupAssistant(grid.unit)
 
@@ -493,8 +493,8 @@ end
 
 local function CreateRaidRosterGroup(parent, groupIndex)
     local group = CreateFrame("Frame", parent:GetName().."Subgroup"..groupIndex, parent, "BackdropTemplate")
-    P:Size(group, 95, 81)
-    Cell:StylizeFrame(group, {0.1, 0.1, 0.1, 0.5})
+    P.Size(group, 95, 81)
+    Cell.StylizeFrame(group, {0.1, 0.1, 0.1, 0.5})
 
     local headerText = group:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     headerText:SetPoint("BOTTOM", group, "TOP", 0, 1)
@@ -576,7 +576,7 @@ local function CheckPermission()
     if UnitIsGroupLeader("player") or UnitIsGroupAssistant("player") then
         if raidRosterFrame.mask then raidRosterFrame.mask:Hide() end
     else
-        Cell:CreateMask(raidRosterFrame, L["You don't have permission to do this"], {1, -1, -1, 1})
+        Cell.CreateMask(raidRosterFrame, L["You don't have permission to do this"], {1, -1, -1, 1})
     end
 end
 
@@ -604,7 +604,7 @@ end)
 local function GroupTypeChanged(groupType)
     raidRosterFrame:Hide()
 end
-Cell:RegisterCallback("GroupTypeChanged", "RaidRosterFrame_GroupTypeChanged", GroupTypeChanged)
+Cell.RegisterCallback("GroupTypeChanged", "RaidRosterFrame_GroupTypeChanged", GroupTypeChanged)
 
 local function UpdateLayout(layout, which)
     layout = Cell.vars.currentLayoutTable
@@ -615,13 +615,13 @@ local function UpdateLayout(layout, which)
         if modeBtn then UpdateModeBtnPosition() end
     end
 end
-Cell:RegisterCallback("UpdateLayout", "RaidRosterFrame_UpdateLayout", UpdateLayout)
+Cell.RegisterCallback("UpdateLayout", "RaidRosterFrame_UpdateLayout", UpdateLayout)
 
 -------------------------------------------------
 -- show
 -------------------------------------------------
 local init
-function F:ShowRaidRosterFrame()
+function F.ShowRaidRosterFrame()
     if not init then
         init = true
         raidRosterFrame:UpdatePixelPerfect()

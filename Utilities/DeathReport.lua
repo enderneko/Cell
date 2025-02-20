@@ -50,7 +50,7 @@ local function UpdateDeathLog(guid, ...)
 end
 
 local function Send(msg)
-    -- F:Print(strupper(ACTION_UNIT_DIED)..": "..msg)
+    -- F.Print(strupper(ACTION_UNIT_DIED)..": "..msg)
     if Cell.hasHighestPriority then
         if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
             SendChatMessage(strupper(ACTION_UNIT_DIED)..": "..msg, "INSTANCE_CHAT")
@@ -79,27 +79,27 @@ local function Report(guid)
         Send(deathLogs[guid]["name"].." > "..L["instakill"])
 
     elseif deathLogs[guid]["type"] == "ENVIRONMENTAL" then
-        Send(deathLogs[guid]["name"].." > "..F:FormatNumber(deathLogs[guid]["amount"]).." ("..deathLogs[guid]["ability"]..")")
+        Send(deathLogs[guid]["name"].." > "..F.FormatNumber(deathLogs[guid]["amount"]).." ("..deathLogs[guid]["ability"]..")")
 
     else -- SPELL & RANGE & SWING
         -- local damageDetails = {}
         local damageDetails = ""
 
         if deathLogs[guid]["overkill"] > 0 then
-            -- tinsert(damageDetails, string.format(overkillFormat, F:FormatNumber(deathLogs[guid]["overkill"])))
-            damageDetails = " ("..string.format(overkillFormat, F:FormatNumber(deathLogs[guid]["overkill"]))..") "
+            -- tinsert(damageDetails, string.format(overkillFormat, F.FormatNumber(deathLogs[guid]["overkill"])))
+            damageDetails = " ("..string.format(overkillFormat, F.FormatNumber(deathLogs[guid]["overkill"]))..") "
         end
         -- if deathLogs[guid]["critical"] == 1 then
         --     tinsert(damageDetails, criticalText)
         -- end
         -- if deathLogs[guid]["resisted"] then
-        --     tinsert(damageDetails, string.format(resistedFormat, F:FormatNumber(deathLogs[guid]["resisted"])))
+        --     tinsert(damageDetails, string.format(resistedFormat, F.FormatNumber(deathLogs[guid]["resisted"])))
         -- end
         -- if deathLogs[guid]["blocked"] then
-        --     tinsert(damageDetails, string.format(blockedFormat, F:FormatNumber(deathLogs[guid]["blocked"])))
+        --     tinsert(damageDetails, string.format(blockedFormat, F.FormatNumber(deathLogs[guid]["blocked"])))
         -- end
         -- if deathLogs[guid]["absorbed"] then
-        --     tinsert(damageDetails, string.format(absorbedFormat, F:FormatNumber(deathLogs[guid]["absorbed"])))
+        --     tinsert(damageDetails, string.format(absorbedFormat, F.FormatNumber(deathLogs[guid]["absorbed"])))
         -- end
 
         -- damageDetails = table.concat(damageDetails, ", ")
@@ -116,7 +116,7 @@ local function Report(guid)
 
         -- damageDetails = table.concat(damageDetails, ", ")
         -- if damageDetails ~= "" then damageDetails = " ("..damageDetails..") " end
-        Send(deathLogs[guid]["name"].." > "..ability.." "..F:FormatNumber(deathLogs[guid]["amount"])..damageDetails..sourceName)
+        Send(deathLogs[guid]["name"].." > "..ability.." "..F.FormatNumber(deathLogs[guid]["amount"])..damageDetails..sourceName)
     end
 
     -- wipe(deathLogs[guid])
@@ -167,7 +167,7 @@ function frame:GROUP_ROSTER_UPDATE()
         else
             if timer then timer:Cancel() end
             timer = C_Timer.NewTimer(7, function()
-                F:CheckPriority()
+                F.CheckPriority()
             end)
         end
     else
@@ -195,7 +195,7 @@ function frame:COMBAT_LOG_EVENT_UNFILTERED(...)
     -- SPELL/RANGE: spellId, spellName, spellSchool
 
     -- if string.find(destGUID, "^Player") then -- debug
-    if string.find(destGUID, "^Player") and F:IsFriend(destFlags) then
+    if string.find(destGUID, "^Player") and F.IsFriend(destFlags) then
         if event == "SPELL_INSTAKILL" then
             UpdateDeathLog(destGUID, timestamp, "INSTAKILL", destName)
         end
@@ -256,7 +256,7 @@ local function UpdatePriority(hasHighestPriority)
         frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     end
 end
-Cell:RegisterCallback("UpdatePriority", "DeathReport_UpdatePriority", UpdatePriority)
+Cell.RegisterCallback("UpdatePriority", "DeathReport_UpdatePriority", UpdatePriority)
 
 ----------------------------------------------------
 -- UpdateTools
@@ -281,4 +281,4 @@ local function UpdateTools(which)
         end
     end
 end
-Cell:RegisterCallback("UpdateTools", "DeathReport_UpdateTools", UpdateTools)
+Cell.RegisterCallback("UpdateTools", "DeathReport_UpdateTools", UpdateTools)

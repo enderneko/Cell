@@ -28,17 +28,17 @@ local function CreatePreviewButton()
     previewButton.widgets.powerBar:SetMinMaxValues(0, 1)
     previewButton.widgets.powerBar:SetValue(1)
 
-    local previewButtonBG = Cell:CreateFrame("CellIconPreviewButtonBG", previewButton)
+    local previewButtonBG = Cell.CreateFrame("CellIconPreviewButtonBG", previewButton)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
-    Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
+    Cell.StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
 
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
-    previewText:SetText(Cell:GetAccentColorString()..L["Preview"])
+    previewText:SetText(Cell.GetAccentColorString()..L["Preview"])
 
-    Cell:Fire("CreatePreview", previewButton)
+    Cell.Fire("CreatePreview", previewButton)
 end
 
 local function UpdatePreviewButton()
@@ -60,19 +60,19 @@ local function UpdatePreviewButton()
         previewButton.indicators.nameText:Hide()
     end
 
-    P:Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
-    B:SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
-    B:SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
+    P.Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
+    B.SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
+    B.SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
 
     previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
     -- health color
-    local r, g, b = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
+    local r, g, b = F.GetHealthBarColor(1, false, F.GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
 
     -- power color
-    r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
+    r, g, b = F.GetPowerBarColor("player", Cell.vars.playerClass)
     previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
 
     -- alpha
@@ -80,16 +80,16 @@ local function UpdatePreviewButton()
 
     previewButton:Show()
 
-    Cell:Fire("UpdatePreview", previewButton)
+    Cell.Fire("UpdatePreview", previewButton)
 end
 
-Cell:RegisterCallback("UpdateLayout", "IconOptions_UpdateLayout", function()
+Cell.RegisterCallback("UpdateLayout", "IconOptions_UpdateLayout", function()
     if previewButton then
         UpdatePreviewButton()
     end
 end)
 
-Cell:RegisterCallback("UpdateAppearance", "IconOptions_UpdateAppearance", function()
+Cell.RegisterCallback("UpdateAppearance", "IconOptions_UpdateAppearance", function()
     if previewButton then
         UpdatePreviewButton()
     end
@@ -103,9 +103,9 @@ local iconAnimation, iconAnchor, iconAnchorTo, iconiconGlowColor, size, xOffset,
 local function UpdateIconPreview()
     local setting = CellDB["spellRequest"]["sharedIconOptions"]
     previewButton.widgets.srIcon:SetAnimationType(setting[1])
-    P:Size(previewButton.widgets.srIcon, setting[2], setting[2])
-    P:ClearPoints(previewButton.widgets.srIcon)
-    P:Point(previewButton.widgets.srIcon, setting[3], previewButton.widgets.srGlowFrame, setting[4], setting[5], setting[6])
+    P.Size(previewButton.widgets.srIcon, setting[2], setting[2])
+    P.ClearPoints(previewButton.widgets.srIcon)
+    P.Point(previewButton.widgets.srIcon, setting[3], previewButton.widgets.srGlowFrame, setting[4], setting[5], setting[6])
     previewButton.widgets.srIcon:Display(icon, iconColorTable)
 end
 
@@ -125,16 +125,16 @@ end
 local function CreateIconOptionsFrame()
     iconOptionsFrame = CreateFrame("Frame", "CellOptionsFrame_IconOptions", Cell.frames.optionsFrame)
     iconOptionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.optionsFrame, "BOTTOMRIGHT", 5, 0)
-    P:Size(iconOptionsFrame, 127, 335)
+    P.Size(iconOptionsFrame, 127, 335)
     iconOptionsFrame:Hide()
 
     -- shared
-    local sharedOptionsFrame = Cell:CreateFrame("CellOptionsFrame_IconOptions_Shared", iconOptionsFrame, 127, 300)
+    local sharedOptionsFrame = Cell.CreateFrame("CellOptionsFrame_IconOptions_Shared", iconOptionsFrame, 127, 300)
     sharedOptionsFrame:SetPoint("BOTTOMLEFT")
     sharedOptionsFrame:Show()
 
     -- iconAnimation
-    iconAnimation = Cell:CreateDropdown(sharedOptionsFrame, 117)
+    iconAnimation = Cell.CreateDropdown(sharedOptionsFrame, 117)
     iconAnimation:SetPoint("TOPLEFT", 5, -20)
     iconAnimation:SetItems({
         {
@@ -143,7 +143,7 @@ local function CreateIconOptionsFrame()
             ["onClick"] = function()
                 CellDB["spellRequest"]["sharedIconOptions"][1] = "none"
                 UpdateIconPreview()
-                Cell:Fire("UpdateRequests", "spellRequest_icon")
+                Cell.Fire("UpdateRequests", "spellRequest_icon")
             end
         },
         {
@@ -152,7 +152,7 @@ local function CreateIconOptionsFrame()
             ["onClick"] = function()
                 CellDB["spellRequest"]["sharedIconOptions"][1] = "beat"
                 UpdateIconPreview()
-                Cell:Fire("UpdateRequests", "spellRequest_icon")
+                Cell.Fire("UpdateRequests", "spellRequest_icon")
             end
         },
         {
@@ -161,7 +161,7 @@ local function CreateIconOptionsFrame()
             ["onClick"] = function()
                 CellDB["spellRequest"]["sharedIconOptions"][1] = "bounce"
                 UpdateIconPreview()
-                Cell:Fire("UpdateRequests", "spellRequest_icon")
+                Cell.Fire("UpdateRequests", "spellRequest_icon")
             end
         },
         {
@@ -170,7 +170,7 @@ local function CreateIconOptionsFrame()
             ["onClick"] = function()
                 CellDB["spellRequest"]["sharedIconOptions"][1] = "blink"
                 UpdateIconPreview()
-                Cell:Fire("UpdateRequests", "spellRequest_icon")
+                Cell.Fire("UpdateRequests", "spellRequest_icon")
             end
         }
     })
@@ -180,16 +180,16 @@ local function CreateIconOptionsFrame()
     iconAnimationText:SetPoint("BOTTOMLEFT", iconAnimation, "TOPLEFT", 0, 1)
 
     -- size
-    size = Cell:CreateSlider(L["Size"], sharedOptionsFrame, 8, 64, 117, 1, function(value)
+    size = Cell.CreateSlider(L["Size"], sharedOptionsFrame, 8, 64, 117, 1, function(value)
         CellDB["spellRequest"]["sharedIconOptions"][2] = value
         UpdateIconPreview()
-        Cell:Fire("UpdateRequests", "spellRequest_icon")
+        Cell.Fire("UpdateRequests", "spellRequest_icon")
     end)
     size:SetPoint("TOPLEFT", iconAnimation, "BOTTOMLEFT", 0, -30)
 
     -- anchor
     local anchorPoints = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "CENTER", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
-    iconAnchor = Cell:CreateDropdown(sharedOptionsFrame, 117)
+    iconAnchor = Cell.CreateDropdown(sharedOptionsFrame, 117)
     iconAnchor:SetPoint("TOPLEFT", size, "BOTTOMLEFT", 0, -40)
     local items = {}
     for _, point in pairs(anchorPoints) do
@@ -199,7 +199,7 @@ local function CreateIconOptionsFrame()
             ["onClick"] = function()
                 CellDB["spellRequest"]["sharedIconOptions"][3] = point
                 UpdateIconPreview()
-                Cell:Fire("UpdateRequests", "spellRequest_icon")
+                Cell.Fire("UpdateRequests", "spellRequest_icon")
             end,
         })
     end
@@ -210,7 +210,7 @@ local function CreateIconOptionsFrame()
     iconAnchorText:SetPoint("BOTTOMLEFT", iconAnchor, "TOPLEFT", 0, 1)
 
     -- anchorTo
-    iconAnchorTo = Cell:CreateDropdown(sharedOptionsFrame, 117)
+    iconAnchorTo = Cell.CreateDropdown(sharedOptionsFrame, 117)
     iconAnchorTo:SetPoint("TOPLEFT", iconAnchor, "BOTTOMLEFT", 0, -30)
     local items = {}
     for _, point in pairs(anchorPoints) do
@@ -220,7 +220,7 @@ local function CreateIconOptionsFrame()
             ["onClick"] = function()
                 CellDB["spellRequest"]["sharedIconOptions"][4] = point
                 UpdateIconPreview()
-                Cell:Fire("UpdateRequests", "spellRequest_icon")
+                Cell.Fire("UpdateRequests", "spellRequest_icon")
             end,
         })
     end
@@ -231,28 +231,28 @@ local function CreateIconOptionsFrame()
     iconAnchorToText:SetPoint("BOTTOMLEFT", iconAnchorTo, "TOPLEFT", 0, 1)
 
     -- x
-    xOffset = Cell:CreateSlider(L["X Offset"], sharedOptionsFrame, -100, 100, 117, 1, function(value)
+    xOffset = Cell.CreateSlider(L["X Offset"], sharedOptionsFrame, -100, 100, 117, 1, function(value)
         CellDB["spellRequest"]["sharedIconOptions"][5] = value
         UpdateIconPreview()
-        Cell:Fire("UpdateRequests", "spellRequest_icon")
+        Cell.Fire("UpdateRequests", "spellRequest_icon")
     end)
     xOffset:SetPoint("TOPLEFT", iconAnchorTo, "BOTTOMLEFT", 0, -30)
 
     -- y
-    yOffset = Cell:CreateSlider(L["Y Offset"], sharedOptionsFrame, -100, 100, 117, 1, function(value)
+    yOffset = Cell.CreateSlider(L["Y Offset"], sharedOptionsFrame, -100, 100, 117, 1, function(value)
         CellDB["spellRequest"]["sharedIconOptions"][6] = value
         UpdateIconPreview()
-        Cell:Fire("UpdateRequests", "spellRequest_icon")
+        Cell.Fire("UpdateRequests", "spellRequest_icon")
     end)
     yOffset:SetPoint("TOPLEFT", xOffset, "BOTTOMLEFT", 0, -40)
 
     -- individual
-    local individualOptionsFrame = Cell:CreateFrame("CellOptionsFrame_IconOptions_Individual", iconOptionsFrame, 127, 30)
+    local individualOptionsFrame = Cell.CreateFrame("CellOptionsFrame_IconOptions_Individual", iconOptionsFrame, 127, 30)
     individualOptionsFrame:SetPoint("BOTTOMLEFT", sharedOptionsFrame, "TOPLEFT", 0, 5)
     individualOptionsFrame:Show()
 
     -- iconGlowColor
-    iconGlowColor = Cell:CreateColorPicker(individualOptionsFrame, L["Glow Color"], false, function(r, g, b)
+    iconGlowColor = Cell.CreateColorPicker(individualOptionsFrame, L["Glow Color"], false, function(r, g, b)
         -- update db
         iconColorTable[1] = r
         iconColorTable[2] = g
@@ -267,7 +267,7 @@ end
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-function U:ShowIconOptions(parent, tex, t)
+function U.ShowIconOptions(parent, tex, t)
     if not iconOptionsFrame then
         CreateIconOptionsFrame()
     end
@@ -284,6 +284,6 @@ function U:ShowIconOptions(parent, tex, t)
     end
 end
 
-function U:HideIconOptions()
+function U.HideIconOptions()
     if iconOptionsFrame then iconOptionsFrame:Hide() end
 end

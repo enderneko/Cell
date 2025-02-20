@@ -35,12 +35,12 @@ Cell.frames.mainFrame = cellMainFrame
 cellMainFrame:SetIgnoreParentScale(true)
 
 local hoverFrame = CreateFrame("Frame", nil, cellMainFrame, "BackdropTemplate")
--- Cell:StylizeFrame(hoverFrame, {1,0,0,0.3}, {0,0,0,0})
+-- Cell.StylizeFrame(hoverFrame, {1,0,0,0.3}, {0,0,0,0})
 
 local anchorFrame = CreateFrame("Frame", "CellAnchorFrame", cellMainFrame)
 Cell.frames.anchorFrame = anchorFrame
 PixelUtil.SetPoint(anchorFrame, "TOPLEFT", UIParent, "CENTER", 1, -1)
-P:Size(anchorFrame, 20, 10)
+P.Size(anchorFrame, 20, 10)
 anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
 
@@ -52,9 +52,9 @@ local function RegisterButtonEvents(frame)
     end)
     frame:SetScript("OnDragStop", function()
         anchorFrame:StopMovingOrSizing()
-        P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["main"]["position"])
+        P.SavePosition(anchorFrame, Cell.vars.currentLayoutTable["main"]["position"])
         if not InCombatLockdown() then
-            P:PixelPerfectPoint(anchorFrame)
+            P.PixelPerfectPoint(anchorFrame)
         end
     end)
 
@@ -78,16 +78,16 @@ Cell.frames.menuFrame = menuFrame
 menuFrame:SetAllPoints(anchorFrame)
 menuFrame:SetFrameLevel(27)
 
-local options = Cell:CreateButton(menuFrame, "", "red", {20, 10}, false, true)
-P:Point(options, "TOPLEFT", menuFrame)
+local options = Cell.CreateButton(menuFrame, "", "red", {20, 10}, false, true)
+P.Point(options, "TOPLEFT", menuFrame)
 RegisterButtonEvents(options)
 options:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 options:SetScript("OnClick", function(self, button)
     if button == "LeftButton" then
-        F:ShowOptionsFrame()
+        F.ShowOptionsFrame()
     elseif button == "RightButton" then
-        F:IterateAllUnitButtons(B.UpdateAll, true)
-        F:Print(L["Unit buttons refreshed (%s)."]:format(F:UpperFirst(L["all"])))
+        F.IterateAllUnitButtons(B.UpdateAll, true)
+        F.Print(L["Unit buttons refreshed (%s)."]:format(F.UpperFirst(L["all"])))
     end
 end)
 options:HookScript("OnEnter", function()
@@ -101,17 +101,17 @@ options:HookScript("OnLeave", function()
     CellTooltip:Hide()
 end)
 
-local raid = Cell:CreateButton(menuFrame, "", "blue", {20, 10}, false, true)
-P:Point(raid, "LEFT", options, "RIGHT", 1, 0)
+local raid = Cell.CreateButton(menuFrame, "", "blue", {20, 10}, false, true)
+P.Point(raid, "LEFT", options, "RIGHT", 1, 0)
 RegisterButtonEvents(raid)
 raid:SetScript("OnClick", function()
-    F:ShowRaidRosterFrame()
+    F.ShowRaidRosterFrame()
 end)
 
--- local tools = Cell:CreateButton(menuFrame, "", "chartreuse", {20, 10}, false, true, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+-- local tools = Cell.CreateButton(menuFrame, "", "chartreuse", {20, 10}, false, true, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
 -- tools:SetSize(20, 10)
 -- tools:EnableMouse(true)
--- P:Point(tools, "LEFT", raid, "RIGHT", 1, 0)
+-- P.Point(tools, "LEFT", raid, "RIGHT", 1, 0)
 -- RegisterButtonEvents(tools)
 -- tools:SetAttribute("_onclick", [[
 --     print(self:GetFrameRef("main"))
@@ -122,12 +122,12 @@ end)
 -- REVIEW: raid tool button
 --[===[
 local frame = CreateFrame("Frame", nil, cellMainFrame, "BackdropTemplate")
-Cell:StylizeFrame(frame)
+Cell.StylizeFrame(frame)
 frame:SetSize(100, 100)
 frame:SetPoint("BOTTOMLEFT", cellMainFrame, "TOPLEFT", 0, 30)
 frame:Hide()
 
-local mark = Cell:CreateButton(frame, "", "accent-hover", {20, 20}, false, false, nil, nil, "SecureActionButtonTemplate")
+local mark = Cell.CreateButton(frame, "", "accent-hover", {20, 20}, false, false, nil, nil, "SecureActionButtonTemplate")
 mark:SetPoint("CENTER")
 mark:SetSize(20, 20)
 mark.texture = mark:CreateTexture(nil, "ARTWORK")
@@ -136,12 +136,12 @@ mark.texture:SetAllPoints(mark)
 mark:SetAttribute("type", "worldmarker")
 mark:SetAttribute("marker", 1)
 
--- local tools = Cell:CreateButton(menuFrame, "", "chartreuse", {20, 10}, false, true, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+-- local tools = Cell.CreateButton(menuFrame, "", "chartreuse", {20, 10}, false, true, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
 local tools = CreateFrame("Frame", nil, menuFrame, "BackdropTemplate,SecureHandlerMouseUpDownTemplate")
-Cell:StylizeFrame(tools)
+Cell.StylizeFrame(tools)
 tools:SetSize(20, 10)
 tools:EnableMouse(true)
-P:Point(tools, "LEFT", raid, "RIGHT", 1, 0)
+P.Point(tools, "LEFT", raid, "RIGHT", 1, 0)
 tools:SetFrameStrata("MEDIUM")
 RegisterButtonEvents(tools)
 -- tools:SetScript("_onclick", function()
@@ -170,9 +170,9 @@ local loadingBar = CreateFrame("StatusBar", "CellLoadingBar", options)
 loadingBar:Hide()
 loadingBar:SetStatusBarTexture(Cell.vars.whiteTexture)
 loadingBar:SetStatusBarColor(0.5, 1, 0)
-P:Height(loadingBar, 1)
-P:Point(loadingBar, "BOTTOMLEFT", options, 1, 1)
-P:Point(loadingBar, "BOTTOMRIGHT", options, -1, 1)
+P.Height(loadingBar, 1)
+P.Point(loadingBar, "BOTTOMLEFT", options, 1, 1)
+P.Point(loadingBar, "BOTTOMRIGHT", options, -1, 1)
 
 -------------------------------------------------
 -- MemoryUsage
@@ -301,9 +301,9 @@ end
 -------------------------------------------------
 -- raid setup
 -------------------------------------------------
-local tankIcon = F:GetDefaultRoleIconEscapeSequence("TANK")
-local healerIcon = F:GetDefaultRoleIconEscapeSequence("HEALER")
-local damagerIcon = F:GetDefaultRoleIconEscapeSequence("DAMAGER")
+local tankIcon = F.GetDefaultRoleIconEscapeSequence("TANK")
+local healerIcon = F.GetDefaultRoleIconEscapeSequence("HEALER")
+local damagerIcon = F.GetDefaultRoleIconEscapeSequence("DAMAGER")
 
 -- local GetGroupMemberCountsForDisplay = GetGroupMemberCountsForDisplay
 -- if not GetGroupMemberCountsForDisplay then
@@ -318,9 +318,9 @@ local damagerIcon = F:GetDefaultRoleIconEscapeSequence("DAMAGER")
 local function GetRaidSetupDetail(role)
     local line = "  "
 
-    for class in F:IterateClasses() do
+    for class in F.IterateClasses() do
         if Cell.vars.raidSetup[role][class] then
-            local r, g, b = F:ConvertRGB_256(F:GetClassColor(class))
+            local r, g, b = F.ConvertRGB_256(F.GetClassColor(class))
 
             for i = 1, Cell.vars.raidSetup[role][class] do
                 if line ~= "  " then
@@ -362,7 +362,7 @@ raid:HookScript("OnLeave", function()
     CellTooltip:Hide()
 end)
 
-function F:UpdateRaidSetup()
+function F.UpdateRaidSetup()
     if CellTooltip:GetOwner() == raid then
         UpdateRaidSetupTooltip()
     end
@@ -392,7 +392,7 @@ local function MainFrame_UpdateVisibility()
         end
     end
 end
-Cell:RegisterCallback("UpdateVisibility", "MainFrame_UpdateVisibility", MainFrame_UpdateVisibility)
+Cell.RegisterCallback("UpdateVisibility", "MainFrame_UpdateVisibility", MainFrame_UpdateVisibility)
 
 local function MainFrame_GroupTypeChanged(groupType)
     if groupType == "raid" then
@@ -404,7 +404,7 @@ local function MainFrame_GroupTypeChanged(groupType)
     -- check whether menu should be shown
     MainFrame_UpdateVisibility()
 end
-Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)
+Cell.RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)
 
 -------------------------------------------------
 -- event
@@ -429,64 +429,64 @@ local function UpdatePosition()
     local anchor = Cell.vars.currentLayoutTable["main"]["anchor"]
 
     cellMainFrame:ClearAllPoints()
-    P:ClearPoints(raid)
+    P.ClearPoints(raid)
 
     if CellDB["general"]["menuPosition"] == "top_bottom" then
-        P:Size(anchorFrame, 20, 10)
-        P:Size(options, 20, 10)
-        P:Size(raid, 20, 10)
+        P.Size(anchorFrame, 20, 10)
+        P.Size(options, 20, 10)
+        P.Size(raid, 20, 10)
 
 
         if anchor == "BOTTOMLEFT" then
             cellMainFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
-            P:Point(raid, "BOTTOMLEFT", options, "BOTTOMRIGHT", 1, 0)
+            P.Point(raid, "BOTTOMLEFT", options, "BOTTOMRIGHT", 1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "BOTTOMLEFT", 0, -3
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 5, -20, -20, 20
 
         elseif anchor == "BOTTOMRIGHT" then
             cellMainFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 4)
-            P:Point(raid, "BOTTOMRIGHT", options, "BOTTOMLEFT", -1, 0)
+            P.Point(raid, "BOTTOMRIGHT", options, "BOTTOMLEFT", -1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "BOTTOMRIGHT", 0, -3
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 5, -20, -20, 20
 
         elseif anchor == "TOPLEFT" then
             cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
-            P:Point(raid, "TOPLEFT", options, "TOPRIGHT", 1, 0)
+            P.Point(raid, "TOPLEFT", options, "TOPRIGHT", 1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "TOPLEFT", 0, 3
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
 
         elseif anchor == "TOPRIGHT" then
             cellMainFrame:SetPoint("TOPRIGHT", anchorFrame, "BOTTOMRIGHT", 0, -4)
-            P:Point(raid, "TOPRIGHT", options, "TOPLEFT", -1, 0)
+            P.Point(raid, "TOPRIGHT", options, "TOPLEFT", -1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
         end
     else -- left_right
-        P:Size(anchorFrame, 10, 20)
-        P:Size(options, 10, 20)
-        P:Size(raid, 10, 20)
+        P.Size(anchorFrame, 10, 20)
+        P.Size(options, 10, 20)
+        P.Size(raid, 10, 20)
 
         if anchor == "BOTTOMLEFT" then
             cellMainFrame:SetPoint("BOTTOMLEFT", anchorFrame, "BOTTOMRIGHT", 4, 0)
-            P:Point(raid, "BOTTOMLEFT", options, "TOPLEFT", 0, 1)
+            P.Point(raid, "BOTTOMLEFT", options, "TOPLEFT", 0, 1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "BOTTOMLEFT", -3, 0
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -20, 5
 
         elseif anchor == "BOTTOMRIGHT" then
             cellMainFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "BOTTOMLEFT", -4, 0)
-            P:Point(raid, "BOTTOMRIGHT", options, "TOPRIGHT", 0, 1)
+            P.Point(raid, "BOTTOMRIGHT", options, "TOPRIGHT", 0, 1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "BOTTOMRIGHT", 3, 0
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -5, 20
 
         elseif anchor == "TOPLEFT" then
             cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "TOPRIGHT", 4, 0)
-            P:Point(raid, "TOPLEFT", options, "BOTTOMLEFT", 0, -1)
+            P.Point(raid, "TOPLEFT", options, "BOTTOMLEFT", 0, -1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "TOPLEFT", -3, 0
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -20, 5
 
         elseif anchor == "TOPRIGHT" then
             cellMainFrame:SetPoint("TOPRIGHT", anchorFrame, "TOPLEFT", -4, 0)
-            P:Point(raid, "TOPRIGHT", options, "BOTTOMRIGHT", 0, -1)
+            P.Point(raid, "TOPRIGHT", options, "BOTTOMRIGHT", 0, -1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "TOPRIGHT", 3, 0
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -5, 20
         end
@@ -496,7 +496,7 @@ local function UpdatePosition()
 end
 
 local function UpdateMenu(which)
-    F:Debug("|cff00bfffUpdateMenu:|r", which)
+    F.Debug("|cff00bfffUpdateMenu:|r", which)
 
     if not which or which == "lock" then
         if CellDB["general"]["locked"] then
@@ -539,11 +539,11 @@ local function UpdateMenu(which)
         UpdatePosition()
     end
 end
-Cell:RegisterCallback("UpdateMenu", "MainFrame_UpdateMenu", UpdateMenu)
+Cell.RegisterCallback("UpdateMenu", "MainFrame_UpdateMenu", UpdateMenu)
 
 local init
 local function MainFrame_UpdateLayout(layout, which)
-    F:Debug("|cffff0066UpdateLayout:|r layout:", layout, " which:", which)
+    F.Debug("|cffff0066UpdateLayout:|r layout:", layout, " which:", which)
 
     if not init then
         init = true
@@ -554,7 +554,7 @@ local function MainFrame_UpdateLayout(layout, which)
     layout = Cell.vars.currentLayoutTable
 
     if not which or which == "main-size" then
-        P:Size(cellMainFrame, unpack(layout["main"]["size"]))
+        P.Size(cellMainFrame, unpack(layout["main"]["size"]))
     end
 
     if not which or which == "main-arrangement" then
@@ -563,28 +563,28 @@ local function MainFrame_UpdateLayout(layout, which)
 
     -- load position
     if not which then
-        if not P:LoadPosition(anchorFrame, layout["main"]["position"]) then
-            P:ClearPoints(anchorFrame)
+        if not P.LoadPosition(anchorFrame, layout["main"]["position"]) then
+            P.ClearPoints(anchorFrame)
             -- no position, use default
             PixelUtil.SetPoint(anchorFrame, "TOPLEFT", UIParent, "CENTER", 1, -1)
         end
     end
 end
-Cell:RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)
+Cell.RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)
 
 local function UpdatePixelPerfect()
-    F:Debug("|cffffff7fUpdatePixelPerfect")
-    P:Resize(cellMainFrame)
-    -- P:Repoint(cellMainFrame)
-    P:Resize(anchorFrame)
+    F.Debug("|cffffff7fUpdatePixelPerfect")
+    P.Resize(cellMainFrame)
+    -- P.Repoint(cellMainFrame)
+    P.Resize(anchorFrame)
     options:UpdatePixelPerfect()
     raid:UpdatePixelPerfect()
-    P:Repoint(loadingBar)
-    P:Resize(loadingBar)
+    P.Repoint(loadingBar)
+    P.Resize(loadingBar)
 
     -- NOTE: update pixel perfect for each button moved to UpdateIndicators
-    -- F:IterateAllUnitButtons(function(b)
-    --     B:UpdatePixelPerfect(b)
+    -- F.IterateAllUnitButtons(function(b)
+    --     B.UpdatePixelPerfect(b)
     -- end)
 end
-Cell:RegisterCallback("UpdatePixelPerfect", "MainFrame_UpdatePixelPerfect", UpdatePixelPerfect)
+Cell.RegisterCallback("UpdatePixelPerfect", "MainFrame_UpdatePixelPerfect", UpdatePixelPerfect)

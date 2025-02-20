@@ -5,7 +5,7 @@ local P = Cell.pixelPerfectFuncs
 
 local lastShownTab
 
-local optionsFrame = Cell:CreateFrame("CellOptionsFrame", Cell.frames.mainFrame, 432, 401)
+local optionsFrame = Cell.CreateFrame("CellOptionsFrame", Cell.frames.mainFrame, 432, 401)
 Cell.frames.optionsFrame = optionsFrame
 PixelUtil.SetPoint(optionsFrame, "CENTER", UIParent, "CENTER", 1, -1)
 optionsFrame:SetFrameStrata("DIALOG")
@@ -22,8 +22,8 @@ local function RegisterDragForOptionsFrame(frame)
     end)
     frame:SetScript("OnDragStop", function()
         optionsFrame:StopMovingOrSizing()
-        P:PixelPerfectPoint(optionsFrame)
-        P:SavePosition(optionsFrame, CellDB["optionsFramePosition"])
+        P.PixelPerfectPoint(optionsFrame)
+        P.SavePosition(optionsFrame, CellDB["optionsFramePosition"])
     end)
 end
 
@@ -33,32 +33,32 @@ end
 local generalBtn, appearanceBtn, clickCastingsBtn, aboutBtn, layoutsBtn, indicatorsBtn, debuffsBtn, utilitiesBtn, closeBtn
 
 local function CreateTabButtons()
-    generalBtn = Cell:CreateButton(optionsFrame, L["General"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    appearanceBtn = Cell:CreateButton(optionsFrame, L["Appearance"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    layoutsBtn = Cell:CreateButton(optionsFrame, L["Layouts"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    clickCastingsBtn = Cell:CreateButton(optionsFrame, L["Click-Castings"], "accent-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    indicatorsBtn = Cell:CreateButton(optionsFrame, L["Indicators"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    debuffsBtn = Cell:CreateButton(optionsFrame, L["Raid Debuffs"], "accent-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    utilitiesBtn = Cell:CreateButton(optionsFrame, L["Utilities"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    aboutBtn = Cell:CreateButton(optionsFrame, L["About"], "accent-hover", {86, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    closeBtn = Cell:CreateButton(optionsFrame, "×", "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
+    generalBtn = Cell.CreateButton(optionsFrame, L["General"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    appearanceBtn = Cell.CreateButton(optionsFrame, L["Appearance"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    layoutsBtn = Cell.CreateButton(optionsFrame, L["Layouts"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    clickCastingsBtn = Cell.CreateButton(optionsFrame, L["Click-Castings"], "accent-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    indicatorsBtn = Cell.CreateButton(optionsFrame, L["Indicators"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    debuffsBtn = Cell.CreateButton(optionsFrame, L["Raid Debuffs"], "accent-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    utilitiesBtn = Cell.CreateButton(optionsFrame, L["Utilities"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    aboutBtn = Cell.CreateButton(optionsFrame, L["About"], "accent-hover", {86, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    closeBtn = Cell.CreateButton(optionsFrame, "×", "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
     closeBtn:SetScript("OnClick", function()
         optionsFrame:Hide()
     end)
 
     -- line 1
-    layoutsBtn:SetPoint("BOTTOMLEFT", optionsFrame, "TOPLEFT", 0, P:Scale(-1))
-    indicatorsBtn:SetPoint("BOTTOMLEFT", layoutsBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
-    debuffsBtn:SetPoint("BOTTOMLEFT", indicatorsBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
-    utilitiesBtn:SetPoint("BOTTOMLEFT", debuffsBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
-    utilitiesBtn:SetPoint("BOTTOMRIGHT", optionsFrame, "TOPRIGHT", 0, P:Scale(-1))
+    layoutsBtn:SetPoint("BOTTOMLEFT", optionsFrame, "TOPLEFT", 0, P.Scale(-1))
+    indicatorsBtn:SetPoint("BOTTOMLEFT", layoutsBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
+    debuffsBtn:SetPoint("BOTTOMLEFT", indicatorsBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
+    utilitiesBtn:SetPoint("BOTTOMLEFT", debuffsBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
+    utilitiesBtn:SetPoint("BOTTOMRIGHT", optionsFrame, "TOPRIGHT", 0, P.Scale(-1))
     -- line 2
-    generalBtn:SetPoint("BOTTOMLEFT", layoutsBtn, "TOPLEFT", 0, P:Scale(-1))
-    appearanceBtn:SetPoint("BOTTOMLEFT", generalBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
-    clickCastingsBtn:SetPoint("BOTTOMLEFT", appearanceBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
-    aboutBtn:SetPoint("BOTTOMLEFT", clickCastingsBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
-    closeBtn:SetPoint("BOTTOMLEFT", aboutBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
-    closeBtn:SetPoint("BOTTOMRIGHT", utilitiesBtn, "TOPRIGHT", 0, P:Scale(-1))
+    generalBtn:SetPoint("BOTTOMLEFT", layoutsBtn, "TOPLEFT", 0, P.Scale(-1))
+    appearanceBtn:SetPoint("BOTTOMLEFT", generalBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
+    clickCastingsBtn:SetPoint("BOTTOMLEFT", appearanceBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
+    aboutBtn:SetPoint("BOTTOMLEFT", clickCastingsBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
+    closeBtn:SetPoint("BOTTOMLEFT", aboutBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
+    closeBtn:SetPoint("BOTTOMRIGHT", utilitiesBtn, "TOPRIGHT", 0, P.Scale(-1))
 
     RegisterDragForOptionsFrame(generalBtn)
     RegisterDragForOptionsFrame(appearanceBtn)
@@ -91,17 +91,17 @@ local function CreateTabButtons()
 
     local function ShowTab(tab)
         if lastShownTab ~= tab then
-            P:Height(optionsFrame, tabHeight[tab])
-            Cell:Fire("ShowOptionsTab", tab)
+            P.Height(optionsFrame, tabHeight[tab])
+            Cell.Fire("ShowOptionsTab", tab)
             lastShownTab = tab
         end
     end
 
     local function OnEnter(b)
         if b.id == utilitiesBtn.id then
-            F:ShowUtilityList(b)
+            F.ShowUtilityList(b)
         else
-            F:HideUtilityList()
+            F.HideUtilityList()
         end
         if utilitiesBtn.timer then
             utilitiesBtn.timer:Cancel()
@@ -112,8 +112,8 @@ local function CreateTabButtons()
     local function OnLeave(b)
         if b.id == utilitiesBtn.id then
             utilitiesBtn.timer = C_Timer.NewTicker(0.5, function()
-                if not F:IsUtilityListMouseover() then
-                    F:HideUtilityList()
+                if not F.IsUtilityListMouseover() then
+                    F.HideUtilityList()
                     utilitiesBtn.timer:Cancel()
                     utilitiesBtn.timer = nil
                 end
@@ -121,7 +121,7 @@ local function CreateTabButtons()
         end
     end
 
-    Cell:CreateButtonGroup({generalBtn, appearanceBtn, layoutsBtn, clickCastingsBtn, indicatorsBtn, debuffsBtn, utilitiesBtn, aboutBtn}, ShowTab, nil, nil, OnEnter, OnLeave)
+    Cell.CreateButtonGroup({generalBtn, appearanceBtn, layoutsBtn, clickCastingsBtn, indicatorsBtn, debuffsBtn, utilitiesBtn, aboutBtn}, ShowTab, nil, nil, OnEnter, OnLeave)
 end
 
 -------------------------------------------------
@@ -131,14 +131,14 @@ local init
 local function Init()
     if not init then
         init = true
-        P:Resize(optionsFrame)
-        P:Reborder(optionsFrame, true)
+        P.Resize(optionsFrame)
+        P.Reborder(optionsFrame, true)
         CreateTabButtons()
-        F:CreateUtilityList(utilitiesBtn)
+        F.CreateUtilityList(utilitiesBtn)
     end
 end
 
-function F:ShowOptionsFrame()
+function F.ShowOptionsFrame()
     Init()
 
     if optionsFrame:IsShown() then
@@ -154,39 +154,39 @@ function F:ShowOptionsFrame()
 end
 
 optionsFrame:SetScript("OnShow", function()
-    if not P:LoadPosition(optionsFrame, CellDB["optionsFramePosition"]) then
-        P:PixelPerfectPoint(optionsFrame)
+    if not P.LoadPosition(optionsFrame, CellDB["optionsFramePosition"]) then
+        P.PixelPerfectPoint(optionsFrame)
     end
 end)
 
 optionsFrame:SetScript("OnHide", function()
     -- stolen from dbm
     if not InCombatLockdown() and not UnitAffectingCombat("player") and not IsFalling() then
-        F:Debug("|cffbbbbbbCellOptionsFrame_OnHide: |cffff7777collectgarbage")
+        F.Debug("|cffbbbbbbCellOptionsFrame_OnHide: |cffff7777collectgarbage")
         collectgarbage("collect")
         -- UpdateAddOnMemoryUsage() -- stuck like hell
     end
 end)
 
 -- optionsFrame:SetScript("OnShow", function()
---     P:PixelPerfectPoint(optionsFrame)
+--     P.PixelPerfectPoint(optionsFrame)
 -- end)
 
 -- for Raid Debuffs import
-function F:ShowRaidDebuffsTab()
+function F.ShowRaidDebuffsTab()
     Init()
     optionsFrame:Show()
     debuffsBtn:Click()
 end
 
 -- for layout import
-function F:ShowLayousTab()
+function F.ShowLayousTab()
     Init()
     optionsFrame:Show()
     layoutsBtn:Click()
 end
 
-function F:ShowUtilitiesTab()
+function F.ShowUtilitiesTab()
     Init()
     optionsFrame:Show()
     utilitiesBtn:Click()
@@ -196,9 +196,9 @@ end
 -- InCombatLockdown
 -------------------------------------------------
 local protectedFrames = {}
-function F:ApplyCombatProtectionToFrame(f, x1, y1, x2, y2)
+function F.ApplyCombatProtectionToFrame(f, x1, y1, x2, y2)
     tinsert(protectedFrames, f)
-    Cell:CreateCombatMask(f, x1, y1, x2, y2)
+    Cell.CreateCombatMask(f, x1, y1, x2, y2)
 
     if InCombatLockdown() then
         f.combatMask:Show()
@@ -212,7 +212,7 @@ function F:ApplyCombatProtectionToFrame(f, x1, y1, x2, y2)
 end
 
 local protectedWidgets = {}
-function F:ApplyCombatProtectionToWidget(widget)
+function F.ApplyCombatProtectionToWidget(widget)
     tinsert(protectedWidgets, widget)
 
     if InCombatLockdown() then
@@ -244,6 +244,6 @@ end)
 -- callbacks
 -------------------------------------------------
 local function UpdatePixelPerfect()
-    P:Resize(optionsFrame)
+    P.Resize(optionsFrame)
 end
-Cell:RegisterCallback("UpdatePixelPerfect", "OptionsFrame_UpdatePixelPerfect", UpdatePixelPerfect)
+Cell.RegisterCallback("UpdatePixelPerfect", "OptionsFrame_UpdatePixelPerfect", UpdatePixelPerfect)

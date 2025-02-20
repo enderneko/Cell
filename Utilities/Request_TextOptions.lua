@@ -26,17 +26,17 @@ local function CreatePreviewButton()
     previewButton.widgets.powerBar:SetMinMaxValues(0, 1)
     previewButton.widgets.powerBar:SetValue(1)
 
-    local previewButtonBG = Cell:CreateFrame("CellTextPreviewButton", previewButton)
+    local previewButtonBG = Cell.CreateFrame("CellTextPreviewButton", previewButton)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
-    Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
+    Cell.StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
 
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
-    previewText:SetText(Cell:GetAccentColorString()..L["Preview"])
+    previewText:SetText(Cell.GetAccentColorString()..L["Preview"])
 
-    Cell:Fire("CreatePreview", previewButton)
+    Cell.Fire("CreatePreview", previewButton)
 end
 
 local function UpdatePreviewButton()
@@ -58,19 +58,19 @@ local function UpdatePreviewButton()
         previewButton.indicators.nameText:Hide()
     end
 
-    P:Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
-    B:SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
-    B:SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
+    P.Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
+    B.SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
+    B.SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
 
     previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
     -- health color
-    local r, g, b = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
+    local r, g, b = F.GetHealthBarColor(1, false, F.GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
 
     -- power color
-    r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
+    r, g, b = F.GetPowerBarColor("player", Cell.vars.playerClass)
     previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
 
     -- alpha
@@ -78,16 +78,16 @@ local function UpdatePreviewButton()
 
     previewButton:Show()
 
-    Cell:Fire("UpdatePreview", previewButton)
+    Cell.Fire("UpdatePreview", previewButton)
 end
 
-Cell:RegisterCallback("UpdateLayout", "TextOptions_UpdateLayout", function()
+Cell.RegisterCallback("UpdateLayout", "TextOptions_UpdateLayout", function()
     if previewButton then
         UpdatePreviewButton()
     end
 end)
 
-Cell:RegisterCallback("UpdateAppearance", "TextOptions_UpdateAppearance", function()
+Cell.RegisterCallback("UpdateAppearance", "TextOptions_UpdateAppearance", function()
     if previewButton then
         UpdatePreviewButton()
     end
@@ -102,9 +102,9 @@ local function UpdateTextPreview()
     local setting = CellDB["dispelRequest"]["textOptions"]
     previewButton.widgets.drText:SetType(setting[1])
     previewButton.widgets.drText:SetColor(setting[2])
-    P:Size(previewButton.widgets.drText, setting[3] * 2, setting[3])
-    P:ClearPoints(previewButton.widgets.drText)
-    P:Point(previewButton.widgets.drText, setting[4], previewButton.widgets.drGlowFrame, setting[5], setting[6], setting[7])
+    P.Size(previewButton.widgets.drText, setting[3] * 2, setting[3])
+    P.ClearPoints(previewButton.widgets.drText)
+    P.Point(previewButton.widgets.drText, setting[4], previewButton.widgets.drGlowFrame, setting[5], setting[6], setting[7])
     previewButton.widgets.drText:Display()
 end
 
@@ -121,11 +121,11 @@ local function LoadTextOptions()
 end
 
 local function CreateTextOptionsFrame()
-    textOptionsFrame = Cell:CreateFrame("CellOptionsFrame_TextOptions", textOptionsFrame, 127, 325)
+    textOptionsFrame = Cell.CreateFrame("CellOptionsFrame_TextOptions", textOptionsFrame, 127, 325)
     textOptionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.optionsFrame, "BOTTOMRIGHT", 5, 0)
 
     -- textType
-    textType = Cell:CreateDropdown(textOptionsFrame, 117)
+    textType = Cell.CreateDropdown(textOptionsFrame, 117)
     textType:SetPoint("TOPLEFT", 5, -20)
     textType:SetItems({
         {
@@ -133,7 +133,7 @@ local function CreateTextOptionsFrame()
             ["onClick"] = function()
                 CellDB["dispelRequest"]["textOptions"][1] = "A"
                 UpdateTextPreview()
-                Cell:Fire("UpdateRequests", "dispelRequest_text")
+                Cell.Fire("UpdateRequests", "dispelRequest_text")
             end
         },
         {
@@ -141,7 +141,7 @@ local function CreateTextOptionsFrame()
             ["onClick"] = function()
                 CellDB["dispelRequest"]["textOptions"][1] = "B"
                 UpdateTextPreview()
-                Cell:Fire("UpdateRequests", "dispelRequest_text")
+                Cell.Fire("UpdateRequests", "dispelRequest_text")
             end
         },
         {
@@ -149,7 +149,7 @@ local function CreateTextOptionsFrame()
             ["onClick"] = function()
                 CellDB["dispelRequest"]["textOptions"][1] = "C"
                 UpdateTextPreview()
-                Cell:Fire("UpdateRequests", "dispelRequest_text")
+                Cell.Fire("UpdateRequests", "dispelRequest_text")
             end
         },
     })
@@ -159,28 +159,28 @@ local function CreateTextOptionsFrame()
     textTypeText:SetPoint("BOTTOMLEFT", textType, "TOPLEFT", 0, 1)
 
     -- textColor
-    textColor = Cell:CreateColorPicker(textOptionsFrame, L["Color"], false, function(r, g, b)
+    textColor = Cell.CreateColorPicker(textOptionsFrame, L["Color"], false, function(r, g, b)
         -- update db
         CellDB["dispelRequest"]["textOptions"][2][1] = r
         CellDB["dispelRequest"]["textOptions"][2][2] = g
         CellDB["dispelRequest"]["textOptions"][2][3] = b
         CellDB["dispelRequest"]["textOptions"][2][4] = 1
         UpdateTextPreview()
-        Cell:Fire("UpdateRequests", "dispelRequest_text")
+        Cell.Fire("UpdateRequests", "dispelRequest_text")
     end)
     textColor:SetPoint("TOPLEFT", textType, "BOTTOMLEFT", 0, -10)
 
     -- size
-    size = Cell:CreateSlider(L["Size"], textOptionsFrame, 8, 64, 117, 1, function(value)
+    size = Cell.CreateSlider(L["Size"], textOptionsFrame, 8, 64, 117, 1, function(value)
         CellDB["dispelRequest"]["textOptions"][3] = value
         UpdateTextPreview()
-        Cell:Fire("UpdateRequests", "dispelRequest_text")
+        Cell.Fire("UpdateRequests", "dispelRequest_text")
     end)
     size:SetPoint("TOPLEFT", textColor, "BOTTOMLEFT", 0, -30)
 
     -- anchor
     local anchorPoints = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "CENTER", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
-    textAnchor = Cell:CreateDropdown(textOptionsFrame, 117)
+    textAnchor = Cell.CreateDropdown(textOptionsFrame, 117)
     textAnchor:SetPoint("TOPLEFT", size, "BOTTOMLEFT", 0, -40)
     local items = {}
     for _, point in pairs(anchorPoints) do
@@ -190,7 +190,7 @@ local function CreateTextOptionsFrame()
             ["onClick"] = function()
                 CellDB["dispelRequest"]["textOptions"][4] = point
                 UpdateTextPreview()
-                Cell:Fire("UpdateRequests", "dispelRequest_text")
+                Cell.Fire("UpdateRequests", "dispelRequest_text")
             end,
         })
     end
@@ -201,7 +201,7 @@ local function CreateTextOptionsFrame()
     textAnchorText:SetPoint("BOTTOMLEFT", textAnchor, "TOPLEFT", 0, 1)
 
     -- anchorTo
-    textAnchorTo = Cell:CreateDropdown(textOptionsFrame, 117)
+    textAnchorTo = Cell.CreateDropdown(textOptionsFrame, 117)
     textAnchorTo:SetPoint("TOPLEFT", textAnchor, "BOTTOMLEFT", 0, -30)
     local items = {}
     for _, point in pairs(anchorPoints) do
@@ -211,7 +211,7 @@ local function CreateTextOptionsFrame()
             ["onClick"] = function()
                 CellDB["dispelRequest"]["textOptions"][5] = point
                 UpdateTextPreview()
-                Cell:Fire("UpdateRequests", "dispelRequest_text")
+                Cell.Fire("UpdateRequests", "dispelRequest_text")
             end,
         })
     end
@@ -222,18 +222,18 @@ local function CreateTextOptionsFrame()
     textAnchorToText:SetPoint("BOTTOMLEFT", textAnchorTo, "TOPLEFT", 0, 1)
 
     -- x
-    xOffset = Cell:CreateSlider(L["X Offset"], textOptionsFrame, -100, 100, 117, 1, function(value)
+    xOffset = Cell.CreateSlider(L["X Offset"], textOptionsFrame, -100, 100, 117, 1, function(value)
         CellDB["dispelRequest"]["textOptions"][6] = value
         UpdateTextPreview()
-        Cell:Fire("UpdateRequests", "dispelRequest_text")
+        Cell.Fire("UpdateRequests", "dispelRequest_text")
     end)
     xOffset:SetPoint("TOPLEFT", textAnchorTo, "BOTTOMLEFT", 0, -30)
 
     -- y
-    yOffset = Cell:CreateSlider(L["Y Offset"], textOptionsFrame, -100, 100, 117, 1, function(value)
+    yOffset = Cell.CreateSlider(L["Y Offset"], textOptionsFrame, -100, 100, 117, 1, function(value)
         CellDB["dispelRequest"]["textOptions"][7] = value
         UpdateTextPreview()
-        Cell:Fire("UpdateRequests", "dispelRequest_text")
+        Cell.Fire("UpdateRequests", "dispelRequest_text")
     end)
     yOffset:SetPoint("TOPLEFT", xOffset, "BOTTOMLEFT", 0, -40)
 end
@@ -241,7 +241,7 @@ end
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-function U:ShowTextOptions(parent)
+function U.ShowTextOptions(parent)
     if not textOptionsFrame then
         CreateTextOptionsFrame()
     end
@@ -256,6 +256,6 @@ function U:ShowTextOptions(parent)
     end
 end
 
-function U:HideTextOptions()
+function U.HideTextOptions()
     if textOptionsFrame then textOptionsFrame:Hide() end
 end

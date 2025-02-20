@@ -11,7 +11,7 @@ local function ShowCooldownAnimation(frame, start, duration)
 end
 
 -- hook built-in
-Cell.funcs:IterateAllUnitButtons(function(b)
+Cell.funcs.IterateAllUnitButtons(function(b)
     for name, indicator in pairs(b.indicators) do
         if name ~= "raidDebuffs" and indicator[1] then
             for i, icon in ipairs(indicator) do

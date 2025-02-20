@@ -185,28 +185,28 @@ local function PartyFrame_UpdateLayout(layout, which)
 
             if not which or strfind(which, "size$") then
                 local width, height = unpack(layout["main"]["size"])
-                P:Size(playerButton, width, height)
-                header:SetAttribute("buttonWidth", P:Scale(width))
-                header:SetAttribute("buttonHeight", P:Scale(height))
+                P.Size(playerButton, width, height)
+                header:SetAttribute("buttonWidth", P.Scale(width))
+                header:SetAttribute("buttonHeight", P.Scale(height))
                 if layout["pet"]["sameSizeAsMain"] then
-                    P:Size(petButton, width, height)
+                    P.Size(petButton, width, height)
                 else
-                    P:Size(petButton, layout["pet"]["size"][1], layout["pet"]["size"][2])
+                    P.Size(petButton, layout["pet"]["size"][1], layout["pet"]["size"][2])
                 end
             end
 
             -- NOTE: SetOrientation BEFORE SetPowerSize
             if not which or which == "barOrientation" then
-                B:SetOrientation(playerButton, layout["barOrientation"][1], layout["barOrientation"][2])
-                B:SetOrientation(petButton, layout["barOrientation"][1], layout["barOrientation"][2])
+                B.SetOrientation(playerButton, layout["barOrientation"][1], layout["barOrientation"][2])
+                B.SetOrientation(petButton, layout["barOrientation"][1], layout["barOrientation"][2])
             end
 
             if not which or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
-                B:SetPowerSize(playerButton, layout["main"]["powerSize"])
+                B.SetPowerSize(playerButton, layout["main"]["powerSize"])
                 if layout["pet"]["sameSizeAsMain"] then
-                    B:SetPowerSize(petButton, layout["main"]["powerSize"])
+                    B.SetPowerSize(petButton, layout["main"]["powerSize"])
                 else
-                    B:SetPowerSize(petButton, layout["pet"]["powerSize"])
+                    B.SetPowerSize(petButton, layout["pet"]["powerSize"])
                 end
             end
         end
@@ -243,7 +243,7 @@ local function PartyFrame_UpdateLayout(layout, which)
         header:SetAttribute("showPlayer", not layout["main"]["hideSelf"])
     end
 end
-Cell:RegisterCallback("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_UpdateLayout)
+Cell.RegisterCallback("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_UpdateLayout)
 
 local function PartyFrame_UpdateVisibility(which)
     if not which or which == "party" then
@@ -259,7 +259,7 @@ local function PartyFrame_UpdateVisibility(which)
         end
     end
 end
-Cell:RegisterCallback("UpdateVisibility", "PartyFrame_UpdateVisibility", PartyFrame_UpdateVisibility)
+Cell.RegisterCallback("UpdateVisibility", "PartyFrame_UpdateVisibility", PartyFrame_UpdateVisibility)
 
 -- local f = CreateFrame("Frame", nil, UIParent, "SecureFrameTemplate")
 -- RegisterAttributeDriver(f, "state-group", "[@raid1,exists] raid;[@party1,exists] party; solo")

@@ -26,7 +26,7 @@ Cell.vars.nicknames = {}
 Cell.vars.nicknameCustoms = {}
 Cell.vars.nicknameBlacklist = {}
 
-function F:GetNickname(shortname, fullname)
+function F.GetNickname(shortname, fullname)
     local name
     if Cell.vars.nicknameCustomEnabled then
         name = Cell.vars.nicknameCustoms[fullname] or
@@ -49,16 +49,16 @@ local function Update(b)
 end
 
 local function UpdateName(who)
-    F:Debug("|cFF69A000UpdateName:|r|cFF696969", who, Cell.vars.nicknames[who], Cell.vars.nicknameCustoms[who])
+    F.Debug("|cFF69A000UpdateName:|r|cFF696969", who, Cell.vars.nicknames[who], Cell.vars.nicknameCustoms[who])
     -- update name
-    local handled = F:HandleUnitButton("name", who, Update)
+    local handled = F.HandleUnitButton("name", who, Update)
     if not handled then
         if strfind(who, "-") then
-            who = F:ToShortName(who)
+            who = F.ToShortName(who)
         else
             who = who.."-"..GetNormalizedRealmName()
         end
-        F:HandleUnitButton("name", who, Update)
+        F.HandleUnitButton("name", who, Update)
     end
     -- update quickAssist
     local unit = Cell.vars.names[who]
@@ -108,7 +108,7 @@ nickname:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 function nickname:PLAYER_ENTERING_WORLD()
     nickname:UnregisterEvent("PLAYER_ENTERING_WORLD")
-    Cell:Fire("UpdateNicknames")
+    Cell.Fire("UpdateNicknames")
 end
 
 function nickname:GROUP_ROSTER_UPDATE()
@@ -117,7 +117,7 @@ end
 ---------------------------------------
 
 local function UpdateNicknames(which, value1, value2)
-    F:Debug("|cFF80FF00UpdateNicknames:|r", which, value1, value2)
+    F.Debug("|cFF80FF00UpdateNicknames:|r", which, value1, value2)
     -- init
     if not which then
         Cell.vars.playerNickname = CellDB["nicknames"]["mine"] ~= "" and CellDB["nicknames"]["mine"] or nil
@@ -154,7 +154,7 @@ local function UpdateNicknames(which, value1, value2)
             nickname:RegisterEvent("GROUP_ROSTER_UPDATE")
         else
             -- clear all except mine
-            F:RemoveElementsExceptKeys(Cell.vars.nicknames, Cell.vars.playerNameShort)
+            F.RemoveElementsExceptKeys(Cell.vars.nicknames, Cell.vars.playerNameShort)
             nickname:UnregisterEvent("GROUP_ROSTER_UPDATE")
 
             if nic_check then nic_check:Cancel() end
@@ -163,7 +163,7 @@ local function UpdateNicknames(which, value1, value2)
             Comm:SendCommMessage("CELL_NIC", "CELL_NONE", sendChannel)
 
             -- update all
-            F:IterateAllUnitButtons(function(b)
+            F.IterateAllUnitButtons(function(b)
                 b.indicators.nameText:UpdateName()
             end, true)
         end
@@ -201,14 +201,14 @@ local function UpdateNicknames(which, value1, value2)
     elseif which == "blacklist-add" then
         Cell.vars.nicknameBlacklist[value1] = true
         Cell.vars.nicknames[value1] = nil
-        Cell.vars.nicknames[F:ToShortName(value1)] = nil
+        Cell.vars.nicknames[F.ToShortName(value1)] = nil
         UpdateName(value1)
     elseif which == "blacklist-delete" then
         Cell.vars.nicknameBlacklist[value1] = nil
         -- no request
     end
 end
-Cell:RegisterCallback("UpdateNicknames", "UpdateNicknames", UpdateNicknames)
+Cell.RegisterCallback("UpdateNicknames", "UpdateNicknames", UpdateNicknames)
 
 -- check nickname received
 Comm:RegisterComm("CELL_CNIC", function(prefix, message, channel, sender)
@@ -260,7 +260,7 @@ f:SetScript("OnEvent", function()
 
         local function UpdateAll()
             -- update all
-            F:IterateAllUnitButtons(function(b)
+            F.IterateAllUnitButtons(function(b)
                 b.indicators.nameText:UpdateName()
             end, true)
         end

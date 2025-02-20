@@ -273,7 +273,7 @@ end
 
 function I.ResetDebuffTypeColor()
     -- copy
-    CellDB["debuffTypeColor"] = F:Copy(DebuffTypeColor)
+    CellDB["debuffTypeColor"] = F.Copy(DebuffTypeColor)
     -- add Bleed
     CellDB["debuffTypeColor"]["Bleed"] = {r = 1, g = 0.2, b = 0.6}
     -- add cleu

@@ -1,5 +1,5 @@
 -- 2024-05-18 02:24:31 GMT+8
-Cell.funcs:IterateAllUnitButtons(function(b)
+Cell.funcs.IterateAllUnitButtons(function(b)
     -- current health bar texture / 当前血条材质: Cell.vars.texture
     -- default health bar texture / 默认血条材质: "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
 

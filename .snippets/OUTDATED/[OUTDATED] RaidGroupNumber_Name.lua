@@ -1,7 +1,7 @@
 -- 在名字前显示队伍编号
 local F = Cell.funcs
 
-F:IterateAllUnitButtons(function(b)
+F.IterateAllUnitButtons(function(b)
     local nameText = b.indicators.nameText
 
     function nameText:UpdateName()
@@ -18,7 +18,7 @@ F:IterateAllUnitButtons(function(b)
             name = b.states.name
         end
 
-        F:UpdateTextWidth(nameText.name, name, nameText.width, b.widgets.healthBar)
+        F.UpdateTextWidth(nameText.name, name, nameText.width, b.widgets.healthBar)
 
         if IsInRaid() then
             local raidIndex = UnitInRaid(b.states.unit)

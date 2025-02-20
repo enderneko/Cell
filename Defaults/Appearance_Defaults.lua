@@ -63,10 +63,10 @@ local buttonStyleIndices = {
     "overshieldReverseFill"
 }
 
-function F:ResetButtonStyle()
+function F.ResetButtonStyle()
     for _, index in pairs(buttonStyleIndices) do
         if type(Cell.defaults.appearance[index]) == "table" then
-            CellDB["appearance"][index] = F:Copy(Cell.defaults.appearance[index])
+            CellDB["appearance"][index] = F.Copy(Cell.defaults.appearance[index])
         else
             CellDB["appearance"][index] = Cell.defaults.appearance[index]
         end

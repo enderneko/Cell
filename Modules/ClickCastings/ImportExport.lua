@@ -18,38 +18,38 @@ local function DoImport()
         Cell.vars.clickCastings[Cell.vars.playerSpecID] = imported
     end
 
-    Cell:Fire("UpdateClickCastings")
+    Cell.Fire("UpdateClickCastings")
     importExportFrame:Hide()
 end
 
 local function CreateClickCastingImportExportFrame()
     importExportFrame = CreateFrame("Frame", "CellOptionsFrame_ClickCastingsImportExport", Cell.frames.clickCastingsTab, "BackdropTemplate")
     importExportFrame:Hide()
-    Cell:StylizeFrame(importExportFrame, nil, Cell:GetAccentColorTable())
+    Cell.StylizeFrame(importExportFrame, nil, Cell.GetAccentColorTable())
     importExportFrame:EnableMouse(true)
     importExportFrame:SetFrameLevel(Cell.frames.clickCastingsTab:GetFrameLevel() + 50)
-    P:Size(importExportFrame, 430, 170)
-    importExportFrame:SetPoint("TOPLEFT", P:Scale(1), -160)
+    P.Size(importExportFrame, 430, 170)
+    importExportFrame:SetPoint("TOPLEFT", P.Scale(1), -160)
 
     if not Cell.frames.clickCastingsTab.mask then
-        Cell:CreateMask(Cell.frames.clickCastingsTab, nil, {1, -1, -1, 1})
+        Cell.CreateMask(Cell.frames.clickCastingsTab, nil, {1, -1, -1, 1})
         Cell.frames.clickCastingsTab.mask:Hide()
     end
 
     -- close
-    local closeBtn = Cell:CreateButton(importExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
-    closeBtn:SetPoint("TOPRIGHT", P:Scale(-5), P:Scale(-1))
+    local closeBtn = Cell.CreateButton(importExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
+    closeBtn:SetPoint("TOPRIGHT", P.Scale(-5), P.Scale(-1))
     closeBtn:SetScript("OnClick", function() importExportFrame:Hide() end)
 
     -- import
-    importBtn = Cell:CreateButton(importExportFrame, L["Import"], "green", {57, 18})
+    importBtn = Cell.CreateButton(importExportFrame, L["Import"], "green", {57, 18})
     importBtn:Hide()
-    importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", P:Scale(1), 0)
+    importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", P.Scale(1), 0)
     importBtn:SetScript("OnClick", function()
         -- lower frame level
         importExportFrame:SetFrameLevel(Cell.frames.clickCastingsTab:GetFrameLevel() + 20)
 
-        local popup = Cell:CreateConfirmPopup(Cell.frames.clickCastingsTab, 200, L["Overwrite Click-Casting"].."?", function(self)
+        local popup = Cell.CreateConfirmPopup(Cell.frames.clickCastingsTab, 200, L["Overwrite Click-Casting"].."?", function(self)
             DoImport()
         end, nil, true)
         popup:SetPoint("TOPLEFT", importExportFrame, 117, -50)
@@ -61,7 +61,7 @@ local function CreateClickCastingImportExportFrame()
     title:SetPoint("TOPLEFT", 5, -5)
 
     -- textArea
-    textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userChanged)
+    textArea = Cell.CreateScrollEditBox(importExportFrame, function(eb, userChanged)
         if userChanged then
             if isImport then
                 imported = {}
@@ -78,7 +78,7 @@ local function CreateClickCastingImportExportFrame()
                         success, data = Serializer:Deserialize(data) -- deserialize
 
                         if success and data then
-                            title:SetText(L["Import"]..": "..F:GetClassColorStr(class)..F:GetLocalizedClassName(class))
+                            title:SetText(L["Import"]..": "..F.GetClassColorStr(class)..F.GetLocalizedClassName(class))
                             imported = data
                             importBtn:SetEnabled(class == Cell.vars.playerClass)
                         else
@@ -100,9 +100,9 @@ local function CreateClickCastingImportExportFrame()
             end
         end
     end)
-    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
-    textArea:SetPoint("TOPLEFT", P:Scale(5), P:Scale(-20))
-    textArea:SetPoint("BOTTOMRIGHT", P:Scale(-5), P:Scale(5))
+    Cell.StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell.GetAccentColorTable())
+    textArea:SetPoint("TOPLEFT", P.Scale(5), P.Scale(-20))
+    textArea:SetPoint("BOTTOMRIGHT", P.Scale(-5), P.Scale(5))
 
     -- highlight text
     textArea.eb:SetScript("OnEditFocusGained", function() textArea.eb:HighlightText() end)
@@ -129,7 +129,7 @@ local function CreateClickCastingImportExportFrame()
 end
 
 local init
-function F:ShowClickCastingImportFrame()
+function F.ShowClickCastingImportFrame()
     if not init then
         init = true
         CreateClickCastingImportExportFrame()
@@ -146,7 +146,7 @@ function F:ShowClickCastingImportFrame()
     textArea.eb:SetFocus(true)
 end
 
-function F:ShowClickCastingExportFrame(clickCastingTable)
+function F.ShowClickCastingExportFrame(clickCastingTable)
     if not init then
         init = true
         CreateClickCastingImportExportFrame()
@@ -156,7 +156,7 @@ function F:ShowClickCastingExportFrame(clickCastingTable)
     isImport = false
     importBtn:Hide()
 
-    title:SetText(L["Export"]..": "..F:GetClassColorStr(Cell.vars.playerClass)..F:GetLocalizedClassName(Cell.vars.playerClass))
+    title:SetText(L["Export"]..": "..F.GetClassColorStr(Cell.vars.playerClass)..F.GetLocalizedClassName(Cell.vars.playerClass))
 
     local prefix = "!CELL:"..Cell.versionNum..":CLICKCASTING:"..Cell.vars.playerClass.."!"
 

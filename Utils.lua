@@ -68,11 +68,11 @@ do
     sort(sortedClasses)
 end
 
-function F:GetClassID(classFile)
+function F.GetClassID(classFile)
     return classFileToID[classFile]
 end
 
-function F:GetLocalizedClassName(classFileOrID)
+function F.GetLocalizedClassName(classFileOrID)
     if type(classFileOrID) == "string" then
         return localizedClass[classFileOrID] or classFileOrID
     elseif type(classFileOrID) == "number" and classIDToFile[classFileOrID] then
@@ -81,7 +81,7 @@ function F:GetLocalizedClassName(classFileOrID)
     return ""
 end
 
-function F:IterateClasses()
+function F.IterateClasses()
     local i = 0
     return function()
         i = i + 1
@@ -91,21 +91,21 @@ function F:IterateClasses()
     end
 end
 
-function F:GetSortedClasses()
-    return F:Copy(sortedClasses)
+function F.GetSortedClasses()
+    return F.Copy(sortedClasses)
 end
 
 -------------------------------------------------
 -- Classic
 -------------------------------------------------
 if Cell.isCata then
-    function F:GetActiveTalentInfo()
+    function F.GetActiveTalentInfo()
         local which = GetActiveTalentGroup() == 1 and L["Primary Talents"] or L["Secondary Talents"]
         return which, Cell.vars.playerSpecIcon, Cell.vars.playerSpecName
     end
 
 elseif Cell.isWrath or Cell.isVanilla then
-    function F:GetActiveTalentInfo()
+    function F.GetActiveTalentInfo()
         local which = GetActiveTalentGroup() == 1 and L["Primary Talents"] or L["Secondary Talents"]
 
         local maxPoints = 0
@@ -168,14 +168,14 @@ end
 --     ["WarriorProtection"] = "TANK",
 -- }
 
--- function F:GetPlayerRole()
+-- function F.GetPlayerRole()
 
 -- end
 
 -------------------------------------------------
 -- color
 -------------------------------------------------
-function F:ConvertRGB(r, g, b, desaturation)
+function F.ConvertRGB(r, g, b, desaturation)
     if not desaturation then desaturation = 1 end
     r = r / 255 * desaturation
     g = g / 255 * desaturation
@@ -183,11 +183,11 @@ function F:ConvertRGB(r, g, b, desaturation)
     return r, g, b
 end
 
-function F:ConvertRGB_256(r, g, b)
+function F.ConvertRGB_256(r, g, b)
     return floor(r * 255), floor(g * 255), floor(b * 255)
 end
 
-function F:ConvertRGBToHEX(r, g, b)
+function F.ConvertRGBToHEX(r, g, b)
     local result = ""
 
     for key, value in pairs({r, g, b}) do
@@ -212,13 +212,13 @@ function F:ConvertRGBToHEX(r, g, b)
     return result
 end
 
-function F:ConvertHEXToRGB(hex)
+function F.ConvertHEXToRGB(hex)
     hex = hex:gsub("#","")
     return tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6))
 end
 
 -- https://wowpedia.fandom.com/wiki/ColorGradient
--- function F:ColorGradient(perc, r1,g1,b1, r2,g2,b2, r3,g3,b3)
+-- function F.ColorGradient(perc, r1,g1,b1, r2,g2,b2, r3,g3,b3)
 --     perc = perc or 1
 --     if perc >= 1 then
 --         return r3, g3, b3
@@ -232,7 +232,7 @@ end
 --     return rr1 + (rr2 - rr1) * relperc, rg1 + (rg2 - rg1) * relperc, rb1 + (rb2 - rb1) * relperc
 -- end
 
-function F:ColorGradient(perc, c1, c2, c3, lowBound, highBound)
+function F.ColorGradient(perc, c1, c2, c3, lowBound, highBound)
     local r1, g1, b1 = c1[1], c1[2], c1[3]
     local r2, g2, b2 = c2[1], c2[2], c2[3]
     local r3, g3, b3 = c3[1], c3[2], c3[3]
@@ -255,9 +255,9 @@ function F:ColorGradient(perc, c1, c2, c3, lowBound, highBound)
     return rr1 + (rr2 - rr1) * relperc, rg1 + (rg2 - rg1) * relperc, rb1 + (rb2 - rb1) * relperc
 end
 
-function F:ColorThreshold(perc, c1, c2, c3, lowBound, highBound, useThresholdColor)
+function F.ColorThreshold(perc, c1, c2, c3, lowBound, highBound, useThresholdColor)
     if useThresholdColor then
-        return F:ColorGradient(perc, c1, c2, c3, lowBound, highBound)
+        return F.ColorGradient(perc, c1, c2, c3, lowBound, highBound)
     end
 
     lowBound = lowBound or 0
@@ -284,7 +284,7 @@ end
         S = Saturation [0, 1]
         B = Brightness [0, 1]
 ]]--
-function F:ConvertRGBToHSB(r, g, b)
+function F.ConvertRGBToHSB(r, g, b)
     local colorMax = max(max(r, g), b)
     local colorMin = min(min(r, g), b)
     local delta = colorMax - colorMin
@@ -336,7 +336,7 @@ end
         G = Green [0,1]
         B = Blue [0,1]
 ]]--
-function F:ConvertHSBToRGB(h, s, b)
+function F.ConvertHSBToRGB(h, s, b)
     local chroma = b * s
     local prime = (h / 60) % 6
     local X = chroma * (1 - abs((prime % 2) - 1))
@@ -380,14 +380,14 @@ function F:ConvertHSBToRGB(h, s, b)
     return R, G, B
 end
 
-function F:InvertColor(r, g, b)
+function F.InvertColor(r, g, b)
     return 1 - r, 1 - g, 1 - b
 end
 
 -------------------------------------------------
 -- number
 -------------------------------------------------
-function F:Round(num, numDecimalPlaces)
+function F.Round(num, numDecimalPlaces)
     if numDecimalPlaces and numDecimalPlaces >= 0 then
         local mult = 10 ^ numDecimalPlaces
         return floor(num * mult + 0.5) / mult
@@ -407,23 +407,23 @@ end
 local abs = math.abs
 
 if Cell.isAsian then
-    function F:FormatNumber(n)
+    function F.FormatNumber(n)
         if abs(n) >= 100000000 then
-            return F:Round(n / 100000000, 2) .. symbol_1B
+            return F.Round(n / 100000000, 2) .. symbol_1B
         elseif abs(n) >= 10000 then
-            return F:Round(n / 10000, 1) .. symbol_10K
+            return F.Round(n / 10000, 1) .. symbol_10K
         else
             return n
         end
     end
 else
-    function F:FormatNumber(n)
+    function F.FormatNumber(n)
         if abs(n) >= 1000000000 then
-            return F:Round(n / 1000000000, 2) .. "B"
+            return F.Round(n / 1000000000, 2) .. "B"
         elseif abs(n) >= 1000000 then
-            return F:Round(n / 1000000, 2) .. "M"
+            return F.Round(n / 1000000, 2) .. "M"
         elseif abs(n) >= 1000 then
-            return F:Round(n / 1000, 1) .. "K"
+            return F.Round(n / 1000, 1) .. "K"
         else
             return n
         end
@@ -433,14 +433,14 @@ end
 -------------------------------------------------
 -- string
 -------------------------------------------------
-function F:UpperFirst(str, lowerOthers)
+function F.UpperFirst(str, lowerOthers)
     if lowerOthers then
         str = strlower(str)
     end
     return (str:gsub("^%l", string.upper))
 end
 
-function F:SplitToNumber(sep, str)
+function F.SplitToNumber(sep, str)
     if not str then return end
 
     local ret = {strsplit(sep, str)}
@@ -464,7 +464,7 @@ local function Chsize(char)
     end
 end
 
-function F:Utf8sub(str, startChar, numChars)
+function F.Utf8sub(str, startChar, numChars)
     if not str then return "" end
     local startIndex = 1
     while startChar > 1 do
@@ -483,7 +483,7 @@ function F:Utf8sub(str, startChar, numChars)
     return str:sub(startIndex, currentIndex - 1)
 end
 
-function F:FitWidth(fs, text, alignment)
+function F.FitWidth(fs, text, alignment)
     fs:SetText(text)
 
     if fs:IsTruncated() then
@@ -504,7 +504,7 @@ end
 -------------------------------------------------
 -- table
 -------------------------------------------------
-function F:Getn(t)
+function F.Getn(t)
     local count = 0
     for k, v in pairs(t) do
         count = count + 1
@@ -512,7 +512,7 @@ function F:Getn(t)
     return count
 end
 
-function F:GetIndex(t, e)
+function F.GetIndex(t, e)
     for i, v in pairs(t) do
         if e == v then
             return i
@@ -521,7 +521,7 @@ function F:GetIndex(t, e)
     return nil
 end
 
-function F:GetKeys(t)
+function F.GetKeys(t)
     local keys = {}
     for k in pairs(t) do
         tinsert(keys, k)
@@ -529,11 +529,11 @@ function F:GetKeys(t)
     return keys
 end
 
-function F:Copy(t)
+function F.Copy(t)
     local newTbl = {}
     for k, v in pairs(t) do
         if type(v) == "table" then
-            newTbl[k] = F:Copy(v)
+            newTbl[k] = F.Copy(v)
         else
             newTbl[k] = v
         end
@@ -541,14 +541,14 @@ function F:Copy(t)
     return newTbl
 end
 
-function F:TContains(t, v)
+function F.TContains(t, v)
     for _, value in pairs(t) do
         if value == v then return true end
     end
     return false
 end
 
-function F:TInsert(t, v)
+function F.TInsert(t, v)
     local i, done = 1
     repeat
         if not t[i] then
@@ -559,7 +559,7 @@ function F:TInsert(t, v)
     until done
 end
 
-function F:TRemove(t, v)
+function F.TRemove(t, v)
     for i = #t, 1, -1 do
         if t[i] == v then
             table.remove(t, i)
@@ -567,11 +567,11 @@ function F:TRemove(t, v)
     end
 end
 
-function F:TMergeOverwrite(...)
+function F.TMergeOverwrite(...)
     local n = select("#", ...)
     if n == 0 then return {} end
 
-    local temp = F:Copy(...)
+    local temp = F.Copy(...)
     for i = 2, n do
         local t = select(i, ...)
         for k, v in pairs(t) do
@@ -581,7 +581,7 @@ function F:TMergeOverwrite(...)
     return temp
 end
 
-function F:RemoveElementsExceptKeys(tbl, ...)
+function F.RemoveElementsExceptKeys(tbl, ...)
     local keys = {}
 
     for i = 1, select("#", ...) do
@@ -596,14 +596,14 @@ function F:RemoveElementsExceptKeys(tbl, ...)
     end
 end
 
-function F:RemoveElementsByKeys(tbl, ...)
+function F.RemoveElementsByKeys(tbl, ...)
     for i = 1, select("#", ...) do
         local k = select(i, ...)
         tbl[k] = nil
     end
 end
 
-function F:Sort(t, k1, order1, k2, order2, k3, order3)
+function F.Sort(t, k1, order1, k2, order2, k3, order3)
     table.sort(t, function(a, b)
         if a[k1] ~= b[k1] then
             if order1 == "ascending" then
@@ -627,7 +627,7 @@ function F:Sort(t, k1, order1, k2, order2, k3, order3)
     end)
 end
 
-function F:StringToTable(s, sep, convertToNum)
+function F.StringToTable(s, sep, convertToNum)
     local t = {}
     for i, v in pairs({string.split(sep, s)}) do
         v = strtrim(v)
@@ -643,11 +643,11 @@ function F:StringToTable(s, sep, convertToNum)
     return t
 end
 
-function F:TableToString(t, sep)
+function F.TableToString(t, sep)
     return table.concat(t, sep)
 end
 
-function F:ConvertTable(t, value)
+function F.ConvertTable(t, value)
     local temp = {}
     for k, v in ipairs(t) do
         temp[v] = value or k
@@ -655,14 +655,14 @@ function F:ConvertTable(t, value)
     return temp
 end
 
-function F:ConvertSpellTable(t, convertIdToName)
+function F.ConvertSpellTable(t, convertIdToName)
     if not convertIdToName then
-        return F:ConvertTable(t)
+        return F.ConvertTable(t)
     end
 
     local temp = {}
     for k, v in ipairs(t) do
-        local name = F:GetSpellInfo(v)
+        local name = F.GetSpellInfo(v)
         if name then
             temp[name] = k
         end
@@ -670,13 +670,13 @@ function F:ConvertSpellTable(t, convertIdToName)
     return temp
 end
 
-function F:ConvertSpellTable_WithColor(t, convertIdToName)
+function F.ConvertSpellTable_WithColor(t, convertIdToName)
     local temp = {}
     for k, st in ipairs(t) do
         local index
 
         if convertIdToName then
-            index = F:GetSpellInfo(st[1])
+            index = F.GetSpellInfo(st[1])
         else
             index = st[1]
         end
@@ -688,11 +688,11 @@ function F:ConvertSpellTable_WithColor(t, convertIdToName)
     return temp
 end
 
-function F:ConvertSpellTable_WithClass(t)
+function F.ConvertSpellTable_WithClass(t)
     local temp = {}
     for class, ct in pairs(t) do
         for _, id in ipairs(ct) do
-            local name = F:GetSpellInfo(id)
+            local name = F.GetSpellInfo(id)
             if name then
                 temp[id] = true
             end
@@ -701,11 +701,11 @@ function F:ConvertSpellTable_WithClass(t)
     return temp
 end
 
-function F:ConvertSpellDurationTable(t, convertIdToName)
+function F.ConvertSpellDurationTable(t, convertIdToName)
     local temp = {}
     for _, v in ipairs(t) do
         local id, duration = strsplit(":", v)
-        local name = F:GetSpellInfo(id)
+        local name = F.GetSpellInfo(id)
         if name then
             if convertIdToName then
                 temp[name] = tonumber(duration)
@@ -717,12 +717,12 @@ function F:ConvertSpellDurationTable(t, convertIdToName)
     return temp
 end
 
-function F:ConvertSpellDurationTable_WithClass(t)
+function F.ConvertSpellDurationTable_WithClass(t)
     local temp = {}
     for class, ct in pairs(t) do
         for k, v in ipairs(ct) do
             local id, duration = strsplit(":", v)
-            local name, icon = F:GetSpellInfo(id)
+            local name, icon = F.GetSpellInfo(id)
             if name then
                 temp[tonumber(id)] = {tonumber(duration), icon}
             end
@@ -731,7 +731,7 @@ function F:ConvertSpellDurationTable_WithClass(t)
     return temp
 end
 
-function F:CheckTableRemoved(previous, after)
+function F.CheckTableRemoved(previous, after)
     local aa = {}
     local ret = {}
 
@@ -746,7 +746,7 @@ function F:CheckTableRemoved(previous, after)
     return ret
 end
 
-function F:FilterInvalidSpells(t)
+function F.FilterInvalidSpells(t)
     if not t then return end
     for i = #t, 1, -1 do
         local spellId
@@ -755,7 +755,7 @@ function F:FilterInvalidSpells(t)
         else -- table
             spellId = t[i][1]
         end
-        if not F:GetSpellInfo(spellId) then
+        if not F.GetSpellInfo(spellId) then
             tremove(t, i)
         end
     end
@@ -764,11 +764,11 @@ end
 -------------------------------------------------
 -- general
 -------------------------------------------------
--- function F:GetRealmName()
+-- function F.GetRealmName()
 --     return string.gsub(GetRealmName(), " ", "")
 -- end
 
-function F:UnitFullName(unit)
+function F.UnitFullName(unit)
     if not unit or not UnitIsPlayer(unit) then return end
 
     local name = GetUnitName(unit, true)
@@ -785,13 +785,13 @@ function F:UnitFullName(unit)
     return name
 end
 
-function F:ToShortName(fullName)
+function F.ToShortName(fullName)
     if not fullName then return "" end
     local shortName = strsplit("-", fullName)
     return shortName
 end
 
-function F:FormatTime(s)
+function F.FormatTime(s)
     if s >= 3600 then
         return "%dh", ceil(s / 3600)
     elseif s >= 60 then
@@ -800,7 +800,7 @@ function F:FormatTime(s)
     return "%ds", floor(s)
 end
 
--- function F:SecondsToTime(seconds)
+-- function F.SecondsToTime(seconds)
 --     local m = seconds / 60
 --     local s = seconds % 60
 --     return format("%d:%02d", m, s)
@@ -822,7 +822,7 @@ elseif strfind(MIN, "2f") then
     PATTERN_MIN = "%.00"
 end
 
-function F:SecondsToTime(seconds)
+function F.SecondsToTime(seconds)
     if seconds > 60 then
         return gsub(format(MIN, seconds / 60), PATTERN_MIN, "")
     else
@@ -840,19 +840,19 @@ local separatedHeaders = {"CellRaidFrameHeader1", "CellRaidFrameHeader2", "CellR
 -- Cell.clickCastFrames = {}
 -- Cell.clickCastFrameQueue = {}
 
--- function F:RegisterFrame(frame)
+-- function F.RegisterFrame(frame)
 --     Cell.clickCastFrames[frame] = true
 --     Cell.clickCastFrameQueue[frame] = true  -- put into queue
---     Cell:Fire("UpdateQueuedClickCastings")
+--     Cell.Fire("UpdateQueuedClickCastings")
 -- end
 
--- function F:UnregisterFrame(frame)
+-- function F.UnregisterFrame(frame)
 --     Cell.clickCastFrames[frame] = nil       -- ignore
 --     Cell.clickCastFrameQueue[frame] = false -- mark for only cleanup
---     Cell:Fire("UpdateQueuedClickCastings")
+--     Cell.Fire("UpdateQueuedClickCastings")
 -- end
 
-function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssists, skipShared)
+function F.IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssists, skipShared)
     -- solo
     if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "solo") then
         for _, b in pairs(Cell.unitButtons.solo) do
@@ -917,7 +917,7 @@ function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist
     end
 end
 
-function F:IterateSharedUnitButtons(func)
+function F.IterateSharedUnitButtons(func)
     -- npc
     for _, b in ipairs(Cell.unitButtons.npc) do
         func(b)
@@ -929,7 +929,7 @@ function F:IterateSharedUnitButtons(func)
     end
 end
 
-function F:GetUnitButtonByUnit(unit, getSpotlights, getQuickAssist)
+function F.GetUnitButtonByUnit(unit, getSpotlights, getQuickAssist)
     if not unit then return end
 
     local normal, spotlights, quickAssist
@@ -962,15 +962,15 @@ function F:GetUnitButtonByUnit(unit, getSpotlights, getQuickAssist)
     return normal, spotlights, quickAssist
 end
 
-function F:GetUnitButtonByGUID(guid, getSpotlights, getQuickAssist)
-    return F:GetUnitButtonByUnit(Cell.vars.guids[guid], getSpotlights, getQuickAssist)
+function F.GetUnitButtonByGUID(guid, getSpotlights, getQuickAssist)
+    return F.GetUnitButtonByUnit(Cell.vars.guids[guid], getSpotlights, getQuickAssist)
 end
 
-function F:GetUnitButtonByName(name, getSpotlights, getQuickAssist)
-    return F:GetUnitButtonByUnit(Cell.vars.names[name], getSpotlights, getQuickAssist)
+function F.GetUnitButtonByName(name, getSpotlights, getQuickAssist)
+    return F.GetUnitButtonByUnit(Cell.vars.names[name], getSpotlights, getQuickAssist)
 end
 
-function F:HandleUnitButton(type, unit, func, ...)
+function F.HandleUnitButton(type, unit, func, ...)
     if not unit then return end
 
     if type == "guid" then
@@ -1010,7 +1010,7 @@ function F:HandleUnitButton(type, unit, func, ...)
     return handled
 end
 
-function F:UpdateTextWidth(fs, text, width, relativeTo)
+function F.UpdateTextWidth(fs, text, width, relativeTo)
     if not text or not width then return end
 
     if width == "unlimited" then
@@ -1033,7 +1033,7 @@ function F:UpdateTextWidth(fs, text, width, relativeTo)
     end
 end
 
-function F:GetMarkEscapeSequence(index)
+function F.GetMarkEscapeSequence(index)
     index = index - 1
     local left, right, top, bottom
     local coordIncrement = 64 / 256
@@ -1059,7 +1059,7 @@ end
 --         end
 --     end
 -- end)
--- function F:SetHideInCombat(obj)
+-- function F.SetHideInCombat(obj)
 --     tinsert(scriptObjects, obj)
 -- end
 
@@ -1088,7 +1088,7 @@ local UnitInPartyIsAI = UnitInPartyIsAI or function() end
 -- frame colors
 -------------------------------------------------
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
-function F:GetClassColor(class)
+function F.GetClassColor(class)
     if class and class ~= "" and RAID_CLASS_COLORS[class] then
         if CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] then
             return CUSTOM_CLASS_COLORS[class].r, CUSTOM_CLASS_COLORS[class].g, CUSTOM_CLASS_COLORS[class].b
@@ -1100,7 +1100,7 @@ function F:GetClassColor(class)
     end
 end
 
-function F:GetClassColorStr(class)
+function F.GetClassColorStr(class)
     if class and class ~= "" and RAID_CLASS_COLORS[class] then
         if CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] then
             return "|c"..CUSTOM_CLASS_COLORS[class].colorStr
@@ -1112,13 +1112,13 @@ function F:GetClassColorStr(class)
     end
 end
 
-function F:GetUnitClassColor(unit, class, guid)
+function F.GetUnitClassColor(unit, class, guid)
     class = class or select(2, UnitClass(unit))
     guid = guid or UnitGUID(unit)
 
     if UnitIsPlayer(unit) or UnitInPartyIsAI(unit) then -- player
-        return F:GetClassColor(class)
-    elseif F:IsPet(guid, unit) then -- pet
+        return F.GetClassColor(class)
+    elseif F.IsPet(guid, unit) then -- pet
         return 0.5, 0.5, 1
     else -- npc / vehicle
         return 0, 1, 0.2
@@ -1126,7 +1126,7 @@ function F:GetUnitClassColor(unit, class, guid)
 end
 
 
-function F:GetPowerColor(unit)
+function F.GetPowerColor(unit)
     local r, g, b, t
     -- https://wow.gamepedia.com/API_UnitPowerType
     local powerType, powerToken, altR, altG, altB = UnitPowerType(unit)
@@ -1154,9 +1154,9 @@ function F:GetPowerColor(unit)
     return r, g, b, t
 end
 
-function F:GetPowerBarColor(unit, class)
+function F.GetPowerBarColor(unit, class)
     local r, g, b, lossR, lossG, lossB, t
-    r, g, b, t = F:GetPowerColor(unit)
+    r, g, b, t = F.GetPowerColor(unit)
 
     if not Cell.loaded then
         return r, g, b, r*0.2, g*0.2, b*0.2, t
@@ -1166,7 +1166,7 @@ function F:GetPowerBarColor(unit, class)
         lossR, lossG, lossB = r, g, b
         r, g, b = r*0.2, g*0.2, b*0.2
     elseif CellDB["appearance"]["powerColor"][1] == "class_color" then
-        r, g, b = F:GetClassColor(class)
+        r, g, b = F.GetClassColor(class)
         lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
     elseif CellDB["appearance"]["powerColor"][1] == "custom" then
         r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
@@ -1177,7 +1177,7 @@ function F:GetPowerBarColor(unit, class)
     return r, g, b, lossR, lossG, lossB, t
 end
 
-function F:GetHealthBarColor(percent, isDeadOrGhost, r, g, b)
+function F.GetHealthBarColor(percent, isDeadOrGhost, r, g, b)
     if not Cell.loaded then
         return r, g, b, r*0.2, g*0.2, b*0.2
     end
@@ -1197,20 +1197,20 @@ function F:GetHealthBarColor(percent, isDeadOrGhost, r, g, b)
             barR, barG, barB = r*0.2, g*0.2, b*0.2
         elseif CellDB["appearance"]["barColor"][1] == "threshold1" then
             local c = CellDB["appearance"]["colorThresholds"]
-            barR, barG, barB = F:ColorThreshold(percent, c[1], c[2], c[3], c[4], c[5], c[6])
+            barR, barG, barB = F.ColorThreshold(percent, c[1], c[2], c[3], c[4], c[5], c[6])
         elseif CellDB["appearance"]["barColor"][1] == "threshold2" then
             local c = CellDB["appearance"]["colorThresholds"]
             if percent >= c[5] then
                 barR, barG, barB = r, g, b -- full: class color
             else
-                barR, barG, barB = F:ColorThreshold(percent, c[1], c[2], {r, g, b}, c[4], c[5], c[6])
+                barR, barG, barB = F.ColorThreshold(percent, c[1], c[2], {r, g, b}, c[4], c[5], c[6])
             end
         elseif CellDB["appearance"]["barColor"][1] == "threshold3" then
             local c = CellDB["appearance"]["colorThresholds"]
             if percent >= c[5] then
                 barR, barG, barB = r*0.2, g*0.2, b*0.2 -- full: class color
             else
-                barR, barG, barB = F:ColorThreshold(percent, c[1], c[2], {r*0.2, g*0.2, b*0.2}, c[4], c[5], c[6])
+                barR, barG, barB = F.ColorThreshold(percent, c[1], c[2], {r*0.2, g*0.2, b*0.2}, c[4], c[5], c[6])
             end
         else
             barR = CellDB["appearance"]["barColor"][2][1]
@@ -1231,20 +1231,20 @@ function F:GetHealthBarColor(percent, isDeadOrGhost, r, g, b)
             lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
         elseif CellDB["appearance"]["lossColor"][1] == "threshold1" then
             local c = CellDB["appearance"]["colorThresholdsLoss"]
-            lossR, lossG, lossB = F:ColorThreshold(percent, c[1], c[2], c[3], c[4], c[5], c[6])
+            lossR, lossG, lossB = F.ColorThreshold(percent, c[1], c[2], c[3], c[4], c[5], c[6])
         elseif CellDB["appearance"]["lossColor"][1] == "threshold2" then
             local c = CellDB["appearance"]["colorThresholdsLoss"]
             if isDeadOrGhost or percent <= c[4] then
                 lossR, lossG, lossB = r, g, b  -- dead: class color
             else
-                lossR, lossG, lossB = F:ColorThreshold(percent, {r, g, b}, c[2], c[3], c[4], c[5], c[6])
+                lossR, lossG, lossB = F.ColorThreshold(percent, {r, g, b}, c[2], c[3], c[4], c[5], c[6])
             end
         elseif CellDB["appearance"]["lossColor"][1] == "threshold3" then
             local c = CellDB["appearance"]["colorThresholdsLoss"]
             if isDeadOrGhost or percent <= c[4] then
                 lossR, lossG, lossB = r*0.2, g*0.2, b*0.2  -- dead: class color
             else
-                lossR, lossG, lossB = F:ColorThreshold(percent, {r*0.2, g*0.2, b*0.2}, c[2], c[3], c[4], c[5], c[6])
+                lossR, lossG, lossB = F.ColorThreshold(percent, {r*0.2, g*0.2, b*0.2}, c[2], c[3], c[4], c[5], c[6])
             end
         else
             lossR = CellDB["appearance"]["lossColor"][2][1]
@@ -1259,7 +1259,7 @@ end
 -------------------------------------------------
 -- units
 -------------------------------------------------
-function F:GetNumSubgroupMembers(group)
+function F.GetNumSubgroupMembers(group)
     local n = 0
     for i = 1, GetNumGroupMembers() do
         local name, _, subgroup = GetRaidRosterInfo(i)
@@ -1270,7 +1270,7 @@ function F:GetNumSubgroupMembers(group)
     return n
 end
 
-function F:GetUnitsInSubGroup(group)
+function F.GetUnitsInSubGroup(group)
     local units = {}
     for i = 1, GetNumGroupMembers() do
         -- name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(raidIndex)
@@ -1282,7 +1282,7 @@ function F:GetUnitsInSubGroup(group)
     return units
 end
 
-function F:GetRaidInfoByName(fullName)
+function F.GetRaidInfoByName(fullName)
     for i = 1, GetNumGroupMembers() do
         -- rank: Returns 2 if the raid member is the leader of the raid, 1 if the raid member is promoted to assistant, and 0 otherwise.
         local name, rank, subgroup = GetRaidRosterInfo(i)
@@ -1292,7 +1292,7 @@ function F:GetRaidInfoByName(fullName)
     end
 end
 
-function F:GetRaidInfoBySubgroupIndex(group, index)
+function F.GetRaidInfoBySubgroupIndex(group, index)
     local currentIndex = 0
     for i = 1, GetNumGroupMembers() do
         local name, rank, subgroup = GetRaidRosterInfo(i)
@@ -1307,7 +1307,7 @@ function F:GetRaidInfoBySubgroupIndex(group, index)
     end
 end
 
-function F:GetPetUnit(playerUnit)
+function F.GetPetUnit(playerUnit)
     if Cell.vars.groupType == "party" then
         if playerUnit == "player" then
             return "pet"
@@ -1321,7 +1321,7 @@ function F:GetPetUnit(playerUnit)
     end
 end
 
-function F:GetPlayerUnit(petUnit)
+function F.GetPlayerUnit(petUnit)
     if petUnit == "pet" then
         return "player"
     else
@@ -1329,7 +1329,7 @@ function F:GetPlayerUnit(petUnit)
     end
 end
 
-function F:IterateGroupMembers()
+function F.IterateGroupMembers()
     local groupType = IsInRaid() and "raid" or "party"
     local numGroupMembers = GetNumGroupMembers()
     local i
@@ -1353,7 +1353,7 @@ function F:IterateGroupMembers()
     end
 end
 
-function F:IterateGroupPets()
+function F.IterateGroupPets()
     local groupType = IsInRaid() and "raid" or "party"
     local numGroupMembers = GetNumGroupMembers()
     local i = groupType == "party" and 0 or 1
@@ -1370,7 +1370,7 @@ function F:IterateGroupPets()
     end
 end
 
-function F:GetGroupType()
+function F.GetGroupType()
     if IsInRaid() then
         return "raid"
     elseif IsInGroup() then
@@ -1380,7 +1380,7 @@ function F:GetGroupType()
     end
 end
 
-function F:UnitInGroup(unit, ignorePets)
+function F.UnitInGroup(unit, ignorePets)
     if ignorePets then
         return UnitIsUnit(unit, "player") or UnitInParty(unit) or UnitInRaid(unit) or UnitInPartyIsAI(unit)
     else
@@ -1389,23 +1389,23 @@ function F:UnitInGroup(unit, ignorePets)
 end
 
 -- UnitTokenFromGUID
-function F:GetTargetUnitID(target)
+function F.GetTargetUnitID(target)
     if UnitIsUnit(target, "player") then
         return "player"
     elseif UnitIsUnit(target, "pet") then
         return "pet"
     end
 
-    if not F:UnitInGroup(target) then return end
+    if not F.UnitInGroup(target) then return end
 
     if UnitIsPlayer(target) or UnitInPartyIsAI(target) then
-        for unit in F:IterateGroupMembers() do
+        for unit in F.IterateGroupMembers() do
             if UnitIsUnit(target, unit) then
                 return unit
             end
         end
     else
-        for unit in F:IterateGroupPets() do
+        for unit in F.IterateGroupPets() do
             if UnitIsUnit(target, unit) then
                 return unit
             end
@@ -1413,17 +1413,17 @@ function F:GetTargetUnitID(target)
     end
 end
 
-function F:GetTargetPetID(target)
+function F.GetTargetPetID(target)
     if UnitIsUnit(target, "player") then
         return "pet"
     end
 
-    if not F:UnitInGroup(target) then return end
+    if not F.UnitInGroup(target) then return end
 
     if UnitIsPlayer(target) or UnitInPartyIsAI(target) then
-        for unit in F:IterateGroupMembers() do
+        for unit in F.IterateGroupMembers() do
             if UnitIsUnit(target, unit) then
-                return F:GetPetUnit(unit)
+                return F.GetPetUnit(unit)
             end
         end
     end
@@ -1434,18 +1434,18 @@ local OBJECT_AFFILIATION_MINE = 0x00000001
 local OBJECT_AFFILIATION_PARTY = 0x00000002
 local OBJECT_AFFILIATION_RAID = 0x00000004
 
-function F:IsFriend(unitFlags)
+function F.IsFriend(unitFlags)
     if not unitFlags then return false end
     return (bit.band(unitFlags, OBJECT_AFFILIATION_MINE) ~= 0) or (bit.band(unitFlags, OBJECT_AFFILIATION_RAID) ~= 0) or (bit.band(unitFlags, OBJECT_AFFILIATION_PARTY) ~= 0)
 end
 
-function F:IsPlayer(guid)
+function F.IsPlayer(guid)
     if guid then
         return string.find(guid, "^Player")
     end
 end
 
-function F:IsPet(guid, unit)
+function F.IsPet(guid, unit)
     if unit then
         return strfind(unit, "pet%d*$")
     end
@@ -1454,25 +1454,25 @@ function F:IsPet(guid, unit)
     end
 end
 
-function F:IsNPC(guid)
+function F.IsNPC(guid)
     if guid then
         return string.find(guid, "^Creature")
     end
 end
 
-function F:IsVehicle(guid)
+function F.IsVehicle(guid)
     if guid then
         return string.find(guid, "^Vehicle")
     end
 end
 
-function F:GetTargetUnitInfo()
+function F.GetTargetUnitInfo()
     if UnitIsUnit("target", "player") then
         return "player", UnitName("player"), UnitClassBase("player")
     elseif UnitIsUnit("target", "pet") then
         return "pet", UnitName("pet")
     end
-    if not F:UnitInGroup("target") then return end
+    if not F.UnitInGroup("target") then return end
 
     if IsInRaid() then
         for i = 1, GetNumGroupMembers() do
@@ -1495,7 +1495,7 @@ function F:GetTargetUnitInfo()
     end
 end
 
-function F:HasPermission(isPartyMarkPermission)
+function F.HasPermission(isPartyMarkPermission)
     if isPartyMarkPermission and IsInGroup() and not IsInRaid() then return true end
     return UnitIsGroupLeader("player") or (IsInRaid() and UnitIsGroupAssistant("player"))
 end
@@ -1511,7 +1511,7 @@ local LSM = LibStub("LibSharedMedia-3.0", true)
 LSM:Register("statusbar", "Cell ".._G.DEFAULT, Cell.vars.texture)
 LSM:Register("font", "visitor", [[Interface\Addons\Cell\Media\Fonts\visitor.ttf]], 255)
 
-function F:GetBarTexture()
+function F.GetBarTexture()
     --! update Cell.vars.texture for further use in UnitButton_OnLoad
     if LSM:IsValid("statusbar", CellDB["appearance"]["texture"]) then
         Cell.vars.texture = LSM:Fetch("statusbar", CellDB["appearance"]["texture"])
@@ -1521,14 +1521,14 @@ function F:GetBarTexture()
     return Cell.vars.texture
 end
 
-function F:GetBarTextureByName(name)
+function F.GetBarTextureByName(name)
     if LSM:IsValid("statusbar", name) then
         return LSM:Fetch("statusbar", name)
     end
     return "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
 end
 
-function F:GetFont(font)
+function F.GetFont(font)
     if font and LSM:IsValid("font", font) then
         return LSM:Fetch("font", font)
     elseif type(font) == "string" and strfind(strlower(font), ".ttf$") then
@@ -1544,7 +1544,7 @@ end
 
 local defaultFontName = "Cell ".._G.DEFAULT
 local defaultFont
-function F:GetFontItems()
+function F.GetFontItems()
     if CellDB["appearance"]["useGameFont"] then
         defaultFont = GameFontNormal:GetFont()
     else
@@ -1555,7 +1555,7 @@ function F:GetFontItems()
     local fonts, fontNames
 
     -- if LSM then
-        fonts, fontNames = F:Copy(LSM:HashTable("font")), F:Copy(LSM:List("font"))
+        fonts, fontNames = F.Copy(LSM:HashTable("font")), F.Copy(LSM:List("font"))
         -- insert default font
         tinsert(fontNames, 1, defaultFontName)
         fonts[defaultFontName] = defaultFont
@@ -1566,7 +1566,7 @@ function F:GetFontItems()
                 ["font"] = fonts[name],
                 -- ["onClick"] = function()
                 --     CellDB["appearance"]["font"] = name
-                --     Cell:Fire("UpdateAppearance", "font")
+                --     Cell.Fire("UpdateAppearance", "font")
                 -- end,
             })
         end
@@ -1579,7 +1579,7 @@ function F:GetFontItems()
     --         ["font"] = defaultFont,
     --         -- ["onClick"] = function()
     --         --     CellDB["appearance"]["font"] = defaultFontName
-    --         --     Cell:Fire("UpdateAppearance", "font")
+    --         --     Cell.Fire("UpdateAppearance", "font")
     --         -- end,
     --     })
     -- end
@@ -1589,7 +1589,7 @@ end
 -------------------------------------------------
 -- texture
 -------------------------------------------------
-function F:GetTexCoord(width, height)
+function F.GetTexCoord(width, height)
     -- ULx,ULy, LLx,LLy, URx,URy, LRx,LRy
     local texCoord = {0.12, 0.12, 0.12, 0.88, 0.88, 0.12, 0.88, 0.88}
     local aspectRatio = width / height
@@ -1605,7 +1605,7 @@ function F:GetTexCoord(width, height)
     return texCoord
 end
 
--- function F:RotateTexture(tex, degrees)
+-- function F.RotateTexture(tex, degrees)
 --     local angle = math.rad(degrees)
 --     local cos, sin = math.cos(angle), math.sin(angle)
 --     tex:SetTexCoord((sin - cos), -(cos + sin), -cos, -sin, sin, -cos, 0, 0)
@@ -1617,7 +1617,7 @@ local function CalculateCorner(degrees)
     local r = math.rad(degrees)
     return 0.5 + math.cos(r) / s2, 0.5 + math.sin(r) / s2
 end
-function F:RotateTexture(texture, degrees)
+function F.RotateTexture(texture, degrees)
     local LRx, LRy = CalculateCorner(degrees + 45)
     local LLx, LLy = CalculateCorner(degrees + 135)
     local ULx, ULy = CalculateCorner(degrees + 225)
@@ -1678,7 +1678,7 @@ local powaTextures = {
     96, 97, 98, 99, 100, 114, 115, 116, 132, 138, 143
 }
 
-function F:GetTextures()
+function F.GetTextures()
     local builtIns = #wowAtlases + #wowTextures + #shapes
 
     local t = {}
@@ -1714,12 +1714,12 @@ function F:GetTextures()
     return builtIns, t
 end
 
-function F:GetDefaultRoleIcon(role)
+function F.GetDefaultRoleIcon(role)
     if not role or role == "NONE" then return "" end
     return "Interface\\AddOns\\Cell\\Media\\Roles\\Default_" .. role
 end
 
-function F:GetDefaultRoleIconEscapeSequence(role, size)
+function F.GetDefaultRoleIconEscapeSequence(role, size)
     if not role or role == "NONE" then return "" end
     return "|TInterface\\AddOns\\Cell\\Media\\Roles\\Default_" .. role .. ":" .. (size or 0) .. "|t"
 end
@@ -1727,7 +1727,7 @@ end
 -------------------------------------------------
 -- frame
 -------------------------------------------------
-function F:GetMouseFocus()
+function F.GetMouseFocus()
     if GetMouseFoci then
         return GetMouseFoci()[1]
     else
@@ -1738,7 +1738,7 @@ end
 -------------------------------------------------
 -- instance
 -------------------------------------------------
-function F:GetInstanceName()
+function F.GetInstanceName()
     if IsInInstance() then
         local name = GetInstanceInfo()
         if not name then name = GetRealZoneText() end
@@ -1774,10 +1774,10 @@ end
 
 -- https://wowpedia.fandom.com/wiki/Patch_10.0.2/API_changes
 local lines = {}
-function F:GetSpellTooltipInfo(spellId)
+function F.GetSpellTooltipInfo(spellId)
     wipe(lines)
 
-    local name, icon = F:GetSpellInfo(spellId)
+    local name, icon = F.GetSpellInfo(spellId)
     if not name then return end
 
     local data = C_TooltipInfo.GetSpellByID(spellId)
@@ -1791,7 +1791,7 @@ function F:GetSpellTooltipInfo(spellId)
 end
 
 if Cell.isRetail then
-    function F:GetSpellInfo(spellId)
+    function F.GetSpellInfo(spellId)
         if not spellId then return end
         if C_Spell and C_Spell.GetSpellInfo then
             local info = C_Spell.GetSpellInfo(spellId)
@@ -1806,7 +1806,7 @@ if Cell.isRetail then
     end
 else
     local GetSpellInfo = GetSpellInfo
-    function F:GetSpellInfo(spellId)
+    function F.GetSpellInfo(spellId)
         if not spellId then return end
         local rank
         spellId, rank = strsplit(":", spellId)
@@ -1822,7 +1822,7 @@ if Cell.isWrath or Cell.isVanilla then
     local GetSpellBookItemName = GetSpellBookItemName
     local PATTERN = TRADESKILL_RANK_HEADER:gsub(" ", ""):gsub("%%d", "%%s*(%%d+)")
 
-    function F:GetMaxSpellRank(spellId)
+    function F.GetMaxSpellRank(spellId)
         local spellName = select(1, GetSpellInfo(spellId))
         if not spellName then return end
 
@@ -1868,7 +1868,7 @@ mc:SetScript("OnEvent", function()
     end
 end)
 
-function F:GetMacroIndices()
+function F.GetMacroIndices()
     return macroIndices
 end
 
@@ -1885,7 +1885,7 @@ local function predicate(...)
     return idToFind == id
 end
 
-function F:FindAuraById(unit, type, spellId)
+function F.FindAuraById(unit, type, spellId)
     if type == "BUFF" then
         return AuraUtil.FindAura(predicate, unit, "HELPFUL", spellId)
     else
@@ -1894,7 +1894,7 @@ function F:FindAuraById(unit, type, spellId)
 end
 
 if Cell.isRetail then
-    function F:FindDebuffByIds(unit, spellIds)
+    function F.FindDebuffByIds(unit, spellIds)
         local debuffs = {}
         AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if spellIds[spellId] then
@@ -1904,7 +1904,7 @@ if Cell.isRetail then
         return debuffs
     end
 
-    function F:FindAuraByDebuffTypes(unit, types)
+    function F.FindAuraByDebuffTypes(unit, types)
         local debuffs = {}
         AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if types == "all" or types[debuffType] then
@@ -1914,7 +1914,7 @@ if Cell.isRetail then
         return debuffs
     end
 else
-    function F:FindDebuffByIds(unit, spellIds)
+    function F.FindDebuffByIds(unit, spellIds)
         local debuffs = {}
         for i = 1, 40 do
             local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
@@ -1929,7 +1929,7 @@ else
         return debuffs
     end
 
-    function F:FindAuraByDebuffTypes(unit, types)
+    function F.FindAuraByDebuffTypes(unit, types)
         local debuffs = {}
         for i = 1, 40 do
             local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
@@ -1948,7 +1948,7 @@ end
 -------------------------------------------------
 -- OmniCD
 -------------------------------------------------
-function F:UpdateOmniCDPosition(frame)
+function F.UpdateOmniCDPosition(frame)
     if OmniCD and OmniCD[1].db.position.uf == frame then
         C_Timer.After(0.5, function()
             OmniCD[1].Party:UpdatePosition()
@@ -1965,7 +1965,7 @@ local modified_priorities = {}
 local spotlightPriorityEnabled
 local quickAssistPriorityEnabled
 
-function F:UpdateFramePriority()
+function F.UpdateFramePriority()
     wipe(frame_priorities)
     wipe(modified_priorities)
     spotlightPriorityEnabled = nil
@@ -1987,13 +1987,13 @@ function F:UpdateFramePriority()
         end
     end
 
-    F:Debug(frame_priorities)
+    F.Debug(frame_priorities)
 end
 
 function Cell.GetUnitFramesForLGF(unit, frames, priorities)
     frames = frames or {}
 
-    local normal, spotlights, quickAssist = F:GetUnitButtonByUnit(unit, spotlightPriorityEnabled, quickAssistPriorityEnabled)
+    local normal, spotlights, quickAssist = F.GetUnitButtonByUnit(unit, spotlightPriorityEnabled, quickAssistPriorityEnabled)
 
     if normal then
         frames[normal.widgets.highLevelFrame] = "CellNormalUnitFrame"
@@ -2188,27 +2188,27 @@ local function SPELLS_CHANGED()
     spell_pet = CELL_RANGE_CHECK_PET[playerClass] or petSpells[playerClass]
 
     if spell_friend and IsSpellKnownOrOverridesKnown(spell_friend) then
-        spell_friend = F:GetSpellInfo(spell_friend)
+        spell_friend = F.GetSpellInfo(spell_friend)
     else
         spell_friend = nil
     end
     if spell_harm and IsSpellKnownOrOverridesKnown(spell_harm) then
-        spell_harm = F:GetSpellInfo(spell_harm)
+        spell_harm = F.GetSpellInfo(spell_harm)
     else
         spell_harm = nil
     end
     if spell_dead and IsSpellKnownOrOverridesKnown(spell_dead) then
-        spell_dead = F:GetSpellInfo(spell_dead)
+        spell_dead = F.GetSpellInfo(spell_dead)
     else
         spell_dead = nil
     end
     if spell_pet and IsSpellKnownOrOverridesKnown(spell_pet) then
-        spell_pet = F:GetSpellInfo(spell_pet)
+        spell_pet = F.GetSpellInfo(spell_pet)
     else
         spell_pet = nil
     end
 
-    -- F:Debug(
+    -- F.Debug(
     --     "[RANGE CHECK]",
     --     "\nfriend:", spell_friend or "nil",
     --     "\npet:", spell_pet or "nil",
@@ -2233,7 +2233,7 @@ function F.IsInRange(unit, check)
     if UnitIsUnit("player", unit) then
         return true
 
-    elseif not check and F:UnitInGroup(unit) then
+    elseif not check and F.UnitInGroup(unit) then
         -- NOTE: UnitInRange only works with group players/pets
         --! but not available for PLAYER PET when SOLO
         local inRange, checked = UnitInRange(unit)
@@ -2304,7 +2304,7 @@ debug.text:SetPoint("LEFT", 5, 0)
 local function GetResult1()
     local inRange, checked = UnitInRange("target")
 
-    return "UnitID: " .. (F:GetTargetUnitID("target") or "target") ..
+    return "UnitID: " .. (F.GetTargetUnitID("target") or "target") ..
         "\n|cffffff00F.IsInRange:|r " .. (F.IsInRange("target") and "true" or "false") ..
         "\nUnitInRange: " .. (checked and "checked" or "unchecked") .. " " .. (inRange and "true" or "false") ..
         "\nUnitIsVisible: " .. (UnitIsVisible("target") and "true" or "false") ..

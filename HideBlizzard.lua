@@ -44,7 +44,7 @@ local function HideFrame(frame)
     end
 end
 
-function F:HideBlizzardParty()
+function F.HideBlizzardParty()
     _G.UIParent:UnregisterEvent("GROUP_ROSTER_UPDATE")
 
     if _G.CompactPartyFrame then
@@ -67,7 +67,7 @@ function F:HideBlizzardParty()
     end
 end
 
-function F:HideBlizzardRaid()
+function F.HideBlizzardRaid()
     _G.UIParent:UnregisterEvent("GROUP_ROSTER_UPDATE")
 
     if _G.CompactRaidFrameContainer then

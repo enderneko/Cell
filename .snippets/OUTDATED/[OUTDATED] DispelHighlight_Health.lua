@@ -15,7 +15,7 @@ local debuffTypeColor = {
     ["none"] = {r = 0.8, g = 0, b = 0},
 }
 
-F:IterateAllUnitButtons(function(b)
+F.IterateAllUnitButtons(function(b)
     local dispels = b.indicators.dispels
 
     dispels.highlight:ClearAllPoints()

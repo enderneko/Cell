@@ -310,8 +310,8 @@ local defaultSpells = {
     },
 }
 
-function F:GetClickCastingSpellList(class, spec)
-    local spells = defaultSpells[class]["common"] and F:Copy(defaultSpells[class]["common"]) or {}
+function F.GetClickCastingSpellList(class, spec)
+    local spells = defaultSpells[class]["common"] and F.Copy(defaultSpells[class]["common"]) or {}
 
     -- check spec
     if spec and defaultSpells[class][spec] then
@@ -334,11 +334,11 @@ function F:GetClickCastingSpellList(class, spec)
             spellType = L[spellType]
         end
 
-        local name, icon = F:GetSpellInfo(spellId)
+        local name, icon = F.GetSpellInfo(spellId)
         if name then
             spells[i] = {icon, name, spellType, spellId}
         else
-            F:Debug("|cffff0000[INVALID]|r click-casting spell:", spellId)
+            F.Debug("|cffff0000[INVALID]|r click-casting spell:", spellId)
             if not invalid then invalid = {} end
             tinsert(invalid, i)
         end
@@ -395,17 +395,17 @@ local resurrections_for_dead = {
 do
     local temp = {}
     for _, id in pairs(resurrections_for_dead) do
-        temp[F:GetSpellInfo(id)] = true
+        temp[F.GetSpellInfo(id)] = true
     end
     resurrections_for_dead = temp
 end
 
-local spell_soulstone = F:GetSpellInfo(20707)
-function F:IsSoulstone(spell)
+local spell_soulstone = F.GetSpellInfo(20707)
+function F.IsSoulstone(spell)
     return spell == spell_soulstone
 end
 
-function F:IsResurrectionForDead(spell)
+function F.IsResurrectionForDead(spell)
     return resurrections_for_dead[spell]
 end
 
@@ -441,12 +441,12 @@ local resurrection_click_castings = {
 -- do
 --     for class, t in pairs(resurrection_click_castings) do
 --         for _, clickCasting in pairs(t) do
---             clickCasting[3] = F:GetSpellInfo(clickCasting[3])
+--             clickCasting[3] = F.GetSpellInfo(clickCasting[3])
 --         end
 --     end
 -- end
 
-function F:GetResurrectionClickCastings(class)
+function F.GetResurrectionClickCastings(class)
     return resurrection_click_castings[class] or {}
 end
 
@@ -483,12 +483,12 @@ local normalResurrection = {
 do
     for class, t in pairs(normalResurrection) do
         for condition, spell in pairs(t) do
-            t[condition] = F:GetSpellInfo(spell)
+            t[condition] = F.GetSpellInfo(spell)
         end
     end
 end
 
-function F:GetNormalResurrection(class)
+function F.GetNormalResurrection(class)
     return normalResurrection[class]
 end
 
@@ -501,10 +501,10 @@ local combatResurrection = {
 
 do
     for class, spell in pairs(combatResurrection) do
-        combatResurrection[class] = F:GetSpellInfo(spell)
+        combatResurrection[class] = F.GetSpellInfo(spell)
     end
 end
 
-function F:GetCombatResurrection(class)
+function F.GetCombatResurrection(class)
     return combatResurrection[class]
 end

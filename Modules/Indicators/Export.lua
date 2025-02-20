@@ -27,13 +27,13 @@ local from, listFrame, exportFrame, textArea, exportBtn
 
 local function CreateIndicatorsExportFrame()
     if not Cell.frames.indicatorsTab.mask then
-        Cell:CreateMask(Cell.frames.indicatorsTab, nil, {1, -1, -1, 1})
+        Cell.CreateMask(Cell.frames.indicatorsTab, nil, {1, -1, -1, 1})
         Cell.frames.indicatorsTab.mask:Hide()
     end
 
     -- list
-    local listParent = Cell:CreateFrame(nil, exportParent, 136, 525)
-    Cell:StylizeFrame(listParent, nil, Cell:GetAccentColorTable())
+    local listParent = Cell.CreateFrame(nil, exportParent, 136, 525)
+    Cell.StylizeFrame(listParent, nil, Cell.GetAccentColorTable())
     listParent:SetPoint("BOTTOMLEFT", 5, 24)
     listParent:Show()
 
@@ -42,17 +42,17 @@ local function CreateIndicatorsExportFrame()
     from:SetPoint("TOPLEFT", 5, -5)
 
     listFrame = CreateFrame("Frame", nil, listParent, "BackdropTemplate")
-    Cell:StylizeFrame(listFrame)
+    Cell.StylizeFrame(listFrame)
     listFrame:SetPoint("TOPLEFT", 5, -20)
     listFrame:SetPoint("TOPRIGHT", -5, -5)
     listFrame:SetHeight(457)
 
-    Cell:CreateScrollFrame(listFrame)
+    Cell.CreateScrollFrame(listFrame)
     listFrame.scrollFrame:SetScrollStep(19)
 
     -- export area
-    exportFrame = Cell:CreateFrame(nil, exportParent, 281, 273)
-    Cell:StylizeFrame(exportFrame, nil, Cell:GetAccentColorTable())
+    exportFrame = Cell.CreateFrame(nil, exportParent, 281, 273)
+    Cell.StylizeFrame(exportFrame, nil, Cell.GetAccentColorTable())
     exportFrame:SetPoint("BOTTOMLEFT", listParent, "BOTTOMRIGHT", 5, 0)
 
     -- title
@@ -60,8 +60,8 @@ local function CreateIndicatorsExportFrame()
     title:SetPoint("TOPLEFT", 5, -5)
 
     -- textArea
-    textArea = Cell:CreateScrollEditBox(exportFrame)
-    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
+    textArea = Cell.CreateScrollEditBox(exportFrame)
+    Cell.StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell.GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", 5, -20)
     textArea:SetPoint("BOTTOMRIGHT", -5, 5)
 
@@ -74,7 +74,7 @@ local function CreateIndicatorsExportFrame()
     end)
 
     -- list buttons
-    exportBtn = Cell:CreateButton(listParent, L["Export"], "green", {64, 20})
+    exportBtn = Cell.CreateButton(listParent, L["Export"], "green", {64, 20})
     exportBtn:SetPoint("BOTTOMLEFT", 5, 5)
     exportBtn:SetEnabled(false)
     exportBtn:SetScript("OnClick", function()
@@ -139,14 +139,14 @@ local function CreateIndicatorsExportFrame()
         textArea:SetText(exported)
     end)
 
-    local closeBtn = Cell:CreateButton(listParent, L["Close"], "red", {63, 20})
-    closeBtn:SetPoint("BOTTOMLEFT", exportBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
+    local closeBtn = Cell.CreateButton(listParent, L["Close"], "red", {63, 20})
+    closeBtn:SetPoint("BOTTOMLEFT", exportBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
     closeBtn:SetScript("OnClick", function()
         exportParent:Hide()
     end)
 
-    local allBtn = Cell:CreateButton(listParent, L["ALL"], "accent-hover", {64, 20})
-    allBtn:SetPoint("BOTTOMLEFT", exportBtn, "TOPLEFT", 0, P:Scale(-1))
+    local allBtn = Cell.CreateButton(listParent, L["ALL"], "accent-hover", {64, 20})
+    allBtn:SetPoint("BOTTOMLEFT", exportBtn, "TOPLEFT", 0, P.Scale(-1))
     allBtn:SetScript("OnClick", function()
         for i = 1, #indicatorButtons do
             Toggle(i, true)
@@ -154,8 +154,8 @@ local function CreateIndicatorsExportFrame()
         Validate()
     end)
 
-    local invertBtn = Cell:CreateButton(listParent, L["INVERT"], "accent-hover", {63, 20})
-    invertBtn:SetPoint("BOTTOMLEFT", closeBtn, "TOPLEFT", 0, P:Scale(-1))
+    local invertBtn = Cell.CreateButton(listParent, L["INVERT"], "accent-hover", {63, 20})
+    invertBtn:SetPoint("BOTTOMLEFT", closeBtn, "TOPLEFT", 0, P.Scale(-1))
     invertBtn:SetScript("OnClick", function()
         for i = 1, #indicatorButtons do
             if selectedIndicators[i] then
@@ -172,7 +172,7 @@ end
 -- functions
 -------------------------------------------------
 Validate = function()
-    if F:Getn(selectedIndicators) ~= 0 then
+    if F.Getn(selectedIndicators) ~= 0 then
         exportBtn:SetEnabled(true)
     else
         exportBtn:SetEnabled(false)
@@ -208,7 +208,7 @@ local function LoadIndicators(layout)
     for i, t in pairs(CellDB["layouts"][layout]["indicators"]) do
         local b = indicatorButtons[i]
         if not b then
-            b = Cell:CreateButton(listFrame.scrollFrame.content, " ", "transparent-accent", {20, 20})
+            b = Cell.CreateButton(listFrame.scrollFrame.content, " ", "transparent-accent", {20, 20})
             indicatorButtons[i] = b
             b:SetScript("OnClick", function()
                 b.selected = not b.selected
@@ -269,7 +269,7 @@ exportParent:SetScript("OnShow", function()
 end)
 
 local init
-function F:ShowIndicatorsExportFrame(layout)
+function F.ShowIndicatorsExportFrame(layout)
     if not init then
         init = true
         CreateIndicatorsExportFrame()

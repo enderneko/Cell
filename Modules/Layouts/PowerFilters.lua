@@ -3,7 +3,7 @@ local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
-local powerFilters = Cell:CreateFrame("CellOptionsFrame_PowerFilters", Cell.frames.layoutsTab, 285, 205)
+local powerFilters = Cell.CreateFrame("CellOptionsFrame_PowerFilters", Cell.frames.layoutsTab, 285, 205)
 Cell.frames.powerFilters = powerFilters
 powerFilters:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)
 
@@ -25,17 +25,17 @@ if Cell.isVanilla then
     end
 
     CreatePowerFilter = function(parent, class, buttons, width, height, color, bgColor)
-        local filter = Cell:CreateButton(parent, class, "accent-hover", {width, height})
+        local filter = Cell.CreateButton(parent, class, "accent-hover", {width, height})
         filter:SetTexture("classicon-"..strlower(class), {height-4, height-4}, {"LEFT", 2, 0}, true, true)
-        P:Size(filter, width, height)
+        P.Size(filter, width, height)
 
 
         if class == "VEHICLE" or class == "PET" or class == "NPC" then
             filter:SetText(L[class])
             filter.classColor = {0, 1, 0.2}
         else
-            filter.classColor = {F:GetClassColor(class)}
-            filter:SetText(F:GetLocalizedClassName(class))
+            filter.classColor = {F.GetClassColor(class)}
+            filter:SetText(F.GetLocalizedClassName(class))
         end
 
         filter:SetScript("OnClick", function()
@@ -43,7 +43,7 @@ if Cell.isVanilla then
             UpdateButton(filter, selectedLayoutTable["powerFilters"][class])
             -- update now, if selectedLayout == currentLayout
             if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "powerFilter")
+                Cell.Fire("UpdateLayout", selectedLayout, "powerFilter")
             end
         end)
 
@@ -75,26 +75,26 @@ else
 
     CreatePowerFilter = function(parent, class, buttons, width, height, color, bgColor)
         local filter = CreateFrame("Frame", nil, parent, "BackdropTemplate")
-        Cell:StylizeFrame(filter, color, bgColor)
-        P:Size(filter, width, height)
+        Cell.StylizeFrame(filter, color, bgColor)
+        P.Size(filter, width, height)
 
         filter.text = filter:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
         filter.text:SetPoint("LEFT", 5, 0)
         if class == "VEHICLE" or class == "PET" or class == "NPC" then
             filter.text:SetText("|cff00ff33"..L[class])
         else
-            filter.text:SetText(F:GetClassColorStr(class)..F:GetLocalizedClassName(class))
+            filter.text:SetText(F.GetClassColorStr(class)..F.GetLocalizedClassName(class))
         end
 
         filter.buttons = {}
         local last
         for i = #buttons, 1, -1 do
-            local b = Cell:CreateButton(filter, nil, "accent-hover", {height, height})
+            local b = Cell.CreateButton(filter, nil, "accent-hover", {height, height})
             filter.buttons[buttons[i]] = b
-            b:SetTexture(F:GetDefaultRoleIcon(buttons[i]), {height-4, height-4}, {"CENTER", 0, 0})
+            b:SetTexture(F.GetDefaultRoleIcon(buttons[i]), {height-4, height-4}, {"CENTER", 0, 0})
 
             if last then
-                b:SetPoint("BOTTOMRIGHT", last, "BOTTOMLEFT", P:Scale(1), 0)
+                b:SetPoint("BOTTOMRIGHT", last, "BOTTOMLEFT", P.Scale(1), 0)
             else
                 b:SetPoint("BOTTOMRIGHT", filter)
             end
@@ -112,7 +112,7 @@ else
                 UpdateButton(b, selected)
                 -- update now, if selectedLayout == currentLayout
                 if selectedLayout == Cell.vars.currentLayout then
-                    Cell:Fire("UpdateLayout", selectedLayout, "powerFilter")
+                    Cell.Fire("UpdateLayout", selectedLayout, "powerFilter")
                 end
             end)
         end
@@ -151,7 +151,7 @@ local function CreateFilters()
     npcF = CreatePowerFilter(powerFilters, "NPC", {"DAMAGER"}, 135, 20)
 
     if Cell.isRetail then
-        P:Height(powerFilters, 205)
+        P.Height(powerFilters, 205)
 
         dkF =  CreatePowerFilter(powerFilters, "DEATHKNIGHT", {"TANK", "DAMAGER"}, 135, 20)
         dhF = CreatePowerFilter(powerFilters, "DEMONHUNTER", {"TANK", "DAMAGER"}, 135, 20)
@@ -176,7 +176,7 @@ local function CreateFilters()
         npcF:SetPoint("TOPLEFT", petF, "BOTTOMLEFT", 0, -5)
 
     elseif Cell.isCata or Cell.isWrath then
-        P:Height(powerFilters, 180)
+        P.Height(powerFilters, 180)
 
         dkF =  CreatePowerFilter(powerFilters, "DEATHKNIGHT", {"TANK", "DAMAGER"}, 135, 20)
 
@@ -195,7 +195,7 @@ local function CreateFilters()
         npcF:SetPoint("TOPLEFT", petF, "BOTTOMLEFT", 0, -5)
 
     elseif Cell.isVanilla then
-        P:Height(powerFilters, 155)
+        P.Height(powerFilters, 155)
 
         druidF:SetPoint("TOPLEFT", 5, -5)
         hunterF:SetPoint("TOPLEFT", 145, -5)
@@ -222,13 +222,13 @@ powerFilters:SetScript("OnHide", function()
 end)
 
 local init
-function F:ShowPowerFilters(l, lt)
+function F.ShowPowerFilters(l, lt)
     selectedLayout, selectedLayoutTable = l, lt
 
     if not init then
         init = true
         powerFilters:UpdatePixelPerfect()
-        powerFilters:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
+        powerFilters:SetBackdropBorderColor(unpack(Cell.GetAccentColorTable()))
         CreateFilters()
     end
 
@@ -266,6 +266,6 @@ function F:ShowPowerFilters(l, lt)
     end
 end
 
-function F:HidePowerFilters()
+function F.HidePowerFilters()
     powerFilters:Hide()
 end

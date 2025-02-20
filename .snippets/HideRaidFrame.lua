@@ -15,5 +15,5 @@ local function Hide()
     end
 end
 
-Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged2", Hide)
-Cell:RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", Hide)
+Cell.RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged2", Hide)
+Cell.RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", Hide)

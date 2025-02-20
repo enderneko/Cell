@@ -9,9 +9,9 @@ local P = Cell.pixelPerfectFuncs
 local battleResFrame = CreateFrame("Frame", "CellBattleResFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.battleResFrame = battleResFrame
 -- battleResFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 17)
-P:Size(battleResFrame, 75, 20)
+P.Size(battleResFrame, 75, 20)
 battleResFrame:Hide()
-Cell:StylizeFrame(battleResFrame, {0.1, 0.1, 0.1, 0.7}, {0, 0, 0, 0.5})
+Cell.StylizeFrame(battleResFrame, {0.1, 0.1, 0.1, 0.7}, {0, 0, 0, 0.5})
 
 ---------------------------------
 -- Animation
@@ -84,11 +84,11 @@ end
 ---------------------------------
 -- Bar
 ---------------------------------
-local bar = Cell:CreateStatusBar("CellBattleResBar", battleResFrame, 10, 4, 100, false, nil, false, "Interface\\AddOns\\Cell\\Media\\statusbar", Cell:GetAccentColorTable())
+local bar = Cell.CreateStatusBar("CellBattleResBar", battleResFrame, 10, 4, 100, false, nil, false, "Interface\\AddOns\\Cell\\Media\\statusbar", Cell.GetAccentColorTable())
 bar:SetPoint("BOTTOMLEFT")
 bar:SetPoint("BOTTOMRIGHT")
--- P:Point(bar, "BOTTOMLEFT", battleResFrame, "BOTTOMLEFT", 1, 1)
--- P:Point(bar, "BOTTOMRIGHT", battleResFrame, "BOTTOMRIGHT", -1, 1)
+-- P.Point(bar, "BOTTOMLEFT", battleResFrame, "BOTTOMLEFT", 1, 1)
+-- P.Point(bar, "BOTTOMRIGHT", battleResFrame, "BOTTOMRIGHT", -1, 1)
 -- bar:SetMinMaxValues(0, 100)
 -- bar:SetValue(50)
 
@@ -110,7 +110,7 @@ title:SetJustifyH("LEFT")
 stack:SetJustifyH("LEFT")
 rTime:SetJustifyH("RIGHT")
 
-P:Point(title, "BOTTOMLEFT", bar, "TOPLEFT", 0, 2)
+P.Point(title, "BOTTOMLEFT", bar, "TOPLEFT", 0, 2)
 stack:SetPoint("LEFT", title, "RIGHT")
 rTime:SetPoint("LEFT", stack, "RIGHT")
 dummy:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 22)
@@ -124,7 +124,7 @@ rTime:SetText("")
 dummy:SetText(L["BR"]..": |cffff00000|r  00:00 ")
 
 battleResFrame:SetScript("OnShow", function()
-    P:Width(battleResFrame, math.floor(dummy:GetWidth()+.5))
+    P.Width(battleResFrame, math.floor(dummy:GetWidth()+.5))
 end)
 
 battleResFrame:SetScript("OnHide", function()
@@ -232,7 +232,7 @@ local function UpdateTools(which)
         end
     end
 end
-Cell:RegisterCallback("UpdateTools", "BattleRes_UpdateTools", UpdateTools)
+Cell.RegisterCallback("UpdateTools", "BattleRes_UpdateTools", UpdateTools)
 
 
 local function UpdatePosition()
@@ -272,7 +272,7 @@ local function UpdateMenu(which)
         UpdatePosition()
     end
 end
-Cell:RegisterCallback("UpdateMenu", "BattleRes_UpdateMenu", UpdateMenu)
+Cell.RegisterCallback("UpdateMenu", "BattleRes_UpdateMenu", UpdateMenu)
 
 local function UpdateLayout(layout, which)
     if not loaded or which == "anchor" then
@@ -280,13 +280,13 @@ local function UpdateLayout(layout, which)
         loaded = true
     end
 end
-Cell:RegisterCallback("UpdateLayout", "BattleRes_UpdateLayout", UpdateLayout)
+Cell.RegisterCallback("UpdateLayout", "BattleRes_UpdateLayout", UpdateLayout)
 
 local function UpdatePixelPerfect()
-    P:Resize(battleResFrame)
-    -- P:Repoint(battleResFrame)
-    Cell:StylizeFrame(battleResFrame, {0.1, 0.1, 0.1, 0.7}, {0, 0, 0, 0.5})
+    P.Resize(battleResFrame)
+    -- P.Repoint(battleResFrame)
+    Cell.StylizeFrame(battleResFrame, {0.1, 0.1, 0.1, 0.7}, {0, 0, 0, 0.5})
     bar:UpdatePixelPerfect()
-    P:Repoint(title)
+    P.Repoint(title)
 end
-Cell:RegisterCallback("UpdatePixelPerfect", "BattleRes_UpdatePixelPerfect", UpdatePixelPerfect)
+Cell.RegisterCallback("UpdatePixelPerfect", "BattleRes_UpdatePixelPerfect", UpdatePixelPerfect)

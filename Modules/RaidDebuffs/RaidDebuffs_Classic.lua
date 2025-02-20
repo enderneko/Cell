@@ -6,7 +6,7 @@ local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")
 
-local debuffsTab = Cell:CreateFrame("CellOptionsFrame_RaidDebuffsTab", Cell.frames.optionsFrame, nil, nil, true)
+local debuffsTab = Cell.CreateFrame("CellOptionsFrame_RaidDebuffsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.raidDebuffsTab = debuffsTab
 debuffsTab:SetAllPoints(Cell.frames.optionsFrame)
 debuffsTab:Hide()
@@ -28,7 +28,7 @@ local instanceButtons, bossButtons, debuffButtons = {}, {}, {}
 -- instanceName, ... = EJ_GetInstanceInfo(instanceId)
 
 -- used to sort list buttons
-local encounterJournalList = F:GetExpansionData()
+local encounterJournalList = F.GetExpansionData()
 
 -- used to GetInstanceInfo/GetRealZoneText --> instanceId
 local instanceNameMapping = {
@@ -45,7 +45,7 @@ local bossIdToName = {
 }
 
 local function LoadList()
-    local list = F:GetExpansionList()
+    local list = F.GetExpansionList()
 
     newestExpansion = list[1]
 
@@ -74,7 +74,7 @@ local LoadExpansion = function(eName)
 end
 
 local unsortedDebuffs = {}
-function F:LoadBuiltInDebuffs(debuffs)
+function F.LoadBuiltInDebuffs(debuffs)
     for instanceId, iTable in pairs(debuffs) do
         unsortedDebuffs[instanceId] = iTable
     end
@@ -136,12 +136,12 @@ local function LoadBuiltIn(instanceId, bossId, bossTable)
                 if tonumber(spellId) < 0 then
                     tinsert(loadedDebuffs[instanceId][bossId]["disabled"], {["id"]=abs(tonumber(spellId)), ["order"]=0, ["trackByID"]=true, ["condition"]={"None"}, ["built-in"]=true})
                 else
-                    F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=abs(tonumber(spellId)), ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["trackByID"]=true, ["condition"]={"None"}, ["built-in"]=true})
+                    F.TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=abs(tonumber(spellId)), ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["trackByID"]=true, ["condition"]={"None"}, ["built-in"]=true})
                 end
             elseif spellId < 0 then --* disabled by default
                 tinsert(loadedDebuffs[instanceId][bossId]["disabled"], {["id"]=abs(spellId), ["order"]=0, ["condition"]={"None"}, ["built-in"]=true})
             else
-                F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["condition"]={"None"}, ["built-in"]=true})
+                F.TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["condition"]={"None"}, ["built-in"]=true})
             end
         else
             -- NOTE: exists in both CellDB and built-in, mark it as built-in (not deletable)
@@ -168,10 +168,10 @@ local function LoadBuiltIn(instanceId, bossId, bossTable)
 end
 
 local function CheckOrders(instanceId, bossId, bossTable)
-    local currentN, correctN = #bossTable["enabled"], F:Getn(bossTable["enabled"])
+    local currentN, correctN = #bossTable["enabled"], F.Getn(bossTable["enabled"])
     if currentN ~= correctN then -- missing some debuffs, maybe deleted from built-in
         -- texplore(bossTable)
-        F:Debug("|cffff2222FIX MISSING DEBUFFS|r", instanceId, bossId)
+        F.Debug("|cffff2222FIX MISSING DEBUFFS|r", instanceId, bossId)
         local temp = {}
         for _, sTable in pairs(bossTable["enabled"]) do
             tinsert(temp, sTable)
@@ -223,7 +223,7 @@ local function UpdateRaidDebuffs()
     LoadList()
     LoadDebuffs()
 end
-Cell:RegisterCallback("UpdateRaidDebuffs", "RaidDebuffsTab_UpdateRaidDebuffs", UpdateRaidDebuffs)
+Cell.RegisterCallback("UpdateRaidDebuffs", "RaidDebuffsTab_UpdateRaidDebuffs", UpdateRaidDebuffs)
 
 -------------------------------------------------
 -- top widgets
@@ -233,7 +233,7 @@ local expansionDropdown, showCurrentBtn
 local function OpenInstanceBoss(instanceName, bossName)
     if not instanceName or not instanceNameMapping[instanceName] then return end
 
-    local eName, iIndex, iId = F:SplitToNumber(":", instanceNameMapping[instanceName])
+    local eName, iIndex, iId = F.SplitToNumber(":", instanceNameMapping[instanceName])
     expansionDropdown:SetSelected(eName)
     LoadExpansion(eName)
     if loadedInstance == iId and not bossName then
@@ -271,7 +271,7 @@ local function OpenInstanceBoss(instanceName, bossName)
                         bossButtons[bIndex]:Click()
                     end
                 else
-                    local bId, _ = F:SplitToNumber("-", bossButtons[bIndex].id)
+                    local bId, _ = F.SplitToNumber("-", bossButtons[bIndex].id)
                     if loadedBoss == bId then
                         ShowDebuffs(bossButtons[bIndex].id, 1)
                     else
@@ -289,11 +289,11 @@ end
 
 local function CreateWidgets()
     -- expansion dropdown
-    expansionDropdown = Cell:CreateDropdown(debuffsTab, 269)
+    expansionDropdown = Cell.CreateDropdown(debuffsTab, 269)
     expansionDropdown:SetPoint("TOPLEFT", 5, -7)
 
     local expansionItems = {}
-    for _, eName in ipairs(F:GetExpansionList()) do
+    for _, eName in ipairs(F.GetExpansionList()) do
         tinsert(expansionItems, {
             ["text"] = eName,
             ["onClick"] = function()
@@ -304,7 +304,7 @@ local function CreateWidgets()
     expansionDropdown:SetItems(expansionItems)
 
     -- current instance button
-    local showCurrentBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Show Current Instance"])
+    local showCurrentBtn = Cell.CreateButton(debuffsTab, "", "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Show Current Instance"])
     showCurrentBtn:SetPoint("TOPRIGHT", -5, -7)
     showCurrentBtn.tex = showCurrentBtn:CreateTexture(nil, "ARTWORK")
     showCurrentBtn:SetTexture("DungeonSkull", {18, 18}, {"CENTER", 0, 0}, true)
@@ -314,25 +314,25 @@ local function CreateWidgets()
             OpenInstanceBoss(GetInstanceInfo())
         end
     end)
-    Cell:RegisterForCloseDropdown(showCurrentBtn)
+    Cell.RegisterForCloseDropdown(showCurrentBtn)
 
     -- import/export button
-    local exportBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Export"])
-    exportBtn:SetPoint("TOPRIGHT", showCurrentBtn, "TOPLEFT", P:Scale(-5), 0)
+    local exportBtn = Cell.CreateButton(debuffsTab, "", "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Export"])
+    exportBtn:SetPoint("TOPRIGHT", showCurrentBtn, "TOPLEFT", P.Scale(-5), 0)
     exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export.blp", {16, 16}, {"CENTER", 0, 0})
     exportBtn:SetScript("OnClick", function()
-        F:ShowRaidDebuffsExportFrame(loadedInstance, loadedInstance == loadedBoss and "general" or loadedBoss)
+        F.ShowRaidDebuffsExportFrame(loadedInstance, loadedInstance == loadedBoss and "general" or loadedBoss)
     end)
 
-    local importBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"])
-    importBtn:SetPoint("TOPRIGHT", exportBtn, "TOPLEFT", P:Scale(-5), 0)
+    local importBtn = Cell.CreateButton(debuffsTab, "", "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"])
+    importBtn:SetPoint("TOPRIGHT", exportBtn, "TOPLEFT", P.Scale(-5), 0)
     importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import.blp", {16, 16}, {"CENTER", 0, 0})
     importBtn:SetScript("OnClick", function()
-        F:ShowRaidDebuffsImportFrame()
+        F.ShowRaidDebuffsImportFrame()
     end)
 
     -- tips
-    local tips = Cell:CreateScrollTextFrame(debuffsTab, "|cffb7b7b7"..L["RAID_DEBUFFS_TIPS"], 0.02, nil, 2)
+    local tips = Cell.CreateScrollTextFrame(debuffsTab, "|cffb7b7b7"..L["RAID_DEBUFFS_TIPS"], 0.02, nil, 2)
     tips:SetPoint("BOTTOMLEFT", 5, 3)
     tips:SetPoint("BOTTOMRIGHT", -5, 3)
 end
@@ -342,8 +342,8 @@ end
 -------------------------------------------------
 local function SetOnEnterLeave(frame)
     frame:SetScript("OnEnter", function()
-        frame:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
-        frame.scrollFrame.scrollbar:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
+        frame:SetBackdropBorderColor(unpack(Cell.GetAccentColorTable()))
+        frame.scrollFrame.scrollbar:SetBackdropBorderColor(unpack(Cell.GetAccentColorTable()))
         -- frame.scrollFrame.scrollThumb:SetBackdropBorderColor(0, 0, 0, 0.5)
     end)
     frame:SetScript("OnLeave", function()
@@ -359,16 +359,16 @@ end
 local instancesFrame
 
 local function CreateInstanceFrame()
-    instancesFrame = Cell:CreateFrame("RaidDebuffsTab_Instances", debuffsTab, 127, 229)
+    instancesFrame = Cell.CreateFrame("RaidDebuffsTab_Instances", debuffsTab, 127, 229)
     instancesFrame:SetPoint("TOPLEFT", expansionDropdown, "BOTTOMLEFT", 0, -7)
     -- instancesFrame:SetPoint("BOTTOMLEFT", 5, 5)
     instancesFrame:Show()
-    Cell:CreateScrollFrame(instancesFrame)
+    Cell.CreateScrollFrame(instancesFrame)
     instancesFrame.scrollFrame:SetScrollStep(19)
     SetOnEnterLeave(instancesFrame)
 
     -- instance image frame
-    local imageFrame = Cell:CreateFrame("RaidDebuffsTab_InstanceImage", debuffsTab, 128, 64, true)
+    local imageFrame = Cell.CreateFrame("RaidDebuffsTab_InstanceImage", debuffsTab, 128, 64, true)
     imageFrame.bg = imageFrame:CreateTexture(nil, "BACKGROUND")
     imageFrame.bg:SetTexture(Cell.vars.whiteTexture)
     imageFrame.bg:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.1, 0.1, 0.1, 1))
@@ -404,7 +404,7 @@ ShowInstances = function(eName)
 
     for i, iTable in pairs(encounterJournalList[eName]) do
         if not instanceButtons[i] then
-            instanceButtons[i] = Cell:CreateButton(instancesFrame.scrollFrame.content, iTable["name"], "transparent-accent", {20, 20})
+            instanceButtons[i] = Cell.CreateButton(instancesFrame.scrollFrame.content, iTable["name"], "transparent-accent", {20, 20})
         else
             instanceButtons[i]:SetText(iTable["name"])
             instanceButtons[i]:Show()
@@ -437,19 +437,19 @@ ShowInstances = function(eName)
     end
 
     -- set onclick
-    Cell:CreateButtonGroup(instanceButtons, function(id, b)
+    Cell.CreateButtonGroup(instanceButtons, function(id, b)
         if IsShiftKeyDown() and b:IsMouseOver() then -- NOTE: sharing
             -- print("instance:"..iId, "bossId:"..id)
             local editbox = GetCurrentKeyBoardFocus()
             if editbox then
-                local iId, iIndex = F:SplitToNumber("-", id)
-                editbox:SetText("[Cell:Debuffs: "..instanceIdToName[iId].." - "..Cell.vars.playerNameFull.."]")
+                local iId, iIndex = F.SplitToNumber("-", id)
+                editbox:SetText("[Cell.Debuffs: "..instanceIdToName[iId].." - "..Cell.vars.playerNameFull.."]")
             end
         elseif IsAltKeyDown() and b:IsMouseOver() then -- NOTE: reset
-            local iId, iIndex = F:SplitToNumber("-", id)
-            local popup = Cell:CreateConfirmPopup(Cell.frames.raidDebuffsTab, 200, L["Reset debuffs?"].."\n"..instanceIdToName[iId], function(self)
+            local iId, iIndex = F.SplitToNumber("-", id)
+            local popup = Cell.CreateConfirmPopup(Cell.frames.raidDebuffsTab, 200, L["Reset debuffs?"].."\n"..instanceIdToName[iId], function(self)
                 -- update
-                F:UpdateRaidDebuffs(iId, nil, nil, instanceIdToName[iId])
+                F.UpdateRaidDebuffs(iId, nil, nil, instanceIdToName[iId])
                 -- reload
                 C_Timer.After(0.25, function()
                     ShowBosses(id, true)
@@ -459,7 +459,7 @@ ShowInstances = function(eName)
         end
         ShowBosses(id)
     end, nil, nil, function(b)
-        local _, iIndex = F:SplitToNumber("-", b.id)
+        local _, iIndex = F.SplitToNumber("-", b.id)
         ShowInstanceImage(encounterJournalList[loadedExpansion][iIndex]["image"], b)
 
         instancesFrame:GetScript("OnEnter")()
@@ -478,16 +478,16 @@ end
 local bossesFrame
 
 local function CreateBossesFrame()
-    bossesFrame = Cell:CreateFrame("RaidDebuffsTab_Bosses", debuffsTab, 127, 229)
+    bossesFrame = Cell.CreateFrame("RaidDebuffsTab_Bosses", debuffsTab, 127, 229)
     bossesFrame:SetPoint("TOPLEFT", instancesFrame, "BOTTOMLEFT", 0, -5)
     -- bossesFrame:SetPoint("BOTTOMLEFT", 5, 5)
     bossesFrame:Show()
-    Cell:CreateScrollFrame(bossesFrame)
+    Cell.CreateScrollFrame(bossesFrame)
     bossesFrame.scrollFrame:SetScrollStep(19)
     SetOnEnterLeave(bossesFrame)
 
     -- boss image frame
-    local imageFrame = Cell:CreateFrame("RaidDebuffsTab_BossImage", debuffsTab, 128, 64, true)
+    local imageFrame = Cell.CreateFrame("RaidDebuffsTab_BossImage", debuffsTab, 128, 64, true)
     imageFrame.bg = imageFrame:CreateTexture(nil, "BACKGROUND")
     imageFrame.bg:SetTexture(Cell.vars.whiteTexture)
     imageFrame.bg:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.1, 0.1, 0.1, 1))
@@ -519,7 +519,7 @@ local function CreateBossesFrame()
 end
 
 ShowBosses = function(instanceId, forceRefresh)
-    local iId, iIndex = F:SplitToNumber("-", instanceId)
+    local iId, iIndex = F.SplitToNumber("-", instanceId)
 
     if loadedInstance == iId and not forceRefresh then return end
     loadedInstance = iId
@@ -528,7 +528,7 @@ ShowBosses = function(instanceId, forceRefresh)
 
     -- instance general debuff
     if not bossButtons[0] then
-        bossButtons[0] = Cell:CreateButton(bossesFrame.scrollFrame.content, L["General"], "transparent-accent", {20, 20})
+        bossButtons[0] = Cell.CreateButton(bossesFrame.scrollFrame.content, L["General"], "transparent-accent", {20, 20})
         bossButtons[0]:SetPoint("TOPLEFT")
         bossButtons[0]:SetPoint("RIGHT")
     end
@@ -537,7 +537,7 @@ ShowBosses = function(instanceId, forceRefresh)
     -- bosses
     for i, bTable in pairs(encounterJournalList[loadedExpansion][iIndex]["bosses"]) do
         if not bossButtons[i] then
-            bossButtons[i] = Cell:CreateButton(bossesFrame.scrollFrame.content, bTable["name"], "transparent-accent", {20, 20})
+            bossButtons[i] = Cell.CreateButton(bossesFrame.scrollFrame.content, bTable["name"], "transparent-accent", {20, 20})
         else
             bossButtons[i]:SetText(bTable["name"])
             bossButtons[i]:Show()
@@ -563,16 +563,16 @@ ShowBosses = function(instanceId, forceRefresh)
     end
 
     -- set onclick/onenter
-    Cell:CreateButtonGroup(bossButtons, function(id, b)
+    Cell.CreateButtonGroup(bossButtons, function(id, b)
         if IsShiftKeyDown() and b:IsMouseOver() then -- NOTE: sharing
             -- print("instance:"..iId, "bossId:"..id)
             local editbox = GetCurrentKeyBoardFocus()
             if editbox then
                 if id == iId then -- general
-                    editbox:SetText("[Cell:Debuffs: "..bossIdToName[0].." ("..instanceIdToName[iId]..") - "..Cell.vars.playerNameFull.."]")
+                    editbox:SetText("[Cell.Debuffs: "..bossIdToName[0].." ("..instanceIdToName[iId]..") - "..Cell.vars.playerNameFull.."]")
                 else
-                    local bId = F:SplitToNumber("-", id)
-                    editbox:SetText("[Cell:Debuffs: "..bossIdToName[bId].." ("..instanceIdToName[iId]..") - "..Cell.vars.playerNameFull.."]")
+                    local bId = F.SplitToNumber("-", id)
+                    editbox:SetText("[Cell.Debuffs: "..bossIdToName[bId].." ("..instanceIdToName[iId]..") - "..Cell.vars.playerNameFull.."]")
                 end
             end
         elseif IsAltKeyDown() and b:IsMouseOver() then -- NOTE: reset
@@ -580,25 +580,25 @@ ShowBosses = function(instanceId, forceRefresh)
             if id == iId then -- general
                 text = bossIdToName[0]
             else
-                local bId = F:SplitToNumber("-", id)
+                local bId = F.SplitToNumber("-", id)
                 text = bossIdToName[bId]
             end
 
-            local popup = Cell:CreateConfirmPopup(Cell.frames.raidDebuffsTab, 200, L["Reset debuffs?"].."\n"..text, function(self)
+            local popup = Cell.CreateConfirmPopup(Cell.frames.raidDebuffsTab, 200, L["Reset debuffs?"].."\n"..text, function(self)
                 local which
                 if id == iId then -- general
                     which = bossIdToName[0].." ("..instanceIdToName[iId]..")"
                     -- update
-                    F:UpdateRaidDebuffs(iId, "general", nil, which)
+                    F.UpdateRaidDebuffs(iId, "general", nil, which)
                     -- reload
                     C_Timer.After(0.25, function()
                         ShowDebuffs(id, 1)
                     end)
                 else
-                    local bId, index = F:SplitToNumber("-", id)
+                    local bId, index = F.SplitToNumber("-", id)
                     which = bossIdToName[bId].." ("..instanceIdToName[iId]..")"
                     -- update
-                    F:UpdateRaidDebuffs(iId, bId, nil, which)
+                    F.UpdateRaidDebuffs(iId, bId, nil, which)
                     -- reload
                     C_Timer.After(0.25, function()
                         ShowDebuffs(id, 1)
@@ -610,7 +610,7 @@ ShowBosses = function(instanceId, forceRefresh)
         ShowDebuffs(id)
     end, nil, nil, function(b)
         if b.id ~= iId then -- not General
-            local _, bIndex = F:SplitToNumber("-", b.id)
+            local _, bIndex = F.SplitToNumber("-", b.id)
             ShowBossImage(encounterJournalList[loadedExpansion][iIndex]["bosses"][bIndex]["image"], b)
         end
         bossesFrame:GetScript("OnEnter")()
@@ -638,34 +638,34 @@ end
 local debuffListFrame, dragged, delete
 
 local function CreateDebuffsFrame()
-    debuffListFrame = Cell:CreateFrame("RaidDebuffsTab_Debuffs", debuffsTab, 137, 438)
+    debuffListFrame = Cell.CreateFrame("RaidDebuffsTab_Debuffs", debuffsTab, 137, 438)
     debuffListFrame:SetPoint("TOPLEFT", instancesFrame, "TOPRIGHT", 5, 0)
     debuffListFrame:Show()
-    Cell:CreateScrollFrame(debuffListFrame)
+    Cell.CreateScrollFrame(debuffListFrame)
     debuffListFrame.scrollFrame:SetScrollStep(19)
     SetOnEnterLeave(debuffListFrame)
 
-    local create = Cell:CreateButton(debuffsTab, L["Create"], "accent-hover", {66, 20})
+    local create = Cell.CreateButton(debuffsTab, L["Create"], "accent-hover", {66, 20})
     create:SetPoint("TOPLEFT", debuffListFrame, "BOTTOMLEFT", 0, -5)
     create:SetScript("OnClick", function()
-        local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Create new debuff (id)"], function(self)
+        local popup = Cell.CreateConfirmPopup(debuffsTab, 200, L["Create new debuff (id)"], function(self)
             local id = tonumber(self.editBox:GetText()) or 0
-            local name = F:GetSpellInfo(id)
+            local name = F.GetSpellInfo(id)
             if not name then
-                F:Print(L["Invalid spell id."])
+                F.Print(L["Invalid spell id."])
                 return
             end
             -- check whether already exists
             if currentBossTable then
                 for _, sTable in pairs(currentBossTable["enabled"]) do
                     if sTable["id"] == id then
-                        F:Print(L["Debuff already exists."])
+                        F.Print(L["Debuff already exists."])
                         return
                     end
                 end
                 for _, sTable in pairs(currentBossTable["disabled"]) do
                     if sTable["id"] == id then
-                        F:Print(L["Debuff already exists."])
+                        F.Print(L["Debuff already exists."])
                         return
                     end
                 end
@@ -698,7 +698,7 @@ local function CreateDebuffsFrame()
                 ShowDebuffs(isGeneral and loadedInstance or loadedBoss, 1)
             end
             -- notify debuff list changed
-            Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+            Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
             CellSpellTooltip:Hide()
         end, function()
             CellSpellTooltip:Hide()
@@ -712,7 +712,7 @@ local function CreateDebuffsFrame()
                 return
             end
 
-            local name, icon = F:GetSpellInfo(spellId)
+            local name, icon = F.GetSpellInfo(spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 popup.button1:SetEnabled(false)
@@ -728,12 +728,12 @@ local function CreateDebuffsFrame()
         popup:SetPoint("TOPLEFT", 117, -170)
     end)
 
-    delete = Cell:CreateButton(debuffsTab, L["Delete"], "accent-hover", {66, 20})
+    delete = Cell.CreateButton(debuffsTab, L["Delete"], "accent-hover", {66, 20})
     delete:SetPoint("LEFT", create, "RIGHT", 5, 0)
     delete:SetEnabled(false)
     delete:SetScript("OnClick", function()
         local text = selectedSpellName.." ["..selectedSpellId.."]".."\n".."|T"..selectedSpellIcon..":12:12:0:0:12:12:1:11:1:11|t"
-        local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Delete debuff?"].."\n"..text, function()
+        local popup = Cell.CreateConfirmPopup(debuffsTab, 200, L["Delete debuff?"].."\n"..text, function()
             -- update db
             local index = isGeneral and "general" or loadedBoss
             local order = CellDB["raidDebuffs"][loadedInstance][index][selectedSpellId]["order"]
@@ -773,14 +773,14 @@ local function CreateDebuffsFrame()
                 ShowDebuffs(loadedBoss, 1)
             end
             -- notify debuff list changed
-            Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+            Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
         end, nil, true)
         popup:SetPoint("TOPLEFT", 117, -170)
     end)
 
     -- dragged
-    dragged = Cell:CreateFrame("RaidDebuffsTab_Dragged", debuffsTab, 20, 20)
-    Cell:StylizeFrame(dragged, nil, Cell:GetAccentColorTable())
+    dragged = Cell.CreateFrame("RaidDebuffsTab_Dragged", debuffsTab, 20, 20)
+    Cell.StylizeFrame(dragged, nil, Cell.GetAccentColorTable())
     dragged:SetFrameStrata("DIALOG")
     dragged:EnableMouse(false)
     dragged:SetMovable(true)
@@ -818,7 +818,7 @@ local function RegisterForDrag(b)
     b:SetScript("OnDragStop", function(self)
         self:SetAlpha(1)
         dragged:Hide()
-        local newB = F:GetMouseFocus()
+        local newB = F.GetMouseFocus()
         -- move on a debuff button & not on currently moving button & not disabled
         if newB:GetParent() == debuffListFrame.scrollFrame.content and newB ~= self and newB.enabled then
             local temp, from, to = self, self.index, newB.index
@@ -831,13 +831,13 @@ local function RegisterForDrag(b)
                     debuffButtons[self.index+1]:ClearAllPoints()
                     debuffButtons[self.index+1]:SetPoint(unpack(self.point1))
                     debuffButtons[self.index+1]:SetPoint("RIGHT")
-                    debuffButtons[self.index+1].point1 = F:Copy(self.point1)
+                    debuffButtons[self.index+1].point1 = F.Copy(self.point1)
                 end
                 -- update new self position
                 self:ClearAllPoints()
                 self:SetPoint(unpack(newB.point1))
                 self:SetPoint("RIGHT")
-                self.point1 = F:Copy(newB.point1)
+                self.point1 = F.Copy(newB.point1)
                 -- update new next's position
                 newB:ClearAllPoints()
                 newB:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, 1)
@@ -883,7 +883,7 @@ local function RegisterForDrag(b)
                     debuffButtons[self.index+1]:ClearAllPoints()
                     debuffButtons[self.index+1]:SetPoint(unpack(self.point1))
                     debuffButtons[self.index+1]:SetPoint("RIGHT")
-                    debuffButtons[self.index+1].point1 = F:Copy(self.point1)
+                    debuffButtons[self.index+1].point1 = F.Copy(self.point1)
                 end
                 -- update new self position
                 self:ClearAllPoints()
@@ -932,7 +932,7 @@ local function RegisterForDrag(b)
                 end
             end
             -- notify debuff list changed
-            Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+            Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
         end
     end)
 end
@@ -946,7 +946,7 @@ end
 local last
 local function CreateDebuffButton(i, sTable)
     if not debuffButtons[i] then
-        debuffButtons[i] = Cell:CreateButton(debuffListFrame.scrollFrame.content, " ", "transparent-accent", {20, 20})
+        debuffButtons[i] = Cell.CreateButton(debuffListFrame.scrollFrame.content, " ", "transparent-accent", {20, 20})
         debuffButtons[i].index = i
         -- icon
         debuffButtons[i].icon = debuffButtons[i]:CreateTexture(nil, "ARTWORK")
@@ -961,7 +961,7 @@ local function CreateDebuffButton(i, sTable)
 
     debuffButtons[i]:Show()
 
-    local name, icon = F:GetSpellInfo(sTable["id"])
+    local name, icon = F.GetSpellInfo(sTable["id"])
     if name then
         debuffButtons[i].icon:SetTexture(icon)
         debuffButtons[i].spellIcon = icon
@@ -1001,7 +1001,7 @@ local function CreateDebuffButton(i, sTable)
 end
 
 ShowDebuffs = function(bossId, buttonIndex)
-    local bId, _ = F:SplitToNumber("-", bossId)
+    local bId, _ = F.SplitToNumber("-", bossId)
 
     if loadedBoss == bId and not buttonIndex then return end
     loadedBoss = bId
@@ -1050,7 +1050,7 @@ ShowDebuffs = function(bossId, buttonIndex)
     end
 
     -- set onclick
-    Cell:CreateButtonGroup(debuffButtons, ShowDetails, nil, nil, function(b)
+    Cell.CreateButtonGroup(debuffButtons, ShowDetails, nil, nil, function(b)
         debuffListFrame:GetScript("OnEnter")()
         CellSpellTooltip:SetOwner(b, "ANCHOR_NONE")
         CellSpellTooltip:SetPoint("TOPRIGHT", b, "TOPLEFT", -1, 0)
@@ -1089,15 +1089,15 @@ local function CreatePreviewButton()
     previewButton.widgets.powerBar:SetMinMaxValues(0, 1)
     previewButton.widgets.powerBar:SetValue(1)
 
-    local previewButtonBG = Cell:CreateFrame("CellRaidDebuffsPreviewButtonBG", previewButton)
+    local previewButtonBG = Cell.CreateFrame("CellRaidDebuffsPreviewButtonBG", previewButton)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
-    Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
+    Cell.StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
 
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
-    previewText:SetText(Cell:GetAccentColorString()..L["Preview"])
+    previewText:SetText(Cell.GetAccentColorString()..L["Preview"])
 
     previewButton.fadeIn = previewButton:CreateAnimationGroup()
     local fadeIn = previewButton.fadeIn:CreateAnimation("alpha")
@@ -1121,7 +1121,7 @@ local function CreatePreviewButton()
         previewButton:Hide()
     end)
 
-    Cell:Fire("CreatePreview", previewButton)
+    Cell.Fire("CreatePreview", previewButton)
 end
 
 local function UpdatePreviewButton()
@@ -1143,25 +1143,25 @@ local function UpdatePreviewButton()
         previewButton.indicators.nameText:Hide()
     end
 
-    P:Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
-    B:SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
-    B:SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
+    P.Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
+    B.SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
+    B.SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
 
     previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
     -- health color
-    local r, g, b = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
+    local r, g, b = F.GetHealthBarColor(1, false, F.GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
 
     -- power color
-    r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
+    r, g, b = F.GetPowerBarColor("player", Cell.vars.playerClass)
     previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
 
     -- alpha
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
 
-    Cell:Fire("UpdatePreview", previewButton)
+    Cell.Fire("UpdatePreview", previewButton)
 end
 
 -------------------------------------------------
@@ -1177,7 +1177,7 @@ local UpdateGlowType, LoadGlowOptions, LoadGlowCondition, ShowGlowPreview
 local conditionHeight, glowOptionsHeight, glowConditionHeight = 0, 0, 0
 
 local function CreateDetailsFrame()
-    detailsFrame = Cell:CreateFrame("RaidDebuffsTab_DebuffDetails", debuffsTab)
+    detailsFrame = Cell.CreateFrame("RaidDebuffsTab_DebuffDetails", debuffsTab)
     detailsFrame:SetPoint("TOPLEFT", debuffListFrame, "TOPRIGHT", 5, 0)
     detailsFrame:SetPoint("BOTTOMRIGHT", -5, 24)
     detailsFrame:Show()
@@ -1186,7 +1186,7 @@ local function CreateDetailsFrame()
     detailsFrame:SetScript("OnUpdate", function()
         if detailsFrame:IsMouseOver() then
             if not isMouseOver or isMouseOver ~= 1 then
-                detailsFrame:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
+                detailsFrame:SetBackdropBorderColor(unpack(Cell.GetAccentColorTable()))
                 isMouseOver = 1
             end
         else
@@ -1197,7 +1197,7 @@ local function CreateDetailsFrame()
         end
     end)
 
-    Cell:CreateScrollFrame(detailsFrame)
+    Cell.CreateScrollFrame(detailsFrame)
 
     local detailsContentFrame = detailsFrame.scrollFrame.content
     -- local detailsContentFrame = CreateFrame("Frame", "RaidDebuffsTab_DebuffDetailsContent", detailsFrame)
@@ -1229,7 +1229,7 @@ local function CreateDetailsFrame()
     spellIdText:SetJustifyH("LEFT")
 
     -- enable
-    enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], function(checked)
+    enabledCB = Cell.CreateCheckButton(detailsContentFrame, L["Enabled"], function(checked)
         local newOrder = checked and #currentBossTable["enabled"]+1 or 0
         -- update db, on re-enabled set its order to the last
         if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
@@ -1284,12 +1284,12 @@ local function CreateDetailsFrame()
             ShowDebuffs(loadedBoss, buttonIndex)
         end
         -- notify debuff list changed
-        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+        Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end)
     enabledCB:SetPoint("TOPLEFT", spellIconBG, "BOTTOMLEFT", 0, -10)
 
     -- track by id
-    trackByIdCB = Cell:CreateCheckButton(detailsContentFrame, L["Track by ID"], function(checked)
+    trackByIdCB = Cell.CreateCheckButton(detailsContentFrame, L["Track by ID"], function(checked)
         -- update db
         if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
         local tIndex = isGeneral and "general" or loadedBoss
@@ -1309,12 +1309,12 @@ local function CreateDetailsFrame()
         t["trackByID"] = checked
 
         -- notify debuff list changed
-        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+        Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end)
     trackByIdCB:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
 
     -- use elapsed time
-    useElapsedTimeCB = Cell:CreateCheckButton(detailsContentFrame, L["Use Elapsed Time"], function(checked)
+    useElapsedTimeCB = Cell.CreateCheckButton(detailsContentFrame, L["Use Elapsed Time"], function(checked)
         -- update db
         if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
         local tIndex = isGeneral and "general" or loadedBoss
@@ -1335,7 +1335,7 @@ local function CreateDetailsFrame()
         t["useElapsedTime"] = checked
 
         -- notify debuff list changed
-        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+        Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end, L["Use Elapsed Time"], L["Display elapsed time since debuff applied"], L["Only affects duration text"])
     useElapsedTimeCB:SetPoint("TOPLEFT", trackByIdCB, "BOTTOMLEFT", 0, -10)
 
@@ -1347,7 +1347,7 @@ local function CreateDetailsFrame()
     conditionText:SetPoint("TOPLEFT", useElapsedTimeCB, "BOTTOMLEFT", 0, -10)
 
     -- conditionDropDown TODO: 同时持有另一个debuff
-    conditionDropDown = Cell:CreateDropdown(detailsContentFrame, 117)
+    conditionDropDown = Cell.CreateDropdown(detailsContentFrame, 117)
     conditionDropDown:SetPoint("TOPLEFT", conditionText, "BOTTOMLEFT", 0, -1)
     conditionDropDown:SetItems({
         {
@@ -1356,7 +1356,7 @@ local function CreateDetailsFrame()
             ["onClick"] = function()
                 UpdateCondition({"None"})
                 -- notify debuff list changed
-                Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+                Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
             end,
         },
         {
@@ -1365,7 +1365,7 @@ local function CreateDetailsFrame()
             ["onClick"] = function()
                 UpdateCondition({"Stack", ">=", 0})
                 -- notify debuff list changed
-                Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+                Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
             end,
         }
     })
@@ -1375,7 +1375,7 @@ local function CreateDetailsFrame()
     conditionFrame:SetPoint("RIGHT")
     conditionFrame:SetHeight(20)
 
-    conditionOperator = Cell:CreateDropdown(conditionFrame, 50)
+    conditionOperator = Cell.CreateDropdown(conditionFrame, 50)
     conditionOperator:SetPoint("TOPLEFT")
 
     do
@@ -1392,14 +1392,14 @@ local function CreateDetailsFrame()
                     local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
                     t["condition"][2] = opr
                     -- notify debuff list changed
-                    Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+                    Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
                 end,
             })
         end
         conditionOperator:SetItems(items)
     end
 
-    conditionValue = Cell:CreateEditBox(conditionFrame, 45, 20, nil, nil, true)
+    conditionValue = Cell.CreateEditBox(conditionFrame, 45, 20, nil, nil, true)
     conditionValue:SetPoint("LEFT", conditionOperator, "RIGHT", 5, 0)
     conditionValue:SetMaxLetters(3)
     conditionValue:SetJustifyH("RIGHT")
@@ -1413,7 +1413,7 @@ local function CreateDetailsFrame()
             local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
             t["condition"][3] = value
             -- notify debuff list changed
-            Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+            Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
         end
     end)
 
@@ -1423,7 +1423,7 @@ local function CreateDetailsFrame()
     glowTypeText = detailsContentFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     glowTypeText:SetText(L["Glow Type"])
 
-    glowTypeDropdown = Cell:CreateDropdown(detailsContentFrame, 117)
+    glowTypeDropdown = Cell.CreateDropdown(detailsContentFrame, 117)
     glowTypeDropdown:SetPoint("TOPLEFT", glowTypeText, "BOTTOMLEFT", 0, -1)
     glowTypeDropdown:SetItems({
         {
@@ -1438,7 +1438,7 @@ local function CreateDetailsFrame()
                     -- update loadedDebuffs
                     t["glowType"] = "None"
                     -- notify debuff list changed
-                    Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+                    Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
                     LoadGlowOptions()
                 end
             end,
@@ -1476,7 +1476,7 @@ local function CreateDetailsFrame()
     glowConditionText:SetText(L["Glow Condition"])
     glowConditionText:SetPoint("TOPLEFT", glowOptionsFrame, 5, 0)
 
-    glowConditionType = Cell:CreateDropdown(glowOptionsFrame, 117)
+    glowConditionType = Cell.CreateDropdown(glowOptionsFrame, 117)
     glowConditionType:SetPoint("TOPLEFT", glowConditionText, "BOTTOMLEFT", 0, -1)
     glowConditionType:SetItems({
         {
@@ -1491,7 +1491,7 @@ local function CreateDetailsFrame()
                 local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
                 t["glowCondition"] = nil
                 -- notify debuff list changed
-                Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+                Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
             end,
         },
         {
@@ -1506,12 +1506,12 @@ local function CreateDetailsFrame()
                 local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
                 t["glowCondition"] = {"Stack", ">=", 0}
                 -- notify debuff list changed
-                Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+                Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
             end,
         },
     })
 
-    glowConditionOperator = Cell:CreateDropdown(glowOptionsFrame, 50)
+    glowConditionOperator = Cell.CreateDropdown(glowOptionsFrame, 50)
     glowConditionOperator:SetPoint("TOPLEFT", glowConditionType, "BOTTOMLEFT", 0, -5)
 
     do
@@ -1528,14 +1528,14 @@ local function CreateDetailsFrame()
                     local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
                     t["glowCondition"][2] = opr
                     -- notify debuff list changed
-                    Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+                    Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
                 end,
             })
         end
         glowConditionOperator:SetItems(items)
     end
 
-    glowConditionValue = Cell:CreateEditBox(glowOptionsFrame, 45, 20, nil, nil, true)
+    glowConditionValue = Cell.CreateEditBox(glowOptionsFrame, 45, 20, nil, nil, true)
     glowConditionValue:SetPoint("LEFT", glowConditionOperator, "RIGHT", 5, 0)
     glowConditionValue:SetMaxLetters(3)
     glowConditionValue:SetJustifyH("RIGHT")
@@ -1549,12 +1549,12 @@ local function CreateDetailsFrame()
             local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
             t["glowCondition"][3] = value
             -- notify debuff list changed
-            Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+            Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
         end
     end)
 
     -- glowColor
-    glowColor = Cell:CreateColorPicker(glowOptionsFrame, L["Glow Color"], false, function(r, g, b)
+    glowColor = Cell.CreateColorPicker(glowOptionsFrame, L["Glow Color"], false, function(r, g, b)
         local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
         -- update db
         local tIndex = isGeneral and "general" or loadedBoss
@@ -1568,7 +1568,7 @@ local function CreateDetailsFrame()
         t["glowOptions"][1][3] = b
         t["glowOptions"][1][4] = 1
         -- notify debuff list changed
-        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+        Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
         -- update preview
         ShowGlowPreview(t["glowType"], t["glowOptions"])
     end)
@@ -1583,42 +1583,42 @@ local function CreateDetailsFrame()
         -- update loadedDebuffs
         t["glowOptions"][index] = value
         -- notify debuff list changed
-        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+        Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
         -- update preview
         ShowGlowPreview(t["glowType"], t["glowOptions"], refresh)
     end
 
     -- glowNumber
-    glowLines = Cell:CreateSlider(L["Lines"], glowOptionsFrame, 1, 30, 117, 1, function(value)
+    glowLines = Cell.CreateSlider(L["Lines"], glowOptionsFrame, 1, 30, 117, 1, function(value)
         SliderValueChanged(2, value)
     end)
     glowLines:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
 
-    glowParticles = Cell:CreateSlider(L["Particles"], glowOptionsFrame, 1, 30, 117, 1, function(value)
+    glowParticles = Cell.CreateSlider(L["Particles"], glowOptionsFrame, 1, 30, 117, 1, function(value)
         SliderValueChanged(2, value, true)
     end)
     glowParticles:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
 
     -- glowFrequency
-    glowFrequency = Cell:CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 117, 0.01, function(value)
+    glowFrequency = Cell.CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 117, 0.01, function(value)
         SliderValueChanged(3, value)
     end)
     glowFrequency:SetPoint("TOPLEFT", glowLines, "BOTTOMLEFT", 0, -40)
 
     -- glowLength
-    glowLength = Cell:CreateSlider(L["Length"], glowOptionsFrame, 1, 20, 117, 1, function(value)
+    glowLength = Cell.CreateSlider(L["Length"], glowOptionsFrame, 1, 20, 117, 1, function(value)
         SliderValueChanged(4, value)
     end)
     glowLength:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
 
     -- glowThickness
-    glowThickness = Cell:CreateSlider(L["Thickness"], glowOptionsFrame, 1, 20, 117, 1, function(value)
+    glowThickness = Cell.CreateSlider(L["Thickness"], glowOptionsFrame, 1, 20, 117, 1, function(value)
         SliderValueChanged(5, value)
     end)
     glowThickness:SetPoint("TOPLEFT", glowLength, "BOTTOMLEFT", 0, -40)
 
     -- glowScale
-    glowScale = Cell:CreateSlider(L["Scale"], glowOptionsFrame, 50, 500, 117, 1, function(value)
+    glowScale = Cell.CreateSlider(L["Scale"], glowOptionsFrame, 50, 500, 117, 1, function(value)
         SliderValueChanged(4, value/100)
     end, nil, true)
     glowScale:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
@@ -1769,7 +1769,7 @@ UpdateGlowType = function(newType)
         end
         LoadGlowOptions(newType, t["glowOptions"])
         -- notify debuff list changed
-        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+        Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end
 end
 
@@ -1900,7 +1900,7 @@ LoadGlowCondition = function(glowCondition)
 end
 
 -- spell description
--- Cell:CreateScrollFrame(detailsContentFrame, -270, 0) -- spell description
+-- Cell.CreateScrollFrame(detailsContentFrame, -270, 0) -- spell description
 -- local descText = detailsContentFrame.scrollFrame.content:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 -- descText:SetPoint("TOPLEFT", 5, -1)
 -- descText:SetPoint("RIGHT", -5, 0)
@@ -1914,13 +1914,13 @@ end
 
 local timer
 ShowDetails = function(spell)
-    local spellId, buttonIndex = F:SplitToNumber("-", spell)
+    local spellId, buttonIndex = F.SplitToNumber("-", spell)
 
     if selectedSpellId == spellId then return end
     selectedSpellId, selectedButtonIndex = spellId, buttonIndex
 
-    -- local name, icon, desc = F:GetSpellTooltipInfo(spellId)
-    local name, icon = F:GetSpellInfo(spellId)
+    -- local name, icon, desc = F.GetSpellTooltipInfo(spellId)
+    local name, icon = F.GetSpellInfo(spellId)
     if not name then return end
 
     detailsFrame.scrollFrame:ResetScroll()
@@ -1936,7 +1936,7 @@ ShowDetails = function(spell)
     -- -- to ensure desc
     -- if timer then timer:Cancel() end
     -- timer = C_Timer.NewTimer(0.7, function()
-    --     SetSpellDesc(select(3, F:GetSpellTooltipInfo(spellId)))
+    --     SetSpellDesc(select(3, F.GetSpellTooltipInfo(spellId)))
     -- end)
 
     local isEnabled = selectedButtonIndex <= #currentBossTable["enabled"]
@@ -2003,9 +2003,9 @@ end
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-function F:GetDebuffList(instanceName)
+function F.GetDebuffList(instanceName)
     local list = {}
-    local eName, iIndex, iId = F:SplitToNumber(":", instanceNameMapping[instanceName])
+    local eName, iIndex, iId = F.SplitToNumber(":", instanceNameMapping[instanceName])
 
     if iId and loadedDebuffs[iId] then
         local n = 0
@@ -2013,7 +2013,7 @@ function F:GetDebuffList(instanceName)
         if loadedDebuffs[iId]["general"] then
             n = #loadedDebuffs[iId]["general"]["enabled"]
             for _, t in ipairs(loadedDebuffs[iId]["general"]["enabled"]) do
-                local spellName = F:GetSpellInfo(t["id"])
+                local spellName = F.GetSpellInfo(t["id"])
                 if spellName then
                     -- list[spellName/spellId] = {order, glowType, glowOptions}
                     list[t["trackByID"] and t["id"] or spellName] = {
@@ -2031,7 +2031,7 @@ function F:GetDebuffList(instanceName)
         for bId, bTable in pairs(loadedDebuffs[iId]) do
             if bId ~= "general" then
                 for _, t in pairs(bTable["enabled"]) do
-                    local spellName = F:GetSpellInfo(t["id"])
+                    local spellName = F.GetSpellInfo(t["id"])
                     if spellName then -- check again
                         list[t["trackByID"] and t["id"] or spellName] = {
                             ["order"] = t["order"]+n,
@@ -2054,7 +2054,7 @@ end
 -------------------------------------------------
 -- sharing functions
 -------------------------------------------------
-function F:GetInstanceAndBossId(instanceName, bossName)
+function F.GetInstanceAndBossId(instanceName, bossName)
     local result = instanceNameMapping[instanceName]
     if not result then return end
 
@@ -2080,7 +2080,7 @@ function F:GetInstanceAndBossId(instanceName, bossName)
     return instanceId, bossId
 end
 
-function F:GetInstanceAndBossName(instanceId, bossId)
+function F.GetInstanceAndBossName(instanceId, bossId)
     if bossId == "general" then
         return instanceIdToName[instanceId], bossIdToName[0]
     else
@@ -2089,7 +2089,7 @@ function F:GetInstanceAndBossName(instanceId, bossId)
 end
 
 -- calculate built-ins and customs
-function F:CalcRaidDebuffs(instanceId, bossId, data)
+function F.CalcRaidDebuffs(instanceId, bossId, data)
     local builtIn = 0
 
     local customs = {}
@@ -2129,12 +2129,12 @@ function F:CalcRaidDebuffs(instanceId, bossId, data)
         end
     end
 
-    return builtIn, F:Getn(customs)
+    return builtIn, F.Getn(customs)
 end
 
-function F:ShowInstanceDebuffs(instanceId, bossId)
+function F.ShowInstanceDebuffs(instanceId, bossId)
     if not InCombatLockdown() then
-        F:ShowRaidDebuffsTab()
+        F.ShowRaidDebuffsTab()
         C_Timer.After(0.25, function()
             if bossId == "general" or bossId == nil then
                 OpenInstanceBoss(instanceIdToName[instanceId], "general")
@@ -2145,7 +2145,7 @@ function F:ShowInstanceDebuffs(instanceId, bossId)
     end
 end
 
-function F:UpdateRaidDebuffs(instanceId, bossId, data, which)
+function F.UpdateRaidDebuffs(instanceId, bossId, data, which)
     -- update db
     if not bossId then
         -- instance debuffs received
@@ -2199,9 +2199,9 @@ function F:UpdateRaidDebuffs(instanceId, bossId, data, which)
     end
 
     -- update current region
-    Cell:Fire("RaidDebuffsChanged", instanceIdToName[instanceId])
+    Cell.Fire("RaidDebuffsChanged", instanceIdToName[instanceId])
 
-    F:Print(L["Raid Debuffs updated: %s."]:format(which))
+    F.Print(L["Raid Debuffs updated: %s."]:format(which))
 end
 
 -------------------------------------------------
@@ -2214,7 +2214,7 @@ local function CreateNoticeFrame()
     noticeFrame:SetAllPoints(debuffsTab)
     noticeFrame:EnableMouse(true)
     noticeFrame:SetFrameLevel(debuffsTab:GetFrameLevel()+25)
-    Cell:StylizeFrame(noticeFrame, {0.1, 0.1, 0.1, 0.99})
+    Cell.StylizeFrame(noticeFrame, {0.1, 0.1, 0.1, 0.99})
 
     local content = noticeFrame:CreateFontString(nil, "OVERLAY")
     content:SetFont(UNIT_NAME_FONT_CHINESE, 12 + CellDB["appearance"]["optionsFontSizeOffset"], "")
@@ -2242,7 +2242,7 @@ If you'd like to fix it, go check |cfffff2b2Cell\RaidDebuffs\ExpansionData\Expan
     content:SetJustifyH("LEFT")
     content:SetSpacing(5)
 
-    local closeBtn = Cell:CreateButton(noticeFrame, "OK", "accent", {205, 20})
+    local closeBtn = Cell.CreateButton(noticeFrame, "OK", "accent", {205, 20})
     closeBtn:SetPoint("BOTTOMLEFT")
     closeBtn:SetPoint("BOTTOMRIGHT")
     closeBtn:SetScript("OnClick", function()
@@ -2278,21 +2278,21 @@ local function ShowTab(tab)
         debuffsTab:Hide()
     end
 end
-Cell:RegisterCallback("ShowOptionsTab", "RaidDebuffsTab_ShowTab", ShowTab)
+Cell.RegisterCallback("ShowOptionsTab", "RaidDebuffsTab_ShowTab", ShowTab)
 
 local function UpdateLayout()
     if previewButton then
         UpdatePreviewButton()
     end
 end
-Cell:RegisterCallback("UpdateLayout", "RaidDebuffsTab_UpdateLayout", UpdateLayout)
+Cell.RegisterCallback("UpdateLayout", "RaidDebuffsTab_UpdateLayout", UpdateLayout)
 
 local function UpdateAppearance()
     if previewButton then
         UpdatePreviewButton()
     end
 end
-Cell:RegisterCallback("UpdateAppearance", "RaidDebuffsTab_UpdateAppearance", UpdateAppearance)
+Cell.RegisterCallback("UpdateAppearance", "RaidDebuffsTab_UpdateAppearance", UpdateAppearance)
 
 local function UpdateIndicators(layout, indicatorName, setting, value)
     if previewButton then
@@ -2301,4 +2301,4 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
         end
     end
 end
-Cell:RegisterCallback("UpdateIndicators", "RaidDebuffsTab_UpdateIndicators", UpdateIndicators)
+Cell.RegisterCallback("UpdateIndicators", "RaidDebuffsTab_UpdateIndicators", UpdateIndicators)

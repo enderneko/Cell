@@ -32,7 +32,7 @@ function I.JustifyText(text, point)
 end
 
 function I.SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, yOffset, color)
-    font = F:GetFont(font)
+    font = F.GetFont(font)
 
     local flags
     if outline == "None" then
@@ -53,8 +53,8 @@ function I.SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, y
         fs:SetShadowColor(0, 0, 0, 0)
     end
 
-    P:ClearPoints(fs)
-    P:Point(fs, anchor, anchorTo, anchor, xOffset, yOffset)
+    P.ClearPoints(fs)
+    P.Point(fs, anchor, anchorTo, anchor, xOffset, yOffset)
     I.JustifyText(fs, anchor)
 
     if color then
@@ -88,7 +88,7 @@ end
 -- VerticalCooldown
 -------------------------------------------------
 local function ReCalcTexCoord(self, width, height)
-    local texCoord = F:GetTexCoord(width, height)
+    local texCoord = F.GetTexCoord(width, height)
     self.icon:SetTexCoord(unpack(texCoord))
     if self.cooldown.icon then
         self.cooldown.icon:SetTexCoord(unpack(texCoord))
@@ -134,8 +134,8 @@ local function Shared_CreateCooldown_Vertical(frame)
     cooldown.ShowCooldown = VerticalCooldown_ShowCooldown
     cooldown:SetScript("OnUpdate", VerticalCooldown_OnUpdate)
 
-    P:Point(cooldown, "TOPLEFT", frame.icon)
-    P:Point(cooldown, "BOTTOMRIGHT", frame.icon, "BOTTOMRIGHT", 0, CELL_BORDER_SIZE)
+    P.Point(cooldown, "TOPLEFT", frame.icon)
+    P.Point(cooldown, "BOTTOMRIGHT", frame.icon, "BOTTOMRIGHT", 0, CELL_BORDER_SIZE)
     cooldown:SetOrientation("VERTICAL")
     cooldown:SetReverseFill(true)
     cooldown:SetStatusBarTexture(Cell.vars.whiteTexture)
@@ -145,7 +145,7 @@ local function Shared_CreateCooldown_Vertical(frame)
 
     local spark = cooldown:CreateTexture(nil, "BORDER")
     cooldown.spark = spark
-    P:Height(spark, 1)
+    P.Height(spark, 1)
     spark:SetBlendMode("ADD")
     spark:SetPoint("TOPLEFT", texture, "BOTTOMLEFT")
     spark:SetPoint("TOPRIGHT", texture, "BOTTOMRIGHT")
@@ -173,8 +173,8 @@ local function Shared_CreateCooldown_Vertical_NoIcon(frame)
     cooldown.ShowCooldown = VerticalCooldown_ShowCooldown
     cooldown:SetScript("OnUpdate", VerticalCooldown_OnUpdate)
 
-    P:Point(cooldown, "TOPLEFT", frame, CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
-    P:Point(cooldown, "BOTTOMRIGHT", frame, -CELL_BORDER_SIZE, CELL_BORDER_SIZE + CELL_BORDER_SIZE)
+    P.Point(cooldown, "TOPLEFT", frame, CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+    P.Point(cooldown, "BOTTOMRIGHT", frame, -CELL_BORDER_SIZE, CELL_BORDER_SIZE + CELL_BORDER_SIZE)
     cooldown:SetOrientation("VERTICAL")
     cooldown:SetReverseFill(true)
     cooldown:SetStatusBarTexture(Cell.vars.whiteTexture)
@@ -184,7 +184,7 @@ local function Shared_CreateCooldown_Vertical_NoIcon(frame)
 
     local spark = cooldown:CreateTexture(nil, "BORDER")
     cooldown.spark = spark
-    P:Height(spark, 1)
+    P.Height(spark, 1)
     spark:SetBlendMode("ADD")
     spark:SetPoint("TOPLEFT", texture, "BOTTOMLEFT")
     spark:SetPoint("TOPRIGHT", texture, "BOTTOMRIGHT")
@@ -198,8 +198,8 @@ local function Shared_CreateCooldown_Clock(frame)
     frame.cooldown = cooldown
     cooldown:Hide()
 
-    P:Point(cooldown, "TOPLEFT", frame, CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
-    P:Point(cooldown, "BOTTOMRIGHT", frame, -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
+    P.Point(cooldown, "TOPLEFT", frame, CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+    P.Point(cooldown, "BOTTOMRIGHT", frame, -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     cooldown:SetReverse(true)
     cooldown:SetDrawEdge(false)
     cooldown:SetSwipeTexture(Cell.vars.whiteTexture)
@@ -381,9 +381,9 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
 end
 
 local function BorderIcon_SetBorder(frame, thickness)
-    P:ClearPoints(frame.iconFrame)
-    P:Point(frame.iconFrame, "TOPLEFT", frame, "TOPLEFT", thickness, -thickness)
-    P:Point(frame.iconFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -thickness, thickness)
+    P.ClearPoints(frame.iconFrame)
+    P.Point(frame.iconFrame, "TOPLEFT", frame, "TOPLEFT", thickness, -thickness)
+    P.Point(frame.iconFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -thickness, thickness)
 end
 
 local function BorderIcon_ShowDuration(frame, show)
@@ -396,11 +396,11 @@ local function BorderIcon_ShowDuration(frame, show)
 end
 
 local function BorderIcon_UpdatePixelPerfect(frame)
-    P:Resize(frame)
-    P:Repoint(frame)
-    P:Repoint(frame.iconFrame)
-    P:Repoint(frame.stack)
-    P:Repoint(frame.duration)
+    P.Resize(frame)
+    P.Repoint(frame)
+    P.Repoint(frame.iconFrame)
+    P.Repoint(frame.stack)
+    P.Repoint(frame.duration)
 end
 
 function I.CreateAura_BorderIcon(name, parent, borderSize)
@@ -429,8 +429,8 @@ function I.CreateAura_BorderIcon(name, parent, borderSize)
 
     local iconFrame = CreateFrame("Frame", name.."IconFrame", frame)
     frame.iconFrame = iconFrame
-    P:Point(iconFrame, "TOPLEFT", frame, "TOPLEFT", borderSize, -borderSize)
-    P:Point(iconFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -borderSize, borderSize)
+    P.Point(iconFrame, "TOPLEFT", frame, "TOPLEFT", borderSize, -borderSize)
+    P.Point(iconFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -borderSize, borderSize)
     iconFrame:SetFrameLevel(cooldown:GetFrameLevel()+1)
 
     local icon = iconFrame:CreateTexture(name.."Icon", "ARTWORK")
@@ -534,14 +534,14 @@ local function BarIcon_ShowAnimation(frame, show)
 end
 
 local function BarIcon_UpdatePixelPerfect(frame)
-    P:Resize(frame)
-    P:Repoint(frame)
-    P:Repoint(frame.icon)
-    P:Repoint(frame.stack)
-    P:Repoint(frame.duration)
-    P:Repoint(frame.cooldown)
+    P.Resize(frame)
+    P.Repoint(frame)
+    P.Repoint(frame.icon)
+    P.Repoint(frame.stack)
+    P.Repoint(frame.duration)
+    P.Repoint(frame.cooldown)
     if frame.cooldown.spark then
-        P:Resize(frame.cooldown.spark)
+        P.Resize(frame.cooldown.spark)
     end
 end
 
@@ -555,8 +555,8 @@ function I.CreateAura_BarIcon(name, parent)
     local icon = frame:CreateTexture(name.."Icon", "ARTWORK")
     frame.icon = icon
     -- icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
-    P:Point(icon, "TOPLEFT", frame, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
-    P:Point(icon, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
+    P.Point(icon, "TOPLEFT", frame, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+    P.Point(icon, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     -- icon:SetDrawLayer("ARTWORK", 1)
 
     frame.stack = frame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
@@ -623,9 +623,9 @@ local function Icons_UpdateSize(icons, numAuras)
     numAuras = min(numAuras, icons.numPerLine)
 
     if icons.isHorizontal then
-        P:SetGridSize(icons, icons.width, icons.height, icons.spacingX, icons.spacingY, numAuras, lines)
+        P.SetGridSize(icons, icons.width, icons.height, icons.spacingX, icons.spacingY, numAuras, lines)
     else
-        P:SetGridSize(icons, icons.width, icons.height, icons.spacingX, icons.spacingY, lines, numAuras)
+        P.SetGridSize(icons, icons.width, icons.height, icons.spacingX, icons.spacingY, lines, numAuras)
     end
 end
 
@@ -721,13 +721,13 @@ local function Icons_SetOrientation(icons, orientation)
     end
 
     for i = 1, icons.maxNum do
-        P:ClearPoints(icons[i])
+        P.ClearPoints(icons[i])
         if i == 1 then
-            P:Point(icons[i], point1)
+            P.Point(icons[i], point1)
         elseif i % icons.numPerLine == 1 then
-            P:Point(icons[i], point1, icons[i-icons.numPerLine], newLinePoint2, newLineX, newLineY)
+            P.Point(icons[i], point1, icons[i-icons.numPerLine], newLinePoint2, newLineX, newLineY)
         else
-            P:Point(icons[i], point1, icons[i-1], point2, x, y)
+            P.Point(icons[i], point1, icons[i-1], point2, x, y)
         end
     end
 
@@ -791,8 +791,8 @@ local function Icons_ShowAnimation(icons, show)
 end
 
 local function Icons_UpdatePixelPerfect(icons)
-    P:Repoint(icons)
-    P:Resize(icons)
+    P.Repoint(icons)
+    P.Resize(icons)
     for i = 1, icons.maxNum do
         icons[i]:UpdatePixelPerfect()
     end
@@ -835,7 +835,7 @@ end
 -- CreateAura_Text
 -------------------------------------------------
 local function Text_SetFont(frame, font, size, outline, shadow)
-    font = F:GetFont(font)
+    font = F.GetFont(font)
 
     local flags
     if outline == "None" then
@@ -1102,16 +1102,16 @@ local function Rect_SetColors(frame, colors)
 end
 
 local function Rect_UpdatePixelPerfect(frame)
-    P:Resize(frame)
-    P:Reborder(frame)
-    P:Repoint(frame)
+    P.Resize(frame)
+    P.Reborder(frame)
+    P.Repoint(frame)
 end
 
 function I.CreateAura_Rect(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     frame.indicatorType = "rect"
-    frame:SetBackdrop({edgeFile=Cell.vars.whiteTexture, edgeSize=P:Scale(1)})
+    frame:SetBackdrop({edgeFile=Cell.vars.whiteTexture, edgeSize=P.Scale(1)})
     frame:SetBackdropBorderColor(0, 0, 0, 1)
 
     local tex = frame:CreateTexture(nil, "BORDER", nil, -7)
@@ -1230,7 +1230,7 @@ local function Bar_SetColors(bar, colors)
 end
 
 function I.CreateAura_Bar(name, parent)
-    local bar = Cell:CreateStatusBar(name, parent, 18, 4, 100)
+    local bar = Cell.CreateStatusBar(name, parent, 18, 4, 100)
     bar:Hide()
     bar.indicatorType = "bar"
 
@@ -1403,7 +1403,7 @@ local function Color_SetCooldown(color, start, duration, debuffType)
             color:SetScript("OnUpdate", Color_OnUpdate)
         end
     elseif color.type == "class-color" then
-        color.solidTex:SetVertexColor(F:GetClassColor(color.parent.states.class))
+        color.solidTex:SetVertexColor(F.GetClassColor(color.parent.states.class))
     elseif color.type == "debuff-type" and debuffType then
         color.solidTex:SetVertexColor(CellDB["debuffTypeColor"][debuffType]["r"], CellDB["debuffTypeColor"][debuffType]["g"], CellDB["debuffTypeColor"][debuffType]["b"], 1)
     end
@@ -1427,8 +1427,8 @@ local function Color_SetAnchor(color, anchorTo)
         -- entire hp bar
         color:SetAllPoints(color.parent.widgets.healthBar)
     else -- unitbutton
-        P:Point(color, "TOPLEFT", color.parent, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
-        P:Point(color, "BOTTOMRIGHT", color.parent, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
+        P.Point(color, "TOPLEFT", color.parent, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+        P.Point(color, "BOTTOMRIGHT", color.parent, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     end
 
     -- color:SetFrameLevel(color:GetParent():GetFrameLevel() + color.configs.frameLevel)
@@ -1691,12 +1691,12 @@ local function QuickAssistBars_UpdateSize(bars, barsShown)
             bars[i]:Hide()
         end
         if barsShown ~= 0 then
-            bars:_SetSize(bars.width, bars.height*barsShown-P:Scale(1)*(barsShown-1))
+            bars:_SetSize(bars.width, bars.height*barsShown-P.Scale(1)*(barsShown-1))
         end
     else
         for i = 1, bars.num do
             if bars[i]:IsShown() then
-                bars:_SetSize(bars.width, bars.height*i-P:Scale(1)*(i-1))
+                bars:_SetSize(bars.width, bars.height*i-P.Scale(1)*(i-1))
             else
                 break
             end
@@ -1728,11 +1728,11 @@ local function QuickAssistBars_SetOrientation(bars, orientation)
     end
 
     for i = 1, bars.num do
-        P:ClearPoints(bars[i])
+        P.ClearPoints(bars[i])
         if i == 1 then
-            P:Point(bars[i], point1)
+            P.Point(bars[i], point1)
         else
-            P:Point(bars[i], point1, bars[i-1], point2, 0, offset)
+            P.Point(bars[i], point1, bars[i-1], point2, 0, offset)
         end
     end
 
@@ -1749,8 +1749,8 @@ local function QuickAssistBars_Hide(bars, hideAll)
 end
 
 local function QuickAssistBars_UpdatePixelPerfect(bars)
-    -- P:Resize(bars)
-    P:Repoint(bars)
+    -- P.Resize(bars)
+    P.Repoint(bars)
     for i = 1, bars.num do
         bars[i]:UpdatePixelPerfect()
     end
@@ -2057,13 +2057,13 @@ local function Block_SetColors(frame, colors)
 end
 
 local function Block_UpdatePixelPerfect(frame)
-    P:Resize(frame)
-    P:Repoint(frame)
-    P:Repoint(frame.stack)
-    P:Repoint(frame.duration)
-    P:Repoint(frame.cooldown)
+    P.Resize(frame)
+    P.Repoint(frame)
+    P.Repoint(frame.stack)
+    P.Repoint(frame.duration)
+    P.Repoint(frame.cooldown)
     if frame.cooldown.spark then
-        P:Resize(frame.cooldown.spark)
+        P.Resize(frame.cooldown.spark)
     end
 end
 
@@ -2072,7 +2072,7 @@ function I.CreateAura_Block(name, parent)
     frame:Hide()
     frame.indicatorType = "block"
 
-    frame:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(CELL_BORDER_SIZE)})
+    frame:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
 
     Shared_SetCooldownStyle(frame, CELL_COOLDOWN_STYLE, true)
 
@@ -2239,18 +2239,18 @@ local function Border_SetCooldown(border, start, duration, _, _, _, _, color)
 end
 
 local function Border_UpdatePixelPerfect(border)
-    P:Repoint(border)
-    P:Repoint(border.mask)
-    P:Repoint(border.mask2)
+    P.Repoint(border)
+    P.Repoint(border.mask)
+    P.Repoint(border.mask2)
 end
 
 local function Border_SetThickness(border, thickness)
-    P:ClearPoints(border.mask)
-    P:Point(border.mask, "TOPLEFT", thickness, -thickness)
-    P:Point(border.mask, "BOTTOMRIGHT", -thickness, thickness)
-    P:ClearPoints(border.mask2)
-    P:Point(border.mask2, "TOPLEFT", thickness+CELL_BORDER_SIZE, -thickness-CELL_BORDER_SIZE)
-    P:Point(border.mask2, "BOTTOMRIGHT", -thickness-CELL_BORDER_SIZE, thickness+CELL_BORDER_SIZE)
+    P.ClearPoints(border.mask)
+    P.Point(border.mask, "TOPLEFT", thickness, -thickness)
+    P.Point(border.mask, "BOTTOMRIGHT", -thickness, thickness)
+    P.ClearPoints(border.mask2)
+    P.Point(border.mask2, "TOPLEFT", thickness+CELL_BORDER_SIZE, -thickness-CELL_BORDER_SIZE)
+    P.Point(border.mask2, "BOTTOMRIGHT", -thickness-CELL_BORDER_SIZE, thickness+CELL_BORDER_SIZE)
 end
 
 function I.CreateAura_Border(name, parent)
@@ -2258,8 +2258,8 @@ function I.CreateAura_Border(name, parent)
     border:Hide()
     border.indicatorType = "border"
 
-    P:Point(border, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
-    P:Point(border, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
+    P.Point(border, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+    P.Point(border, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
 
     local mask = border:CreateMaskTexture()
     border.mask = mask

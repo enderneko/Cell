@@ -22,7 +22,7 @@ local function UpdatePvPStatusIcon(b, event)
     end
 end
 
-Cell.funcs:IterateAllUnitButtons(function(b)
+Cell.funcs.IterateAllUnitButtons(function(b)
     local pvpStatusIcon = b.widgets.indicatorFrame:CreateTexture(b:GetName().."PvPStatusIcon", "ARTWORK", nil, -7)
     b.widgets.pvpStatusIcon = pvpStatusIcon
     pvpStatusIcon:SetPoint(point, b.widgets.indicatorFrame, relativePoint, x, y)

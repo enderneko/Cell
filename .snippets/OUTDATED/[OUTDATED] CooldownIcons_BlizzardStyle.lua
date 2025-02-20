@@ -116,8 +116,8 @@ function I.CreateAura_BarIcon(name, parent)
     local icon = frame:CreateTexture(name.."Icon", "ARTWORK")
     frame.icon = icon
     icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
-    P:Point(icon, "TOPLEFT", frame, "TOPLEFT", 1, -1)
-    P:Point(icon, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
+    P.Point(icon, "TOPLEFT", frame, "TOPLEFT", 1, -1)
+    P.Point(icon, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
     -- icon:SetDrawLayer("ARTWORK", 1)
 
     local cooldown = CreateFrame("Cooldown", name.."Cooldown", frame, "CooldownFrameTemplate")
@@ -136,12 +136,12 @@ function I.CreateAura_BarIcon(name, parent)
     local stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.stack = stack
     stack:SetJustifyH("RIGHT")
-    P:Point(stack, "TOPRIGHT", textFrame, "TOPRIGHT", 2, 0)
+    P.Point(stack, "TOPRIGHT", textFrame, "TOPRIGHT", 2, 0)
 
     local duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.duration = duration
     duration:SetJustifyH("RIGHT")
-    P:Point(duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", 2, 0)
+    P.Point(duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", 2, 0)
     duration:Hide()
 
     frame.SetFont = BarIcon_SetFont
@@ -188,12 +188,12 @@ function I.CreateAura_BarIcon(name, parent)
     end
 
     function frame:UpdatePixelPerfect()
-        P:Resize(frame)
-        P:Repoint(frame)
-        P:Repoint(icon)
-        P:Repoint(cooldown)
-        P:Repoint(stack)
-        P:Repoint(duration)
+        P.Resize(frame)
+        P.Repoint(frame)
+        P.Repoint(icon)
+        P.Repoint(cooldown)
+        P.Repoint(stack)
+        P.Repoint(duration)
     end
 
     return frame
@@ -213,15 +213,15 @@ local function CreateCooldown(f)
     f.SetCooldown = BarIcon_SetCooldown
 end
 
-F:IterateAllUnitButtons(function(b)
+F.IterateAllUnitButtons(function(b)
     -- debuffs
     for i = 1, 10 do
         CreateCooldown(b.indicators.debuffs[i])
         hooksecurefunc(b.indicators.debuffs[i], "SetCooldown", function(self, start, duration, debuffType, texture, count, refreshing, isBigDebuff)
             if isBigDebuff then
-                P:Size(self, b.indicators.debuffs.bigSize[1], b.indicators.debuffs.bigSize[2])
+                P.Size(self, b.indicators.debuffs.bigSize[1], b.indicators.debuffs.bigSize[2])
             else
-                P:Size(self, b.indicators.debuffs.normalSize[1], b.indicators.debuffs.normalSize[2])
+                P.Size(self, b.indicators.debuffs.normalSize[1], b.indicators.debuffs.normalSize[2])
             end
         end)
     end

@@ -3,7 +3,7 @@ local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
-local aboutTab = Cell:CreateFrame("CellOptionsFrame_AboutTab", Cell.frames.optionsFrame, nil, nil, true)
+local aboutTab = Cell.CreateFrame("CellOptionsFrame_AboutTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.aboutTab = aboutTab
 aboutTab:SetAllPoints(Cell.frames.optionsFrame)
 aboutTab:Hide()
@@ -17,19 +17,19 @@ local UpdateFont
 -------------------------------------------------
 local descriptionPane
 local function CreateDescriptionPane()
-    descriptionPane = Cell:CreateTitledPane(aboutTab, "Cell", 422, 140)
+    descriptionPane = Cell.CreateTitledPane(aboutTab, "Cell", 422, 140)
     descriptionPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -5)
 
-    local changelogsBtn = Cell:CreateButton(descriptionPane, L["Changelogs"], "accent", {100, 17})
+    local changelogsBtn = Cell.CreateButton(descriptionPane, L["Changelogs"], "accent", {100, 17})
     changelogsBtn:SetPoint("TOPRIGHT")
     changelogsBtn:SetScript("OnClick", function()
-        F:CheckWhatsNew(true)
+        F.CheckWhatsNew(true)
     end)
 
-    local snippetsBtn = Cell:CreateButton(descriptionPane, L["Code Snippets"], "accent", {120, 17})
+    local snippetsBtn = Cell.CreateButton(descriptionPane, L["Code Snippets"], "accent", {120, 17})
     snippetsBtn:SetPoint("TOPRIGHT", changelogsBtn, "TOPLEFT", 1, 0)
     snippetsBtn:SetScript("OnClick", function()
-        F:ShowCodeSnippets()
+        F.ShowCodeSnippets()
     end)
 
     local descText = descriptionPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
@@ -46,7 +46,7 @@ end
 -- author
 -------------------------------------------------
 local function CreateAuthorPane()
-    local authorPane = Cell:CreateTitledPane(aboutTab, L["Author"], 205, 50)
+    local authorPane = Cell.CreateTitledPane(aboutTab, L["Author"], 205, 50)
     authorPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -150)
 
     authorText = authorPane:CreateFontString(nil, "OVERLAY")
@@ -62,7 +62,7 @@ end
 -- slash
 -------------------------------------------------
 local function CreateSlashPane()
-    local slashPane = Cell:CreateTitledPane(aboutTab, L["Slash Commands"], 205, 50)
+    local slashPane = Cell.CreateTitledPane(aboutTab, L["Slash Commands"], 205, 50)
     slashPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -150)
 
     local commandText = slashPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
@@ -74,7 +74,7 @@ end
 -- translators
 -------------------------------------------------
 local function CreateTranslatorsPane()
-    local translatorsPane = Cell:CreateTitledPane(aboutTab, L["Translators"], 422, 120)
+    local translatorsPane = Cell.CreateTitledPane(aboutTab, L["Translators"], 422, 120)
     translatorsPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -205)
 
     -- zhTW
@@ -159,7 +159,7 @@ end
 -- special thanks
 -------------------------------------------------
 local function CreateSpecialThanksPane()
-    local specialThanksPane = Cell:CreateTitledPane(aboutTab, L["Special Thanks"], 422, 120)
+    local specialThanksPane = Cell.CreateTitledPane(aboutTab, L["Special Thanks"], 422, 120)
     specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -320)
 
     specialThanksText = specialThanksPane:CreateFontString(nil, "OVERLAY")
@@ -236,7 +236,7 @@ local function CreateAnimation(frame)
 end
 
 local function CreateButton(w, h, tex)
-    local supportersBtn = Cell:CreateButton(aboutTab, L["Supporters"], "accent", {w, h})
+    local supportersBtn = Cell.CreateButton(aboutTab, L["Supporters"], "accent", {w, h})
     supportersBtn:SetToplevel(true)
     supportersBtn:SetPushedTextOffset(0, 0)
 
@@ -245,24 +245,24 @@ local function CreateButton(w, h, tex)
     end)
 
     supportersBtn:HookScript("OnEnter", function()
-        F:HideUtilityList()
+        F.HideUtilityList()
     end)
 
-    Cell:StartRainbowText(supportersBtn:GetFontString())
+    Cell.StartRainbowText(supportersBtn:GetFontString())
 
     local iconSize = min(w, h) - 2
 
     local icon1 = supportersBtn:CreateTexture(nil, "ARTWORK")
     supportersBtn.icon1 = icon1
-    P:Point(supportersBtn.icon1, "TOPLEFT", 1, -1)
-    P:Size(icon1, iconSize, iconSize)
+    P.Point(supportersBtn.icon1, "TOPLEFT", 1, -1)
+    P.Size(icon1, iconSize, iconSize)
     icon1:SetTexture(tex)
     icon1:SetVertexColor(0.5, 0.5, 0.5)
 
     local icon2 = supportersBtn:CreateTexture(nil, "ARTWORK")
     supportersBtn.icon2 = icon2
-    P:Point(supportersBtn.icon2, "BOTTOMRIGHT", -1, 1)
-    P:Size(icon2, iconSize, iconSize)
+    P.Point(supportersBtn.icon2, "BOTTOMRIGHT", -1, 1)
+    P.Size(icon2, iconSize, iconSize)
     icon2:SetTexture(tex)
     icon2:SetVertexColor(0.5, 0.5, 0.5)
 
@@ -273,7 +273,7 @@ end
 
 local function CreateSupportersPane()
     -- pane
-    local supportersPane = Cell:CreateTitledPane(aboutTab, "", 100, 100)
+    local supportersPane = Cell.CreateTitledPane(aboutTab, "", 100, 100)
     supportersPane:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 6, -5)
     supportersPane:SetPoint("BOTTOMLEFT", aboutTab, "BOTTOMRIGHT", 6, 5)
     supportersPane:Hide()
@@ -294,7 +294,7 @@ local function CreateSupportersPane()
     local supportersFrame1 = CreateFrame("Frame", nil, supportersPane)
     supportersFrame1:SetPoint("TOPLEFT", 0, -27)
     supportersFrame1:SetPoint("BOTTOMLEFT")
-    supportersFrame1.scroll = Cell:CreateScrollFrame(supportersFrame1)
+    supportersFrame1.scroll = Cell.CreateScrollFrame(supportersFrame1)
     supportersFrame1.scroll:SetScrollStep(50)
 
     supportersText1 = supportersFrame1.scroll.content:CreateFontString(nil, "OVERLAY")
@@ -310,7 +310,7 @@ local function CreateSupportersPane()
     local supportersFrame2 = CreateFrame("Frame", nil, supportersPane)
     supportersFrame2:SetPoint("TOPLEFT", supportersFrame1, "TOPRIGHT", 10, 0)
     supportersFrame2:SetPoint("BOTTOMLEFT", supportersFrame1, "BOTTOMRIGHT")
-    supportersFrame2.scroll = Cell:CreateScrollFrame(supportersFrame2)
+    supportersFrame2.scroll = Cell.CreateScrollFrame(supportersFrame2)
     supportersFrame2.scroll:SetScrollStep(50)
 
     supportersText2 = supportersFrame2.scroll.content:CreateFontString(nil, "OVERLAY")
@@ -353,19 +353,19 @@ local function CreateSupportersPane()
         label:SetPoint("CENTER", 6, -5)
         label:SetRotation(-math.pi/2)
     -- else
-    --     Cell:StopRainbowText(label)
+    --     Cell.StopRainbowText(label)
     --     label:SetWordWrap(true)
     --     label:SetSpacing(0)
     --     label:ClearAllPoints()
     --     label:SetPoint("CENTER")
     --     label:SetText("P\na\nt\nr\no\nn\ns")
-    --     Cell:StartRainbowText(label)
+    --     Cell.StartRainbowText(label)
     -- end
 
     local supportersBtn2 = CreateButton(17, 17, [[Interface\AddOns\Cell\Media\Icons\left]])
     -- supportersBtn2:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 6, -5)
     supportersBtn2:SetPoint("TOPLEFT", supportersPane)
-    supportersBtn2:SetPoint("TOPRIGHT", supportersPane, P:Scale(-20), 0)
+    supportersBtn2:SetPoint("TOPRIGHT", supportersPane, P.Scale(-20), 0)
     supportersBtn2:Hide()
 
     supportersBtn1:SetScript("OnClick", function()
@@ -389,19 +389,19 @@ end
 local links = {}
 local function CreateLink(parent, id, icon, onEnter)
     local f = CreateFrame("Frame", nil, parent, "BackdropTemplate")
-    P:Size(f, 34, 34)
+    P.Size(f, 34, 34)
     f:SetBackdrop({bgFile = Cell.vars.whiteTexture})
     f:SetBackdropColor(0, 0, 0, 1)
 
     links[id] = f
 
     f.icon = f:CreateTexture(nil, "ARTWORK")
-    P:Point(f.icon, "TOPLEFT", 1, -1)
-    P:Point(f.icon, "BOTTOMRIGHT", -1, 1)
+    P.Point(f.icon, "TOPLEFT", 1, -1)
+    P.Point(f.icon, "BOTTOMRIGHT", -1, 1)
     f.icon:SetTexture(icon)
 
     f:SetScript("OnEnter", function()
-        f:SetBackdropColor(Cell:GetAccentColorRGB())
+        f:SetBackdropColor(Cell.GetAccentColorRGB())
         for  _id, _f in pairs(links) do
             if _id ~= id then
                 _f:SetBackdropColor(0, 0, 0, 1)
@@ -418,12 +418,12 @@ local function CreateLink(parent, id, icon, onEnter)
 end
 
 local function CreateLinksPane()
-    local linksPane = Cell:CreateTitledPane(aboutTab, L["Links"], 422, 100)
+    local linksPane = Cell.CreateTitledPane(aboutTab, L["Links"], 422, 100)
     linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -460)
 
     local current
 
-    local linksEB = Cell:CreateEditBox(linksPane, 412, 20)
+    local linksEB = Cell.CreateEditBox(linksPane, 412, 20)
     linksEB:SetPoint("TOPLEFT", 5, -27)
     linksEB:SetText("https://github.com/enderneko/Cell")
     linksEB:SetScript("OnTextChanged", function(self, userChanged)
@@ -502,20 +502,20 @@ end
 -- import & export
 -------------------------------------------------
 local function CreateImportExportPane()
-    local iePane = Cell:CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
+    local iePane = Cell.CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
     iePane:SetPoint("TOPLEFT", 5, -575)
 
-    local importBtn = Cell:CreateButton(iePane, L["Import"], "accent-hover", {134, 20})
+    local importBtn = Cell.CreateButton(iePane, L["Import"], "accent-hover", {134, 20})
     importBtn:SetPoint("TOPLEFT", 5, -27)
     importBtn:SetScript("OnClick", F.ShowImportFrame)
     importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import", {16, 16}, {"LEFT", 2, 0})
 
-    local exportBtn = Cell:CreateButton(iePane, L["Export"], "accent-hover", {134, 20})
+    local exportBtn = Cell.CreateButton(iePane, L["Export"], "accent-hover", {134, 20})
     exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", 5, 0)
     exportBtn:SetScript("OnClick", F.ShowExportFrame)
     exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export", {16, 16}, {"LEFT", 2, 0})
 
-    local backupBtn = Cell:CreateButton(iePane, L["Backups"], "accent-hover", {134, 20})
+    local backupBtn = Cell.CreateButton(iePane, L["Backups"], "accent-hover", {134, 20})
     backupBtn:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", 5, 0)
     backupBtn:SetScript("OnClick", F.ShowBackupFrame)
     backupBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\backup", {16, 16}, {"LEFT", 2, 0})
@@ -544,7 +544,7 @@ local function ShowTab(tab)
         aboutTab:Hide()
     end
 end
-Cell:RegisterCallback("ShowOptionsTab", "AboutTab_ShowTab", ShowTab)
+Cell.RegisterCallback("ShowOptionsTab", "AboutTab_ShowTab", ShowTab)
 
 UpdateFont = function(fs)
     if not fs then return end
@@ -555,7 +555,7 @@ UpdateFont = function(fs)
     fs:SetShadowOffset(1, -1)
 end
 
-function Cell:UpdateAboutFont()
+function Cell.UpdateAboutFont()
     UpdateFont(authorText)
     UpdateFont(translatorsTextCN)
     UpdateFont(translatorsTextKR)

@@ -1,23 +1,23 @@
-local addonName, addon = ...
+local addonName, Cell = ...
 
 local callbacks = {}
 
-function addon:RegisterCallback(eventName, onEventFuncName, onEventFunc)
+function Cell.RegisterCallback(eventName, onEventFuncName, onEventFunc)
     if not callbacks[eventName] then callbacks[eventName] = {} end
     callbacks[eventName][onEventFuncName] = onEventFunc
 end
 
-function addon:UnregisterCallback(eventName, onEventFuncName)
+function Cell.UnregisterCallback(eventName, onEventFuncName)
     if not callbacks[eventName] then return end
     callbacks[eventName][onEventFuncName] = nil
 end
 
-function addon:UnregisterAllCallbacks(eventName)
+function Cell.UnregisterAllCallbacks(eventName)
     if not callbacks[eventName] then return end
     callbacks[eventName] = nil
 end
 
-function addon:Fire(eventName, ...)
+function Cell.Fire(eventName, ...)
     if not callbacks[eventName] then return end
 
     for onEventFuncName, onEventFunc in pairs(callbacks[eventName]) do

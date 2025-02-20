@@ -2,7 +2,7 @@
 -- File: RaidDebuffs_TWW.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2024-07-20 14:35 +08:00
--- Modified: 2025-02-17 10:29 +08:00
+-- Modified: 2025-02-20 16:08 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -547,4 +547,4 @@ local debuffs = {
     },
 }
 
-F:LoadBuiltInDebuffs(debuffs)
+F.LoadBuiltInDebuffs(debuffs)

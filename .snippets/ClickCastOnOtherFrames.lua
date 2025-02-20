@@ -15,14 +15,14 @@ local blizzardFrames = {
 }
 
 local function UpdateClickCastings(noReload, onlyqueued)
-    F:UpdateClickCastings(noReload, onlyqueued)
-    local snippet = F:GetBindingSnippet()
+    F.UpdateClickCastings(noReload, onlyqueued)
+    local snippet = F.GetBindingSnippet()
     local ClickCastFrames = _G.ClickCastFrames or {}
     for frame, _ in pairs(ClickCastFrames) do
-        F:UpdateClickCastOnFrame(frame, snippet)
+        F.UpdateClickCastOnFrame(frame, snippet)
     end
     for _, name in pairs(blizzardFrames) do
-        F:UpdateClickCastOnFrame(_G[name], snippet)
+        F.UpdateClickCastOnFrame(_G[name], snippet)
     end
 end
 
@@ -30,8 +30,8 @@ local function UpdateQueuedClickCastings()
     UpdateClickCastings(true, true)
 end
 
-Cell:UnregisterCallback("UpdateClickCastings",  "UpdateClickCastings")
-Cell:UnregisterCallback("UpdateQueuedClickCastings",  "UpdateQueuedClickCastings")
+Cell.UnregisterCallback("UpdateClickCastings",  "UpdateClickCastings")
+Cell.UnregisterCallback("UpdateQueuedClickCastings",  "UpdateQueuedClickCastings")
 
-Cell:RegisterCallback("UpdateQueuedClickCastings", "UpdateQueuedClickCastings", UpdateQueuedClickCastings)
-Cell:RegisterCallback("UpdateClickCastings",  "UpdateClickCastings", UpdateClickCastings)
+Cell.RegisterCallback("UpdateQueuedClickCastings", "UpdateQueuedClickCastings", UpdateQueuedClickCastings)
+Cell.RegisterCallback("UpdateClickCastings",  "UpdateClickCastings", UpdateClickCastings)

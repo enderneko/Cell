@@ -40,26 +40,26 @@ local function SoloFrame_UpdateLayout(layout, which)
 
     if not which or strfind(which, "size$") then
         local width, height = unpack(layout["main"]["size"])
-        P:Size(playerButton, width, height)
+        P.Size(playerButton, width, height)
         if layout["pet"]["sameSizeAsMain"] then
-            P:Size(petButton, width, height)
+            P.Size(petButton, width, height)
         else
-            P:Size(petButton, layout["pet"]["size"][1], layout["pet"]["size"][2])
+            P.Size(petButton, layout["pet"]["size"][1], layout["pet"]["size"][2])
         end
     end
 
     -- NOTE: SetOrientation BEFORE SetPowerSize
     if not which or which == "barOrientation" then
-        B:SetOrientation(playerButton, layout["barOrientation"][1], layout["barOrientation"][2])
-        B:SetOrientation(petButton, layout["barOrientation"][1], layout["barOrientation"][2])
+        B.SetOrientation(playerButton, layout["barOrientation"][1], layout["barOrientation"][2])
+        B.SetOrientation(petButton, layout["barOrientation"][1], layout["barOrientation"][2])
     end
 
     if not which or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
-        B:SetPowerSize(playerButton, layout["main"]["powerSize"])
+        B.SetPowerSize(playerButton, layout["main"]["powerSize"])
         if layout["pet"]["sameSizeAsMain"] then
-            B:SetPowerSize(petButton, layout["main"]["powerSize"])
+            B.SetPowerSize(petButton, layout["main"]["powerSize"])
         else
-            B:SetPowerSize(petButton, layout["pet"]["powerSize"])
+            B.SetPowerSize(petButton, layout["pet"]["powerSize"])
         end
     end
 
@@ -104,10 +104,10 @@ local function SoloFrame_UpdateLayout(layout, which)
         end
     end
 end
-Cell:RegisterCallback("UpdateLayout", "SoloFrame_UpdateLayout", SoloFrame_UpdateLayout)
+Cell.RegisterCallback("UpdateLayout", "SoloFrame_UpdateLayout", SoloFrame_UpdateLayout)
 
 local function SoloFrame_UpdateVisibility(which)
-    F:Debug("|cffff7fffUpdateVisibility:|r "..(which or "all"))
+    F.Debug("|cffff7fffUpdateVisibility:|r "..(which or "all"))
 
     if not which or which == "solo" then
         if CellDB["general"]["showSolo"] then
@@ -118,4 +118,4 @@ local function SoloFrame_UpdateVisibility(which)
         end
     end
 end
-Cell:RegisterCallback("UpdateVisibility", "SoloFrame_UpdateVisibility", SoloFrame_UpdateVisibility)
+Cell.RegisterCallback("UpdateVisibility", "SoloFrame_UpdateVisibility", SoloFrame_UpdateVisibility)

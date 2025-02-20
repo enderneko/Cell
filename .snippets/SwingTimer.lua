@@ -45,12 +45,12 @@ local function Display(b, sourceGUID)
     end
 end
 
-F:IterateAllUnitButtons(function(b)
+F.IterateAllUnitButtons(function(b)
     local swingTimer = I.CreateAura_Bar(b:GetName().."SwingTimer", b.widgets.indicatorFrame)
     b.swingTimer = swingTimer
     swingTimer:Hide()
-    swingTimer:SetPoint(POINT1, P:Scale(POINT1_X), P:Scale(POINT1_Y))
-    swingTimer:SetPoint(POINT2, P:Scale(POINT2_X), P:Scale(POINT2_Y))
+    swingTimer:SetPoint(POINT1, P.Scale(POINT1_X), P.Scale(POINT1_Y))
+    swingTimer:SetPoint(POINT2, P.Scale(POINT2_X), P.Scale(POINT2_Y))
     swingTimer:SetStatusBarColor(unpack(COLOR))
     swingTimer:SetFrameLevel(b.widgets.indicatorFrame:GetFrameLevel()+FRAME_LEVEL)
 
@@ -78,7 +78,7 @@ eventFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 eventFrame:SetScript("OnEvent", function(self, event)
     local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
     if subEvent == "SWING_DAMAGE" or subEvent == "SWING_MISSED" then
-        F:HandleUnitButton("guid", destGUID, Display, sourceGUID)
+        F.HandleUnitButton("guid", destGUID, Display, sourceGUID)
     elseif subEvent == "UNIT_DIED" then
         if timers[destGUID] then
             timers[destGUID]:Hide()
@@ -87,7 +87,7 @@ eventFrame:SetScript("OnEvent", function(self, event)
     end
 end)
 
-Cell:RegisterCallback("LeaveInstance", "CellSwingTimer_LeaveInstance", function()
+Cell.RegisterCallback("LeaveInstance", "CellSwingTimer_LeaveInstance", function()
     for _, t in pairs(timers) do
         t:Hide()
     end

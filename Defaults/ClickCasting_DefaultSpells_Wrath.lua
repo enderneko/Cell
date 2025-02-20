@@ -172,8 +172,8 @@ local defaultSpells = {
     },
 }
 
-function F:GetClickCastingSpellList(class)
-    local spells = defaultSpells[class]["common"] and F:Copy(defaultSpells[class]["common"]) or {}
+function F.GetClickCastingSpellList(class)
+    local spells = defaultSpells[class]["common"] and F.Copy(defaultSpells[class]["common"]) or {}
 
     -- fill data
     for i, v in pairs(spells) do
@@ -187,8 +187,8 @@ function F:GetClickCastingSpellList(class)
             spellType = L[spellType]
         end
 
-        local name, icon = F:GetSpellInfo(spellId)
-        spells[i] = {icon, name, spellType, spellId, F:GetMaxSpellRank(spellId)}
+        local name, icon = F.GetSpellInfo(spellId)
+        spells[i] = {icon, name, spellType, spellId, F.GetMaxSpellRank(spellId)}
     end
 
     -- texplore(spells)
@@ -219,16 +219,16 @@ local resurrections_for_dead = {
 do
     local temp = {}
     for _, id in pairs(resurrections_for_dead) do
-        temp[F:GetSpellInfo(id)] = true
+        temp[F.GetSpellInfo(id)] = true
     end
     resurrections_for_dead = temp
 end
 
-function F:IsSoulstone()
+function F.IsSoulstone()
     return false
 end
 
-function F:IsResurrectionForDead(spellId)
+function F.IsResurrectionForDead(spellId)
     return resurrections_for_dead[spellId]
 end
 
@@ -251,7 +251,7 @@ local resurrection_click_castings = {
     },
 }
 
-function F:GetResurrectionClickCastings(class)
+function F.GetResurrectionClickCastings(class)
     return resurrection_click_castings[class] or {}
 end
 
@@ -267,11 +267,11 @@ local normalResurrection = {
 
 do
     for class, spell in pairs(normalResurrection) do
-        normalResurrection[class] = F:GetSpellInfo(spell)
+        normalResurrection[class] = F.GetSpellInfo(spell)
     end
 end
 
-function F:GetNormalResurrection(class)
+function F.GetNormalResurrection(class)
     return normalResurrection[class]
 end
 
@@ -282,10 +282,10 @@ local combatResurrection = {
 
 do
     for class, spell in pairs(combatResurrection) do
-        combatResurrection[class] = F:GetSpellInfo(spell)
+        combatResurrection[class] = F.GetSpellInfo(spell)
     end
 end
 
-function F:GetCombatResurrection(class)
+function F.GetCombatResurrection(class)
     return combatResurrection[class]
 end
