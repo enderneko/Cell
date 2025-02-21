@@ -2,8 +2,10 @@
 -- http://wow.gamepedia.com/UI_Scale
 -- http://www.wowinterface.com/forums/showthread.php?t=31813
 --------------------------------------------
-local addonName, addon = ...
+local _, addon = ...
 addon.pixelPerfectFuncs = {}
+
+---@class PixelPerfectFuncs
 local P = addon.pixelPerfectFuncs
 
 function P.GetResolution()

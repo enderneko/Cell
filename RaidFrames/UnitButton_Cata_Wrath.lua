@@ -1,10 +1,16 @@
 local _, Cell = ...
 local L = Cell.L
+---@type CellFuncs
 local F = Cell.funcs
+---@class CellUnitButtonFuncs
 local B = Cell.bFuncs
+---@type CellIndicatorFuncs
 local I = Cell.iFuncs
+---@type CellUtilityFuncs
 local U = Cell.uFuncs
+---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
+---@type CellAnimations
 local A = Cell.animations
 
 local HealComm

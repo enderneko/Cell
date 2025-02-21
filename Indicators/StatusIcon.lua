@@ -1,6 +1,9 @@
 local _, Cell = ...
+---@type CellFuncs
 local F = Cell.funcs
+---@class CellIndicatorFuncs
 local I = Cell.iFuncs
+---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 
 CELL_SUMMON_ICONS_ENABLED = false

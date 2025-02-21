@@ -1,7 +1,10 @@
 local _, Cell = ...
 local L = Cell.L
+---@type CellFuncs
 local F = Cell.funcs
+---@class CellIndicatorFuncs
 local I = Cell.iFuncs
+---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")

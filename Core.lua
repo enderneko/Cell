@@ -1,5 +1,18 @@
-local addonName, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 _G.Cell = Cell
+
+---@class Cell
+---@field defaults table
+---@field frames table
+---@field vars table
+---@field snippetVars table
+---@field funcs CellFuncs
+---@field iFuncs CellIndicatorFuncs
+---@field bFuncs CellUnitButtonFuncs
+---@field uFuncs CellUtilityFuncs
+---@field animations CellAnimations
+
 Cell.defaults = {}
 Cell.frames = {}
 Cell.vars = {}
@@ -162,7 +175,7 @@ local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetad
 
 -- local cellLoaded, omnicdLoaded
 function eventFrame:ADDON_LOADED(arg1)
-    if arg1 == addonName then
+    if arg1 == "Cell" then
         -- cellLoaded = true
         eventFrame:UnregisterEvent("ADDON_LOADED")
 
@@ -518,7 +531,7 @@ function eventFrame:ADDON_LOADED(arg1)
         Cell.vars.actions = I.ConvertActions(CellDB["actions"])
 
         -- misc -----------------------------------------------------------------------------------
-        Cell.version = GetAddOnMetadata(addonName, "version")
+        Cell.version = GetAddOnMetadata("Cell", "version")
         Cell.versionNum = tonumber(string.match(Cell.version, "%d+"))
         if not CellDB["revise"] then CellDB["firstRun"] = true end
         F.Revise()
