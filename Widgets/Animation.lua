@@ -2,6 +2,7 @@ local addonName, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+---@class CellAnimations
 local A = Cell.animations
 
 -----------------------------------------

@@ -1,6 +1,8 @@
 local _, Cell = ...
 local L = Cell.L
+---@type CellFuncs
 local F = Cell.funcs
+---@class CellIndicatorFuncs
 local I = Cell.iFuncs
 
 -------------------------------------------------

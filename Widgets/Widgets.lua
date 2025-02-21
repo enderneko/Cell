@@ -1,6 +1,10 @@
-local addonName, Cell = ...
+local addonName = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
+---@type CellFuncs
 local F = Cell.funcs
+---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 

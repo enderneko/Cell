@@ -1,6 +1,9 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
+---@class CellFuncs
 local F = Cell.funcs
+---@type CellIndicatorFuncs
 local I = Cell.iFuncs
 
 Cell.vars.playerFaction = UnitFactionGroup("player")
