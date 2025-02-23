@@ -51,6 +51,7 @@ local UnitExists = UnitExists
 local UnitIsGroupLeader = UnitIsGroupLeader
 local UnitIsGroupAssistant = UnitIsGroupAssistant
 local InCombatLockdown = InCombatLockdown
+local UnitAffectingCombat = UnitAffectingCombat
 local UnitInPhase = UnitInPhase
 local UnitBuff = UnitBuff
 local UnitDebuff = UnitDebuff
@@ -159,6 +160,9 @@ local function ResetIndicators()
         end
         if t["hideInCombat"] ~= nil then
             indicatorBooleans[t["indicatorName"]] = t["hideInCombat"]
+        end
+        if t["onlyEnableNotInCombat"] ~= nil then
+            indicatorBooleans[t["indicatorName"]] = t["onlyEnableNotInCombat"]
         end
     end
 end
@@ -498,7 +502,13 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         if setting == "enabled" then
             enabledIndicators[indicatorName] = value
 
-            if indicatorName == "aoeHealing" then
+            if indicatorName == "combatIcon" then
+                F.IterateAllUnitButtons(function(b)
+                    if not value then
+                        b.indicators[indicatorName]:Hide()
+                    end
+                end, true)
+            elseif indicatorName == "aoeHealing" then
                 I.EnableAoEHealing(value)
             elseif indicatorName == "targetCounter" then
                 I.EnableTargetCounter(value)
@@ -801,6 +811,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicatorBooleans[indicatorName] = value2
                 F.IterateAllUnitButtons(function(b)
                     UnitButton_UpdateLeader(b)
+                end, true)
+            elseif value == "onlyEnableNotInCombat" then
+                indicatorBooleans[indicatorName] = value2
+                F.IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:Hide()
                 end, true)
             elseif value == "showStack" then
                 F.IterateAllUnitButtons(function(b)
@@ -1862,6 +1877,19 @@ local function UnitButton_UpdateThreatBar(self)
     end
 end
 
+local function UnitButton_UpdateCombatIcon(self)
+    if not enabledIndicators["combatIcon"] then return end
+
+    local unit = self.states.displayedUnit
+    if not unit then return end
+
+    if not (indicatorBooleans["combatIcon"] and InCombatLockdown()) and UnitAffectingCombat(unit) then
+        self.indicators.combatIcon:Show()
+    else
+        self.indicators.combatIcon:Hide()
+    end
+end
+
 local IsInRange = F.IsInRange
 local function UnitButton_UpdateInRange(self)
     local unit = self.states.displayedUnit
@@ -2533,8 +2561,9 @@ end
 local function UnitButton_OnUpdate(self, elapsed)
     local e = (self.__updateElapsed or 0) + elapsed
     if e > 0.25 then
-        UnitButton_OnTick(self)
         e = 0
+        UnitButton_OnTick(self)
+        UnitButton_UpdateCombatIcon(self)
     end
     self.__updateElapsed = e
 end
@@ -3117,6 +3146,7 @@ function CellUnitButton_OnLoad(button)
     I.CreateStatusIcon(button)
     I.CreatePartyAssignmentIcon(button)
     I.CreateLeaderIcon(button)
+    I.CreateCombatIcon(button)
     I.CreateReadyCheckIcon(button)
     I.CreateAggroBlink(button)
     I.CreateAggroBorder(button)

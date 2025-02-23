@@ -1,7 +1,7 @@
 local addonName, Cell = ...
 
 -- number of built-in indicators
-Cell.defaults.builtIns = 25
+Cell.defaults.builtIns = 26
 
 Cell.defaults.indicatorIndices = {
     ["nameText"] = 1,
@@ -12,23 +12,24 @@ Cell.defaults.indicatorIndices = {
     ["statusIcon"] = 6,
     ["partyAssignmentIcon"] = 7,
     ["leaderIcon"] = 8,
-    ["readyCheckIcon"] = 9,
-    ["playerRaidIcon"] = 10,
-    ["targetRaidIcon"] = 11,
-    ["aggroBlink"] = 12,
-    ["aggroBar"] = 13,
-    ["aggroBorder"] = 14,
-    ["aoeHealing"] = 15,
-    ["externalCooldowns"] = 16,
-    ["defensiveCooldowns"] = 17,
-    ["allCooldowns"] = 18,
-    ["dispels"] = 19,
-    ["debuffs"] = 20,
-    ["raidDebuffs"] = 21,
-    ["targetedSpells"] = 22,
-    ["targetCounter"] = 23,
-    ["actions"] = 24,
-    ["missingBuffs"] = 25,
+    ["combatIcon"] = 9,
+    ["readyCheckIcon"] = 10,
+    ["playerRaidIcon"] = 11,
+    ["targetRaidIcon"] = 12,
+    ["aggroBlink"] = 13,
+    ["aggroBar"] = 14,
+    ["aggroBorder"] = 15,
+    ["aoeHealing"] = 16,
+    ["externalCooldowns"] = 17,
+    ["defensiveCooldowns"] = 18,
+    ["allCooldowns"] = 19,
+    ["dispels"] = 20,
+    ["debuffs"] = 21,
+    ["raidDebuffs"] = 22,
+    ["targetedSpells"] = 23,
+    ["targetCounter"] = 24,
+    ["actions"] = 25,
+    ["missingBuffs"] = 26,
 }
 
 Cell.defaults.layout = {
@@ -230,6 +231,16 @@ Cell.defaults.layout = {
             ["size"] = {11, 11},
         }, -- 8
         {
+            ["name"] = "Combat Icon",
+            ["indicatorName"] = "combatIcon",
+            ["type"] = "built-in",
+            ["enabled"] = false,
+            ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 4, -4},
+            ["frameLevel"] = 5,
+            ["size"] = {16, 16},
+            ["onlyEnableNotInCombat"] = true,
+        }, -- 9
+        {
             ["name"] = "Ready Check Icon",
             ["indicatorName"] = "readyCheckIcon",
             ["type"] = "built-in",
@@ -237,7 +248,7 @@ Cell.defaults.layout = {
             ["position"] = {"CENTER", "CENTER", 0, 0},
             ["frameLevel"] = 100,
             ["size"] = {16, 16},
-        }, -- 9
+        }, -- 10
         {
             ["name"] = "Raid Icon (player)",
             ["indicatorName"] = "playerRaidIcon",
@@ -247,7 +258,7 @@ Cell.defaults.layout = {
             ["frameLevel"] = 5,
             ["size"] = {14, 14},
             ["alpha"] = 0.77,
-        }, -- 10
+        }, -- 11
         {
             ["name"] = "Raid Icon (target)",
             ["indicatorName"] = "targetRaidIcon",
@@ -257,7 +268,7 @@ Cell.defaults.layout = {
             ["frameLevel"] = 5,
             ["size"] = {14, 14},
             ["alpha"] = 0.77,
-        }, -- 11
+        }, -- 12
         {
             ["name"] = "Aggro (blink)",
             ["indicatorName"] = "aggroBlink",
@@ -266,7 +277,7 @@ Cell.defaults.layout = {
             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
             ["frameLevel"] = 7,
             ["size"] = {11, 11},
-        }, -- 12
+        }, -- 13
         {
             ["name"] = "Aggro (bar)",
             ["indicatorName"] = "aggroBar",
@@ -275,7 +286,7 @@ Cell.defaults.layout = {
             ["position"] = {"BOTTOMLEFT", "TOPLEFT", 0, -1},
             ["frameLevel"] = 1,
             ["size"] = {20, 4},
-        }, -- 13
+        }, -- 14
         {
             ["name"] = "Aggro (border)",
             ["indicatorName"] = "aggroBorder",
@@ -283,7 +294,7 @@ Cell.defaults.layout = {
             ["enabled"] = true,
             ["frameLevel"] = 3,
             ["thickness"] = 2,
-        }, -- 14
+        }, -- 15
         {
             ["name"] = "AoE Healing",
             ["indicatorName"] = "aoeHealing",
@@ -291,7 +302,7 @@ Cell.defaults.layout = {
             ["enabled"] = true,
             ["height"] = 10,
             ["color"] = {1, 1, 0},
-        }, -- 15
+        }, -- 16
         {
             ["name"] = "External Cooldowns",
             ["indicatorName"] = "externalCooldowns",
@@ -308,7 +319,7 @@ Cell.defaults.layout = {
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
-        }, -- 16
+        }, -- 17
         {
             ["name"] = "Defensive Cooldowns",
             ["indicatorName"] = "defensiveCooldowns",
@@ -325,7 +336,7 @@ Cell.defaults.layout = {
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
-        }, -- 17
+        }, -- 18
         {
             ["name"] = "Externals + Defensives",
             ["indicatorName"] = "allCooldowns",
@@ -342,7 +353,7 @@ Cell.defaults.layout = {
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
-        }, -- 18
+        }, -- 19
         {
             ["name"] = "Dispels",
             ["indicatorName"] = "dispels",
@@ -362,7 +373,7 @@ Cell.defaults.layout = {
             ["highlightType"] = "gradient-half",
             ["iconStyle"] = "blizzard",
             ["orientation"] = "right-to-left",
-        }, -- 19
+        }, -- 20
         {
             ["name"] = "Debuffs",
             ["indicatorName"] = "debuffs",
@@ -382,7 +393,7 @@ Cell.defaults.layout = {
             },
             ["dispellableByMe"] = false,
             ["orientation"] = "left-to-right",
-        }, -- 20
+        }, -- 21
         {
             ["name"] = "Raid Debuffs",
             ["indicatorName"] = "raidDebuffs",
@@ -401,7 +412,7 @@ Cell.defaults.layout = {
             ["onlyShowTopGlow"] = true,
             ["orientation"] = "left-to-right",
             ["showTooltip"] = false,
-        }, -- 21
+        }, -- 22
         {
             ["name"] = "Targeted Spells",
             ["indicatorName"] = "targetedSpells",
@@ -415,7 +426,7 @@ Cell.defaults.layout = {
             ["num"] = 1,
             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
             ["orientation"] = "left-to-right",
-        }, -- 22
+        }, -- 23
         {
             ["name"] = "Target Counter",
             ["indicatorName"] = "targetCounter",
@@ -430,14 +441,14 @@ Cell.defaults.layout = {
                 ["pve"] = false,
                 ["pvp"] = true,
             },
-        }, -- 23
+        }, -- 24
         {
             ["name"] = "Actions",
             ["indicatorName"] = "actions",
             ["type"] = "built-in",
             ["enabled"] = true,
             ["speed"] = 1,
-        }, -- 24
+        }, -- 25
         {
             ["name"] = "Missing Buffs",
             ["indicatorName"] = "missingBuffs",
@@ -458,7 +469,7 @@ Cell.defaults.layout = {
             ["size"] = {13, 13},
             ["num"] = 3,
             ["orientation"] = "right-to-left",
-        }, -- 25
+        }, -- 26
     },
 }
 

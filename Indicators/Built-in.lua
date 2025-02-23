@@ -4,6 +4,8 @@ local L = Cell.L
 local F = Cell.funcs
 ---@class CellIndicatorFuncs
 local I = Cell.iFuncs
+---@type CellAnimations
+local A = Cell.animations
 ---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 
@@ -2476,4 +2478,38 @@ function I.CreateCrowdControls(parent)
         -- frame:SetScript("OnShow", crowdControls.UpdateSize)
         -- frame:SetScript("OnHide", crowdControls.UpdateSize)
     end
+end
+
+--------------------------------------------------
+-- Combat Icon
+--------------------------------------------------
+local function CombatIcon_UpdatePixelPerfect(self)
+    P.Resize(self)
+    P.Repoint(self)
+end
+
+function I.CreateCombatIcon(parent)
+    local combatIcon = CreateFrame("Frame", parent:GetName() .. "CombatIcon", parent.widgets.indicatorFrame)
+    parent.indicators.combatIcon = combatIcon
+    combatIcon.root = parent
+    combatIcon:Hide()
+
+    combatIcon.tex = combatIcon:CreateTexture(nil, "ARTWORK", nil, 0)
+    combatIcon.tex:SetAllPoints()
+    combatIcon.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\combat", nil, nil, "TRILINEAR")
+    -- combatIcon.tex:SetAtlas("combat_swords-dynamicIcon")
+
+    combatIcon.flashTex = combatIcon:CreateTexture(nil, "ARTWORK", nil, -5)
+    combatIcon.flashTex:SetAllPoints()
+    combatIcon.flashTex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\combat_glow", nil, nil, "TRILINEAR")
+    -- combatIcon.flashTex:SetAtlas("combat_swords-flash")
+    combatIcon.flashTex:SetBlendMode("ADD")
+
+    A.CreateBlinkAnimation(combatIcon.flashTex, nil, true)
+
+    combatIcon:SetScript("OnEvent", CombatIcon_OnEvent)
+
+    combatIcon.UpdatePixelPerfect = CombatIcon_UpdatePixelPerfect
+
+    return combatIcon
 end

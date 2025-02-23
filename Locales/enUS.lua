@@ -46,6 +46,7 @@ select(2, ...).L = setmetatable({
     ["showAllSpells"] = "Show all spells",
     ["enableBlacklistShortcut"] = "Blacklist: Alt+Ctrl+RightClick",
     ["smooth"] = "Smooth",
+    ["onlyEnableNotInCombat"] = "Only when I'm not in combat",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",

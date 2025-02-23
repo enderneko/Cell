@@ -242,3 +242,30 @@ function A.ApplyFadeInOutToMenu(anchorFrame, hoverFrame)
         end
     end)
 end
+
+-----------------------------------------
+-- blink
+-----------------------------------------
+function A.CreateBlinkAnimation(region, duration, enableShowHideHook)
+    local blink = region:CreateAnimationGroup()
+    region.blink = blink
+
+    local alpha = blink:CreateAnimation("Alpha")
+    blink.alpha = alpha
+    alpha:SetFromAlpha(0.25)
+    alpha:SetToAlpha(1)
+    alpha:SetDuration(duration or 0.5)
+
+    blink:SetLooping("BOUNCE")
+
+    if enableShowHideHook then
+        region:HookScript("OnShow", function()
+            blink:Play()
+        end)
+        region:HookScript("OnHide", function()
+            blink:Stop()
+        end)
+    else
+        blink:Play()
+    end
+end
