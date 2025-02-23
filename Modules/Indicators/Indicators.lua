@@ -1559,6 +1559,7 @@ if Cell.isRetail then
             "|A:nameplates-icon-orb-purple:18:18|a ", "enabled", "size-square", "position", "frameLevel"},
         ["roleIcon"] = {"enabled", "checkbutton:hideDamager", "size-square", "roleTexture", "position", "frameLevel"},
         ["leaderIcon"] = {"enabled", "checkbutton:hideInCombat", "size-square", "position"},
+        ["combatIcon"] = {"enabled", "checkbutton:onlyOutOfCombat", "size-square", "position", "frameLevel"},
         ["readyCheckIcon"] = {"enabled", "size-square", "position", "frameLevel"},
         ["playerRaidIcon"] = {"enabled", "size-square", "alpha", "position", "frameLevel"},
         ["targetRaidIcon"] = {"enabled", "size-square", "alpha", "position", "frameLevel"},
