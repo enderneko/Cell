@@ -31,7 +31,6 @@ Indicators\AoEHealing.lua
 Indicators\TargetCounter.lua
 Indicators\TargetedSpells.lua
 Indicators\Actions.lua
-Indicators\CombatIcon.lua
 Indicators\Custom.lua
 Indicators\Supporter.lua
 

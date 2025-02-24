@@ -253,10 +253,10 @@ Cell.defaults.layout = {
             ["indicatorName"] = "combatIcon",
             ["type"] = "built-in",
             ["enabled"] = false,
-            ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 6, -6},
+            ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 4, -4},
             ["frameLevel"] = 5,
             ["size"] = {16, 16},
-            ["onlyOutOfCombat"] = true,
+            ["onlyEnableNotInCombat"] = true,
         }, -- 9
         {
             ["name"] = "Ready Check Icon",

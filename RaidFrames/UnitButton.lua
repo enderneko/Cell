@@ -54,6 +54,7 @@ local UnitExists = UnitExists
 local UnitIsGroupLeader = UnitIsGroupLeader
 local UnitIsGroupAssistant = UnitIsGroupAssistant
 local InCombatLockdown = InCombatLockdown
+local UnitAffectingCombat = UnitAffectingCombat
 local UnitPhaseReason = UnitPhaseReason
 -- local UnitBuff = UnitBuff
 -- local UnitDebuff = UnitDebuff
@@ -180,6 +181,9 @@ local function ResetIndicators()
         if t["hideInCombat"] ~= nil then
             indicatorBooleans[t["indicatorName"]] = t["hideInCombat"]
         end
+        if t["onlyEnableNotInCombat"] ~= nil then
+            indicatorBooleans[t["indicatorName"]] = t["onlyEnableNotInCombat"]
+        end
         if t["onlyShowOvershields"] ~= nil then
             indicatorBooleans[t["indicatorName"]] = t["onlyShowOvershields"]
         end
@@ -204,211 +208,200 @@ local function HandleIndicators(b)
         local indicator = b.indicators[t["indicatorName"]] or I.CreateIndicator(b, t)
         indicator.configs = t
 
-        if indicator.LoadConfig then
-            -- NOTE: NEW LoadConfig
-            indicator:LoadConfig(t)
-            if t["enabled"] and b:IsShown() then
-                indicator:Enable()
+        -- update position
+        if t["position"] then
+            if t["indicatorName"] == "statusText" then
+                indicator:SetPosition(t["position"][1], t["position"][2], t["position"][3])
             else
-                indicator:Disable()
+                P.ClearPoints(indicator)
+                P.Point(indicator, t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
             end
-        else
-            -- NOTE: OLD
-            -- update position
-            if t["position"] then
-                if t["indicatorName"] == "statusText" then
-                    indicator:SetPosition(t["position"][1], t["position"][2], t["position"][3])
-                else
-                    P.ClearPoints(indicator)
-                    P.Point(indicator, t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
-                end
-            end
-            -- update anchor
-            if t["anchor"] then
-                indicator:SetAnchor(t["anchor"])
-            end
-            -- update frameLevel
-            if t["frameLevel"] then
-                indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+t["frameLevel"])
-            end
-            -- update size
-            if t["size"] then
-                -- NOTE: debuffs: ["size"] = {{normalSize}, {bigSize}}
-                if t["indicatorName"] == "debuffs" then
-                    indicator:SetSize(t["size"][1], t["size"][2])
-                else
-                    P.Size(indicator, t["size"][1], t["size"][2])
-                end
-            end
-            -- update thickness
-            if t["thickness"] then
-                indicator:SetThickness(t["thickness"])
-            end
-            -- update border
-            if t["border"] then
-                indicator:SetBorder(t["border"])
-            end
-            -- update height
-            if t["height"] then
-                P.Height(indicator, t["height"])
-            end
-            -- update height
-            if t["textWidth"] then
-                indicator:UpdateTextWidth(t["textWidth"])
-            end
-            -- update alpha
-            if t["alpha"] then
-                indicator:SetAlpha(t["alpha"])
-            end
-            -- update numPerLine
-            if t["numPerLine"] then
-                indicator:SetNumPerLine(t["numPerLine"])
-            end
-            -- update spacing
-            if t["spacing"] then
-                indicator:SetSpacing(t["spacing"])
-            end
-            -- update orientation
-            if t["orientation"] then
-                indicator:SetOrientation(t["orientation"])
-            end
-            -- update font
-            if t["font"] then
-                indicator:SetFont(unpack(t["font"]))
-            end
-            -- update format
-            if t["format"] then
-                indicator:SetFormat(t["format"])
-                if t["indicatorName"] == "healthText" then
-                    B.UpdateHealthText(b)
-                elseif t["indicatorName"] == "powerText" then
-                    B.UpdatePowerText(b)
-                end
-            end
-            -- update color
-            if t["color"] and t["indicatorName"] ~= "nameText" and t["indicatorName"] ~="powerText" then
-                indicator:SetColor(unpack(t["color"]))
-            end
-            -- update colors
-            if t["colors"] then
-                indicator:SetColors(t["colors"])
-            end
-            -- update texture
-            if t["texture"] then
-                indicator:SetTexture(t["texture"])
-            end
-            -- update dispel highlight
-            if t["highlightType"] then
-                indicator:UpdateHighlight(t["highlightType"])
-            end
-            -- update icon style
-            if t["iconStyle"] then
-                indicator:SetIconStyle(t["iconStyle"])
-            end
-            -- update animation
-            if type(t["showAnimation"]) == "boolean" then
-                indicator:ShowAnimation(t["showAnimation"])
-            end
-            -- update duration
-            if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
-                indicator:ShowDuration(t["showDuration"])
-            end
-            -- update stack
-            if type(t["showStack"]) == "boolean" then
-                indicator:ShowStack(t["showStack"])
-            end
-            -- update duration
-            if t["duration"] then
-                indicator:SetDuration(t["duration"])
-            end
-            -- update stack
-            if t["stack"] then
-                indicator:SetStack(t["stack"])
-            end
-            -- update groupNumber
-            if type(t["showGroupNumber"]) == "boolean" then
-                indicator:ShowGroupNumber(t["showGroupNumber"])
-            end
-            -- update vehicleNamePosition
-            if t["vehicleNamePosition"] then
-                indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
-            end
-            -- update timer
-            if type(t["showTimer"]) == "boolean" then
-                indicator:SetShowTimer(t["showTimer"])
-            end
-            -- update background
-            if type(t["showBackground"]) == "boolean" then
-                indicator:ShowBackground(t["showBackground"])
-            end
-            -- update role texture
-            if t["roleTexture"] then
-                indicator:SetRoleTexture(t["roleTexture"])
-                indicator:HideDamager(t["hideDamager"])
-                UnitButton_UpdateRole(b)
-            end
-            -- tooltip
-            if type(t["showTooltip"]) == "boolean" then
-                indicator:ShowTooltip(t["showTooltip"])
-            end
-            -- blacklist shortcut
-            if type(t["enableBlacklistShortcut"]) == "boolean" then
-                indicator:EnableBlacklistShortcut(t["enableBlacklistShortcut"])
-            end
-            -- speed
-            if t["speed"] then
-                indicator:SetSpeed(t["speed"])
-            end
-            -- privateAuraOptions
-            if t["privateAuraOptions"] then
-                indicator:UpdateOptions(t["privateAuraOptions"])
-            end
-            -- update fadeOut
-            if type(t["fadeOut"]) == "boolean" then
-                indicator:SetFadeOut(t["fadeOut"])
-            end
-            -- update glow
-            if t["glowOptions"] then
-                indicator:UpdateGlowOptions(t["glowOptions"])
-            end
-            -- update smooth
-            if type(t["smooth"]) == "boolean" then
-                indicator:EnableSmooth(t["smooth"])
-            end
-            -- max value
-            if t["maxValue"] then
-                indicator:SetMaxValue(t["maxValue"])
-            end
-            -- update hideIfEmptyOrFull
-            if type(t["hideIfEmptyOrFull"]) == "boolean" then
-                indicator:SetHideIfEmptyOrFull(t["hideIfEmptyOrFull"])
-            end
-
-            -- init
-            -- update name visibility
-            if t["indicatorName"] == "nameText" or t["indicatorName"] == "healthText" then
-                if t["enabled"] then
-                    indicator:Show()
-                else
-                    indicator:Hide()
-                end
-            elseif t["indicatorName"] == "playerRaidIcon" then
-                B.UpdatePlayerRaidIcon(b, t["enabled"])
-            elseif t["indicatorName"] == "targetRaidIcon" then
-                B.UpdateTargetRaidIcon(b, t["enabled"])
-            elseif t["indicatorName"] == "readyCheckIcon" then
-                B.UpdateReadyCheckIcon(b, t["enabled"])
-            else
-                UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
-            end
-
-            -- update pixel perfect for built-in widgets
-            -- if t["type"] == "built-in" then
-            --     if indicator.UpdatePixelPerfect then
-            --         indicator:UpdatePixelPerfect()
-            --     end
-            -- end
         end
+        -- update anchor
+        if t["anchor"] then
+            indicator:SetAnchor(t["anchor"])
+        end
+        -- update frameLevel
+        if t["frameLevel"] then
+            indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+t["frameLevel"])
+        end
+        -- update size
+        if t["size"] then
+            -- NOTE: debuffs: ["size"] = {{normalSize}, {bigSize}}
+            if t["indicatorName"] == "debuffs" then
+                indicator:SetSize(t["size"][1], t["size"][2])
+            else
+                P.Size(indicator, t["size"][1], t["size"][2])
+            end
+        end
+        -- update thickness
+        if t["thickness"] then
+            indicator:SetThickness(t["thickness"])
+        end
+        -- update border
+        if t["border"] then
+            indicator:SetBorder(t["border"])
+        end
+        -- update height
+        if t["height"] then
+            P.Height(indicator, t["height"])
+        end
+        -- update height
+        if t["textWidth"] then
+            indicator:UpdateTextWidth(t["textWidth"])
+        end
+        -- update alpha
+        if t["alpha"] then
+            indicator:SetAlpha(t["alpha"])
+        end
+        -- update numPerLine
+        if t["numPerLine"] then
+            indicator:SetNumPerLine(t["numPerLine"])
+        end
+        -- update spacing
+        if t["spacing"] then
+            indicator:SetSpacing(t["spacing"])
+        end
+        -- update orientation
+        if t["orientation"] then
+            indicator:SetOrientation(t["orientation"])
+        end
+        -- update font
+        if t["font"] then
+            indicator:SetFont(unpack(t["font"]))
+        end
+        -- update format
+        if t["format"] then
+            indicator:SetFormat(t["format"])
+            if t["indicatorName"] == "healthText" then
+                B.UpdateHealthText(b)
+            elseif t["indicatorName"] == "powerText" then
+                B.UpdatePowerText(b)
+            end
+        end
+        -- update color
+        if t["color"] and t["indicatorName"] ~= "nameText" and t["indicatorName"] ~="powerText" then
+            indicator:SetColor(unpack(t["color"]))
+        end
+        -- update colors
+        if t["colors"] then
+            indicator:SetColors(t["colors"])
+        end
+        -- update texture
+        if t["texture"] then
+            indicator:SetTexture(t["texture"])
+        end
+        -- update dispel highlight
+        if t["highlightType"] then
+            indicator:UpdateHighlight(t["highlightType"])
+        end
+        -- update icon style
+        if t["iconStyle"] then
+            indicator:SetIconStyle(t["iconStyle"])
+        end
+        -- update animation
+        if type(t["showAnimation"]) == "boolean" then
+            indicator:ShowAnimation(t["showAnimation"])
+        end
+        -- update duration
+        if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
+            indicator:ShowDuration(t["showDuration"])
+        end
+        -- update stack
+        if type(t["showStack"]) == "boolean" then
+            indicator:ShowStack(t["showStack"])
+        end
+        -- update duration
+        if t["duration"] then
+            indicator:SetDuration(t["duration"])
+        end
+        -- update stack
+        if t["stack"] then
+            indicator:SetStack(t["stack"])
+        end
+        -- update groupNumber
+        if type(t["showGroupNumber"]) == "boolean" then
+            indicator:ShowGroupNumber(t["showGroupNumber"])
+        end
+        -- update vehicleNamePosition
+        if t["vehicleNamePosition"] then
+            indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
+        end
+        -- update timer
+        if type(t["showTimer"]) == "boolean" then
+            indicator:SetShowTimer(t["showTimer"])
+        end
+        -- update background
+        if type(t["showBackground"]) == "boolean" then
+            indicator:ShowBackground(t["showBackground"])
+        end
+        -- update role texture
+        if t["roleTexture"] then
+            indicator:SetRoleTexture(t["roleTexture"])
+            indicator:HideDamager(t["hideDamager"])
+            UnitButton_UpdateRole(b)
+        end
+        -- tooltip
+        if type(t["showTooltip"]) == "boolean" then
+            indicator:ShowTooltip(t["showTooltip"])
+        end
+        -- blacklist shortcut
+        if type(t["enableBlacklistShortcut"]) == "boolean" then
+            indicator:EnableBlacklistShortcut(t["enableBlacklistShortcut"])
+        end
+        -- speed
+        if t["speed"] then
+            indicator:SetSpeed(t["speed"])
+        end
+        -- privateAuraOptions
+        if t["privateAuraOptions"] then
+            indicator:UpdateOptions(t["privateAuraOptions"])
+        end
+        -- update fadeOut
+        if type(t["fadeOut"]) == "boolean" then
+            indicator:SetFadeOut(t["fadeOut"])
+        end
+        -- update glow
+        if t["glowOptions"] then
+            indicator:UpdateGlowOptions(t["glowOptions"])
+        end
+        -- update smooth
+        if type(t["smooth"]) == "boolean" then
+            indicator:EnableSmooth(t["smooth"])
+        end
+        -- max value
+        if t["maxValue"] then
+            indicator:SetMaxValue(t["maxValue"])
+        end
+        -- update hideIfEmptyOrFull
+        if type(t["hideIfEmptyOrFull"]) == "boolean" then
+            indicator:SetHideIfEmptyOrFull(t["hideIfEmptyOrFull"])
+        end
+
+        -- init
+        -- update name visibility
+        if t["indicatorName"] == "nameText" or t["indicatorName"] == "healthText" then
+            if t["enabled"] then
+                indicator:Show()
+            else
+                indicator:Hide()
+            end
+        elseif t["indicatorName"] == "playerRaidIcon" then
+            B.UpdatePlayerRaidIcon(b, t["enabled"])
+        elseif t["indicatorName"] == "targetRaidIcon" then
+            B.UpdateTargetRaidIcon(b, t["enabled"])
+        elseif t["indicatorName"] == "readyCheckIcon" then
+            B.UpdateReadyCheckIcon(b, t["enabled"])
+        else
+            UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
+        end
+
+        -- update pixel perfect for built-in widgets
+        -- if t["type"] == "built-in" then
+        --     if indicator.UpdatePixelPerfect then
+        --         indicator:UpdatePixelPerfect()
+        --     end
+        -- end
     end
 
     --! update pixel perfect for widgets
@@ -538,13 +531,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         if setting == "enabled" then
             enabledIndicators[indicatorName] = value
 
-            if indicatorName == "CombatIcon" then
-                -- TODO: NEW
+            if indicatorName == "combatIcon" then
                 F.IterateAllUnitButtons(function(b)
-                    if value then
-                        b.indicators[indicatorName]:Enable()
-                    else
-                        b.indicators[indicatorName]:Disable()
+                    if not value then
+                        b.indicators[indicatorName]:Hide()
                     end
                 end, true)
             elseif indicatorName == "aoeHealing" then
@@ -864,6 +854,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicatorBooleans[indicatorName] = value2
                 F.IterateAllUnitButtons(function(b)
                     UnitButton_UpdateLeader(b)
+                end, true)
+            elseif value == "onlyEnableNotInCombat" then
+                indicatorBooleans[indicatorName] = value2
+                F.IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:Hide()
                 end, true)
             elseif value == "onlyShowOvershields" then
                 indicatorBooleans[indicatorName] = value2
@@ -2263,6 +2258,19 @@ local function UnitButton_UpdateThreatBar(self)
     end
 end
 
+local function UnitButton_UpdateCombatIcon(self)
+    if not enabledIndicators["combatIcon"] then return end
+
+    local unit = self.states.displayedUnit
+    if not unit then return end
+
+    if not (indicatorBooleans["combatIcon"] and InCombatLockdown()) and UnitAffectingCombat(unit) then
+        self.indicators.combatIcon:Show()
+    else
+        self.indicators.combatIcon:Hide()
+    end
+end
+
 -- UNIT_IN_RANGE_UPDATE: unit, inRange
 local IsInRange = F.IsInRange
 local function UnitButton_UpdateInRange(self, ir)
@@ -2978,8 +2986,9 @@ end
 local function UnitButton_OnUpdate(self, elapsed)
     local e = (self.__updateElapsed or 0) + elapsed
     if e > 0.25 then
-        UnitButton_OnTick(self)
         e = 0
+        UnitButton_OnTick(self)
+        UnitButton_UpdateCombatIcon(self)
     end
     self.__updateElapsed = e
 end
