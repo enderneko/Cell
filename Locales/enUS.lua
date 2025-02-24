@@ -90,6 +90,26 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r244-release (Feb 24, 2025, 21:40 GMT+8)</h1>
+        <p>+ (Classic) Added downranking spells support for Click-Castings.</p>
+        <p>* Updated "Drinking" list (#279, #306).</p>
+        <p>* Updated range check.</p>
+        <p>* Updated Dispel Request text flipbook animation.</p>
+        <p>* Refactor HealthText indicator.</p>
+        <p>+ (Classic) Updated RaidDebuffs to include the Naxxramas raid (#294).</p>
+        <p>+ (TWW) Updated debuffs for season 2 (Thanks 钛锬).</p>
+        <p>+ (TWW) Updated Liberation of Undermine debuffs (Thanks Reat).</p>
+        <p>+ (Classic) Updated RoleIcon indicator and PowerBarFilters.</p>
+        <p>+ Implemented CombatIcon indicator.</p>
+        <p>+ Updated AoEHealings indicator.</p>
+        <p>+ Added "Relative" for indicator position settings.</p>
+        <p>+ Added class/role filter for PowerText indicator.</p>
+        <p>+ Added functions for "installer" addons.</p>
+        <p>* Fixed texture selector.</p>
+        <p>* Converted colon methods to dot notation, so some code snippets need to be updated.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
         <h1>r243-release (Oct 13, 2024, 21:37 GMT+8)</h1>
         <p>* Fixed power filters for Wrath(CN).</p>
         <p>* Fixed indicator revision process.</p>

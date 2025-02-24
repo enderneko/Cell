@@ -3233,6 +3233,9 @@ function F.Revise()
                 layout["powerFilters"] = F.Copy(Cell.defaults.layout.powerFilters)
             end
         end
+
+        -- disable snippets
+        F.DisableSnippets()
     end
 
     -- ----------------------------------------------------------------------- --

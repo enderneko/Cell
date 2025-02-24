@@ -1,6 +1,6 @@
 ## Interface: 40401,40402
 ## Title: Cell
-## Version: r243-release
+## Version: r244-release
 ## Author: enderneko
 ## X-Flavor: Cata
 ## SavedVariables: CellDB, CellDBBackup

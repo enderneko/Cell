@@ -1,10 +1,22 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r242-release...16402c234159ae4dd8b357e9c30e941dea8d7cea)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r243-release...92c6781c5747dd56e44f3deb3682b4a6d2e39f19)
 
-- Fix wrath power filter
-- Fix indicator revision process
-- Add stack options for custom text indicators
-- Update health text format
-- Update bleed list
-- Update buff tracker events
-- Update range check
-- Revert some GROUP_ROSTER_UPDATE changes
+- Update Click-Casting spells (#298)
+- Update "Drinking" list (#279, #306)
+- Update GetMouseFocus for Classic (Era and Cata) (#293)
+- Update RaidDebuffs to include the Naxxramas for Classic (#294)
+- Update locales
+- Update debuffs for TWW season 2 (Thanks 钛锬)
+- Update Liberation of Undermine debuffs (Thanks Reat)
+- Update RoleIcon/PowerFilters for Vanilla
+- Implement CombatIcon indicator
+- Update F.IsInRange
+- Update AoEHealings indicator
+- Update dispel request text flipbook
+- Add "Relative" for indicator position settings
+- Add class/role filter for PowerText indicator
+- Add downranking spells support (beta)
+- Add functions for "installer" addons
+- Restore F.IsSoulstone
+- Refactor HealthText indicator
+- Fix texture selector
+- Convert colon methods to dot notation
