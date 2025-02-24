@@ -117,7 +117,7 @@ L["Button"] = "Bouton"
 L["C"] = "Talent de classe"
 L["Cancel"] = "Annuler"
 L["Can't change options in combat"] = "Impossible de modifier les options en combat"
-L["Cast By"] = "Lancer par"
+L["Cast By"] = "Lancé par"
 --[[Translation missing --]]
 --[[ L["cast Inner spell"] = ""--]]
 --[[Translation missing --]]
@@ -161,6 +161,8 @@ L["Color Duration Text"] = "Couleur du texte de la durée"
 --[[Translation missing --]]
 --[[ L["Color Thresholds"] = ""--]]
 L["Columns"] = "Colonnes"
+--[[Translation missing --]]
+--[[ L["Combat Icon"] = ""--]]
 L["Combine Groups"] = "Combiner les groupes"
 L["Common"] = "Commun"
 L["Condition"] = "Condition"
@@ -220,6 +222,8 @@ L["Delete debuff?"] = "Supprimer l'affaiblissement ?"
 L["Delete indicator"] = "Supprimer l'indicateur"
 L["Delete layout"] = "Supprimer la mise en page"
 L["Delete spell?"] = "Supprimer le sort ?"
+--[[Translation missing --]]
+--[[ L["Delimiter"] = "Delimiter"--]]
 L["Disabled"] = "Désactivé"
 L["Disabled in battlegrounds and arenas"] = "Désactivé en champs de bataille et arènes."
 --[[Translation missing --]]
@@ -248,6 +252,8 @@ L["Displayed Per Line"] = "Affiché par ligne"
 --[[ L["durationFont"] = "Duration Font"--]]
 L["Edit"] = "Modifier"
 L["Edit spell"] = "Modifier le sort"
+--[[Translation missing --]]
+--[[ L["Effective"] = "Effective"--]]
 --[[Translation missing --]]
 --[[ L["En"] = "En"--]]
 L["Enable"] = "Activer"
@@ -344,7 +350,11 @@ L["Half"] = "Moitié"
 --[[Translation missing --]]
 --[[ L["Heal Absorb"] = "Heal Absorb"--]]
 --[[Translation missing --]]
+--[[ L["Heal Absorbs"] = ""--]]
+--[[Translation missing --]]
 --[[ L["Heal Prediction"] = "Heal Prediction"--]]
+--[[Translation missing --]]
+--[[ L["Health"] = ""--]]
 L["Health Bar"] = "Barre de vie"
 --[[Translation missing --]]
 --[[ L["Health Bar Alpha"] = "Health Bar Alpha"--]]
@@ -555,6 +565,8 @@ L["only in group"] = "Seulement en groupe"
 --[[ L["Only show when you have permission to do this"] = "Only show when you have permission to do this"--]]
 L["Only visible to me"] = "Seulement visible par moi"
 --[[Translation missing --]]
+--[[ L["onlyEnableNotInCombat"] = "Only when I'm not in combat"--]]
+--[[Translation missing --]]
 --[[ L["onlyShowOvershields"] = "Only show overshields"--]]
 L["onlyShowTopGlow"] = "Afficher uniquement la lueur pour le premier affaiblissement"
 L["Options"] = "Options"
@@ -610,6 +622,8 @@ L["Preview"] = "Aperçu"
 L["Primary Talents"] = "Talents primaires"
 --[[Translation missing --]]
 --[[ L["Private Auras"] = "Private Auras"--]]
+--[[Translation missing --]]
+--[[ L["Profile imported successfully."] = ""--]]
 L["Profiles"] = "Profils"
 --[[Translation missing --]]
 --[[ L["Pull"] = "Pull"--]]
@@ -646,6 +660,10 @@ L["Rect"] = "Rect"
 --[[ L["refresh unit buttons"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Refreshing unit buttons (%s)..."] = ""--]]
+--[[Translation missing --]]
+--[[ L["Relative Point"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Relative To"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Remaining Time"] = "Remaining Time"--]]
 --[[Translation missing --]]
@@ -746,6 +764,8 @@ L["Shield Texture"] = "Texture de bouclier"
 --[[Translation missing --]]
 --[[ L["shieldByMe"] = "Only show PW:S cast by me"--]]
 L["shields"] = "Boucliers"
+--[[Translation missing --]]
+--[[ L["Shields"] = "Shields"--]]
 L["Shift+Enter: add a new line"] = "Maj+Entrée : ajouter une nouvelle ligne"
 L["Shine"] = "Briller"
 L["Show All"] = "Tout afficher"
@@ -809,6 +829,8 @@ L["SNIPPETS_TIPS"] = "[Double-clic] pour renommer. [Maj-clic] pour supprimer. To
 --[[ L["Solid"] = "Solid"--]]
 L["Solo"] = "Solo"
 L["Sort By Role"] = "Trier par rôle"
+--[[Translation missing --]]
+--[[ L["Space"] = "Space"--]]
 L["Spacing"] = "Espacement"
 --[[Translation missing --]]
 --[[ L["Spec"] = ""--]]
@@ -885,7 +907,7 @@ L["This may help solve issues of indicators not updating correctly"] = "Cela peu
 --[[Translation missing --]]
 --[[ L["This may overwrite built-in indicators"] = "This may overwrite built-in indicators"--]]
 L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"] = "Ce paramètre sera ignoré si l'option %1$s dans l'onglet %2$s est activée"
-L["This will make these icons not click-through-able"] = "Cela rendra ces icônes non cliquables"
+L["This will make these icons not click-through-able"] = "Lorsque c'est activé un click sur l'icone empêche le lancement des sorts."
 L["This will not affect aura tooltips"] = "Cela n'affectera pas les infobulles d'aura"
 --[[Translation missing --]]
 --[[ L["This will overwrite your debuffs"] = "This will overwrite your debuffs"--]]

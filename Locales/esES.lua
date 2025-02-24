@@ -131,6 +131,8 @@ L["Color By"] = "Color de"
 L["Color Duration Text"] = "Color Texto de duración"
 L["Color Thresholds"] = "Umbrales de color"
 L["Columns"] = "Columnas"
+--[[Translation missing --]]
+--[[ L["Combat Icon"] = ""--]]
 L["Combine Groups"] = "Combinar grupos"
 L["Common"] = "Común"
 L["Condition"] = "Condición"
@@ -162,7 +164,7 @@ L["Custom indicators will not be overwritten, even with same name"] = "Los indic
 L["Custom Nicknames"] = "Apodos personalizados"
 L["custom(s)"] = "personalizado(s)"
 L["Data transfer failed..."] = "Fallo en la transferencia de datos..."
-L["DEAD"] = "MUERTE"
+L["DEAD"] = "MUERTO"
 L["Death Report"] = "Informe de Muerte"
 L["Debuff"] = "Perjuicios"
 L["Debuff already exists."] = "El perjuicio ya existe."
@@ -181,6 +183,8 @@ L["Delete debuff?"] = "Borrar perjuicios?"
 L["Delete indicator"] = "Borrar indicador"
 L["Delete layout"] = "Borrar diseño"
 L["Delete spell?"] = "Borrar hechizo?"
+--[[Translation missing --]]
+--[[ L["Delimiter"] = "Delimiter"--]]
 L["Disabled"] = "Desactivado"
 L["Disabled in battlegrounds and arenas"] = "Desactivar en campos de batalla y arenas"
 L["Discard"] = "Descartar"
@@ -201,6 +205,8 @@ L["Due to restrictions of the private aura system, this indicator can only use B
 L["durationFont"] = "Fuente de duración"
 L["Edit"] = "Editar"
 L["Edit spell"] = "Editar hechizo"
+--[[Translation missing --]]
+--[[ L["Effective"] = "Effective"--]]
 L["En"] = "En"
 L["Enable"] = "Habilitar"
 L["Enable Color Gradient"] = "Habilitar degradado de color"
@@ -261,7 +267,9 @@ L["Group Spacing"] = "Espaciado entre Grupos"
 L["H"] = "Talento Héroe"
 L["Half"] = "Mitad"
 L["Heal Absorb"] = "Absorción de Sanación"
+L["Heal Absorbs"] = "Absorción de Sanación"
 L["Heal Prediction"] = "Predicción de sanación"
+L["Health"] = "Salud"
 L["Health Bar"] = "Barra de salud"
 L["Health Bar Alpha"] = "Barra de salud Alpha"
 L["Health Bar Color"] = "Color de barra salud"
@@ -401,6 +409,8 @@ L["Only one threshold is displayed at a time"] = "Solo se muestra un límite a l
 L["Only show during encounter or in mythic+"] = "Solo se muestra durante en encuentro o en mica+"
 L["Only show when you have permission to do this"] = "Mostrar solo cuando tenga permiso para ello"
 L["Only visible to me"] = "Solo visible para mí"
+--[[Translation missing --]]
+--[[ L["onlyEnableNotInCombat"] = "Only when I'm not in combat"--]]
 L["onlyShowOvershields"] = "Mostrar solo SobreEscudos"
 L["onlyShowTopGlow"] = "Mostrar brillo solo para el primer perjuicio"
 L["Options"] = "Opciones"
@@ -440,6 +450,8 @@ L["Press Key to Bind"] = "Presiona la Tecla para Asignar"
 L["Preview"] = "Previsualizar"
 L["Primary Talents"] = "Talentos principales"
 L["Private Auras"] = "Auras privadas"
+--[[Translation missing --]]
+--[[ L["Profile imported successfully."] = ""--]]
 L["Profiles"] = "Perfiles"
 L["Pull"] = "Pull"
 L["Pull in %d sec"] = "Iniciar en %d sec"
@@ -464,6 +476,10 @@ L["readyCheckTips"] = "\n|rComprobación de Listo\nClic Izquierdo: |cffffffffini
 L["Rect"] = "Rectángulo"
 L["refresh unit buttons"] = "Botones de la actualización"
 L["Refreshing unit buttons (%s)..."] = "Actualización de los botones de la unidad (%s)..."
+--[[Translation missing --]]
+--[[ L["Relative Point"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Relative To"] = ""--]]
 L["Remaining Time"] = "Duración restante"
 L["Remember to backup your profile"] = "Recuerda hacer una copia de seguridad de tu perfil"
 L["Remove"] = "Eliminar"
@@ -533,6 +549,8 @@ L["Shield Bar"] = "Barra Escudo"
 L["Shield Texture"] = "Textura escudo"
 L["shieldByMe"] = "Mostrar solo PW:S lanzados por mí"
 L["shields"] = "Escudos"
+--[[Translation missing --]]
+--[[ L["Shields"] = "Shields"--]]
 L["Shift+Enter: add a new line"] = "Mayús+Intro: añade una nueva línea"
 L["Shine"] = "Brillo"
 L["Show All"] = "Mostrar todo"
@@ -570,6 +588,8 @@ L["SNIPPETS_TIPS"] = "[Doble click] para renombrar. [Shift-click] para eliminar.
 L["Solid"] = "Sólido"
 L["Solo"] = "Solo"
 L["Sort By Role"] = "Ordenar por función"
+--[[Translation missing --]]
+--[[ L["Space"] = "Space"--]]
 L["Spacing"] = "Espacio"
 L["Spec"] = "Especialización"
 L["Spec Filter"] = "Filtro especialización"

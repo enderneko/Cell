@@ -131,6 +131,8 @@ L["Color By"] = "Farbe nach"
 L["Color Duration Text"] = "Farbe Dauer Text"
 L["Color Thresholds"] = "Farbschwellenwerte"
 L["Columns"] = "Spalten"
+--[[Translation missing --]]
+--[[ L["Combat Icon"] = ""--]]
 L["Combine Groups"] = "Gruppen kombinieren"
 L["Common"] = "Allgemein"
 L["Condition"] = "Bedingung"
@@ -181,6 +183,8 @@ L["Delete debuff?"] = "Debuffs löschen?"
 L["Delete indicator"] = "Indikator löschen"
 L["Delete layout"] = "Layout löschen"
 L["Delete spell?"] = "Zauber löschen?"
+--[[Translation missing --]]
+--[[ L["Delimiter"] = "Delimiter"--]]
 L["Disabled"] = "Deaktiviert"
 L["Disabled in battlegrounds and arenas"] = "Deaktiviert in Schlachtfeldern und Arenen"
 L["Discard"] = "Verwerfen"
@@ -201,6 +205,8 @@ L["Due to restrictions of the private aura system, this indicator can only use B
 L["durationFont"] = "Dauer Schriftart"
 L["Edit"] = "Bearbeiten"
 L["Edit spell"] = "Zauber bearbeiten"
+--[[Translation missing --]]
+--[[ L["Effective"] = "Effective"--]]
 L["En"] = "En"
 L["Enable"] = "Aktivieren"
 L["Enable Color Gradient"] = "Farbverlauf aktivieren"
@@ -261,7 +267,9 @@ L["Group Spacing"] = "Abstand zwischen den Gruppen"
 L["H"] = "Heldentalent"
 L["Half"] = "Halb"
 L["Heal Absorb"] = "Heilung Absorbieren"
+L["Heal Absorbs"] = "Heilabsorb"
 L["Heal Prediction"] = "Heilung Vorhersage"
+L["Health"] = "Gesundheit"
 L["Health Bar"] = "Gesundheitsleiste"
 L["Health Bar Alpha"] = "Gesundheitsleiste Alpha"
 L["Health Bar Color"] = "Farbe der Gesundheitsleiste"
@@ -401,6 +409,8 @@ L["Only one threshold is displayed at a time"] = "Es wird jeweils nur ein Schwel
 L["Only show during encounter or in mythic+"] = "Wird nur bei Begegnungen oder in mythisch+ angezeigt"
 L["Only show when you have permission to do this"] = "Nur anzeigen, wenn du die Berechtigung hast, dies zu tun"
 L["Only visible to me"] = "Nur für mich sichtbar"
+--[[Translation missing --]]
+--[[ L["onlyEnableNotInCombat"] = "Only when I'm not in combat"--]]
 L["onlyShowOvershields"] = "Nur Überschilde anzeigen"
 L["onlyShowTopGlow"] = "Nur für den ersten Schwächungszauber leuchten"
 L["Options"] = "Optionen"
@@ -440,6 +450,8 @@ L["Press Key to Bind"] = "Taste zum Binden drücken"
 L["Preview"] = "Vorschau"
 L["Primary Talents"] = "Primäre Talente"
 L["Private Auras"] = "Private Auren"
+--[[Translation missing --]]
+--[[ L["Profile imported successfully."] = ""--]]
 L["Profiles"] = "Profile"
 L["Pull"] = "Pull"
 L["Pull in %d sec"] = "Pull in %d sek"
@@ -464,6 +476,10 @@ L["readyCheckTips"] = "\n|rBereitschaftsprüfung\nLinks-Klick: |cffffffffStarten
 L["Rect"] = "Rechteck"
 L["refresh unit buttons"] = "Tasten der Aktualisierungseinheit"
 L["Refreshing unit buttons (%s)..."] = "Aktualisieren der Einheitentasten (%s)..."
+--[[Translation missing --]]
+--[[ L["Relative Point"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Relative To"] = ""--]]
 L["Remaining Time"] = "Verbleibende Zeit"
 L["Remember to backup your profile"] = "Denke daran, dein Profil zu sichern"
 L["Remove"] = "Entfernen"
@@ -533,6 +549,8 @@ L["Shield Bar"] = "Schildleiste"
 L["Shield Texture"] = "Schildtextur"
 L["shieldByMe"] = "Nur von mir gecastete Machtwort: Schild anzeigen"
 L["shields"] = "Schilde"
+--[[Translation missing --]]
+--[[ L["Shields"] = "Shields"--]]
 L["Shift+Enter: add a new line"] = "Umschalt+Eingabe: eine neue Zeile hinzufügen"
 L["Shine"] = "Glänzen"
 L["Show All"] = "Alles anzeigen"
@@ -570,6 +588,8 @@ L["SNIPPETS_TIPS"] = "Zum Umbenennen [Doppelklick]. [Umschalt-Klick] zum Lösche
 L["Solid"] = "Solide"
 L["Solo"] = "Solo"
 L["Sort By Role"] = "Nach Rolle sortieren"
+--[[Translation missing --]]
+--[[ L["Space"] = "Space"--]]
 L["Spacing"] = "Abstand"
 L["Spec"] = "Spezalisierung"
 L["Spec Filter"] = "Spezialisierungsfilter"

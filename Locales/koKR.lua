@@ -137,7 +137,7 @@ L["Bug Report & Suggestion"] = "버그 신고 & 제안"
 --[[Translation missing --]]
 --[[ L["Button"] = ""--]]
 --[[Translation missing --]]
---[[ L["C"] = "Class Talent"--]]
+--[[ L["C"] = "Class"--]]
 L["Cancel"] = "취소"
 L["Can't change options in combat"] = "전투 중 옵션을 바꿀 수 없습니다."
 --[[Translation missing --]]
@@ -192,6 +192,8 @@ L["Color"] = "색상"
 --[[ L["Color Thresholds"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Columns"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Combat Icon"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Combine Groups"] = ""--]]
 L["Common"] = "공용"
@@ -258,6 +260,8 @@ L["Delete layout"] = "배치 삭제"
 --[[Translation missing --]]
 --[[ L["Delete spell?"] = "Delete spell?"--]]
 --[[Translation missing --]]
+--[[ L["Delimiter"] = "Delimiter"--]]
+--[[Translation missing --]]
 --[[ L["Disabled"] = "Disabled"--]]
 L["Disabled in battlegrounds and arenas"] = "전장 및 투기장에서 꺼짐"
 L["Discard"] = "취소"
@@ -274,7 +278,7 @@ L["Discard"] = "취소"
 L["dispellableByMe"] = "자신이 해제 가능한 약화 효과만"
 L["Dispels"] = "해제 가능 디버프"
 --[[Translation missing --]]
---[[ L["Display a gradient texture when the unit receives a heal from your certain healing spells."] = ""--]]
+--[[ L["Display a gradient texture when the unit receives a heal from your certain healing spells."] = "Display a gradient texture when the unit receives a heal from your certain healing spells."--]]
 --[[Translation missing --]]
 --[[ L["Display elapsed time since debuff applied"] = ""--]]
 --[[Translation missing --]]
@@ -290,6 +294,8 @@ L["DRINKING"] = "음료"
 --[[ L["durationFont"] = "Duration Font"--]]
 L["Edit"] = "편집"
 L["Edit spell"] = "주문 편집"
+--[[Translation missing --]]
+--[[ L["Effective"] = "Effective"--]]
 --[[Translation missing --]]
 --[[ L["En"] = "En"--]]
 L["Enable"] = "사용"
@@ -371,11 +377,15 @@ L["Group Filters"] = "그룹 필터"
 L["Group Rows"] = "그룹 행"
 L["Group Spacing"] = "그룹 간격"
 --[[Translation missing --]]
---[[ L["H"] = "Hero Talent"--]]
+--[[ L["H"] = "Hero"--]]
 --[[Translation missing --]]
 --[[ L["Half"] = "Half"--]]
 L["Heal Absorb"] = "치유 흡수"
+--[[Translation missing --]]
+--[[ L["Heal Absorbs"] = ""--]]
 L["Heal Prediction"] = "치유 예측"
+--[[Translation missing --]]
+--[[ L["Health"] = ""--]]
 L["Health Bar"] = "생명력 바"
 L["Health Bar Alpha"] = "생명력 바 투명도"
 L["Health Bar Color"] = "생명력 바 색상"
@@ -581,6 +591,8 @@ L["Only show when you have permission to do this"] = "이 작업을 수행할 �
 --[[Translation missing --]]
 --[[ L["Only visible to me"] = "Only visible to me"--]]
 --[[Translation missing --]]
+--[[ L["onlyEnableNotInCombat"] = "Only when I'm not in combat"--]]
+--[[Translation missing --]]
 --[[ L["onlyShowOvershields"] = "Only show overshields"--]]
 L["onlyShowTopGlow"] = "Glow만 표시"
 L["Options"] = "옵션"
@@ -636,6 +648,8 @@ L["Preview"] = "미리보기"
 --[[ L["Primary Talents"] = "Primary Talents"--]]
 --[[Translation missing --]]
 --[[ L["Private Auras"] = "Private Auras"--]]
+--[[Translation missing --]]
+--[[ L["Profile imported successfully."] = ""--]]
 L["Profiles"] = "프로필"
 L["Pull"] = "풀링"
 --[[Translation missing --]]
@@ -671,6 +685,10 @@ L["Rect"] = "모서리"
 --[[ L["refresh unit buttons"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Refreshing unit buttons (%s)..."] = ""--]]
+--[[Translation missing --]]
+--[[ L["Relative Point"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Relative To"] = ""--]]
 L["Remaining Time"] = "남은 시간 <"
 --[[Translation missing --]]
 --[[ L["Remember to backup your profile"] = ""--]]
@@ -753,7 +771,7 @@ L["Rotate Texture"] = "텍스처 회전"
 --[[ L["Rows"] = ""--]]
 L["Run"] = "실행"
 --[[Translation missing --]]
---[[ L["S"] = "Spec Talent"--]]
+--[[ L["S"] = "Spec"--]]
 L["Save"] = "저장"
 L["Scale"] = "크기"
 L["ScrollDown"] = "휠 버튼 아래로"
@@ -784,6 +802,8 @@ L["Shield Bar"] = "보호막 바"
 --[[ L["shieldByMe"] = "Only show PW:S cast by me"--]]
 --[[Translation missing --]]
 --[[ L["shields"] = "shields"--]]
+--[[Translation missing --]]
+--[[ L["Shields"] = "Shields"--]]
 L["Shift+Enter: add a new line"] = "Shift+Enter: 새로운 라인 추가"
 L["Shine"] = "Shine"
 --[[Translation missing --]]
@@ -842,6 +862,8 @@ L["Solid"] = "단색"
 --[[ L["Solo"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Sort By Role"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Space"] = "Space"--]]
 --[[Translation missing --]]
 --[[ L["Spacing"] = ""--]]
 --[[Translation missing --]]
