@@ -3214,6 +3214,19 @@ function F.Revise()
                         t.filters = F.Copy(Cell.defaults.layout.indicators[Cell.defaults.indicatorIndices.powerText].filters)
                     end
                 end
+
+                -- position
+                if t.position and #t.position == 4 then
+                    local relativeTo
+                    if t.indicatorName == "nameText" then
+                        relativeTo = "healthBar"
+                    elseif t.indicatorName == "shieldBar" then
+                        relativeTo = nil
+                    else
+                        relativeTo = "button"
+                    end
+                    tinsert(t.position, 2, relativeTo)
+                end
             end
         end
     end

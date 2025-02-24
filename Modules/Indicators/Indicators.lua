@@ -1,8 +1,12 @@
 local _, Cell = ...
 local L = Cell.L
+---@type CellFuncs
 local F = Cell.funcs
+---@type CellUnitButtonFuncs
 local B = Cell.bFuncs
+---@type CellIndicatorFuncs
 local I = Cell.iFuncs
+---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
@@ -620,7 +624,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                         indicator:SetPosition(t["position"][1], t["position"][2], t["position"][3])
                     else
                         P.ClearPoints(indicator)
-                        P.Point(indicator, t["position"][1], previewButton, t["position"][2], t["position"][3], t["position"][4])
+                        local relativeTo = t["position"][2] == "healthBar" and previewButton.widgets.healthBar or previewButton
+                        P.Point(indicator, t["position"][1], relativeTo, t["position"][3], t["position"][4], t["position"][5])
                     end
                 end
                 -- update anchor
@@ -832,7 +837,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:SetPosition(value[1], value[2], value[3])
             else
                 P.ClearPoints(indicator)
-                P.Point(indicator, value[1], previewButton, value[2], value[3], value[4])
+                local relativeTo = value[2] == "healthBar" and previewButton.widgets.healthBar or previewButton
+                P.Point(indicator, value[1], relativeTo, value[3], value[4], value[5])
             end
             -- update arrangement
             if indicator.indicatorType == "icons" then
@@ -983,7 +989,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update position
             if value["position"] then
                 P.ClearPoints(indicator)
-                P.Point(indicator, value["position"][1], previewButton, value["position"][2], value["position"][3], value["position"][4])
+                local relativeTo = value["position"][2] == "healthBar" and previewButton.widgets.healthBar or previewButton
+                P.Point(indicator, value["position"][1], relativeTo, value["position"][3], value["position"][4], value["position"][5])
             end
             -- update anchor
             if value["anchor"] then
@@ -1542,7 +1549,7 @@ local DEBUFFS_TOOLTIP1 = L["This will make these icons not click-through-able"].
 local DEBUFFS_TOOLTIP2 = L["This will make these icons not click-through-able"]
 if Cell.isRetail then
     indicatorSettings = {
-        ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "position", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "healthFormat", "position", "frameLevel", "font-noOffset"},
         ["powerText"] = {"enabled", "color-power", "powerFormat", "powerTextFilters", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
@@ -1585,7 +1592,7 @@ if Cell.isRetail then
     }
 elseif Cell.isCata or Cell.isWrath then
     indicatorSettings = {
-        ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "position", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "healthFormat", "position", "frameLevel", "font-noOffset"},
         ["powerText"] = {"enabled", "color-power", "powerFormat", "powerTextFilters", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
@@ -1622,7 +1629,7 @@ elseif Cell.isCata or Cell.isWrath then
     }
 elseif Cell.isVanilla then
     indicatorSettings = {
-        ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "position", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "healthFormat", "position", "frameLevel", "font-noOffset"},
         ["powerText"] = {"enabled", "color-power", "powerFormat", "powerTextFilters", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
@@ -1742,7 +1749,7 @@ local function ShowIndicatorSettings(id)
         if currentSetting == "color-alpha" or currentSetting == "color-class" or currentSetting == "color-power" then currentSetting = "color" end
         if currentSetting == "customColors" or currentSetting == "overlayColors" or currentSetting == "blockColors" then currentSetting = "colors" end
         if currentSetting == "size-square" or currentSetting == "size-normal-big" then currentSetting = "size" end
-        if currentSetting == "namePosition" or currentSetting == "statusPosition" or currentSetting == "position-noHCenter" or currentSetting == "shieldBarPosition" then currentSetting = "position" end
+        if currentSetting == "statusPosition" or currentSetting == "position-noHCenter" or currentSetting == "shieldBarPosition" then currentSetting = "position" end
         if currentSetting == "barOrientation" then currentSetting = "orientation" end
         if currentSetting == "durationVisibility" then currentSetting = "showDuration" end
         if currentSetting == "powerFormat" then currentSetting = "format" end

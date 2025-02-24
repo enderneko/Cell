@@ -68,13 +68,18 @@ local function CreateSetting_Enabled(parent)
 end
 
 local anchorPoints = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "CENTER", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
-local function CreateSetting_Position(parent, relativeToText)
+local function CreateSetting_Position(parent)
     local widget
 
     if not settingWidgets["position"] then
-        widget = Cell.CreateFrame("CellIndicatorSettings_Position", parent, 240, 95)
+        widget = Cell.CreateFrame("CellIndicatorSettings_Position", parent, 240, 141)
         settingWidgets["position"] = widget
 
+        local function GetResult()
+            return {widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.relativePoint:GetSelected(), widget.x:GetValue(), widget.y:GetValue()}
+        end
+
+        -- anchor
         widget.anchor = Cell.CreateDropdown(widget, 110)
         widget.anchor:SetPoint("TOPLEFT", 5, -20)
         local items = {}
@@ -83,7 +88,7 @@ local function CreateSetting_Position(parent, relativeToText)
                 ["text"] = L[point],
                 ["value"] = point,
                 ["onClick"] = function()
-                    widget.func({point, widget.relativeTo:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
+                    widget.func(GetResult())
                 end,
             })
         end
@@ -93,34 +98,61 @@ local function CreateSetting_Position(parent, relativeToText)
         widget.anchorText:SetText(L["Anchor Point"])
         widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
 
-        widget.relativeTo = Cell.CreateDropdown(widget, 110)
-        widget.relativeTo:SetPoint("LEFT", widget.anchor, "RIGHT", 25, 0)
+        -- relative point
+        widget.relativePoint = Cell.CreateDropdown(widget, 110)
+        widget.relativePoint:SetPoint("TOPLEFT", widget.anchor, "TOPRIGHT", 25, 0)
         items = {}
         for _, point in pairs(anchorPoints) do
             tinsert(items, {
                 ["text"] = L[point],
                 ["value"] = point,
                 ["onClick"] = function()
-                    widget.func({widget.anchor:GetSelected(), point, widget.x:GetValue(), widget.y:GetValue()})
+                    widget.func(GetResult())
                 end,
             })
         end
-        widget.relativeTo:SetItems(items)
+        widget.relativePoint:SetItems(items)
+
+        widget.relativePointText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.relativePointText:SetText(L["Relative Point"])
+        widget.relativePointText:SetPoint("BOTTOMLEFT", widget.relativePoint, "TOPLEFT", 0, 1)
+
+        -- relative to
+        widget.relativeTo = Cell.CreateDropdown(widget, 110)
+        widget.relativeTo:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
+        widget.relativeTo:SetItems({
+            {
+                ["text"] = L["Unit Button"],
+                ["value"] = "button",
+                ["onClick"] = function()
+                    widget.func(GetResult())
+                end,
+            },
+            {
+                ["text"] = L["Health Bar"],
+                ["value"] = "healthBar",
+                ["onClick"] = function()
+                    widget.func(GetResult())
+                end,
+            }
+        })
 
         widget.relativeToText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.relativeToText:SetText(L["To UnitButton's"])
+        widget.relativeToText:SetText(L["Relative To"])
         widget.relativeToText:SetPoint("BOTTOMLEFT", widget.relativeTo, "TOPLEFT", 0, 1)
 
+        -- x
         widget.x = Cell.CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
-        widget.x:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
+        widget.x:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
         widget.x.afterValueChangedFn = function(value)
-            widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), value, widget.y:GetValue()})
+            widget.func(GetResult())
         end
 
+        -- y
         widget.y = Cell.CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
-        widget.y:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
+        widget.y:SetPoint("TOPLEFT", widget.x, "TOPRIGHT", 25, 0)
         widget.y.afterValueChangedFn = function(value)
-            widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
+            widget.func(GetResult())
         end
 
         -- callback
@@ -130,28 +162,33 @@ local function CreateSetting_Position(parent, relativeToText)
 
         -- show db value
         function widget:SetDBValue(positionTable)
-            widget.anchor:SetSelected(L[positionTable[1]])
-            widget.relativeTo:SetSelected(L[positionTable[2]])
-            widget.x:SetValue(positionTable[3])
-            widget.y:SetValue(positionTable[4])
+            widget.anchor:SetSelectedValue(positionTable[1])
+            widget.relativePoint:SetSelectedValue(positionTable[3])
+            widget.relativeTo:SetSelectedValue(positionTable[2])
+            widget.x:SetValue(positionTable[4])
+            widget.y:SetValue(positionTable[5])
         end
     else
         widget = settingWidgets["position"]
     end
 
-    widget.relativeToText:SetText(relativeToText)
     widget:Show()
     return widget
 end
 
 local anchorPoints_noHCenter = {"BOTTOMLEFT", "BOTTOMRIGHT", "LEFT", "RIGHT", "TOPLEFT", "TOPRIGHT"}
-local function CreateSetting_PositionNoHCenter(parent, relativeToText)
+local function CreateSetting_PositionNoHCenter(parent)
     local widget
 
     if not settingWidgets["position_noHCenter"] then
         widget = Cell.CreateFrame("CellIndicatorSettings_PositionNoHCenter", parent, 240, 95)
         settingWidgets["position_noHCenter"] = widget
 
+        local function GetResult()
+            return {widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.relativePoint:GetSelected(), widget.x:GetValue(), widget.y:GetValue()}
+        end
+
+        -- anchor
         widget.anchor = Cell.CreateDropdown(widget, 110)
         widget.anchor:SetPoint("TOPLEFT", 5, -20)
         local items = {}
@@ -160,7 +197,7 @@ local function CreateSetting_PositionNoHCenter(parent, relativeToText)
                 ["text"] = L[point],
                 ["value"] = point,
                 ["onClick"] = function()
-                    widget.func({point, widget.relativeTo:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
+                    widget.func(GetResult())
                 end,
             })
         end
@@ -170,34 +207,61 @@ local function CreateSetting_PositionNoHCenter(parent, relativeToText)
         widget.anchorText:SetText(L["Anchor Point"])
         widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
 
-        widget.relativeTo = Cell.CreateDropdown(widget, 110)
-        widget.relativeTo:SetPoint("LEFT", widget.anchor, "RIGHT", 25, 0)
+        -- relative point
+        widget.relativePoint = Cell.CreateDropdown(widget, 110)
+        widget.relativePoint:SetPoint("TOPLEFT", widget.anchor, "TOPRIGHT", 25, 0)
         items = {}
         for _, point in pairs(anchorPoints_noHCenter) do
             tinsert(items, {
                 ["text"] = L[point],
                 ["value"] = point,
                 ["onClick"] = function()
-                    widget.func({widget.anchor:GetSelected(), point, widget.x:GetValue(), widget.y:GetValue()})
+                    widget.func(GetResult())
                 end,
             })
         end
-        widget.relativeTo:SetItems(items)
+        widget.relativePoint:SetItems(items)
+
+        widget.relativePointText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.relativePointText:SetText(L["Relative Point"])
+        widget.relativePointText:SetPoint("BOTTOMLEFT", widget.relativePoint, "TOPLEFT", 0, 1)
+
+        -- relative to
+        widget.relativeTo = Cell.CreateDropdown(widget, 110)
+        widget.relativeTo:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
+        widget.relativeTo:SetItems({
+            {
+                ["text"] = L["Unit Button"],
+                ["value"] = "button",
+                ["onClick"] = function()
+                    widget.func(GetResult())
+                end,
+            },
+            {
+                ["text"] = L["Health Bar"],
+                ["value"] = "healthBar",
+                ["onClick"] = function()
+                    widget.func(GetResult())
+                end,
+            }
+        })
 
         widget.relativeToText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.relativeToText:SetText(L["To UnitButton's"])
+        widget.relativeToText:SetText(L["Relative To"])
         widget.relativeToText:SetPoint("BOTTOMLEFT", widget.relativeTo, "TOPLEFT", 0, 1)
 
+        -- x
         widget.x = Cell.CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
-        widget.x:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
+        widget.x:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
         widget.x.afterValueChangedFn = function(value)
-            widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), value, widget.y:GetValue()})
+            widget.func(GetResult())
         end
 
+        -- y
         widget.y = Cell.CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
-        widget.y:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
+        widget.y:SetPoint("TOPLEFT", widget.x, "TOPRIGHT", 25, 0)
         widget.y.afterValueChangedFn = function(value)
-            widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
+            widget.func(GetResult())
         end
 
         -- callback
@@ -207,16 +271,16 @@ local function CreateSetting_PositionNoHCenter(parent, relativeToText)
 
         -- show db value
         function widget:SetDBValue(positionTable)
-            widget.anchor:SetSelected(L[positionTable[1]])
-            widget.relativeTo:SetSelected(L[positionTable[2]])
-            widget.x:SetValue(positionTable[3])
-            widget.y:SetValue(positionTable[4])
+            widget.anchor:SetSelectedValue(positionTable[1])
+            widget.relativePoint:SetSelectedValue(positionTable[3])
+            widget.relativeTo:SetSelectedValue(positionTable[2])
+            widget.x:SetValue(positionTable[4])
+            widget.y:SetValue(positionTable[5])
         end
     else
         widget = settingWidgets["position_noHCenter"]
     end
 
-    widget.relativeToText:SetText(relativeToText)
     widget:Show()
     return widget
 end
@@ -236,8 +300,8 @@ local function CreateSetting_ShieldBarPosition(parent)
                 ["text"] = L[point],
                 ["value"] = point,
                 ["onClick"] = function()
-                    widget.func({point, widget.relativeTo:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
-                    Cell.SetEnabled(true, widget.relativeToText, widget.relativeTo, widget.x, widget.y)
+                    widget.func({point, nil, widget.relativePoint:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
+                    Cell.SetEnabled(true, widget.relativePointText, widget.relativePoint, widget.x, widget.y)
                 end,
             })
         end
@@ -245,8 +309,8 @@ local function CreateSetting_ShieldBarPosition(parent)
             ["text"] = L["Health Bar"],
             ["value"] = "HEALTH_BAR",
             ["onClick"] = function()
-                widget.func({"HEALTH_BAR", widget.relativeTo:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
-                Cell.SetEnabled(false, widget.relativeToText, widget.relativeTo, widget.x, widget.y)
+                widget.func({"HEALTH_BAR", nil, widget.relativePoint:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
+                Cell.SetEnabled(false, widget.relativePointText, widget.relativePoint, widget.x, widget.y)
             end,
         })
         widget.anchor:SetItems(items)
@@ -255,34 +319,34 @@ local function CreateSetting_ShieldBarPosition(parent)
         widget.anchorText:SetText(L["Anchor Point"])
         widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
 
-        widget.relativeTo = Cell.CreateDropdown(widget, 110)
-        widget.relativeTo:SetPoint("LEFT", widget.anchor, "RIGHT", 25, 0)
+        widget.relativePoint = Cell.CreateDropdown(widget, 110)
+        widget.relativePoint:SetPoint("LEFT", widget.anchor, "RIGHT", 25, 0)
         items = {}
         for _, point in pairs(anchorPoints_noHCenter) do
             tinsert(items, {
                 ["text"] = L[point],
                 ["value"] = point,
                 ["onClick"] = function()
-                    widget.func({widget.anchor:GetSelected(), point, widget.x:GetValue(), widget.y:GetValue()})
+                    widget.func({widget.anchor:GetSelected(), nil, point, widget.x:GetValue(), widget.y:GetValue()})
                 end,
             })
         end
-        widget.relativeTo:SetItems(items)
+        widget.relativePoint:SetItems(items)
 
-        widget.relativeToText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.relativeToText:SetText(L["To UnitButton's"])
-        widget.relativeToText:SetPoint("BOTTOMLEFT", widget.relativeTo, "TOPLEFT", 0, 1)
+        widget.relativePointText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.relativePointText:SetText(L["To UnitButton's"])
+        widget.relativePointText:SetPoint("BOTTOMLEFT", widget.relativePoint, "TOPLEFT", 0, 1)
 
         widget.x = Cell.CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
         widget.x:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
         widget.x.afterValueChangedFn = function(value)
-            widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), value, widget.y:GetValue()})
+            widget.func({widget.anchor:GetSelected(), nil, widget.relativePoint:GetSelected(), value, widget.y:GetValue()})
         end
 
         widget.y = Cell.CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
-        widget.y:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
+        widget.y:SetPoint("TOPLEFT", widget.relativePoint, "BOTTOMLEFT", 0, -25)
         widget.y.afterValueChangedFn = function(value)
-            widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
+            widget.func({widget.anchor:GetSelected(), nil, widget.relativePoint:GetSelected(), widget.x:GetValue(), value})
         end
 
         -- callback
@@ -293,11 +357,11 @@ local function CreateSetting_ShieldBarPosition(parent)
         -- show db value
         function widget:SetDBValue(positionTable)
             widget.anchor:SetSelectedValue(positionTable[1])
-            widget.relativeTo:SetSelectedValue(positionTable[2])
-            widget.x:SetValue(positionTable[3])
-            widget.y:SetValue(positionTable[4])
+            widget.relativePoint:SetSelectedValue(positionTable[3])
+            widget.x:SetValue(positionTable[4])
+            widget.y:SetValue(positionTable[5])
 
-            Cell.SetEnabled(positionTable[1] ~= "HEALTH_BAR", widget.relativeToText, widget.relativeTo, widget.x, widget.y)
+            Cell.SetEnabled(positionTable[1] ~= "HEALTH_BAR", widget.relativePointText, widget.relativePoint, widget.x, widget.y)
         end
     else
         widget = settingWidgets["shieldBarPosition"]
@@ -6761,11 +6825,9 @@ function Cell.CreateIndicatorSettings(parent, settingsTable)
         if builders[setting] then
             tinsert(widgetsTable, builders[setting](parent))
         elseif setting == "position" then
-            tinsert(widgetsTable, CreateSetting_Position(parent, L["To UnitButton's"]))
+            tinsert(widgetsTable, CreateSetting_Position(parent))
         elseif setting == "position-noHCenter" then
-            tinsert(widgetsTable, CreateSetting_PositionNoHCenter(parent, L["To UnitButton's"]))
-        elseif setting == "namePosition" then
-            tinsert(widgetsTable, CreateSetting_Position(parent, L["To HealthBar's"]))
+            tinsert(widgetsTable, CreateSetting_PositionNoHCenter(parent))
         elseif strfind(setting, "^frameLevel") then
             tinsert(widgetsTable, CreateSetting_FrameLevel(parent))
         elseif string.find(setting, "^num:") then

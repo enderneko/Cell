@@ -480,6 +480,8 @@ L["Blocks"] = "色块组"
 
 L["Enabled"] = "启用"
 L["Anchor Point"] = "锚点"
+L["Relative Point"] = "相对锚点"
+L["Relative To"] = "相对于"
 L["To UnitButton's"] = "到单位按钮的"
 L["To HealthBar's"] = "到血条的"
 L["vehicle name"] = "载具名称"

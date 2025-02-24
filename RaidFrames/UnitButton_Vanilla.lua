@@ -191,7 +191,8 @@ local function HandleIndicators(b)
                 indicator:SetPosition(t["position"][1], t["position"][2], t["position"][3])
             else
                 P.ClearPoints(indicator)
-                P.Point(indicator, t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
+                local relativeTo = t["position"][2] == "healthBar" and b.widgets.healthBar or b
+                P.Point(indicator, t["position"][1], relativeTo, t["position"][3], t["position"][4], t["position"][5])
             end
         end
         -- update anchor
@@ -596,7 +597,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:SetPosition(value[1], value[2], value[3])
                 else
                     P.ClearPoints(indicator)
-                    P.Point(indicator, value[1], b, value[2], value[3], value[4])
+                    local relativeTo = value[2] == "healthBar" and b.widgets.healthBar or b
+                    P.Point(indicator, value[1], relativeTo, value[3], value[4], value[5])
                 end
                 -- update arrangement
                 if indicator.indicatorType == "icons" then
@@ -867,7 +869,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update position
                 if value["position"] then
                     P.ClearPoints(indicator)
-                    P.Point(indicator, value["position"][1], b, value["position"][2], value["position"][3], value["position"][4])
+                    local relativeTo = value["position"][2] == "healthBar" and b.widgets.healthBar or b
+                    P.Point(indicator, value["position"][1], relativeTo, value["position"][3], value["position"][4], value["position"][5])
                 end
                 -- update anchor
                 if value["anchor"] then

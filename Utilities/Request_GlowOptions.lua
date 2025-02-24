@@ -56,7 +56,8 @@ local function UpdatePreviewButton()
         previewButton.indicators.nameText:UpdateTextWidth(iTable["textWidth"])
         previewButton.indicators.nameText:SetFont(unpack(iTable["font"]))
         previewButton.indicators.nameText:ClearAllPoints()
-        previewButton.indicators.nameText:SetPoint(unpack(iTable["position"]))
+        local relativeTo = iTable["position"][2] == "healthBar" and previewButton.widgets.healthBar or previewButton
+        previewButton.indicators.nameText:SetPoint(iTable["position"][1], relativeTo, iTable["position"][3], iTable["position"][4], iTable["position"][5])
     else
         previewButton.indicators.nameText:Hide()
     end

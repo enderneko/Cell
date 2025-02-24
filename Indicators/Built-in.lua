@@ -1086,7 +1086,7 @@ function I.CreateNameText(parent)
     nameText._SetPoint = nameText.SetPoint
     function nameText:SetPoint(point, relativeTo, relativePoint, x, y)
         -- override relativeTo
-        nameText:_SetPoint(point, parent.widgets.healthBar, relativePoint, x, y)
+        nameText:_SetPoint(point, relativeTo, relativePoint, x, y)
 
         -- update name
         nameText.name:ClearAllPoints()

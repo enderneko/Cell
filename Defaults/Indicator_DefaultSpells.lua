@@ -849,7 +849,7 @@ function F.FirstRun()
             ["indicatorName"] = indicatorName,
             ["type"] = "icons",
             ["enabled"] = true,
-            ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+            ["position"] = {"TOPRIGHT", "button", "TOPRIGHT", 0, 3},
             ["frameLevel"] = 5,
             ["size"] = {13, 13},
             ["num"] = 5,
