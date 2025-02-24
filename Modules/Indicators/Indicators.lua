@@ -2226,7 +2226,7 @@ LoadIndicatorList = function()
             i:Show()
             if i.preview then i.preview:Show() end
         else
-            -- hide none selected indicators
+            -- hide non-selected indicators
             i:Hide()
             if i.preview then i.preview:Hide() end
         end

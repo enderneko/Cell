@@ -106,7 +106,7 @@ local function CreateAnimationGroup_TypeA()
     end)
 
     ag:SetScript("OnFinished", function()
-        animationPool.A.Release(canvas)
+        animationPool.A:Release(canvas)
     end)
 
     function ag:Display(parent, r, g, b)
@@ -531,7 +531,7 @@ local function CreateAnimationGroup_TypeF()
     end)
 
     ag:SetScript("OnFinished", function()
-        animationPool.F.Release(canvas)
+        animationPool.F:Release(canvas)
     end)
 
     function ag:Display(parent, r, g, b)
