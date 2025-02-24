@@ -95,7 +95,7 @@ select(2, ...).L = setmetatable({
         <p>* Updated "Drinking" list (#279, #306).</p>
         <p>* Updated range check.</p>
         <p>* Updated Dispel Request text flipbook animation.</p>
-        <p>* Refactor HealthText indicator.</p>
+        <p>* Refactored HealthText indicator.</p>
         <p>+ (Classic) Updated RaidDebuffs to include the Naxxramas raid (#294).</p>
         <p>+ (TWW) Updated debuffs for season 2 (Thanks 钛锬).</p>
         <p>+ (TWW) Updated Liberation of Undermine debuffs (Thanks Reat).</p>
