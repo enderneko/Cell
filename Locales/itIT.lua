@@ -1,4 +1,4 @@
-if not LOCALE_frFR then return end
+if not LOCALE_itIT then return end
 
 local L = select( 2, ...).L
 
