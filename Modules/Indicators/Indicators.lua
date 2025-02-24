@@ -1640,6 +1640,7 @@ elseif Cell.isVanilla then
             "|TInterface\\TargetingFrame\\UI-PhasingIcon:18:18:0:0:31:31:3:28:3:28|t "..
             "|A:horde_icon_and_flag-dynamicIcon:18:18|a "..
             "|A:alliance_icon_and_flag-dynamicIcon:18:18|a ", "enabled", "size-square", "position", "frameLevel"},
+        ["roleIcon"] = {"enabled", "checkbutton:hideDamager", "size-square", "roleTexture", "position", "frameLevel"},
         ["partyAssignmentIcon"] = {"enabled", "size-square", "position"},
         ["leaderIcon"] = {"enabled", "checkbutton:hideInCombat", "size-square", "position"},
         ["combatIcon"] = {"enabled", "checkbutton:onlyEnableNotInCombat", "size-square", "position", "frameLevel"},

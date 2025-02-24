@@ -6806,7 +6806,7 @@ local builders = {
     -- ["showOn"] = CreateSetting_ShowOn,
     ["maxValue"] = CreateSetting_MaxValue,
     ["iconStyle"] = CreateSetting_IconStyle,
-    ["powerTextFilters"] = Cell.isVanilla and CreateSetting_ClassFilters or CreateSetting_RoleFilters,
+    ["powerTextFilters"] = CreateSetting_RoleFilters,
 }
 
 function Cell.CreateIndicatorSettings(parent, settingsTable)

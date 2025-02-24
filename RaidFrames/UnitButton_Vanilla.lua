@@ -27,6 +27,7 @@ local UnitHealthMax = UnitHealthMax
 local UnitIsFriend = UnitIsFriend
 local UnitIsUnit = UnitIsUnit
 local UnitIsPlayer = UnitIsPlayer
+local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 local UnitIsConnected = UnitIsConnected
 local UnitIsAFK = UnitIsAFK
 local UnitIsFeignDeath = UnitIsFeignDeath
@@ -65,7 +66,7 @@ local barAnimationType, highlightEnabled, predictionEnabled
 -- unit button func declarations
 -------------------------------------------------
 local UnitButton_UpdateAll
-local UnitButton_UpdateAuras, UnitButton_UpdateAssignment, UnitButton_UpdateLeader, UnitButton_UpdateStatusText
+local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateAssignment, UnitButton_UpdateLeader, UnitButton_UpdateStatusText
 local UnitButton_UpdateHealthColor, UnitButton_UpdateNameTextColor, UnitButton_UpdateHealthTextColor
 local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerType, UnitButton_UpdatePowerText, UnitButton_UpdatePowerTextColor
 local CheckPowerEventRegistration, ShouldShowPowerText, ShouldShowPowerBar
@@ -313,6 +314,12 @@ local function HandleIndicators(b)
         if type(t["showBackground"]) == "boolean" then
             indicator:ShowBackground(t["showBackground"])
         end
+        -- update role texture
+        if t["roleTexture"] then
+            indicator:SetRoleTexture(t["roleTexture"])
+            indicator:HideDamager(t["hideDamager"])
+            UnitButton_UpdateRole(b)
+        end
         -- tooltip
         if type(t["showTooltip"]) == "boolean" then
             indicator:ShowTooltip(t["showTooltip"])
@@ -517,6 +524,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 I.EnableTargetedSpells(value)
             elseif indicatorName == "actions" then
                 I.EnableActions(value)
+            elseif indicatorName == "roleIcon" then
+                F.IterateAllUnitButtons(function(b)
+                    UnitButton_UpdateRole(b)
+                end, true)
             elseif indicatorName == "partyAssignmentIcon" then
                 F.IterateAllUnitButtons(function(b)
                     UnitButton_UpdateAssignment(b)
@@ -730,6 +741,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetNumPerLine(value)
             end, true)
+        elseif setting == "roleTexture" then
+            F.IterateAllUnitButtons(function(b)
+                local indicator = b.indicators[indicatorName]
+                indicator:SetRoleTexture(value)
+                UnitButton_UpdateRole(b)
+            end, true)
         elseif setting == "texture" then
             F.IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
@@ -845,6 +862,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             elseif value == "enableBlacklistShortcut" then
                 F.IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:EnableBlacklistShortcut(value2)
+                end, true)
+            elseif value == "hideDamager" then
+                F.IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:HideDamager(value2)
+                    UnitButton_UpdateRole(b)
                 end, true)
             elseif value == "fadeOut" then
                 F.IterateAllUnitButtons(function(b)
@@ -1426,6 +1448,12 @@ end
 -------------------------------------------------
 -- power filter funcs
 -------------------------------------------------
+local function GetRole(b)
+    if b.states.role and b.states.role ~= "NONE" then
+        return b.states.role
+    end
+end
+
 ShouldShowPowerText = function(b)
     if not enabledIndicators["powerText"] then return end
     if not (b:IsVisible() or b.isPreview) then return end
@@ -1434,11 +1462,12 @@ ShouldShowPowerText = function(b)
         return true
     end
 
-    local class
+    local class, role
     if b.states.inVehicle then
         class = "VEHICLE"
     elseif F.IsPlayer(b.states.guid) then
         class = b.states.class
+        role = GetRole(b)
     elseif F.IsPet(b.states.guid) then
         class = "PET"
     elseif F.IsNPC(b.states.guid) then
@@ -1448,7 +1477,15 @@ ShouldShowPowerText = function(b)
     end
 
     if class then
-        return indicatorCustoms["powerText"][class]
+        if type(indicatorCustoms["powerText"][class]) == "boolean" then
+            return indicatorCustoms["powerText"][class]
+        else
+            if role then
+                return indicatorCustoms["powerText"][class][role]
+            else
+                return true -- show power if role not found
+            end
+        end
     end
 
     return true
@@ -1462,11 +1499,12 @@ ShouldShowPowerBar = function(b)
         return true
     end
 
-    local class
+    local class, role
     if b.states.inVehicle then
         class = "VEHICLE"
     elseif F.IsPlayer(b.states.guid) then
         class = b.states.class
+        role = GetRole(b)
     elseif F.IsPet(b.states.guid) then
         class = "PET"
     elseif F.IsNPC(b.states.guid) then
@@ -1475,8 +1513,16 @@ ShouldShowPowerBar = function(b)
         class = "VEHICLE"
     end
 
-    if class then
-        return Cell.vars.currentLayoutTable["powerFilters"][class]
+    if class and Cell.vars.currentLayoutTable then
+        if type(Cell.vars.currentLayoutTable["powerFilters"][class]) == "boolean" then
+            return Cell.vars.currentLayoutTable["powerFilters"][class]
+        else
+            if role then
+                return Cell.vars.currentLayoutTable["powerFilters"][class][role]
+            else
+                return true -- show power if role not found
+            end
+        end
     end
 
     return true
@@ -1565,6 +1611,27 @@ local function CheckVehicleRoot(self, petUnit)
     end
 
     self.indicators.roleIcon:SetRole(isRoot and "VEHICLE" or "NONE")
+end
+
+UnitButton_UpdateRole = function(self)
+    local unit = self.states.unit
+    if not unit then return end
+
+    local role = UnitGroupRolesAssigned(unit)
+    self.states.role = role
+
+    local roleIcon = self.indicators.roleIcon
+    if enabledIndicators["roleIcon"] then
+
+        roleIcon:SetRole(role)
+
+        --! check vehicle root
+        if self.states.guid and strfind(self.states.guid, "^Vehicle") and not UnitInPartyIsAI(unit) then
+            CheckVehicleRoot(self, unit)
+        end
+    else
+        roleIcon:Hide()
+    end
 end
 
 UnitButton_UpdateAssignment = function(self)
@@ -2161,6 +2228,7 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdatePlayerRaidIcon(self)
     UnitButton_UpdateTargetRaidIcon(self)
     UnitButton_UpdateInRange(self)
+    UnitButton_UpdateRole(self)
     UnitButton_UpdateAssignment(self)
     UnitButton_UpdateLeader(self)
     UnitButton_UpdateReadyCheck(self)
@@ -3147,6 +3215,7 @@ function CellUnitButton_OnLoad(button)
     I.CreateHealthText(button)
     I.CreatePowerText(button)
     I.CreateStatusIcon(button)
+    I.CreateRoleIcon(button)
     I.CreatePartyAssignmentIcon(button)
     I.CreateLeaderIcon(button)
     I.CreateCombatIcon(button)

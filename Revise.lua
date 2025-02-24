@@ -3228,6 +3228,10 @@ function F.Revise()
                     tinsert(t.position, 2, relativeTo)
                 end
             end
+
+            if Cell.isVanilla then
+                layout["powerFilters"] = F.Copy(Cell.defaults.layout.powerFilters)
+            end
         end
     end
 
