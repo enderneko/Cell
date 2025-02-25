@@ -967,6 +967,53 @@ end
 -----------------------------------------
 -- editbox
 -----------------------------------------
+local function EditBox_AddConfirmButton(self, func, mode)
+    self.confirmBtn = self.confirmBtn or Cell.CreateButton(self, "OK", "accent", {27, 20})
+    self.confirmBtn:Hide()
+
+    P.ClearPoints(self.confirmBtn)
+    P.Point(self.confirmBtn, "TOPLEFT", self, "TOPRIGHT", -1, 0)
+
+    self.confirmBtn:SetScript("OnHide", function()
+        self.confirmBtn:Hide()
+    end)
+
+    self.confirmBtn:SetScript("OnClick", function()
+        local value = self:GetText()
+
+        if mode == "number" then
+            value = tonumber(value) or 0
+        elseif mode == "trim" then
+            value = strtrim(value)
+        end
+
+        if func then func(value) end
+        self.value = value -- update value
+        self.confirmBtn:Hide()
+        self:ClearFocus()
+    end)
+
+    self:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            local newValue = self:GetText()
+
+            if mode == "number" then
+                newValue = tonumber(newValue) or 0
+            elseif mode == "trim" then
+                newValue = strtrim(newValue)
+            end
+
+            if newValue and newValue ~= self.value then
+                self.confirmBtn:Show()
+            else
+                self.confirmBtn:Hide()
+            end
+        else
+            self.value = self:GetText()
+        end
+    end)
+end
+
 function Cell.CreateEditBox(parent, width, height, isTransparent, isMultiLine, isNumeric, font)
     local eb = CreateFrame("EditBox", nil, parent, "BackdropTemplate")
     if not isTransparent then Cell.StylizeFrame(eb, {0.115, 0.115, 0.115, 0.9}) end
@@ -986,6 +1033,8 @@ function Cell.CreateEditBox(parent, width, height, isTransparent, isMultiLine, i
     eb:SetScript("OnEditFocusLost", function() eb:HighlightText(0, 0) end)
     eb:SetScript("OnDisable", function() eb:SetTextColor(0.4, 0.4, 0.4, 1) end)
     eb:SetScript("OnEnable", function() eb:SetTextColor(1, 1, 1, 1) end)
+
+    eb.AddConfirmButton = EditBox_AddConfirmButton
 
     return eb
 end

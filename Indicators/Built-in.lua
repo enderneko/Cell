@@ -1439,141 +1439,117 @@ local formatter = {
     end,
 
     -- health
-    ["health"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+    ["health"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
         if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
-        return self.health:format(health)
+        return pattern:format(health)
     end,
-    ["health_short"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+    ["health_short"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
         if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
-        return self.health:format(F.FormatNumber(health))
+        return pattern:format(F.FormatNumber(health))
     end,
-    ["health_percent"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+    ["health_percent"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
         if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
-        return self.health:format(F.Round(health / maxHealth * 100))
+        return pattern:format(F.Round(health / maxHealth * 100))
     end,
-    ["deficit"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+    ["deficit"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
         if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
-        return self.health:format(health - maxHealth)
+        return pattern:format(health - maxHealth)
     end,
-    ["deficit_short"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+    ["deficit_short"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
         if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
-        return self.health:format(F.FormatNumber(health - maxHealth))
+        return pattern:format(F.FormatNumber(health - maxHealth))
     end,
-    ["deficit_percent"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+    ["deficit_percent"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
         if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
-        return self.health:format(F.Round((health - maxHealth) / maxHealth * 100))
+        return pattern:format(F.Round((health - maxHealth) / maxHealth * 100))
     end,
 
     -- effective health
-    ["effective"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+    ["effective"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
         if hideIfEmptyOrFull and (health == 0 or health == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
-        return self.health:format(health + absorbs - healAbsorbs)
+        return pattern:format(health + absorbs - healAbsorbs)
     end,
-    ["effective_short"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+    ["effective_short"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
         if hideIfEmptyOrFull and (health == 0 or health == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
-        return self.health:format(F.FormatNumber(health + absorbs - healAbsorbs))
+        return pattern:format(F.FormatNumber(health + absorbs - healAbsorbs))
     end,
-    ["effective_percent"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+    ["effective_percent"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
         if hideIfEmptyOrFull and (health == 0 or health == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
-        return self.health:format(F.Round((health + absorbs - healAbsorbs) / maxHealth * 100))
+        return pattern:format(F.Round((health + absorbs - healAbsorbs) / maxHealth * 100))
     end,
 
     -- shields
-    ["shields"] = function(self, health, maxHealth, absorbs, healAbsorbs)
+    ["shields"] = function(pattern, health, maxHealth, absorbs, healAbsorbs)
         if absorbs == 0 then return "" end
-        return self.shields:format(absorbs)
+        return pattern:format(absorbs)
     end,
-    ["shields_short"] = function(self, health, maxHealth, absorbs, healAbsorbs)
+    ["shields_short"] = function(pattern, health, maxHealth, absorbs, healAbsorbs)
         if absorbs == 0 then return "" end
-        return self.shields:format(F.FormatNumber(absorbs))
+        return pattern:format(F.FormatNumber(absorbs))
     end,
-    ["shields_percent"] = function(self, health, maxHealth, absorbs, healAbsorbs)
+    ["shields_percent"] = function(pattern, health, maxHealth, absorbs, healAbsorbs)
         if absorbs == 0 then return "" end
-        return self.shields:format(F.Round(absorbs / maxHealth * 100))
+        return pattern:format(F.Round(absorbs / maxHealth * 100))
     end,
 
     -- heal absorbs
-    ["healabsorbs"] = function(self, health, maxHealth, absorbs, healAbsorbs)
+    ["healabsorbs"] = function(pattern, health, maxHealth, absorbs, healAbsorbs)
         if healAbsorbs == 0 then return "" end
-        return self.healAbsorbs:format(healAbsorbs)
+        return pattern:format(healAbsorbs)
     end,
-    ["healabsorbs_short"] = function(self, health, maxHealth, absorbs, healAbsorbs)
+    ["healabsorbs_short"] = function(pattern, health, maxHealth, absorbs, healAbsorbs)
         if healAbsorbs == 0 then return "" end
-        return self.healAbsorbs:format(F.FormatNumber(healAbsorbs))
+        return pattern:format(F.FormatNumber(healAbsorbs))
     end,
-    ["healabsorbs_percent"] = function(self, health, maxHealth, absorbs, healAbsorbs)
+    ["healabsorbs_percent"] = function(pattern, health, maxHealth, absorbs, healAbsorbs)
         if healAbsorbs == 0 then return "" end
-        return self.healAbsorbs:format(F.Round(healAbsorbs / maxHealth * 100))
+        return pattern:format(F.Round(healAbsorbs / maxHealth * 100))
     end,
 }
 
+local function BuildPattern(config)
+    if config.format == "none" then
+        return ""
+    end
+
+    local prefix
+    if config.delimiter == nil then
+        prefix = ""
+    else
+        prefix = "|cffababab" .. config.delimiter .. "|r"
+    end
+
+    local suffix = config.format:find("percent$") and "%%" or ""
+
+    if config.color[1] == "class_color" then
+        return prefix .. "%s" .. suffix
+    else
+        return prefix .. "|cff" .. F.ConvertRGBToHEX(F.ConvertRGB_256(unpack(config.color[2]))) .. "%s" .. suffix .. "|r"
+    end
+end
+
 local function HealthText_SetFormat(self, format)
-    self.GetHealth = formatter[format.health.format:gsub("_no_sign$", "")]
+    self.GetHealth1 = formatter[format.health1.format:gsub("_no_sign$", "")]
+    self.GetHealth2 = formatter[format.health2.format:gsub("_no_sign$", "")]
     self.GetAbsorbs = formatter[format.shields.format:gsub("_no_sign$", "")]
     self.GetHealAbsorbs = formatter[format.healAbsorbs.format:gsub("_no_sign$", "")]
 
-    if format.health.format ~= "none" then
-        self.hideHealthIfEmptyOrFull = format.health.hideIfEmptyOrFull
-        local suffix = format.health.format:find("percent$") and "%%" or ""
-        if format.health.color[1] == "class_color" then
-            self.health = "%s" .. suffix
-        else
-            self.health = "|cff" .. F.ConvertRGBToHEX(F.ConvertRGB_256(unpack(format.health.color[2]))) .. "%s" .. suffix .. "|r"
-        end
-    else
-        self.health = ""
-    end
-
-    if format.shields.format ~= "none" then
-        local prefix
-        if format.shields.delimiter == "none" then
-            prefix = ""
-        elseif format.shields.delimiter == "space" then
-            prefix = " "
-        else
-            prefix = "|cffababab" .. format.shields.delimiter .. "|r"
-        end
-
-        local suffix = format.shields.format:find("percent$") and "%%" or ""
-
-        if format.shields.color[1] == "class_color" then
-            self.shields = prefix .. "%s" .. suffix
-        else
-            self.shields = prefix .. "|cff" .. F.ConvertRGBToHEX(F.ConvertRGB_256(unpack(format.shields.color[2]))) .. "%s" .. suffix .. "|r"
-        end
-    else
-        self.shields = ""
-    end
-
-    if format.healAbsorbs.format ~= "none" then
-        local prefix
-
-        if format.healAbsorbs.delimiter == "none" then
-            prefix = ""
-        elseif format.healAbsorbs.delimiter == "space" then
-            prefix = " "
-        else
-            prefix = "|cffababab" .. format.healAbsorbs.delimiter .. "|r"
-        end
-
-        local suffix = format.healAbsorbs.format:find("percent$") and "%%" or ""
-        if format.healAbsorbs.color[1] == "class_color" then
-            self.healAbsorbs = prefix .. "%s" .. suffix
-        else
-            self.healAbsorbs = prefix .. "|cff" .. F.ConvertRGBToHEX(F.ConvertRGB_256(unpack(format.healAbsorbs.color[2]))) .. "%s" .. suffix .. "|r"
-        end
-    else
-        self.healAbsorbs = ""
-    end
+    self.health1 = BuildPattern(format.health1)
+    self.health1_hideIfEmptyOrFull = format.health1.hideIfEmptyOrFull
+    self.health2 = BuildPattern(format.health2)
+    self.health2_hideIfEmptyOrFull = format.health2.hideIfEmptyOrFull
+    self.shields = BuildPattern(format.shields)
+    self.healAbsorbs = BuildPattern(format.healAbsorbs)
 end
 
 local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
     maxHealth = maxHealth == 0 and 1 or maxHealth
 
-    self.text:SetFormattedText("%s%s%s",
-        self:GetHealth(self.hideHealthIfEmptyOrFull, health, maxHealth, shields, healAbsorbs),
-        self:GetAbsorbs(health, maxHealth, shields, healAbsorbs),
-        self:GetHealAbsorbs(health, maxHealth, shields, healAbsorbs))
+    self.text:SetFormattedText("%s%s%s%s",
+        self.GetHealth1(self.health1, self.health1_hideIfEmptyOrFull, health, maxHealth, shields, healAbsorbs),
+        self.GetHealth2(self.health2, self.health2_hideIfEmptyOrFull, health, maxHealth, shields, healAbsorbs),
+        self.GetAbsorbs(self.shields, health, maxHealth, shields, healAbsorbs),
+        self.GetHealAbsorbs(self.healAbsorbs, health, maxHealth, shields, healAbsorbs))
     self:SetWidth(self.text:GetStringWidth())
 end
 

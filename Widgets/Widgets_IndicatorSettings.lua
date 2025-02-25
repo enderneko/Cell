@@ -1031,7 +1031,7 @@ local function CreateSetting_HealthFormat(parent)
     local widget
 
     if not settingWidgets["healthFormat"] then
-        widget = Cell.CreateFrame("CellIndicatorSettings_HealthFormat", parent, 240, 270)
+        widget = Cell.CreateFrame("CellIndicatorSettings_HealthFormat", parent, 240, 380)
         settingWidgets["healthFormat"] = widget
 
         local health, healthMax = 213777, 300000
@@ -1039,20 +1039,44 @@ local function CreateSetting_HealthFormat(parent)
         local healAbsorb = 88127
 
         local function UpdateWidgets()
-            local healthEnabled = widget.format.health.format ~= "none"
-            widget.hideIfEmptyOrFullCB:SetEnabled(healthEnabled)
-            widget.healthColorDropdown:SetEnabled(healthEnabled)
-            widget.healthColorPicker:SetEnabled(healthEnabled)
+            local health1Enabled = widget.format.health1.format ~= "none"
+            widget.health1HideIfEmptyOrFullCB:SetEnabled(health1Enabled)
+            widget.health1ColorDropdown:SetEnabled(health1Enabled)
+            widget.health1ColorPicker:SetEnabled(health1Enabled)
+
+            local health2Enabled = widget.format.health2.format ~= "none"
+            widget.health2DelimiterEB:SetEnabled(health2Enabled)
+            widget.health2DelimiterEB.confirmBtn:Hide()
+            widget.health2HideIfEmptyOrFullCB:SetEnabled(health2Enabled)
+            widget.health2ColorDropdown:SetEnabled(health2Enabled)
+            widget.health2ColorPicker:SetEnabled(health2Enabled)
+            if health2Enabled then
+                widget.health2DelimiterText:SetTextColor(1, 1, 1)
+            else
+                widget.health2DelimiterText:SetTextColor(0.4, 0.4, 0.4)
+            end
 
             local shieldEnabled = widget.format.shields.format ~= "none"
-            widget.shieldDelimiterDropdown:SetEnabled(shieldEnabled)
+            widget.shieldDelimiterEB:SetEnabled(shieldEnabled)
+            widget.shieldDelimiterEB.confirmBtn:Hide()
             widget.shieldColorDropdown:SetEnabled(shieldEnabled)
             widget.shieldColorPicker:SetEnabled(shieldEnabled)
+            if shieldEnabled then
+                widget.shieldDelimiterText:SetTextColor(1, 1, 1)
+            else
+                widget.shieldDelimiterText:SetTextColor(0.4, 0.4, 0.4)
+            end
 
             local healAbsorbEnabled = widget.format.healAbsorbs.format ~= "none"
-            widget.healAbsorbDelimiterDropdown:SetEnabled(healAbsorbEnabled)
+            widget.healAbsorbDelimiterEB:SetEnabled(healAbsorbEnabled)
+            widget.healAbsorbDelimiterEB.confirmBtn:Hide()
             widget.healAbsorbColorDropdown:SetEnabled(healAbsorbEnabled)
             widget.healAbsorbColorPicker:SetEnabled(healAbsorbEnabled)
+            if healAbsorbEnabled then
+                widget.healAbsorbDelimiterText:SetTextColor(1, 1, 1)
+            else
+                widget.healAbsorbDelimiterText:SetTextColor(0.4, 0.4, 0.4)
+            end
         end
 
         local function GetItems(which, list)
@@ -1071,60 +1095,6 @@ local function CreateSetting_HealthFormat(parent)
             return items
         end
 
-        local function GetDelimiterItems(which)
-            return {
-                {
-                    ["text"] = L["None"],
-                    ["value"] = "none",
-                    ["onClick"] = function()
-                        widget.format[which].delimiter = "none"
-                        widget.func()
-                    end,
-                },
-                {
-                    ["text"] = L["Space"],
-                    ["value"] = "space",
-                    ["onClick"] = function()
-                        widget.format[which].delimiter = "space"
-                        widget.func()
-                    end,
-                },
-                {
-                    ["text"] = "+",
-                    ["value"] = "+",
-                    ["onClick"] = function()
-                        widget.format[which].delimiter = "+"
-                        widget.func()
-                    end,
-                },
-                {
-                    ["text"] = "-",
-                    ["value"] = "-",
-                    ["onClick"] = function()
-                        widget.format[which].delimiter = "-"
-                        widget.func()
-                    end,
-                },
-                {
-                    ["text"] = "/",
-                    ["value"] = "/",
-                    ["onClick"] = function()
-                        widget.format[which].delimiter = "/"
-                        widget.func()
-                    end,
-                },
-                {
-                    ["text"] = "|",
-                    ["value"] = "|",
-                    ["onClick"] = function()
-                        widget.format[which].delimiter = "||"
-                        widget.func()
-                    end,
-                },
-            }
-        end
-
-        -- health -------------------------------
         local effective = " |cff7b7b7b" .. L["Effective"] .. "|r"
         local healthList = {
             {L["None"], "none"},
@@ -1142,52 +1112,109 @@ local function CreateSetting_HealthFormat(parent)
             {F.Round((health - healthMax) / healthMax * 100), "deficit_percent_no_sign"},
         }
 
-        widget.healthFormatDropdown = Cell.CreateDropdown(widget, 127)
-        widget.healthFormatDropdown:SetPoint("TOPLEFT", 5, -20)
-        widget.healthFormatDropdown:SetItems(GetItems("health", healthList))
+        -- health1 ------------------------------
+        widget.health1FormatDropdown = Cell.CreateDropdown(widget, 127)
+        widget.health1FormatDropdown:SetPoint("TOPLEFT", 5, -20)
+        widget.health1FormatDropdown:SetItems(GetItems("health1", healthList))
 
-        local healthText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-        healthText:SetPoint("BOTTOMLEFT", widget.healthFormatDropdown, "TOPLEFT", 0, 1)
-        healthText:SetText(L["Health"])
+        local health1Text = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        health1Text:SetPoint("BOTTOMLEFT", widget.health1FormatDropdown, "TOPLEFT", 0, 1)
+        health1Text:SetText(L["Health"] .. " 1")
 
-        -- hideIfEmptyOrFull
-        widget.hideIfEmptyOrFullCB = Cell.CreateCheckButton(widget, L["hideIfEmptyOrFull"], function(checked)
-            widget.format.health.hideIfEmptyOrFull = checked
+        widget.health1HideIfEmptyOrFullCB = Cell.CreateCheckButton(widget, L["hideIfEmptyOrFull"], function(checked)
+            widget.format.health1.hideIfEmptyOrFull = checked
             widget.func()
         end)
-        widget.hideIfEmptyOrFullCB:SetPoint("TOPLEFT", widget.healthFormatDropdown, "BOTTOMLEFT", 0, -10)
+        widget.health1HideIfEmptyOrFullCB:SetPoint("TOPLEFT", widget.health1FormatDropdown, "BOTTOMLEFT", 0, -10)
 
-        -- color
-        widget.healthColorDropdown = Cell.CreateDropdown(widget, 127)
-        widget.healthColorDropdown:SetPoint("TOPLEFT", widget.hideIfEmptyOrFullCB, "BOTTOMLEFT", 0, -10)
-        widget.healthColorDropdown:SetItems({
+        widget.health1ColorDropdown = Cell.CreateDropdown(widget, 127)
+        widget.health1ColorDropdown:SetPoint("TOPLEFT", widget.health1HideIfEmptyOrFullCB, "BOTTOMLEFT", 0, -10)
+        widget.health1ColorDropdown:SetItems({
             {
                 ["text"] = L["Class Color"],
                 ["value"] = "class_color",
                 ["onClick"] = function()
-                    widget.format.health.color[1] = "class_color"
+                    widget.format.health1.color[1] = "class_color"
                     widget.func()
-                    widget.healthColorPicker:Hide()
+                    widget.health1ColorPicker:Hide()
                 end,
             },
             {
                 ["text"] = L["Custom Color"],
                 ["value"] = "custom_color",
                 ["onClick"] = function()
-                    widget.format.health.color[1] = "custom_color"
+                    widget.format.health1.color[1] = "custom_color"
                     widget.func()
-                    widget.healthColorPicker:Show()
+                    widget.health1ColorPicker:Show()
                 end,
             },
         })
 
-        widget.healthColorPicker = Cell.CreateColorPicker(widget, "", false, function(r, g, b)
-            widget.format.health.color[2][1] = r
-            widget.format.health.color[2][2] = g
-            widget.format.health.color[2][3] = b
+        widget.health1ColorPicker = Cell.CreateColorPicker(widget, "", false, function(r, g, b)
+            widget.format.health1.color[2][1] = r
+            widget.format.health1.color[2][2] = g
+            widget.format.health1.color[2][3] = b
             widget.func()
         end)
-        widget.healthColorPicker:SetPoint("LEFT", widget.healthColorDropdown, "RIGHT", 5, 0)
+        widget.health1ColorPicker:SetPoint("LEFT", widget.health1ColorDropdown, "RIGHT", 5, 0)
+
+        -- health2 ------------------------------
+        widget.health2FormatDropdown = Cell.CreateDropdown(widget, 127)
+        widget.health2FormatDropdown:SetPoint("TOPLEFT", widget.health1ColorDropdown, "BOTTOMLEFT", 0, -35)
+        widget.health2FormatDropdown:SetItems(GetItems("health2", healthList))
+
+        local health2Text = widget:CreateFontString(nil, "OVERLAY", font_name)
+        health2Text:SetPoint("BOTTOMLEFT", widget.health2FormatDropdown, "TOPLEFT", 0, 1)
+        health2Text:SetText(L["Health"] .. " 2")
+
+        widget.health2DelimiterEB = Cell.CreateEditBox(widget, 50, 20)
+        widget.health2DelimiterEB:SetPoint("TOPLEFT", widget.health2FormatDropdown, "TOPRIGHT", 25, 0)
+        widget.health2DelimiterEB:SetMaxLetters(5)
+        widget.health2DelimiterEB:AddConfirmButton(function()
+            widget.format.health2.delimiter = widget.health2DelimiterEB:GetText()
+            widget.func()
+        end)
+
+        widget.health2DelimiterText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        widget.health2DelimiterText:SetPoint("BOTTOMLEFT", widget.health2DelimiterEB, "TOPLEFT", 0, 1)
+        widget.health2DelimiterText:SetText(L["Delimiter"])
+
+        widget.health2HideIfEmptyOrFullCB = Cell.CreateCheckButton(widget, L["hideIfEmptyOrFull"], function(checked)
+            widget.format.health2.hideIfEmptyOrFull = checked
+            widget.func()
+        end)
+        widget.health2HideIfEmptyOrFullCB:SetPoint("TOPLEFT", widget.health2FormatDropdown, "BOTTOMLEFT", 0, -10)
+
+        widget.health2ColorDropdown = Cell.CreateDropdown(widget, 127)
+        widget.health2ColorDropdown:SetPoint("TOPLEFT", widget.health2HideIfEmptyOrFullCB, "BOTTOMLEFT", 0, -10)
+        widget.health2ColorDropdown:SetItems({
+            {
+            ["text"] = L["Class Color"],
+            ["value"] = "class_color",
+            ["onClick"] = function()
+                widget.format.health2.color[1] = "class_color"
+                widget.func()
+                widget.health2ColorPicker:Hide()
+            end,
+            },
+            {
+            ["text"] = L["Custom Color"],
+            ["value"] = "custom_color",
+            ["onClick"] = function()
+                widget.format.health2.color[1] = "custom_color"
+                widget.func()
+                widget.health2ColorPicker:Show()
+            end,
+            },
+        })
+
+        widget.health2ColorPicker = Cell.CreateColorPicker(widget, "", false, function(r, g, b)
+            widget.format.health2.color[2][1] = r
+            widget.format.health2.color[2][2] = g
+            widget.format.health2.color[2][3] = b
+            widget.func()
+        end)
+        widget.health2ColorPicker:SetPoint("LEFT", widget.health2ColorDropdown, "RIGHT", 5, 0)
 
         -- shield -------------------------------
         local shieldList = {
@@ -1199,7 +1226,7 @@ local function CreateSetting_HealthFormat(parent)
         }
 
         widget.shieldFormatDropdown = Cell.CreateDropdown(widget, 127)
-        widget.shieldFormatDropdown:SetPoint("TOPLEFT", widget.healthColorDropdown, "BOTTOMLEFT", 0, -35)
+        widget.shieldFormatDropdown:SetPoint("TOPLEFT", widget.health2ColorDropdown, "BOTTOMLEFT", 0, -35)
         widget.shieldFormatDropdown:SetItems(GetItems("shields", shieldList))
 
         local shieldText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
@@ -1207,13 +1234,17 @@ local function CreateSetting_HealthFormat(parent)
         shieldText:SetText(L["Shields"])
 
         -- delimiter
-        widget.shieldDelimiterDropdown = Cell.CreateDropdown(widget, 70)
-        widget.shieldDelimiterDropdown:SetPoint("TOPLEFT", widget.shieldFormatDropdown, "TOPRIGHT", 25, 0)
-        widget.shieldDelimiterDropdown:SetItems(GetDelimiterItems("shields"))
+        widget.shieldDelimiterEB = Cell.CreateEditBox(widget, 50, 20)
+        widget.shieldDelimiterEB:SetPoint("TOPLEFT", widget.shieldFormatDropdown, "TOPRIGHT", 25, 0)
+        widget.shieldDelimiterEB:SetMaxLetters(5)
+        widget.shieldDelimiterEB:AddConfirmButton(function()
+            widget.format.shields.delimiter = widget.shieldDelimiterEB:GetText()
+            widget.func()
+        end)
 
-        local shieldDelimiterText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-        shieldDelimiterText:SetPoint("BOTTOMLEFT", widget.shieldDelimiterDropdown, "TOPLEFT", 0, 1)
-        shieldDelimiterText:SetText(L["Delimiter"])
+        widget.shieldDelimiterText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        widget.shieldDelimiterText:SetPoint("BOTTOMLEFT", widget.shieldDelimiterEB, "TOPLEFT", 0, 1)
+        widget.shieldDelimiterText:SetText(L["Delimiter"])
 
         -- color
         widget.shieldColorDropdown = Cell.CreateDropdown(widget, 127)
@@ -1265,13 +1296,17 @@ local function CreateSetting_HealthFormat(parent)
         healAbsorbText:SetText(L["Heal Absorbs"])
 
         -- delimiter
-        widget.healAbsorbDelimiterDropdown = Cell.CreateDropdown(widget, 70)
-        widget.healAbsorbDelimiterDropdown:SetPoint("TOPLEFT", widget.healAbsorbFormatDropdown, "TOPRIGHT", 25, 0)
-        widget.healAbsorbDelimiterDropdown:SetItems(GetDelimiterItems("healAbsorbs"))
+        widget.healAbsorbDelimiterEB = Cell.CreateEditBox(widget, 50, 20)
+        widget.healAbsorbDelimiterEB:SetPoint("TOPLEFT", widget.healAbsorbFormatDropdown, "TOPRIGHT", 25, 0)
+        widget.healAbsorbDelimiterEB:SetMaxLetters(5)
+        widget.healAbsorbDelimiterEB:AddConfirmButton(function()
+            widget.format.healAbsorbs.delimiter = widget.healAbsorbDelimiterEB:GetText()
+            widget.func()
+        end)
 
-        local healAbsorbDelimiterText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-        healAbsorbDelimiterText:SetPoint("BOTTOMLEFT", widget.healAbsorbDelimiterDropdown, "TOPLEFT", 0, 1)
-        healAbsorbDelimiterText:SetText(L["Delimiter"])
+        widget.healAbsorbDelimiterText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        widget.healAbsorbDelimiterText:SetPoint("BOTTOMLEFT", widget.healAbsorbDelimiterEB, "TOPLEFT", 0, 1)
+        widget.healAbsorbDelimiterText:SetText(L["Delimiter"])
 
         -- color
         widget.healAbsorbColorDropdown = Cell.CreateDropdown(widget, 127)
@@ -1315,21 +1350,28 @@ local function CreateSetting_HealthFormat(parent)
             widget.format = format
             UpdateWidgets()
 
-            -- health
-            widget.healthFormatDropdown:SetSelectedValue(format.health.format)
-            widget.hideIfEmptyOrFullCB:SetChecked(format.health.hideIfEmptyOrFull)
-            widget.healthColorDropdown:SetSelectedValue(format.health.color[1])
-            widget.healthColorPicker:SetColor(unpack(format.health.color[2]))
+            -- health1
+            widget.health1FormatDropdown:SetSelectedValue(format.health1.format)
+            widget.health1HideIfEmptyOrFullCB:SetChecked(format.health1.hideIfEmptyOrFull)
+            widget.health1ColorDropdown:SetSelectedValue(format.health1.color[1])
+            widget.health1ColorPicker:SetColor(unpack(format.health1.color[2]))
+
+            -- health2
+            widget.health2FormatDropdown:SetSelectedValue(format.health2.format)
+            widget.health2DelimiterEB:SetText(format.health2.delimiter)
+            widget.health2HideIfEmptyOrFullCB:SetChecked(format.health2.hideIfEmptyOrFull)
+            widget.health2ColorDropdown:SetSelectedValue(format.health2.color[1])
+            widget.health2ColorPicker:SetColor(unpack(format.health2.color[2]))
 
             -- shields
             widget.shieldFormatDropdown:SetSelectedValue(format.shields.format)
-            widget.shieldDelimiterDropdown:SetSelectedValue(format.shields.delimiter)
+            widget.shieldDelimiterEB:SetText(format.shields.delimiter)
             widget.shieldColorDropdown:SetSelectedValue(format.shields.color[1])
             widget.shieldColorPicker:SetColor(unpack(format.shields.color[2]))
 
             -- heal absorbs
             widget.healAbsorbFormatDropdown:SetSelectedValue(format.healAbsorbs.format)
-            widget.healAbsorbDelimiterDropdown:SetSelectedValue(format.healAbsorbs.delimiter)
+            widget.healAbsorbDelimiterEB:SetText(format.healAbsorbs.delimiter)
             widget.healAbsorbColorDropdown:SetSelectedValue(format.healAbsorbs.color[1])
             widget.healAbsorbColorPicker:SetColor(unpack(format.healAbsorbs.color[2]))
         end

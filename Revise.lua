@@ -3238,6 +3238,26 @@ function F.Revise()
         F.DisableSnippets()
     end
 
+    -- r245-release
+    if CellDB["revise"] and dbRevision < 245 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.indicatorName == "healthText" then
+                    if not i.format.health2 then
+                        i.format.health1 = i.format.health
+                        i.format.health2 = {
+                            ["format"] = "none",
+                            ["color"] = {"custom_color", {1, 1, 1}},
+                            ["hideIfEmptyOrFull"] = false,
+                            ["delimiter"] = " ",
+                        }
+                        i.format.health = nil
+                    end
+                end
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --
