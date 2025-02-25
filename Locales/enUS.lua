@@ -161,6 +161,11 @@ select(2, ...).L = setmetatable({
         <p>+ Updated locales: deDE, frFR, ptBR, ruRU, zhTW.</p>
         <br/>
 
+        <p><a href="older">Click to view older changelogs</a></p>
+        <br/>
+    ]],
+
+    ["OLDER_CHANGELOGS"] = [[
         <h1>r238-release (Aug 7, 2024, 15:25 GMT+8)</h1>
         <p>* Fixed missing indicators.</p>
         <p>* Updated deDE and zhTW.</p>
@@ -478,11 +483,6 @@ select(2, ...).L = setmetatable({
         <p>* Updated zhTW.</p>
         <br/>
 
-        <p><a href="older">Click to view older changelogs</a></p>
-        <br/>
-    ]],
-
-    ["OLDER_CHANGELOGS"] = [[
         <h1>r199-release (Oct 21, 2023, 15:40 GMT+8)</h1>
         <p>* Updated spells of Defensives and Externals.</p>
         <p>+ Added "Cast By" option to custom buff indicators.</p>

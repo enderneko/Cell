@@ -948,6 +948,11 @@ L["CHANGELOGS"] = [[
     <p>+ 更新本地化：德语、法语、葡萄牙语、俄语、繁中。</p>
     <br/>
 
+    <p><a href="older">]]..L["Click to view older changelogs"]..[[</a></p>
+    <br/>
+]]
+
+L["OLDER_CHANGELOGS"] = [[
     <h1>r238-release (Aug 7, 2024, 15:25 GMT+8)</h1>
     <p>* 修复可能缺失的指示器。</p>
     <p>* 更新本地化。</p>
@@ -1265,11 +1270,6 @@ L["CHANGELOGS"] = [[
     <p>* 更新繁中。</p>
     <br/>
 
-    <p><a href="older">]]..L["Click to view older changelogs"]..[[</a></p>
-    <br/>
-]]
-
-L["OLDER_CHANGELOGS"] = [[
     <h1>r199-release (Oct 21, 2023, 15:40 GMT+8)</h1>
     <p>* 更新“减伤”指示器的内置法术。</p>
     <p>+ 为增益类型的自定义指示器添加了“来源”选项。</p>
