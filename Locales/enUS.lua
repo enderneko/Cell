@@ -90,6 +90,16 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r245-release (Feb 25, 2025, 19:35 GMT+8)</h1>
+        <p>* Fixed a layout auto switch issue.</p>
+        <p>* Fixed issues caused by spotlight on Classic.</p>
+        <p>* Fixed import.</p>
+        <p>+ Added "Health 2" for HealthText.</p>
+        <p>* HealthText no longer hides when dead/ghost.</p>
+        <p>* SpellRequest now supports nickname.</p>
+        <p>* Updated deDE, zhTW.</p>
+        <br/>
+
         <h1>r244-release (Feb 24, 2025, 21:40 GMT+8)</h1>
         <p>+ (Classic) Added downranking spells support for Click-Castings.</p>
         <p>* Updated "Drinking" list (#279, #306).</p>

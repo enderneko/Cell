@@ -1,22 +1,9 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r243-release...92c6781c5747dd56e44f3deb3682b4a6d2e39f19)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r244-release...106ad398539e0bcb5821fa5722d2a38147c61a4d)
 
-- Update Click-Casting spells (#298)
-- Update "Drinking" list (#279, #306)
-- Update GetMouseFocus for Classic (Era and Cata) (#293)
-- Update RaidDebuffs to include the Naxxramas for Classic (#294)
-- Update locales
-- Update debuffs for TWW season 2 (Thanks 钛锬)
-- Update Liberation of Undermine debuffs (Thanks Reat)
-- Update RoleIcon/PowerFilters for Vanilla
-- Implement CombatIcon indicator
-- Update F.IsInRange
-- Update AoEHealings indicator
-- Update dispel request text flipbook
-- Add "Relative" for indicator position settings
-- Add class/role filter for PowerText indicator
-- Add downranking spells support (beta)
-- Add functions for "installer" addons
-- Restore F.IsSoulstone
-- Refactor HealthText indicator
-- Fix texture selector
-- Convert colon methods to dot notation
+- Fix a layout auto switch issue
+- Fix issues caused by spotlight on Classic
+- Fix import
+- Add nickname support for SpellRequest
+- Add "health2" for HealthText
+- HealthText no longer hide when dead/ghost
+- Update deDE, zhTW
