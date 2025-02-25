@@ -238,7 +238,8 @@ Comm:RegisterComm("CELL_REQ_S", function(prefix, message, channel, sender)
         if spellId and CheckSRConditions(spellId, Cell.vars.names[sender], sender) then
             local me = GetUnitName("player")
             -- NOTE: to all provider / to me
-            if (srResponseType == "all" and (not target or target == me)) or (srResponseType == "me" and target == me) then
+            -- if (srResponseType == "all" and (not target or target == me)) or (srResponseType == "me" and target == me) then
+            if srResponseType == "all" or (srResponseType == "me" and (target == me or target == Cell.vars.playerNickname)) then
                 F.HandleUnitButton("name", sender, ShowSpellRequest, spellId)
                 -- notify WA
                 F.Notify("SPELL_REQ_RECEIVED", Cell.vars.names[sender], srSpells[spellId][2], srTimeout)
