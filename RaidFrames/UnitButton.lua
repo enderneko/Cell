@@ -456,6 +456,11 @@ hooksecurefunc(updater, "Show", function()
     CellLoadingBar:Show()
 end)
 
+local function FlushQueue()
+    updater:Hide()
+    wipe(queue)
+end
+
 local function AddToInitQueue(b)
     b._indicatorsReady = nil
     b._status = "waiting_for_init"
@@ -477,6 +482,7 @@ local previousLayout = {}
 local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     F.Debug("|cffff7777UpdateIndicators:|r ", layout, indicatorName, setting, value, value2)
 
+    FlushQueue()
     local INDEX = Cell.vars.groupType == "solo" and "solo" or Cell.vars.layoutGroupType
 
     if layout then

@@ -636,7 +636,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
         inInstance = true
 
         -- NOTE: delayed raid difficulty check
-        if Cell.vars.groupType == "raid" and iType == "raid" then
+        if iType == "raid" then
             C_Timer.After(0.5, function()
                 --! can't get difficultyID, difficultyName immediately after entering an instance
                 local _, _, difficultyID, difficultyName, maxPlayers = GetInstanceInfo()

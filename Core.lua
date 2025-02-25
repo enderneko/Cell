@@ -708,7 +708,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
         inInstance = true
 
         -- NOTE: delayed check mythic raid
-        if Cell.vars.groupType == "raid" and iType == "raid" then
+        if iType == "raid" then
             C_Timer.After(0.5, function()
                 local difficultyID, difficultyName = select(3, GetInstanceInfo()) --! can't get difficultyID, difficultyName immediately after entering an instance
                 Cell.vars.inMythic = difficultyID == 16
