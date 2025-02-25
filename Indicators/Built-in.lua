@@ -1439,69 +1439,69 @@ local formatter = {
     end,
 
     -- health
-    ["health"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
-        return self.health:format(currentHealth)
+    ["health"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+        return self.health:format(health)
     end,
-    ["health_short"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
-        return self.health:format(F.FormatNumber(currentHealth))
+    ["health_short"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+        return self.health:format(F.FormatNumber(health))
     end,
-    ["health_percent"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
-        return self.health:format(F.Round(currentHealth / maxHealth * 100))
+    ["health_percent"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+        return self.health:format(F.Round(health / maxHealth * 100))
     end,
-    ["deficit"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
-        return self.health:format(currentHealth - maxHealth)
+    ["deficit"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+        return self.health:format(health - maxHealth)
     end,
-    ["deficit_short"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
-        return self.health:format(F.FormatNumber(currentHealth - maxHealth))
+    ["deficit_short"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+        return self.health:format(F.FormatNumber(health - maxHealth))
     end,
-    ["deficit_percent"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
-        return self.health:format(F.Round((currentHealth - maxHealth) / maxHealth * 100))
+    ["deficit_percent"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+        return self.health:format(F.Round((health - maxHealth) / maxHealth * 100))
     end,
 
     -- effective health
-    ["effective"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
-        return self.health:format(currentHealth + absorbs - healAbsorbs)
+    ["effective"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
+        return self.health:format(health + absorbs - healAbsorbs)
     end,
-    ["effective_short"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
-        return self.health:format(F.FormatNumber(currentHealth + absorbs - healAbsorbs))
+    ["effective_short"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
+        return self.health:format(F.FormatNumber(health + absorbs - healAbsorbs))
     end,
-    ["effective_percent"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
-        return self.health:format(F.Round((currentHealth + absorbs - healAbsorbs) / maxHealth * 100))
+    ["effective_percent"] = function(self, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
+        return self.health:format(F.Round((health + absorbs - healAbsorbs) / maxHealth * 100))
     end,
 
     -- shields
-    ["shields"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+    ["shields"] = function(self, health, maxHealth, absorbs, healAbsorbs)
         if absorbs == 0 then return "" end
         return self.shields:format(absorbs)
     end,
-    ["shields_short"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+    ["shields_short"] = function(self, health, maxHealth, absorbs, healAbsorbs)
         if absorbs == 0 then return "" end
         return self.shields:format(F.FormatNumber(absorbs))
     end,
-    ["shields_percent"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+    ["shields_percent"] = function(self, health, maxHealth, absorbs, healAbsorbs)
         if absorbs == 0 then return "" end
         return self.shields:format(F.Round(absorbs / maxHealth * 100))
     end,
 
     -- heal absorbs
-    ["healabsorbs"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+    ["healabsorbs"] = function(self, health, maxHealth, absorbs, healAbsorbs)
         if healAbsorbs == 0 then return "" end
         return self.healAbsorbs:format(healAbsorbs)
     end,
-    ["healabsorbs_short"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+    ["healabsorbs_short"] = function(self, health, maxHealth, absorbs, healAbsorbs)
         if healAbsorbs == 0 then return "" end
         return self.healAbsorbs:format(F.FormatNumber(healAbsorbs))
     end,
-    ["healabsorbs_percent"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+    ["healabsorbs_percent"] = function(self, health, maxHealth, absorbs, healAbsorbs)
         if healAbsorbs == 0 then return "" end
         return self.healAbsorbs:format(F.Round(healAbsorbs / maxHealth * 100))
     end,
@@ -1567,13 +1567,13 @@ local function HealthText_SetFormat(self, format)
     end
 end
 
-local function HealthText_SetValue(self, currentHealth, maxHealth, shields, healAbsorbs)
+local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
     maxHealth = maxHealth == 0 and 1 or maxHealth
 
     self.text:SetFormattedText("%s%s%s",
-        self:GetHealth(self.hideHealthIfEmptyOrFull, currentHealth, maxHealth, shields, healAbsorbs),
-        self:GetAbsorbs(currentHealth, maxHealth, shields, healAbsorbs),
-        self:GetHealAbsorbs(currentHealth, maxHealth, shields, healAbsorbs))
+        self:GetHealth(self.hideHealthIfEmptyOrFull, health, maxHealth, shields, healAbsorbs),
+        self:GetAbsorbs(health, maxHealth, shields, healAbsorbs),
+        self:GetHealAbsorbs(health, maxHealth, shields, healAbsorbs))
     self:SetWidth(self.text:GetStringWidth())
 end
 
