@@ -134,8 +134,7 @@ L["Color By"] = "著色"
 L["Color Duration Text"] = "著色持續時間文字"
 L["Color Thresholds"] = "顏色閥值"
 L["Columns"] = "列數"
---[[Translation missing --]]
---[[ L["Combat Icon"] = ""--]]
+L["Combat Icon"] = "戰鬥圖示"
 L["Combine Groups"] = "合併隊伍"
 L["Common"] = "共用"
 L["Condition"] = "條件"
@@ -186,8 +185,7 @@ L["Delete debuff?"] = "是否確定要刪除減益?"
 L["Delete indicator"] = "是否確定要刪除指示器"
 L["Delete layout"] = "是否確定要刪除版面配置"
 L["Delete spell?"] = "是否要刪除法術？"
---[[Translation missing --]]
---[[ L["Delimiter"] = "Delimiter"--]]
+L["Delimiter"] = "分隔符號"
 L["Disabled"] = "停用"
 L["Disabled in battlegrounds and arenas"] = "戰場和競技場停用"
 L["Discard"] = "取消"
@@ -208,8 +206,7 @@ L["Due to restrictions of the private aura system, this indicator can only use B
 L["durationFont"] = "持續時間字體"
 L["Edit"] = "編輯"
 L["Edit spell"] = "修改法術"
---[[Translation missing --]]
---[[ L["Effective"] = "Effective"--]]
+L["Effective"] = "有效"
 L["En"] = "英"
 L["Enable"] = "啟用"
 L["Enable Color Gradient"] = "啟用漸層色"
@@ -416,8 +413,7 @@ L["Only one threshold is displayed at a time"] = "同時間只會顯示一個臨
 L["Only show during encounter or in mythic+"] = "只在首領戰或 M+ 顯示"
 L["Only show when you have permission to do this"] = "只在你有權限這樣做時才會顯示"
 L["Only visible to me"] = "只對我自己顯示"
---[[Translation missing --]]
---[[ L["onlyEnableNotInCombat"] = "Only when I'm not in combat"--]]
+L["onlyEnableNotInCombat"] = "只有當我不在戰鬥中時"
 L["onlyShowOvershields"] = "只顯示超過血量上限的護盾"
 L["onlyShowTopGlow"] = "只有優先順序最高的減益會發光"
 L["Options"] = "選項"
@@ -457,8 +453,7 @@ L["Press Key to Bind"] = "按下要綁定的按鍵"
 L["Preview"] = "預覽"
 L["Primary Talents"] = "主要天賦"
 L["Private Auras"] = "個人光環"
---[[Translation missing --]]
---[[ L["Profile imported successfully."] = ""--]]
+L["Profile imported successfully."] = "已成功匯入設定檔。"
 L["Profiles"] = "設定檔"
 L["Pull"] = "倒數"
 L["Pull in %d sec"] = "開怪還有 %d 秒"
@@ -490,10 +485,8 @@ L["readyCheckTips"] = [=[
 L["Rect"] = "矩形"
 L["refresh unit buttons"] = "重新整理單位按鈕"
 L["Refreshing unit buttons (%s)..."] = "正在重新整理單位按鈕 (%s)..."
---[[Translation missing --]]
---[[ L["Relative Point"] = ""--]]
---[[Translation missing --]]
---[[ L["Relative To"] = ""--]]
+L["Relative Point"] = "相對對齊點"
+L["Relative To"] = "相對於"
 L["Remaining Time"] = "剩餘時間"
 L["Remember to backup your profile"] = "請記得備份你的設定檔"
 L["Remove"] = "移除"
@@ -564,8 +557,7 @@ L["Shield Bar"] = "護盾條"
 L["Shield Texture"] = "護盾材質"
 L["shieldByMe"] = "只顯示我施放的真言術：盾"
 L["shields"] = "護盾"
---[[Translation missing --]]
---[[ L["Shields"] = "Shields"--]]
+L["Shields"] = "護盾"
 L["Shift+Enter: add a new line"] = "Shift+Enter: 增加一行"
 L["Shine"] = "閃耀"
 L["Show All"] = "全部顯示"
@@ -603,8 +595,6 @@ L["SNIPPETS_TIPS"] = "[點兩下]重新名命。[Shift+左鍵]刪除。所有已
 L["Solid"] = "單色"
 L["Solo"] = "單人"
 L["Sort By Role"] = "依職責排序"
---[[Translation missing --]]
---[[ L["Space"] = "Space"--]]
 L["Spacing"] = "間距"
 L["Spec"] = "專精"
 L["Spec Filter"] = "依專精"
