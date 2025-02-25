@@ -2474,11 +2474,11 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             -- NOTE: when unitId for this button changes
             if self.__unitGuid then -- self.__unitGuid is deleted when hide
                 -- print("deleteUnitGuid:", self:GetName(), self.states.unit, self.__unitGuid)
-                Cell.vars.guids[self.__unitGuid] = nil
+                if not self.isSpotlight then Cell.vars.guids[self.__unitGuid] = nil end
                 self.__unitGuid = nil
             end
             if self.__unitName then
-                Cell.vars.names[self.__unitName] = nil
+                if not self.isSpotlight then Cell.vars.names[self.__unitName] = nil end
                 self.__unitName = nil
             end
             wipe(self.states)
@@ -2540,11 +2540,11 @@ local function UnitButton_OnHide(self)
     -- NOTE: update Cell.vars.guids
     -- print("hide", self.states.unit, self.__unitGuid, self.__unitName)
     if self.__unitGuid then
-        Cell.vars.guids[self.__unitGuid] = nil
+        if not self.isSpotlight then Cell.vars.guids[self.__unitGuid] = nil end
         self.__unitGuid = nil
     end
     if self.__unitName then
-        Cell.vars.names[self.__unitName] = nil
+        if not self.isSpotlight then Cell.vars.names[self.__unitName] = nil end
         self.__unitName = nil
     end
     self.__displayedGuid = nil
@@ -2593,7 +2593,7 @@ local function UnitButton_OnTick(self)
                 -- NOTE: unit entity changed
                 -- update Cell.vars.guids
                 self.__unitGuid = guid
-                Cell.vars.guids[guid] = self.states.unit
+                if not self.isSpotlight then Cell.vars.guids[guid] = self.states.unit end
 
                 -- NOTE: only save players' names
                 if UnitIsPlayer(self.states.unit) then
@@ -2601,7 +2601,7 @@ local function UnitButton_OnTick(self)
                     local name = GetUnitName(self.states.unit, true)
                     if (name and self.__nameRetries and self.__nameRetries >= 4) or (name and name ~= UNKNOWN and name ~= UNKNOWNOBJECT) then
                         self.__unitName = name
-                        Cell.vars.names[name] = self.states.unit
+                        if not self.isSpotlight then Cell.vars.names[name] = self.states.unit end
                         self.__nameRetries = nil
                     else
                         -- NOTE: update on next tick
