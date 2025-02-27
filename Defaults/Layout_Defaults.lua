@@ -55,7 +55,9 @@ Cell.defaults.layout = {
         ["groupSpacing"] = 0,
     },
     ["pet"] = {
+        ["soloEnabled"] = true,
         ["partyEnabled"] = true,
+        ["detached"] = false,
         ["raidEnabled"] = false,
         ["sameSizeAsMain"] = true,
         ["sameArrangementAsMain"] = true,

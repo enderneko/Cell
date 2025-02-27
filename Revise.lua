@@ -3258,6 +3258,15 @@ function F.Revise()
         end
     end
 
+    -- r246-release
+    if CellDB["revise"] and dbRevision < 246 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            if type(layout.pet.soloEnabled) ~= "boolean" then
+                layout.pet.soloEnabled = true
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

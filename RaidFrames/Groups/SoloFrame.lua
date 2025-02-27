@@ -17,7 +17,6 @@ Cell.unitButtons.solo["player"] = playerButton
 local petButton = CreateFrame("Button", soloFrame:GetName().."Pet", soloFrame, "CellUnitButtonTemplate")
 -- petButton.type = "pet" -- layout setup
 petButton:SetAttribute("unit", "pet")
-RegisterAttributeDriver(petButton, "state-visibility", "[nopet] hide; [vehicleui] hide; show")
 Cell.unitButtons.solo["pet"] = petButton
 
 local init, previousLayout
@@ -101,6 +100,15 @@ local function SoloFrame_UpdateLayout(layout, which)
             end
 
             petButton:SetPoint(point, playerButton, anchorPoint, petSpacing, 0)
+        end
+    end
+
+    if not which or which == "pet" then
+        if layout["pet"]["soloEnabled"] then
+            RegisterAttributeDriver(petButton, "state-visibility", "[nopet] hide; [vehicleui] hide; show")
+        else
+            UnregisterAttributeDriver(petButton, "state-visibility")
+            petButton:Hide()
         end
     end
 end

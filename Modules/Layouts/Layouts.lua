@@ -1993,7 +1993,8 @@ local orientationDropdown, anchorDropdown, spacingXSlider, spacingYSlider
 
 local sameSizeAsMainCB, sameArrangementAsMainCB
 local combineGroupsCB, sortByRoleCB, roleOrderWidget, hideSelfCB
-local showNpcCB, separateNpcCB, spotlightCB, hidePlaceholderCB, spotlightOrientationDropdown, partyPetsCB, raidPetsCB
+local showNpcCB, separateNpcCB, spotlightCB, hidePlaceholderCB, spotlightOrientationDropdown
+local soloPetCB, partyPetsCB, partyPetsDetachedCB, raidPetsCB
 
 local function UpdateSize()
     if selectedLayout == Cell.vars.currentLayout then
@@ -2394,13 +2395,29 @@ local function CreateLayoutSetupPane()
     pages.pet:SetAllPoints(layoutSetupPane)
     pages.pet:Hide()
 
+    soloPetCB = Cell.CreateCheckButton(pages.pet, L["Show Solo Pet"], function(checked)
+        selectedLayoutTable["pet"]["soloEnabled"] = checked
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell.Fire("UpdateLayout", selectedLayout, "pet")
+        end
+    end)
+    soloPetCB:SetPoint("TOPLEFT", 5, -27)
+
     partyPetsCB = Cell.CreateCheckButton(pages.pet, L["Show Party/Arena Pets"], function(checked)
         selectedLayoutTable["pet"]["partyEnabled"] = checked
         if selectedLayout == Cell.vars.currentLayout then
             Cell.Fire("UpdateLayout", selectedLayout, "pet")
         end
     end)
-    partyPetsCB:SetPoint("TOPLEFT", 5, -27)
+    partyPetsCB:SetPoint("TOPLEFT", soloPetCB, "BOTTOMLEFT", 0, -8)
+
+    partyPetsDetachedCB = Cell.CreateCheckButton(pages.pet, L["Detached"], function(checked)
+        selectedLayoutTable["pet"]["detached"] = checked
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell.Fire("UpdateLayout", selectedLayout, "pet")
+        end
+    end, L["Detached"], L["Show pets in a separate frame"], L["You can move it in Preview mode"])
+    partyPetsDetachedCB:SetPoint("TOPLEFT", partyPetsCB, "TOPRIGHT", 203, 0)
 
     raidPetsCB = Cell.CreateCheckButton(pages.pet, L["Show Raid Pets"], function(checked)
         selectedLayoutTable["pet"]["raidEnabled"] = checked
@@ -2414,7 +2431,7 @@ local function CreateLayoutSetupPane()
         if selectedLayout == Cell.vars.currentLayout then
             Cell.Fire("UpdateLayout", selectedLayout, "pet")
         end
-    end, L["Show Raid Pets"], L["You can move it in Preview mode"])
+    end, L["Show Raid Pets"], L["Show pets in a separate frame"], L["You can move it in Preview mode"])
     raidPetsCB:SetPoint("TOPLEFT", partyPetsCB, "BOTTOMLEFT", 0, -8)
 
     --* npc -------------------------------------
@@ -2593,7 +2610,7 @@ local barOrientationDropdown, rotateTexCB
 
 local function CreateBarOrientationPane()
     local barOrientationPane = Cell.CreateTitledPane(layoutsTab, L["Bar Orientation"], 205, 80)
-    barOrientationPane:SetPoint("TOPLEFT", 5, -425)
+    barOrientationPane:SetPoint("TOPLEFT", 5, -445)
 
     local function SetOrientation(orientation)
         selectedLayoutTable["barOrientation"][1] = orientation
@@ -2653,7 +2670,7 @@ end
 -------------------------------------------------
 local function CreateMiscPane()
     local miscPane = Cell.CreateTitledPane(layoutsTab, L["Misc"], 205, 80)
-    miscPane:SetPoint("TOPLEFT", 222, -425)
+    miscPane:SetPoint("TOPLEFT", 222, -445)
 
     local powerFilterBtn = Cell.CreateButton(miscPane, L["Power Bar Filters"], "accent-hover", {195, 20})
     Cell.frames.layoutsTab.powerFilterBtn = powerFilterBtn
@@ -2758,7 +2775,9 @@ LoadLayoutDB = function(layout, dontShowPreview)
     end
     roleOrderWidget:Load(selectedLayoutTable["main"]["roleOrder"])
     hideSelfCB:SetChecked(selectedLayoutTable["main"]["hideSelf"])
+    soloPetCB:SetChecked(selectedLayoutTable["pet"]["soloEnabled"])
     partyPetsCB:SetChecked(selectedLayoutTable["pet"]["partyEnabled"])
+    partyPetsDetachedCB:SetChecked(selectedLayoutTable["pet"]["detached"])
     raidPetsCB:SetChecked(selectedLayoutTable["pet"]["raidEnabled"])
     showNpcCB:SetChecked(selectedLayoutTable["npc"]["enabled"])
     separateNpcCB:SetChecked(selectedLayoutTable["npc"]["separate"])
