@@ -327,12 +327,24 @@ local function RaidPetFrame_UpdateLayout(layout, which)
     end
 
     if not which or which == "pet" then
-        if layout["pet"]["raidEnabled"] and Cell.vars.inBattleground ~= 5 then
+        if layout["pet"]["partyEnabled"] and layout["pet"]["detached"] then
+            if Cell.vars.inBattleground == 5 then -- arena
+                header:SetAttribute("showParty", false)
+                header:SetAttribute("showRaid", true)
+            else
+                header:SetAttribute("showParty", true)
+                header:SetAttribute("showRaid", false)
+            end
+            raidPetFrame:Show()
+        elseif layout["pet"]["raidEnabled"] and Cell.vars.inBattleground ~= 5 then
+            header:SetAttribute("showParty", false)
             header:SetAttribute("showRaid", true)
-            RegisterAttributeDriver(raidPetFrame, "state-visibility", "[@raid1,exists] show;hide")
+            -- RegisterAttributeDriver(raidPetFrame, "state-visibility", "[@raid1,exists] show;hide")
+            raidPetFrame:Show()
         else
+            header:SetAttribute("showParty", false)
             header:SetAttribute("showRaid", false)
-            UnregisterAttributeDriver(raidPetFrame, "state-visibility")
+            -- UnregisterAttributeDriver(raidPetFrame, "state-visibility")
             raidPetFrame:Hide()
         end
     end
