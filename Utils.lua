@@ -1855,6 +1855,36 @@ if Cell.isWrath or Cell.isVanilla then
     end
 end
 
+if C_Spell.GetSpellCooldown then
+    local GetSpellCooldown = C_Spell.GetSpellCooldown
+    F.GetSpellCooldown = function(spellId)
+        local info = GetSpellCooldown(spellId)
+        if info then
+            return info.startTime, info.duration
+        end
+    end
+else
+    F.GetSpellCooldown = function(spellId)
+        local start, duration = GetSpellCooldown(spellId)
+        return start, duration
+    end
+end
+
+function F.IsSpellReady(spellId)
+    local start, duration = F.GetSpellCooldown(spellId)
+    if start == 0 or duration == 0 then
+        return true
+    else
+        local _, gcd = F.GetSpellCooldown(61304) --! check gcd
+        if duration == gcd then -- spell ready
+            return true
+        else
+            local cdLeft = start + duration - GetTime()
+            return false, cdLeft
+        end
+    end
+end
+
 -------------------------------------------------
 -- macro
 -------------------------------------------------
