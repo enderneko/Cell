@@ -101,11 +101,13 @@ local function PartyFrame_UpdateLayout(layout, which)
     layout = CellDB["layouts"][layout]
 
     -- anchor
-    if not which or which == "main-arrangement" then
+    if not which or which == "main-arrangement" or which == "pet-arrangement" then
         local orientation = layout["main"]["orientation"]
         local anchor = layout["main"]["anchor"]
         local spacingX = layout["main"]["spacingX"]
         local spacingY = layout["main"]["spacingY"]
+        local petSpacingX = layout["pet"]["sameArrangementAsMain"] and spacingX or layout["pet"]["spacingX"]
+        local petSpacingY = layout["pet"]["sameArrangementAsMain"] and spacingY or layout["pet"]["spacingY"]
 
         local point, playerAnchorPoint, petAnchorPoint, playerSpacing, petSpacing, headerPoint
         if orientation == "vertical" then
@@ -113,22 +115,22 @@ local function PartyFrame_UpdateLayout(layout, which)
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
                 headerPoint = "BOTTOM"
                 playerSpacing = spacingY
-                petSpacing = spacingX
+                petSpacing = petSpacingX
             elseif anchor == "BOTTOMRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
                 headerPoint = "BOTTOM"
                 playerSpacing = spacingY
-                petSpacing = -spacingX
+                petSpacing = -petSpacingX
             elseif anchor == "TOPLEFT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
                 headerPoint = "TOP"
                 playerSpacing = -spacingY
-                petSpacing = spacingX
+                petSpacing = petSpacingX
             elseif anchor == "TOPRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
                 headerPoint = "TOP"
                 playerSpacing = -spacingY
-                petSpacing = -spacingX
+                petSpacing = -petSpacingX
             end
 
             header:SetAttribute("xOffset", 0)
@@ -139,22 +141,22 @@ local function PartyFrame_UpdateLayout(layout, which)
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
                 headerPoint = "LEFT"
                 playerSpacing = spacingX
-                petSpacing = spacingY
+                petSpacing = petSpacingY
             elseif anchor == "BOTTOMRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
                 headerPoint = "RIGHT"
                 playerSpacing = -spacingX
-                petSpacing = spacingY
+                petSpacing = petSpacingY
             elseif anchor == "TOPLEFT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
                 headerPoint = "LEFT"
                 playerSpacing = spacingX
-                petSpacing = -spacingY
+                petSpacing = -petSpacingY
             elseif anchor == "TOPRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
                 headerPoint = "RIGHT"
                 playerSpacing = -spacingX
-                petSpacing = -spacingY
+                petSpacing = -petSpacingY
             end
 
             header:SetAttribute("xOffset", playerSpacing)
