@@ -2996,9 +2996,6 @@ function B.UpdatePixelPerfect(button, updateIndicators)
                 i:UpdatePixelPerfect()
             end
         end
-    else
-        button.indicators.nameText:UpdatePixelPerfect()
-        button.indicators.statusText:UpdatePixelPerfect()
     end
 
     button.widgets.srIcon:UpdatePixelPerfect()

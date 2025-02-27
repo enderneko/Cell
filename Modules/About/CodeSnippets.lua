@@ -15,7 +15,7 @@ local function CreateCodeSnippetsFrame()
     codeSnippetsFrame:SetToplevel(true)
     codeSnippetsFrame:SetPoint("CENTER")
 
-    P.SetEffectiveScale(codeSnippetsFrame)
+    codeSnippetsFrame:SetScale(CellDB["appearance"]["scale"])
 
     local reloadBtn = Cell.CreateButton(codeSnippetsFrame.header, "Reload", "blue", {70, 20})
     reloadBtn:SetPoint("TOPRIGHT", codeSnippetsFrame.header.closeBtn, "TOPLEFT", P.Scale(1), 0)

@@ -32,7 +32,6 @@ local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 -------------------------------------------------
 local cellMainFrame = CreateFrame("Frame", "CellMainFrame", UIParent, "SecureFrameTemplate")
 Cell.frames.mainFrame = cellMainFrame
-cellMainFrame:SetIgnoreParentScale(true)
 
 local hoverFrame = CreateFrame("Frame", nil, cellMainFrame, "BackdropTemplate")
 -- Cell.StylizeFrame(hoverFrame, {1,0,0,0.3}, {0,0,0,0})
@@ -53,9 +52,6 @@ local function RegisterButtonEvents(frame)
     frame:SetScript("OnDragStop", function()
         anchorFrame:StopMovingOrSizing()
         P.SavePosition(anchorFrame, Cell.vars.currentLayoutTable["main"]["position"])
-        if not InCombatLockdown() then
-            P.PixelPerfectPoint(anchorFrame)
-        end
     end)
 
     frame:HookScript("OnEnter", function()

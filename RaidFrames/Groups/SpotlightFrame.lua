@@ -92,7 +92,7 @@ targetFrame:EnableMouse(false)
 
 function targetFrame:StartMoving()
     targetFrame:Show()
-    local scale = P.GetEffectiveScale()
+    local scale = targetFrame:GetEffectiveScale()
     targetFrame:SetScript("OnUpdate", function()
         local x, y = GetCursorPosition()
         targetFrame:SetPoint("BOTTOMLEFT", UIParent, x/scale, y/scale)

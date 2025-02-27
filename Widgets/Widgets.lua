@@ -341,7 +341,6 @@ end
 function Cell.CreateMovableFrame(title, name, width, height, frameStrata, frameLevel, notUserPlaced)
     local f = CreateFrame("Frame", name, UIParent, "BackdropTemplate")
     f:EnableMouse(true)
-    f:SetIgnoreParentScale(true)
     -- f:SetResizable(false)
     f:SetMovable(true)
     f:SetUserPlaced(not notUserPlaced)

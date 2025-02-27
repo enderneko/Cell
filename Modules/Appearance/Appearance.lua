@@ -1811,17 +1811,34 @@ local function UpdateAppearance(which)
 
     -- scale
     if not which or which == "scale" then
-        P.SetRelativeScale(CellDB["appearance"]["scale"])
-        P.SetEffectiveScale(Cell.frames.mainFrame)
-        if Cell.frames.changelogsFrame then P.SetEffectiveScale(Cell.frames.changelogsFrame) end
-        if Cell.frames.codeSnippetsFrame then P.SetEffectiveScale(Cell.frames.codeSnippetsFrame) end
-        P.SetEffectiveScale(CellTooltip)
-        P.SetEffectiveScale(CellSpellTooltip)
-        -- P.SetEffectiveScale(CellScanningTooltip)
+        local scale = CellDB["appearance"]["scale"]
+        P.SetRelativeScale(scale) -- just pass the scale value
+
+        Cell.frames.mainFrame:SetScale(scale)
+
+        CellTooltip:SetScale(scale)
         CellTooltip:UpdatePixelPerfect()
+
+        CellSpellTooltip:SetScale(scale)
         CellSpellTooltip:UpdatePixelPerfect()
-        -- CellScanningTooltip:UpdatePixelPerfect()
+
+        Cell.menu:SetScale(scale)
         Cell.menu:UpdatePixelPerfect()
+
+        if Cell.frames.changelogsFrame then
+            Cell.frames.changelogsFrame:SetScale(scale)
+            Cell.frames.changelogsFrame:UpdatePixelPerfect()
+        end
+
+        if Cell.frames.codeSnippetsFrame then
+            Cell.frames.codeSnippetsFrame:SetScale(scale)
+            Cell.frames.codeSnippetsFrame:UpdatePixelPerfect()
+        end
+
+        if CellColorPicker then
+            CellColorPicker:SetScale(scale)
+            CellColorPicker:UpdatePixelPerfect()
+        end
     end
 
     -- strata

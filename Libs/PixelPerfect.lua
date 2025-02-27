@@ -83,15 +83,19 @@ end
 --     return scale - scale % 0.1 ^ 2
 -- end
 
+local scale = 1
 local mult = 1
-function P.SetRelativeScale(scale)
-    mult = 1 / scale
+function P.SetRelativeScale(s)
+    mult = 1 / s
+    scale = s
 end
 
+---@deprecated
 function P.GetEffectiveScale()
     return P.GetPixelPerfectScale() / mult
 end
 
+---@deprecated
 function P.SetEffectiveScale(frame)
     frame:SetScale(P.GetEffectiveScale())
 end
@@ -103,13 +107,19 @@ function P.Scale(n)
     return (mult == 1 or n == 0) and n or ((mult < 1 and trunc(n/mult) or round(n/mult)) * mult)
 end
 ]]
-function P.Scale(n)
-    if mult == 1 or n == 0 then
-        return n
-    else
-        local x = mult > 1 and mult or -mult
-        return n - n % (n < 0 and x or -x)
-    end
+-- function P.Scale(n)
+--     if mult == 1 or n == 0 then
+--         return n
+--     else
+--         local x = mult > 1 and mult or -mult
+--         return n - n % (n < 0 and x or -x)
+--     end
+-- end
+
+local GetNearestPixelSize = PixelUtil.GetNearestPixelSize
+
+function P.Scale(desiredPixels)
+    return GetNearestPixelSize(desiredPixels, UIParent:GetScale() * scale)
 end
 
 function P.Size(frame, width, height)
@@ -237,17 +247,24 @@ end
 --------------------------------------------
 function P.SavePosition(frame, positionTable)
     wipe(positionTable)
-    local left = math.floor(frame:GetLeft() + 0.5)
-    local top = math.floor(frame:GetTop() + 0.5)
-    positionTable[1], positionTable[2] = left, top
+    positionTable[1], _, positionTable[2], positionTable[3], positionTable[4] = frame:GetPoint(1)
+    -- local left = math.floor(frame:GetLeft() + 0.5)
+    -- local top = math.floor(frame:GetTop() + 0.5)
+    -- positionTable[1], positionTable[2] = left, top
 end
 
 function P.LoadPosition(frame, positionTable)
-    if type(positionTable) ~= "table" or #positionTable ~= 2 then return end
+    if type(positionTable) ~= "table" then return end
 
-    P.ClearPoints(frame)
-    P.Point(frame, "TOPLEFT", UIParent, "BOTTOMLEFT", positionTable[1], positionTable[2])
-    return true
+    if #positionTable == 2 then
+        P.ClearPoints(frame)
+        P.Point(frame, "TOPLEFT", UIParent, "BOTTOMLEFT", positionTable[1], positionTable[2])
+        return true
+    elseif #positionTable == 4 then
+        P.ClearPoints(frame)
+        frame:SetPoint(positionTable[1], UIParent, positionTable[2], positionTable[3], positionTable[4])
+        return true
+    end
 end
 
 ---------------------------------------------------------------------

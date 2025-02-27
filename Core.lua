@@ -833,7 +833,7 @@ end
 
 function eventFrame:UI_SCALE_CHANGED()
     if not InCombatLockdown() then
-        F.Debug("UI_SCALE_CHANGED: ", "effectiveScale:", P.GetEffectiveScale(), "uiScale:", UIParent:GetScale())
+        F.Debug("UI_SCALE_CHANGED: ", UIParent:GetScale())
         Cell.Fire("UpdatePixelPerfect")
         Cell.Fire("UpdateAppearance", "scale")
         PreUpdateLayout()

@@ -9,8 +9,7 @@ local function CreateChangelogsFrame()
     changelogsFrame = Cell.CreateMovableFrame("Cell "..L["Changelogs"], "CellChangelogsFrame", 400, 450, "DIALOG", 1, true)
     Cell.frames.changelogsFrame = changelogsFrame
     changelogsFrame:SetToplevel(true)
-
-    P.SetEffectiveScale(changelogsFrame)
+    changelogsFrame:SetScale(CellDB["appearance"]["scale"])
 
     changelogsFrame.header.closeBtn:HookScript("OnClick", function()
         CellDB["changelogsViewed"] = Cell.version
