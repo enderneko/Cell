@@ -60,6 +60,8 @@ local defaultSpells = {
             "18562S", -- Swiftmend - 迅捷治愈
             "102693H", -- Grove Guardians - 林莽卫士
             "305497P", -- pvp - Thorns - 荆棘术
+            "474149P", -- pvp - Mass Blooming - 群体绽放
+            "473919P", -- pvp - Blossom Burst - 绽放迸发
         },
     },
 
