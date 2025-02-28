@@ -338,7 +338,7 @@ local function RaidFrame_UpdateLayout(layout, which)
     layout = CellDB["layouts"][layout]
 
     -- arena pets
-    if Cell.vars.inBattleground == 5 and layout["pet"]["partyEnabled"] then
+    if Cell.vars.inBattleground == 5 and layout["pet"]["partyEnabled"] and not layout["pet"]["partyDetached"] then
         for i, arenaPet in ipairs(arenaPetButtons) do
             RegisterAttributeDriver(arenaPet, "state-visibility", "[@raidpet"..i..", exists] show;hide")
         end
@@ -351,7 +351,10 @@ local function RaidFrame_UpdateLayout(layout, which)
 
     local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, unitSpacingX, unitSpacingY, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint = GetPoints(layout)
 
-    if not which or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "groupFilter" then
+    if not which or which == "main-arrangement" or which == "pet-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "groupFilter" then
+        local petSpacingX = layout["pet"]["sameArrangementAsMain"] and unitSpacingX or layout["pet"]["spacingX"]
+        local petSpacingY = layout["pet"]["sameArrangementAsMain"] and unitSpacingY or layout["pet"]["spacingY"]
+
         -- arena pets
         for k in ipairs(arenaPetButtons) do
             arenaPetButtons[k]:ClearAllPoints()
@@ -359,9 +362,9 @@ local function RaidFrame_UpdateLayout(layout, which)
                 arenaPetButtons[k]:SetPoint(point, npcFrameAnchor)
             else
                 if layout["main"]["orientation"] == "vertical" then
-                    arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, 0, unitSpacing)
+                    arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, 0, petSpacingY)
                 else
-                    arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, unitSpacing, 0)
+                    arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, petSpacingX, 0)
                 end
             end
         end

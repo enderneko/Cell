@@ -3265,6 +3265,13 @@ function F.Revise()
                 layout.pet.soloEnabled = true
             end
         end
+
+        if strfind(CellDB["snippets"][0]["code"], "CELL_SHOW_RAID_PET_OWNER_NAME") then
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"]:gsub("CELL_SHOW_RAID_PET_OWNER_NAME", "CELL_SHOW_GROUP_PET_OWNER_NAME")
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"]:gsub("show raid pet owner name", "show group pet owner name")
+        elseif not strfind(CellDB["snippets"][0]["code"], "CELL_SHOW_GROUP_PET_OWNER_NAME") then
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- show group pet owner name (\"VEHICLE\", \"NAME\", nil)\nCELL_SHOW_GROUP_PET_OWNER_NAME = nil"
+        end
     end
 
     -- ----------------------------------------------------------------------- --

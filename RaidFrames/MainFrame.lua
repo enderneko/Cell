@@ -12,7 +12,7 @@ Cell.unitButtons = {
     ["raid"] = {
         ["units"] = {}, -- NOTE: update in UnitButton_OnAttributeChanged
     },
-    ["raidpet"] = {
+    ["pet"] = {
         ["units"] = {}, -- NOTE: update in _initialAttribute-refreshUnitChange
     },
     ["npc"] = {

@@ -896,8 +896,8 @@ function F.IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist
             func(b)
         end
 
-        -- raid pet
-        for index, b in pairs(Cell.unitButtons.raidpet) do
+        -- group pet
+        for index, b in pairs(Cell.unitButtons.pet) do
             if index ~= "units" then
                 func(b)
             end
@@ -944,7 +944,7 @@ function F.GetUnitButtonByUnit(unit, getSpotlights, getQuickAssist)
         if Cell.vars.inBattleground == 5 then
             normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.arena[unit]
         else
-            normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.raidpet.units[unit]
+            normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.pet.units[unit]
         end
     elseif Cell.vars.groupType == "party" then
         normal = Cell.unitButtons.party.units[unit] or Cell.unitButtons.npc.units[unit]
@@ -993,7 +993,7 @@ function F.HandleUnitButton(type, unit, func, ...)
         if Cell.vars.inBattleground == 5 then
             normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.arena[unit]
         else
-            normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.raidpet.units[unit]
+            normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.pet.units[unit]
         end
     elseif Cell.vars.groupType == "party" then
         normal = Cell.unitButtons.party.units[unit] or Cell.unitButtons.npc.units[unit]
