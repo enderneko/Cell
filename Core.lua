@@ -23,6 +23,7 @@ Cell.bFuncs = {}
 Cell.uFuncs = {}
 Cell.animations = {}
 
+---@class CellFuncs
 local F = Cell.funcs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
@@ -92,14 +93,19 @@ function F.UpdateLayout(layoutGroupType)
 
         local layout = Cell.vars.layoutAutoSwitch[layoutGroupType]
         Cell.vars.currentLayout = layout
-        Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell.vars.layoutGroupType = layoutGroupType
+
+        if layout == "hide" then
+            Cell.vars.currentLayoutTable = CellDB["layouts"]["default"]
+        else
+            Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
+        end
 
         F.IterateAllUnitButtons(function(b)
             b._indicatorsReady = nil
         end, true)
 
-        Cell.Fire("UpdateLayout", Cell.vars.currentLayout)
+        Cell.Fire("UpdateLayout", layout)
         Cell.Fire("UpdateIndicators")
     end
 end
@@ -204,9 +210,6 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["enableTooltips"] = false,
                 ["hideTooltipsInCombat"] = true,
                 ["tooltipsPosition"] = {"BOTTOMLEFT", "Default", "TOPLEFT", 0, 15},
-                ["showSolo"] = true,
-                ["showParty"] = true,
-                ["showRaid"] = true,
                 ["hideBlizzardParty"] = true,
                 ["hideBlizzardRaid"] = true,
                 ["locked"] = false,
@@ -543,7 +546,7 @@ function eventFrame:ADDON_LOADED(arg1)
         for _, roleOrClass in pairs(CellDB["layoutAutoSwitch"]) do
             for _, t in pairs(roleOrClass) do
                 for groupType, layout in pairs(t) do
-                    if not CellDB["layouts"][layout] then
+                    if layout ~= "hide" and not CellDB["layouts"][layout] then
                         t[groupType] = "default"
                     end
                 end
@@ -791,8 +794,6 @@ function eventFrame:PLAYER_LOGIN()
 
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable
     eventFrame:GROUP_ROSTER_UPDATE()
-    -- update visibility
-    Cell.Fire("UpdateVisibility")
     -- REVIEW: register unitframes for click casting
     -- RegisterGlobalClickCastings()
     -- update click-castings

@@ -330,11 +330,22 @@ end
 local init, previousLayout
 local function RaidFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "raid" and init then return end
+
+    -- visibility
+    if layout == "hide" then
+        UnregisterAttributeDriver(raidFrame, "state-visibility")
+        raidFrame:Hide()
+        if init then
+            return
+        else
+            layout = "default"
+        end
+    else
+        RegisterAttributeDriver(raidFrame, "state-visibility", "show")
+    end
+
+    -- update
     init = true
-
-    -- if previousLayout == layout and not which then return end
-    -- previousLayout = layout
-
     layout = CellDB["layouts"][layout]
 
     -- arena pets
@@ -549,16 +560,16 @@ local function RaidFrame_UpdateLayout(layout, which)
 end
 Cell.RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)
 
-local function RaidFrame_UpdateVisibility(which)
-    if not which or which == "raid" then
-        UpdateHeadersShowRaidAttribute()
+-- local function RaidFrame_UpdateVisibility(which)
+--     if not which or which == "raid" then
+--         UpdateHeadersShowRaidAttribute()
 
-        if CellDB["general"]["showRaid"] then
-            RegisterAttributeDriver(raidFrame, "state-visibility", "show")
-        else
-            UnregisterAttributeDriver(raidFrame, "state-visibility")
-            raidFrame:Hide()
-        end
-    end
-end
-Cell.RegisterCallback("UpdateVisibility", "RaidFrame_UpdateVisibility", RaidFrame_UpdateVisibility)
+--         if CellDB["general"]["showRaid"] then
+--             RegisterAttributeDriver(raidFrame, "state-visibility", "show")
+--         else
+--             UnregisterAttributeDriver(raidFrame, "state-visibility")
+--             raidFrame:Hide()
+--         end
+--     end
+-- end
+-- Cell.RegisterCallback("UpdateVisibility", "RaidFrame_UpdateVisibility", RaidFrame_UpdateVisibility)

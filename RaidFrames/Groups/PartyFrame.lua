@@ -93,11 +93,22 @@ end
 local init, previousLayout
 local function PartyFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "party" and init then return end
+
+    -- visibility
+    if layout == "hide" then
+        UnregisterAttributeDriver(partyFrame, "state-visibility")
+        partyFrame:Hide()
+        if init then
+            return
+        else
+            layout = "default"
+        end
+    else
+        RegisterAttributeDriver(partyFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] show;[group:party] show;hide")
+    end
+
+    -- update
     init = true
-
-    -- if previousLayout == layout and not which then return end
-    -- previousLayout = layout
-
     layout = CellDB["layouts"][layout]
 
     -- anchor
@@ -248,21 +259,21 @@ local function PartyFrame_UpdateLayout(layout, which)
 end
 Cell.RegisterCallback("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_UpdateLayout)
 
-local function PartyFrame_UpdateVisibility(which)
-    if not which or which == "party" then
-        header:SetAttribute("showParty", CellDB["general"]["showParty"])
-        if CellDB["general"]["showParty"] then
-            --! [group] won't fire during combat
-            -- RegisterAttributeDriver(partyFrame, "state-visibility", "[group:raid] hide; [group:party] show; hide")
-            -- NOTE: [group:party] show: fix for premade, only player in party, but party1 not exists
-            RegisterAttributeDriver(partyFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] show;[group:party] show;hide")
-        else
-            UnregisterAttributeDriver(partyFrame, "state-visibility")
-            partyFrame:Hide()
-        end
-    end
-end
-Cell.RegisterCallback("UpdateVisibility", "PartyFrame_UpdateVisibility", PartyFrame_UpdateVisibility)
+-- local function PartyFrame_UpdateVisibility(which)
+--     if not which or which == "party" then
+--         header:SetAttribute("showParty", CellDB["general"]["showParty"])
+--         if CellDB["general"]["showParty"] then
+--             --! [group] won't fire during combat
+--             -- RegisterAttributeDriver(partyFrame, "state-visibility", "[group:raid] hide; [group:party] show; hide")
+--             -- NOTE: [group:party] show: fix for premade, only player in party, but party1 not exists
+--             RegisterAttributeDriver(partyFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] show;[group:party] show;hide")
+--         else
+--             UnregisterAttributeDriver(partyFrame, "state-visibility")
+--             partyFrame:Hide()
+--         end
+--     end
+-- end
+-- Cell.RegisterCallback("UpdateVisibility", "PartyFrame_UpdateVisibility", PartyFrame_UpdateVisibility)
 
 -- local f = CreateFrame("Frame", nil, UIParent, "SecureFrameTemplate")
 -- RegisterAttributeDriver(f, "state-group", "[@raid1,exists] raid;[@party1,exists] party; solo")

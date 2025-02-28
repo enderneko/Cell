@@ -209,11 +209,17 @@ Cell.RegisterCallback("UpdateMenu", "PetFrame_UpdateMenu", UpdateMenu)
 local init, previousLayout
 local function PetFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType == "solo" and init then return end
+
+    -- visibility
+    if layout == "hide" then
+        UnregisterAttributeDriver(petFrame, "state-visibility")
+        petFrame:Hide()
+        return
+    end
+    RegisterAttributeDriver(petFrame, "state-visibility", "[@raid1,exists] show;[@party1,exists] show;hide")
+
+    -- update
     init = true
-
-    -- if previousLayout == layout and not which then return end
-    -- previousLayout = layout
-
     layout = CellDB["layouts"][layout]
 
     if not which or strfind(which, "size$") or strfind(which, "power$") or which == "barOrientation" then
@@ -341,12 +347,10 @@ local function PetFrame_UpdateLayout(layout, which)
         elseif Cell.vars.groupType == "raid" and layout["pet"]["raidEnabled"] and Cell.vars.inBattleground ~= 5 then
             header:SetAttribute("showParty", false)
             header:SetAttribute("showRaid", true)
-            -- RegisterAttributeDriver(petFrame, "state-visibility", "[@raid1,exists] show;hide")
             petFrame:Show()
         else
             header:SetAttribute("showParty", false)
             header:SetAttribute("showRaid", false)
-            -- UnregisterAttributeDriver(petFrame, "state-visibility")
             petFrame:Hide()
         end
     end

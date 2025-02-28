@@ -22,19 +22,22 @@ Cell.unitButtons.solo["pet"] = petButton
 local init, previousLayout
 local function SoloFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "solo" and init then return end
+
+    -- visibility
+    if layout == "hide" then
+        UnregisterAttributeDriver(soloFrame, "state-visibility")
+        soloFrame:Hide()
+        if init then
+            return
+        else
+            layout = "default"
+        end
+    else
+        RegisterAttributeDriver(soloFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] hide;[group] hide;show")
+    end
+
+    -- update
     init = true
-
-    -- if layout == "hide" then
-    --     UnregisterAttributeDriver(soloFrame, "state-visibility")
-    --     soloFrame:Hide()
-    --     return
-    -- else
-    --     RegisterAttributeDriver(soloFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] hide;[group] hide;show")
-    -- end
-
-    -- if previousLayout == layout and not which then return end
-    -- previousLayout = layout
-
     layout = CellDB["layouts"][layout]
 
     if not which or strfind(which, "size$") then
@@ -114,16 +117,16 @@ local function SoloFrame_UpdateLayout(layout, which)
 end
 Cell.RegisterCallback("UpdateLayout", "SoloFrame_UpdateLayout", SoloFrame_UpdateLayout)
 
-local function SoloFrame_UpdateVisibility(which)
-    F.Debug("|cffff7fffUpdateVisibility:|r "..(which or "all"))
+-- local function SoloFrame_UpdateVisibility(which)
+--     F.Debug("|cffff7fffUpdateVisibility:|r "..(which or "all"))
 
-    if not which or which == "solo" then
-        if CellDB["general"]["showSolo"] then
-            RegisterAttributeDriver(soloFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] hide;[group] hide;show")
-        else
-            UnregisterAttributeDriver(soloFrame, "state-visibility")
-            soloFrame:Hide()
-        end
-    end
-end
-Cell.RegisterCallback("UpdateVisibility", "SoloFrame_UpdateVisibility", SoloFrame_UpdateVisibility)
+--     if not which or which == "solo" then
+--         if CellDB["general"]["showSolo"] then
+--             RegisterAttributeDriver(soloFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] hide;[group] hide;show")
+--         else
+--             UnregisterAttributeDriver(soloFrame, "state-visibility")
+--             soloFrame:Hide()
+--         end
+--     end
+-- end
+-- Cell.RegisterCallback("UpdateVisibility", "SoloFrame_UpdateVisibility", SoloFrame_UpdateVisibility)

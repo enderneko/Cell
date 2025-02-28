@@ -607,6 +607,11 @@ end
 Cell.RegisterCallback("GroupTypeChanged", "RaidRosterFrame_GroupTypeChanged", GroupTypeChanged)
 
 local function UpdateLayout(layout, which)
+    if layout == "hide" then
+        raidRosterFrame:Hide()
+        return
+    end
+
     layout = Cell.vars.currentLayoutTable
     if not which or which == "main-arrangement" then
         raidRosterFrame:ClearAllPoints()

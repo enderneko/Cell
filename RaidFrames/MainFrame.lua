@@ -367,38 +367,12 @@ end
 -------------------------------------------------
 -- group type changed
 -------------------------------------------------
-local function MainFrame_UpdateVisibility()
-    if Cell.vars.groupType == "solo" then
-        if CellDB["general"]["showSolo"] then
-            menuFrame:Show()
-        else
-            menuFrame:Hide()
-        end
-    elseif Cell.vars.groupType == "party" then
-        if CellDB["general"]["showParty"] then
-            menuFrame:Show()
-        else
-            menuFrame:Hide()
-        end
-    else
-        if CellDB["general"]["showRaid"] then
-            menuFrame:Show()
-        else
-            menuFrame:Hide()
-        end
-    end
-end
-Cell.RegisterCallback("UpdateVisibility", "MainFrame_UpdateVisibility", MainFrame_UpdateVisibility)
-
 local function MainFrame_GroupTypeChanged(groupType)
     if groupType == "raid" then
         raid:Show()
     else
         raid:Hide()
     end
-    UpdateHoverFrame()
-    -- check whether menu should be shown
-    MainFrame_UpdateVisibility()
 end
 Cell.RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)
 
@@ -541,10 +515,18 @@ local init
 local function MainFrame_UpdateLayout(layout, which)
     F.Debug("|cffff0066UpdateLayout:|r layout:", layout, " which:", which)
 
+    -- visibility
+    if layout == "hide" then
+        menuFrame:Hide()
+        return
+    else
+        menuFrame:Show()
+    end
+
     if not init then
-        init = true
         --! NOTE: a reload during pet battle prevents HEADER from CREATING CHILDs (unit buttons), this hide delay is a MUST
         RegisterStateDriver(cellMainFrame, "visibility", "[petbattle] hide; show")
+        init = true
     end
 
     layout = Cell.vars.currentLayoutTable

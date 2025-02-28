@@ -752,6 +752,14 @@ local function UpdateLayout(layout, which)
     -- if previousLayout == layout and not which then return end
     -- previousLayout = layout
 
+    -- visibility
+    if layout == "hide" then
+        spotlightFrame:Hide()
+        menu:Hide()
+        return
+    end
+
+    -- update
     layout = Cell.vars.currentLayoutTable
 
     if not which or strfind(which, "size$") then

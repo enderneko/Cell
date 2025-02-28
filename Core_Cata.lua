@@ -85,14 +85,19 @@ function F.UpdateLayout(layoutGroupType)
 
         local layout = Cell.vars.layoutAutoSwitch[layoutGroupType]
         Cell.vars.currentLayout = layout
-        Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell.vars.layoutGroupType = layoutGroupType
+
+        if layout == "hide" then
+            Cell.vars.currentLayoutTable = CellDB["layouts"]["default"]
+        else
+            Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
+        end
 
         F.IterateAllUnitButtons(function(b)
             b._indicatorsReady = nil
         end, true)
 
-        Cell.Fire("UpdateLayout", Cell.vars.currentLayout)
+        Cell.Fire("UpdateLayout", layout)
         Cell.Fire("UpdateIndicators")
     end
 end
@@ -183,9 +188,6 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["enableTooltips"] = false,
                 ["hideTooltipsInCombat"] = true,
                 ["tooltipsPosition"] = {"BOTTOMLEFT", "Default", "TOPLEFT", 0, 15},
-                ["showSolo"] = true,
-                ["showParty"] = true,
-                ["showRaid"] = true,
                 ["hideBlizzardParty"] = true,
                 ["hideBlizzardRaid"] = true,
                 ["locked"] = false,
@@ -725,8 +727,6 @@ function eventFrame:PLAYER_LOGIN()
 
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable
     eventFrame:GROUP_ROSTER_UPDATE()
-    -- update visibility
-    Cell.Fire("UpdateVisibility")
     -- update click-castings
     Cell.Fire("UpdateClickCastings")
     -- update indicators

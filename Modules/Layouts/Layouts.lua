@@ -1,7 +1,10 @@
 local _, Cell = ...
 local L = Cell.L
+---@type CellFuncs
 local F = Cell.funcs
+---@type CellUnitButtonFuncs
 local B = Cell.bFuncs
+---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 
 local layoutsTab = Cell.CreateFrame("CellOptionsFrame_LayoutsTab", Cell.frames.optionsFrame, nil, nil, true)
@@ -1300,6 +1303,10 @@ end
 -- hide previews
 -------------------------------------------------
 local function HidePreviews()
+    if not layoutPreview then
+        return
+    end
+
     if layoutPreview.timer then
         layoutPreview.timer:Cancel()
         layoutPreview.timer = nil
@@ -1363,7 +1370,8 @@ local LoadLayoutDB, UpdateButtonStates, LoadLayoutAutoSwitchDB
 
 local function IsValidLayoutName(name)
     return name and name ~= ""
-        and strlower(name) ~= "default"and name ~= _G.DEFAULT
+        and strlower(name) ~= "default" and name ~= _G.DEFAULT
+        and strlower(name) ~= "hide"
         -- and not strfind(name, ":") and not strfind(name, "!")
         and not CellDB["layouts"][name]
 end
@@ -1877,8 +1885,8 @@ LoadAutoSwitchDropdowns = function()
         end
     end
     table.sort(indices)
-    -- tinsert(indices, 1, "hide") -- make hide first
-    tinsert(indices, 1, "default") -- make default second
+    tinsert(indices, 1, "hide") -- make hide first
+    tinsert(indices, 2, "default") -- make default second
 
     -- soloDropdown
     soloDropdown:SetItems(GetDropdownItems(indices, "solo"))
@@ -2777,10 +2785,16 @@ LoadPageDB = function(page)
 end
 
 LoadLayoutDB = function(layout, dontShowPreview)
-    F.Debug("LoadLayoutDB:", layout, dontShowPreview)
+    if layout == "hide" then
+        selectedLayout = "default"
+        selectedLayoutTable = CellDB["layouts"]["default"]
+        dontShowPreview = true
+    else
+        selectedLayout = layout
+        selectedLayoutTable = CellDB["layouts"][layout]
+    end
 
-    selectedLayout = layout
-    selectedLayoutTable = CellDB["layouts"][layout]
+    F.Debug("LoadLayoutDB:", layout, dontShowPreview)
 
     layoutDropdown:SetSelectedValue(selectedLayout)
 
