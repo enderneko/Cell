@@ -31,6 +31,7 @@ local defaultSpells = {
             "102401C", -- Wild Charge - 野性冲锋
             "29166C", -- Innervate - 激活
             "48438C", -- Wild Growth - 野性成长
+            "474750C", -- Symbiotic Relationship - 共生关系
         },
         -- 102 - Balance
         [102] = {

@@ -471,12 +471,12 @@ local function NPCFrame_UpdateLayout(layout, which)
     end
 
     if not which or which == "pet" then
-        if layout["pet"]["partyEnabled"] then
-            npcFrame:SetFrameRef("party", CellPartyFrameHeaderUnitButton1Pet)
-            anchors["party"] = CellPartyFrameHeaderUnitButton1Pet
-        else
+        if not layout["pet"]["partyEnabled"] or layout["pet"]["partyDetached"] then
             npcFrame:SetFrameRef("party", CellPartyFrameHeaderUnitButton1)
             anchors["party"] = CellPartyFrameHeaderUnitButton1
+        else
+            npcFrame:SetFrameRef("party", CellPartyFrameHeaderUnitButton1Pet)
+            anchors["party"] = CellPartyFrameHeaderUnitButton1Pet
         end
     end
 

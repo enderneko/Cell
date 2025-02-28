@@ -1148,12 +1148,12 @@ function I.CreateNameText(parent)
 
         F.UpdateTextWidth(nameText.name, name, nameText.width, parent.widgets.healthBar)
 
-        if CELL_SHOW_RAID_PET_OWNER_NAME and parent.isRaidPet then
+        if CELL_SHOW_GROUP_PET_OWNER_NAME and parent.isGroupPet then
             local owner = F.GetPlayerUnit(parent.states.unit)
             owner = UnitName(owner)
-            if CELL_SHOW_RAID_PET_OWNER_NAME == "VEHICLE" then
+            if CELL_SHOW_GROUP_PET_OWNER_NAME == "VEHICLE" then
                 F.UpdateTextWidth(nameText.vehicle, owner, nameText.width, parent.widgets.healthBar)
-            elseif CELL_SHOW_RAID_PET_OWNER_NAME == "NAME" then
+            elseif CELL_SHOW_GROUP_PET_OWNER_NAME == "NAME" then
                 F.UpdateTextWidth(nameText.name, owner, nameText.width, parent.widgets.healthBar)
             end
         end

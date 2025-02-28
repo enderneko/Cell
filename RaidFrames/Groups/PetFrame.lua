@@ -7,20 +7,20 @@ local P = Cell.pixelPerfectFuncs
 
 local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 
-local raidPetFrame = CreateFrame("Frame", "CellRaidPetFrame", Cell.frames.mainFrame, "SecureHandlerAttributeTemplate")
-Cell.frames.raidPetFrame = raidPetFrame
+local petFrame = CreateFrame("Frame", "CellPetFrame", Cell.frames.mainFrame, "SecureHandlerAttributeTemplate")
+Cell.frames.petFrame = petFrame
 
 -------------------------------------------------
 -- anchor
 -------------------------------------------------
-local anchorFrame = CreateFrame("Frame", "CellRaidPetAnchorFrame", raidPetFrame, "BackdropTemplate")
-Cell.frames.raidPetFrameAnchor = anchorFrame
+local anchorFrame = CreateFrame("Frame", "CellPetAnchorFrame", petFrame, "BackdropTemplate")
+Cell.frames.petFrameAnchor = anchorFrame
 anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
 anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
 -- Cell.StylizeFrame(anchorFrame, {1, 0, 0, 0.4})
 
-local hoverFrame = CreateFrame("Frame", nil, raidPetFrame)
+local hoverFrame = CreateFrame("Frame", nil, petFrame)
 hoverFrame:SetPoint("TOP", anchorFrame, 0, 1)
 hoverFrame:SetPoint("BOTTOM", anchorFrame, 0, -1)
 hoverFrame:SetPoint("LEFT", anchorFrame, -1, 0)
@@ -44,7 +44,7 @@ dumb:HookScript("OnEnter", function()
     hoverFrame:GetScript("OnEnter")(hoverFrame)
     CellTooltip:SetOwner(dumb, "ANCHOR_NONE")
     CellTooltip:SetPoint(tooltipPoint, dumb, tooltipRelativePoint, tooltipX, tooltipY)
-    CellTooltip:AddLine(L["Raid Pets"])
+    CellTooltip:AddLine(L["Pets"])
     CellTooltip:Show()
 end)
 dumb:HookScript("OnLeave", function()
@@ -54,8 +54,9 @@ end)
 
 local function UpdateAnchor()
     local show
-    if Cell.vars.currentLayoutTable["pet"]["raidEnabled"] then
-        show = Cell.unitButtons.raidpet[1]:IsShown()
+    if Cell.vars.currentLayoutTable["pet"]["raidEnabled"]
+    or (Cell.vars.currentLayoutTable["pet"]["partyEnabled"] and Cell.vars.currentLayoutTable["pet"]["partyDetached"]) then
+        show = Cell.unitButtons.pet[1]:IsShown()
     end
 
     hoverFrame:EnableMouse(show)
@@ -76,8 +77,8 @@ end
 -------------------------------------------------
 -- header
 -------------------------------------------------
-local header = CreateFrame("Frame", "CellRaidPetFrameHeader", raidPetFrame, "SecureGroupPetHeaderTemplate")
-header:SetAllPoints(raidPetFrame)
+local header = CreateFrame("Frame", "CellPetFrameHeader", petFrame, "SecureGroupPetHeaderTemplate")
+header:SetAllPoints(petFrame)
 
 header:SetAttribute("initialConfigFunction", [[
     --! button for pet/vehicle only, toggleForVehicle MUST be false
@@ -92,8 +93,8 @@ header:SetAttribute("initialConfigFunction", [[
 
 function header:UpdateButtonUnit(bName, unit)
     if not unit then return end
-    Cell.unitButtons.raidpet.units[unit] = _G[bName]
-    _G[bName].isRaidPet = true
+    Cell.unitButtons.pet.units[unit] = _G[bName]
+    _G[bName].isGroupPet = true
 end
 
 header:SetAttribute("_initialAttributeNames", "refreshUnitChange")
@@ -105,6 +106,7 @@ header:SetAttribute("template", "CellUnitButtonTemplate")
 header:SetAttribute("point", "TOP")
 header:SetAttribute("columnAnchorPoint", "LEFT")
 header:SetAttribute("unitsPerColumn", 5)
+header:SetAttribute("showPlayer", true) -- show player pet while not in a raid
 
 if Cell.isRetail then
     header:SetAttribute("maxColumns", 4)
@@ -119,7 +121,7 @@ header:Show()
 header:SetAttribute("startingIndex", 1)
 
 for i, b in ipairs(header) do
-    Cell.unitButtons.raidpet[i] = b
+    Cell.unitButtons.pet[i] = b
     -- b.type = "pet" -- layout setup
 end
 
@@ -135,7 +137,7 @@ end)
 -- functions
 -------------------------------------------------
 local function UpdatePosition()
-    raidPetFrame:ClearAllPoints()
+    petFrame:ClearAllPoints()
     -- NOTE: detach from spotlightPreviewAnchor
     P.LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["pet"]["position"])
 
@@ -149,31 +151,31 @@ local function UpdatePosition()
     if CellDB["general"]["menuPosition"] == "top_bottom" then
         P.Size(anchorFrame, 20, 10)
         if anchor == "BOTTOMLEFT" then
-            raidPetFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
+            petFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "BOTTOMLEFT", 0, -3
         elseif anchor == "BOTTOMRIGHT" then
-            raidPetFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 4)
+            petFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 4)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "BOTTOMRIGHT", 0, -3
         elseif anchor == "TOPLEFT" then
-            raidPetFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
+            petFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "TOPLEFT", 0, 3
         elseif anchor == "TOPRIGHT" then
-            raidPetFrame:SetPoint("TOPRIGHT", anchorFrame, "BOTTOMRIGHT", 0, -4)
+            petFrame:SetPoint("TOPRIGHT", anchorFrame, "BOTTOMRIGHT", 0, -4)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
         end
     else
         P.Size(anchorFrame, 10, 20)
         if anchor == "BOTTOMLEFT" then
-            raidPetFrame:SetPoint("BOTTOMLEFT", anchorFrame, "BOTTOMRIGHT", 4, 0)
+            petFrame:SetPoint("BOTTOMLEFT", anchorFrame, "BOTTOMRIGHT", 4, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "BOTTOMLEFT", -3, 0
         elseif anchor == "BOTTOMRIGHT" then
-            raidPetFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "BOTTOMLEFT", -4, 0)
+            petFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "BOTTOMLEFT", -4, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "BOTTOMRIGHT", 3, 0
         elseif anchor == "TOPLEFT" then
-            raidPetFrame:SetPoint("TOPLEFT", anchorFrame, "TOPRIGHT", 4, 0)
+            petFrame:SetPoint("TOPLEFT", anchorFrame, "TOPRIGHT", 4, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "TOPLEFT", -3, 0
         elseif anchor == "TOPRIGHT" then
-            raidPetFrame:SetPoint("TOPRIGHT", anchorFrame, "TOPLEFT", -4, 0)
+            petFrame:SetPoint("TOPRIGHT", anchorFrame, "TOPLEFT", -4, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "TOPRIGHT", 3, 0
         end
     end
@@ -202,11 +204,11 @@ local function UpdateMenu(which)
         UpdatePosition()
     end
 end
-Cell.RegisterCallback("UpdateMenu", "RaidPetFrame_UpdateMenu", UpdateMenu)
+Cell.RegisterCallback("UpdateMenu", "PetFrame_UpdateMenu", UpdateMenu)
 
 local init, previousLayout
-local function RaidPetFrame_UpdateLayout(layout, which)
-    if Cell.vars.groupType ~= "raid" and init then return end
+local function PetFrame_UpdateLayout(layout, which)
+    if Cell.vars.groupType == "solo" and init then return end
     init = true
 
     -- if previousLayout == layout and not which then return end
@@ -225,7 +227,7 @@ local function RaidPetFrame_UpdateLayout(layout, which)
             powerSize = layout["pet"]["powerSize"]
         end
 
-        P.Size(raidPetFrame, width, height)
+        P.Size(petFrame, width, height)
 
         -- header:SetAttribute("buttonWidth", P.Scale(width))
         -- header:SetAttribute("buttonHeight", P.Scale(height))
@@ -327,14 +329,26 @@ local function RaidPetFrame_UpdateLayout(layout, which)
     end
 
     if not which or which == "pet" then
-        if layout["pet"]["raidEnabled"] and Cell.vars.inBattleground ~= 5 then
+        if Cell.vars.groupType == "party" and layout["pet"]["partyEnabled"] and layout["pet"]["partyDetached"] then
+            if Cell.vars.inBattleground == 5 then -- arena
+                header:SetAttribute("showParty", false)
+                header:SetAttribute("showRaid", true)
+            else
+                header:SetAttribute("showParty", true)
+                header:SetAttribute("showRaid", false)
+            end
+            petFrame:Show()
+        elseif Cell.vars.groupType == "raid" and layout["pet"]["raidEnabled"] and Cell.vars.inBattleground ~= 5 then
+            header:SetAttribute("showParty", false)
             header:SetAttribute("showRaid", true)
-            RegisterAttributeDriver(raidPetFrame, "state-visibility", "[@raid1,exists] show;hide")
+            -- RegisterAttributeDriver(petFrame, "state-visibility", "[@raid1,exists] show;hide")
+            petFrame:Show()
         else
+            header:SetAttribute("showParty", false)
             header:SetAttribute("showRaid", false)
-            UnregisterAttributeDriver(raidPetFrame, "state-visibility")
-            raidPetFrame:Hide()
+            -- UnregisterAttributeDriver(petFrame, "state-visibility")
+            petFrame:Hide()
         end
     end
 end
-Cell.RegisterCallback("UpdateLayout", "RaidPetFrame_UpdateLayout", RaidPetFrame_UpdateLayout)
+Cell.RegisterCallback("UpdateLayout", "PetFrame_UpdateLayout", PetFrame_UpdateLayout)

@@ -280,7 +280,7 @@ L["Tip: Every layout has its own position setting"] = "提示：每个布局都�
 
 -- layout preview
 L["Party"] = "小队"
-L["Raid Pets"] = "团队宠物"
+L["Pets"] = "宠物"
 L["Friendly NPC Frame"] = "友方 NPC 框体"
 
 -- layout auto switch
@@ -322,8 +322,11 @@ L["%s is required"] = "需要%s"
 L["Use Same Size As Main"] = "使用与主框体相同的尺寸"
 L["Use Same Arrangement As Main"] = "使用与主框体相同的排列"
 
+L["Show Solo Pet"] = "显示单人宠物"
 L["Show Party/Arena Pets"] = "显示小队/竞技场宠物"
+L["Detached"] = "分离"
 L["Show Raid Pets"] = "显示团队宠物"
+L["Show pets in a separate frame"] = "将宠物显示在一个单独的框体中"
 
 L["Show NPC Frame"] = "显示 NPC 框体"
 L["Separate NPC Frame"] = "分离 NPC 框体"

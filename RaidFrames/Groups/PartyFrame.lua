@@ -41,7 +41,7 @@ header:SetAttribute("_initialAttribute-refreshUnitChange", [[
 
     -- print(self:GetName(), unit, petButton)
 
-    if petButton and header:GetAttribute("showPartyPets") then
+    if petButton and header:GetAttribute("showPartyPets") and not header:GetAttribute("partyDetached") then
         local petUnit
         if unit == "player" then
             petUnit = "pet"
@@ -216,7 +216,8 @@ local function PartyFrame_UpdateLayout(layout, which)
 
     if not which or which == "pet" then
         header:SetAttribute("showPartyPets", layout["pet"]["partyEnabled"])
-        if layout["pet"]["partyEnabled"] then
+        header:SetAttribute("partyDetached", layout["pet"]["partyDetached"])
+        if layout["pet"]["partyEnabled"] and not layout["pet"]["partyDetached"] then
             for i, playerButton in ipairs(header) do
                 RegisterUnitWatch(playerButton.petButton)
             end
