@@ -67,6 +67,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             },
             ["showStack"] = false,
             ["showDuration"] = false,
+            ["maxValue"] = {0, true},
             ["auraType"] = auraType,
             ["auras"] = {},
         }

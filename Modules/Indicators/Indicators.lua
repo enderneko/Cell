@@ -1697,7 +1697,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "duration", "stack", "colors", "position", "frameLevel", "font-noOffset"}
         elseif indicatorType == "bar" then
-            settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "durationVisibility", "barOrientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
+            settingsTable = {"enabled", "auras", "maxValue", "colors", "checkbutton3:showStack", "durationVisibility", "barOrientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "bars" then
             settingsTable = {"enabled", "auras", "maxValue", "checkbutton3:showStack", "durationVisibility", "size", "num:10", "numPerLine:10", "spacing", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "rect" then
@@ -1961,6 +1961,14 @@ local function ShowIndicatorSettings(id)
                 indicatorTable["size"][2] = value[2]
                 indicatorTable["border"] = value[3]
                 Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
+            end)
+        
+        -- maxValue
+        elseif currentSetting == "maxValue" then
+            w:SetDBValue(indicatorTable["maxValue"])
+            w:SetFunc(function(value)
+                indicatorTable["maxValue"] = value
+                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "maxValue", value)
             end)
 
         -- colors

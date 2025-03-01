@@ -1214,7 +1214,11 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
             bar.duration:Show()
         end
 
-        bar:SetMinMaxValues(0, duration)
+        if bar.maxValue then
+            bar:SetMinMaxValues(0, bar.allowSmaller and min(bar.maxValue, duration) or bar.maxValue)
+        else
+            bar:SetMinMaxValues(0, duration)
+        end
         bar._start = start
         bar._duration = duration
         bar._elapsed = 0.1 -- update immediately
@@ -1223,6 +1227,16 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
 
     bar.stack:SetText((count == 0 or count == 1) and "" or count)
     bar:Show()
+end
+
+local function Bar_SetMaxValue(bar, maxValue)
+    if maxValue[1] == 0 then
+        bar.maxValue = nil
+        bar.allowSmaller = nil
+    else
+        bar.maxValue = maxValue[1]
+        bar.allowSmaller = maxValue[2]
+    end
 end
 
 local function Bar_SetColors(bar, colors)
@@ -1244,6 +1258,7 @@ function I.CreateAura_Bar(name, parent)
     bar.SetCooldown = Bar_SetCooldown
     bar.ShowStack = Shared_ShowStack
     bar.ShowDuration = Shared_ShowDuration
+    bar.SetMaxValue = Bar_SetMaxValue
     bar.SetColors = Bar_SetColors
 
     return bar
