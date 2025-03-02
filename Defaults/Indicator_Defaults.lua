@@ -27,6 +27,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["showAnimation"] = true,
             ["auraType"] = auraType,
             ["auras"] = {},
+            ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
         }
     elseif type == "text" then
         t = {
@@ -69,6 +70,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["showDuration"] = false,
             ["auraType"] = auraType,
             ["auras"] = {},
+            ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
         }
     elseif type == "bars" then
         t = {
@@ -92,6 +94,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["maxValue"] = {0, true},
             ["auraType"] = auraType,
             ["auras"] = {},
+            ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
         }
     elseif type == "rect" then
         t = {
@@ -111,6 +114,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["showDuration"] = false,
             ["auraType"] = auraType,
             ["auras"] = {},
+            ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
         }
     elseif type == "icons" then
         t = {
@@ -134,6 +138,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["showAnimation"] = true,
             ["auraType"] = auraType,
             ["auras"] = {},
+            ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
         }
     elseif type == "color" then
         t = {
@@ -204,6 +209,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["showDuration"] = false,
             ["auraType"] = auraType,
             ["auras"] = {},
+            ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
         }
     elseif type == "blocks" then
         t = {
@@ -226,6 +232,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["showDuration"] = false,
             ["auraType"] = auraType,
             ["auras"] = {},
+            ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
         }
     elseif type == "border" then
         t = {

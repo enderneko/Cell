@@ -1297,7 +1297,7 @@ local function UpdateQuickAssist(which)
             -- glow
             indicator = header[i].offensiveGlow
             indicator:SetFadeOut(ogt["fadeOut"])
-            indicator:UpdateGlowOptions(ogt["options"])
+            indicator:SetupGlow(ogt["options"])
         end
     end
 

@@ -337,6 +337,7 @@ Cell.defaults.layout = {
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
+            ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
         }, -- 18
         {
             ["name"] = "Defensive Cooldowns",
@@ -354,6 +355,7 @@ Cell.defaults.layout = {
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
+            ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
         }, -- 19
         {
             ["name"] = "Externals + Defensives",
@@ -371,6 +373,7 @@ Cell.defaults.layout = {
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
+            ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
         }, -- 20
         {
             ["name"] = "Dispels",
