@@ -298,55 +298,7 @@ local function UpdateLayoutPreview()
     layoutPreviewName:SetText(L["Layout"]..": "..selectedLayout)
 
     -- re-arrange
-    local spacingX = selectedLayoutTable["main"]["spacingX"]
-    local spacingY = selectedLayoutTable["main"]["spacingY"]
-    local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, verticalSpacing, horizontalSpacing
-
-    if selectedLayoutTable["main"]["orientation"] == "vertical" then
-        if selectedLayoutTable["main"]["anchor"] == "BOTTOMLEFT" then
-            point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
-            unitSpacing = spacingY
-            groupSpacing = spacingX
-            verticalSpacing = spacingY+selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "BOTTOMRIGHT" then
-            point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
-            unitSpacing = spacingY
-            groupSpacing = -spacingX
-            verticalSpacing = spacingY+selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "TOPLEFT" then
-            point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
-            unitSpacing = -spacingY
-            groupSpacing = spacingX
-            verticalSpacing = -spacingY-selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "TOPRIGHT" then
-            point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
-            unitSpacing = -spacingY
-            groupSpacing = -spacingX
-            verticalSpacing = -spacingY-selectedLayoutTable["main"]["groupSpacing"]
-        end
-    else
-        if selectedLayoutTable["main"]["anchor"] == "BOTTOMLEFT" then
-            point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
-            unitSpacing = spacingX
-            groupSpacing = spacingY
-            horizontalSpacing = spacingX+selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "BOTTOMRIGHT" then
-            point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
-            unitSpacing = -spacingX
-            groupSpacing = spacingY
-            horizontalSpacing = -spacingX-selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "TOPLEFT" then
-            point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
-            unitSpacing = spacingX
-            groupSpacing = -spacingY
-            horizontalSpacing = spacingX+selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "TOPRIGHT" then
-            point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
-            unitSpacing = -spacingX
-            groupSpacing = -spacingY
-            horizontalSpacing = -spacingX-selectedLayoutTable["main"]["groupSpacing"]
-        end
-    end
+    local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, _, _, verticalSpacing, horizontalSpacing = F.GetRaidFramePoints(selectedLayoutTable["main"])
 
     if selectedLayoutTable["main"]["combineGroups"] and previewMode ~= 1 then
         -- hide separatedHeaders
@@ -369,7 +321,7 @@ local function UpdateLayoutPreview()
         -- end
 
         if selectedLayoutTable["main"]["orientation"] == "vertical" then
-            P.Size(layoutPreview.combinedHeader,
+            layoutPreview.combinedHeader:SetSize(
                 selectedLayoutTable["main"]["size"][1]*maxColumns+abs(groupSpacing)*(maxColumns-1),
                 selectedLayoutTable["main"]["size"][2]*unitsPerColumn+abs(unitSpacing)*(unitsPerColumn-1))
 
@@ -386,7 +338,7 @@ local function UpdateLayoutPreview()
                 end
             end
         else
-            P.Size(layoutPreview.combinedHeader,
+            layoutPreview.combinedHeader:SetSize(
                 selectedLayoutTable["main"]["size"][1]*unitsPerColumn+abs(unitSpacing)*(unitsPerColumn-1),
                 selectedLayoutTable["main"]["size"][2]*maxColumns+abs(groupSpacing)*(maxColumns-1))
 
@@ -406,7 +358,7 @@ local function UpdateLayoutPreview()
 
         -- hide unused
         for i = 1, 40 do
-            P.Size(layoutPreview.combinedHeader[i], selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
+            layoutPreview.combinedHeader[i]:SetSize(selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
             if i > units then
                 layoutPreview.combinedHeader[i]:Hide()
                 layoutPreview.combinedHeader[i].tex:Hide()
@@ -448,9 +400,9 @@ local function UpdateLayoutPreview()
             header:ClearAllPoints()
 
             if selectedLayoutTable["main"]["orientation"] == "vertical" then
-                P.Size(header, selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2]*5+abs(unitSpacing)*4)
+                header:SetSize(selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2]*5+abs(unitSpacing)*4)
                 for j = 1, 5 do
-                    P.Size(header[j], selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
+                    header[j]:SetSize(selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
                     header[j]:ClearAllPoints()
 
                     if j == 1 then
@@ -463,16 +415,16 @@ local function UpdateLayoutPreview()
                 if i == 1 then
                     header:SetPoint(point)
                 else
-                    if i / selectedLayoutTable["main"]["maxColumns"] > 1 then -- not the first row
-                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-selectedLayoutTable["main"]["maxColumns"]]], anchorPoint, 0, verticalSpacing)
+                    if i % selectedLayoutTable["main"]["maxColumns"] == 1 then -- first column on each row
+                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-selectedLayoutTable["main"]["maxColumns"]]], 0, verticalSpacing)
                     else
                         header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
                     end
                 end
             else
-                P.Size(header, selectedLayoutTable["main"]["size"][1]*5+abs(unitSpacing)*4, selectedLayoutTable["main"]["size"][2])
+                header:SetSize(selectedLayoutTable["main"]["size"][1]*5+abs(unitSpacing)*4, selectedLayoutTable["main"]["size"][2])
                 for j = 1, 5 do
-                    P.Size(header[j], selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
+                    header[j]:SetSize(selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
                     header[j]:ClearAllPoints()
 
                     if j == 1 then
@@ -485,8 +437,8 @@ local function UpdateLayoutPreview()
                 if i == 1 then
                     header:SetPoint(point)
                 else
-                    if i / selectedLayoutTable["main"]["maxColumns"] > 1 then -- not the first column
-                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-selectedLayoutTable["main"]["maxColumns"]]], anchorPoint, horizontalSpacing, 0)
+                    if i % selectedLayoutTable["main"]["maxColumns"] == 1 then -- first row on each column
+                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-selectedLayoutTable["main"]["maxColumns"]]], horizontalSpacing, 0)
                     else
                         header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
                     end

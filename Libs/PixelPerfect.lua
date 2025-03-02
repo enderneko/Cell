@@ -247,7 +247,7 @@ end
 --------------------------------------------
 function P.SavePosition(frame, positionTable)
     wipe(positionTable)
-    positionTable[1], _, positionTable[2], positionTable[3], positionTable[4] = frame:GetPoint(1)
+    positionTable[1], positionTable[2], positionTable[3] = P.CalcPoint(frame)
     -- local left = math.floor(frame:GetLeft() + 0.5)
     -- local top = math.floor(frame:GetTop() + 0.5)
     -- positionTable[1], positionTable[2] = left, top
@@ -260,11 +260,51 @@ function P.LoadPosition(frame, positionTable)
         P.ClearPoints(frame)
         P.Point(frame, "TOPLEFT", UIParent, "BOTTOMLEFT", positionTable[1], positionTable[2])
         return true
-    elseif #positionTable == 4 then
+    elseif #positionTable == 3 then
         P.ClearPoints(frame)
-        frame:SetPoint(positionTable[1], UIParent, positionTable[2], positionTable[3], positionTable[4])
+        frame:SetPoint(positionTable[1], UIParent, positionTable[2], positionTable[3])
         return true
     end
+end
+
+local function Round(num, numDecimalPlaces)
+    if numDecimalPlaces and numDecimalPlaces >= 0 then
+        local mult = 10 ^ numDecimalPlaces
+        return floor(num * mult + 0.5) / mult
+    end
+    return floor(num + 0.5)
+end
+
+function P.CalcPoint(owner)
+    local point, x, y
+    local centerX, centerY = UIParent:GetCenter()
+    local width = UIParent:GetRight()
+    x, y = owner:GetCenter()
+
+    if y >= centerY then
+        point = "TOP"
+            y = -(UIParent:GetTop() - owner:GetTop())
+    else
+        point = "BOTTOM"
+            y = owner:GetBottom()
+    end
+
+    if x >= (width * 2 / 3) then
+        point = point.."RIGHT"
+            x = owner:GetRight() - width
+    elseif x <= (width / 3) then
+        point = point.."LEFT"
+            x = owner:GetLeft()
+    else
+        x = x - centerX
+    end
+
+    -- x = tonumber(string.format("%.2f", x))
+    -- y = tonumber(string.format("%.2f", y))
+    x = Round(x, 1)
+    y = Round(y, 1)
+
+    return point, x, y
 end
 
 ---------------------------------------------------------------------
