@@ -146,6 +146,8 @@ local function CreateGroupHeader(group)
     --     self:SetHeight(header:GetAttribute("buttonHeight") or 46)
     -- ]])
 
+    -- header:SetAttribute("_initialAttributeNames", "refreshUnitChange")
+
     header:SetAttribute("template", "CellUnitButtonTemplate")
     header:SetAttribute("columnAnchorPoint", "LEFT")
     header:SetAttribute("point", "TOP")
@@ -326,6 +328,16 @@ local function UpdateHeader(header, layout, which)
         end
     end
 end
+
+-- local function RemoveInitialAttribute(header)
+--     header:SetAttribute("_initialAttribute-refreshUnitChange", nil)
+-- end
+
+-- local function SetInitialAttribute(header, relativeTo)
+--     header:SetAttribute("_initialAttribute-refreshUnitChange", [[
+
+--     ]])
+-- end
 
 local init, previousLayout
 local function RaidFrame_UpdateLayout(layout, which)
