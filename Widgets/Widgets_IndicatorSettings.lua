@@ -3760,6 +3760,7 @@ local function CreateSetting_Glow(parent)
                     widget:SetHeight(50)
                     Cell.UpdateIndicatorSettingsHeight()
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
+                    widget.glowColor:Hide()
                     widget.glowLines:Hide()
                     widget.glowParticles:Hide()
                     widget.glowDuration:Hide()
@@ -3783,6 +3784,7 @@ local function CreateSetting_Glow(parent)
                     widget:SetHeight(50)
                     Cell.UpdateIndicatorSettingsHeight()
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
+                    widget.glowColor:Show()
                     widget.glowLines:Hide()
                     widget.glowParticles:Hide()
                     widget.glowDuration:Hide()
@@ -3806,6 +3808,7 @@ local function CreateSetting_Glow(parent)
                     widget:SetHeight(145)
                     Cell.UpdateIndicatorSettingsHeight()
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
+                    widget.glowColor:Show()
                     widget.glowLines:Show()
                     widget.glowLines:SetValue(9)
                     widget.glowFrequency:Show()
@@ -3819,10 +3822,10 @@ local function CreateSetting_Glow(parent)
                     widget.glowScale:Hide()
                     widget.glow[1] = "Pixel"
                     widget.glow[2] = {0.95,0.95,0.32,1}
-                    widget.glow[3] = 9
+                    widget.glow[3] = widget.useSmallerSize and 4 or 9
                     widget.glow[4] = 0.25
-                    widget.glow[5] = 8
-                    widget.glow[6] = 2
+                    widget.glow[5] = widget.useSmallerSize and 4 or 8
+                    widget.glow[6] = widget.useSmallerSize and 1 or 2
                     widget.func(widget.glow)
                 end,
             },
@@ -3833,6 +3836,7 @@ local function CreateSetting_Glow(parent)
                     widget:SetHeight(145)
                     Cell.UpdateIndicatorSettingsHeight()
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
+                    widget.glowColor:Show()
                     widget.glowParticles:Show()
                     widget.glowParticles:SetValue(9)
                     widget.glowFrequency:Show()
@@ -3845,9 +3849,9 @@ local function CreateSetting_Glow(parent)
                     widget.glowThickness:Hide()
                     widget.glow[1] = "Shine"
                     widget.glow[2] = {0.95,0.95,0.32,1}
-                    widget.glow[3] = 9
+                    widget.glow[3] = widget.useSmallerSize and 4 or 9
                     widget.glow[4] = 0.5
-                    widget.glow[5] = 1
+                    widget.glow[5] = widget.useSmallerSize and 0.7 or 1
                     widget.glow[6] = nil
                     widget.func(widget.glow)
                 end,
@@ -3859,6 +3863,7 @@ local function CreateSetting_Glow(parent)
                     widget:SetHeight(95)
                     Cell.UpdateIndicatorSettingsHeight()
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
+                    widget.glowColor:Show()
                     widget.glowDuration:Show()
                     widget.glowDuration:SetValue(1)
                     widget.glowParticles:Hide()
@@ -3943,8 +3948,9 @@ local function CreateSetting_Glow(parent)
 
         -- show db value
         function widget:SetDBValue(t, hideNone)
+            widget.useSmallerSize = not hideNone -- TODO: may require addtional arg
             widget.glowType.items[1].disabled = hideNone
-            widget.glowType.items[5].disabled = Cell.isVanilla or Cell.isCata
+            widget.glowType.items[5].disabled = not Cell.isRetail
 
             -- {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
             widget.glow = t
@@ -3952,6 +3958,9 @@ local function CreateSetting_Glow(parent)
             widget.glowColor:SetColor(t[2])
 
             if t[1] == "None" or t[1] == "Normal" then
+                if t[1] == "None" then
+                    widget.glowColor:Hide()
+                end
                 widget.glowLines:Hide()
                 widget.glowParticles:Hide()
                 widget.glowDuration:Hide()
@@ -3961,6 +3970,7 @@ local function CreateSetting_Glow(parent)
                 widget.glowScale:Hide()
                 widget:SetHeight(50)
             else
+                widget.glowColor:Show()
                 if t[1] == "Pixel" then
                     widget.glowLines:Show()
                     widget.glowLines:SetValue(t[3])

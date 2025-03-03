@@ -242,6 +242,98 @@ local function Shared_SetCooldownStyle(frame, style, noIcon)
     end
 end
 
+--------------------------------------------------
+-- glow
+--------------------------------------------------
+---@type function
+local ButtonGlow_Start = LCG.ButtonGlow_Start
+---@type function
+local ButtonGlow_Stop = LCG.ButtonGlow_Stop
+---@type function
+local PixelGlow_Start = LCG.PixelGlow_Start
+---@type function
+local PixelGlow_Stop = LCG.PixelGlow_Stop
+---@type function
+local AutoCastGlow_Start = LCG.AutoCastGlow_Start
+---@type function
+local AutoCastGlow_Stop = LCG.AutoCastGlow_Stop
+---@type function
+local ProcGlow_Start = LCG.ProcGlow_Start
+---@type function
+local ProcGlow_Stop = LCG.ProcGlow_Stop
+
+local StartGlow = {
+    ["none"] = function(frame)
+    end,
+    ["normal"] = function(frame)
+        ButtonGlow_Start(frame, frame.glowOptions.color)
+    end,
+    ["pixel"] = function(frame)
+        PixelGlow_Start(frame, frame.glowOptions.color, frame.glowOptions.N, frame.glowOptions.frequency, frame.glowOptions.length, frame.glowOptions.thickness)
+    end,
+    ["shine"] = function(frame)
+        AutoCastGlow_Start(frame, frame.glowOptions.color, frame.glowOptions.N, frame.glowOptions.frequency, frame.glowOptions.scale)
+    end,
+    ["proc"] = function(frame)
+        ProcGlow_Start(frame, frame.glowOptions)
+    end,
+}
+
+local StopGlow = {
+    ["none"] = function(frame)
+    end,
+    ["normal"] = ButtonGlow_Stop,
+    ["pixel"] = PixelGlow_Stop,
+    ["shine"] = AutoCastGlow_Stop,
+    ["proc"] = ProcGlow_Stop,
+}
+
+local function Shared_SetupGlow(frame, glowOptions)
+    frame.glowType = glowOptions[1]
+    frame.glowOptions = {}
+
+    ButtonGlow_Stop(frame)
+    PixelGlow_Stop(frame)
+    AutoCastGlow_Stop(frame)
+    ProcGlow_Stop(frame)
+
+    frame.StartGlow = StartGlow[strlower(frame.glowType)]
+    frame.StopGlow = StopGlow[strlower(frame.glowType)]
+
+    if frame.glowType == "Normal" then
+        frame.glowOptions.color = glowOptions[2]
+    elseif frame.glowType == "Pixel" then
+        frame.glowOptions.color = glowOptions[2]
+        frame.glowOptions.N = glowOptions[3]
+        frame.glowOptions.frequency = glowOptions[4]
+        frame.glowOptions.length = glowOptions[5]
+        frame.glowOptions.thickness = glowOptions[6]
+    elseif frame.glowType == "Shine" then
+        frame.glowOptions.color = glowOptions[2]
+        frame.glowOptions.N = glowOptions[3]
+        frame.glowOptions.frequency = glowOptions[4]
+        frame.glowOptions.scale = glowOptions[5]
+    elseif frame.glowType == "Proc" then
+        frame.glowOptions = {color = glowOptions[2], duration = glowOptions[3], startAnim = false}
+    end
+
+    if frame.glowType ~= "None" then
+        frame:StartGlow()
+        if not frame._sizeChangedHooked then
+            frame._sizeChangedHooked = true
+            frame:HookScript("OnSizeChanged", function()
+                frame:StartGlow()
+            end)
+        end
+    end
+end
+
+function I.Glow_SetupForChildren(parent, glowOptions)
+    for _, child in ipairs(parent) do
+        child:SetupGlow(glowOptions)
+    end
+end
+
 -------------------------------------------------
 -- Icon_OnUpdate
 -------------------------------------------------
@@ -583,6 +675,7 @@ function I.CreateAura_BarIcon(name, parent)
     frame.ShowDuration = Shared_ShowDuration
     frame.ShowStack = Shared_ShowStack
     frame.ShowAnimation = BarIcon_ShowAnimation
+    frame.SetupGlow = Shared_SetupGlow
     frame.UpdatePixelPerfect = BarIcon_UpdatePixelPerfect
 
     Shared_SetCooldownStyle(frame, CELL_COOLDOWN_STYLE)
@@ -823,6 +916,7 @@ function I.CreateAura_Icons(name, parent, num)
     icons.ShowDuration = Icons_ShowDuration
     icons.ShowStack = Icons_ShowStack
     icons.ShowAnimation = Icons_ShowAnimation
+    icons.SetupGlow = I.Glow_SetupForChildren
     icons.UpdatePixelPerfect = Icons_UpdatePixelPerfect
 
     for i = 1, num do
@@ -1129,6 +1223,7 @@ function I.CreateAura_Rect(name, parent)
     frame.SetColors = Rect_SetColors
     frame.ShowStack = Shared_ShowStack
     frame.ShowDuration = Shared_ShowDuration
+    frame.SetupGlow = Shared_SetupGlow
     frame.UpdatePixelPerfect = Rect_UpdatePixelPerfect
 
     return frame
@@ -1258,7 +1353,6 @@ function I.CreateAura_Bar(name, parent)
     bar.SetCooldown = Bar_SetCooldown
     bar.ShowStack = Shared_ShowStack
     bar.ShowDuration = Shared_ShowDuration
-    bar.SetMaxValue = Bar_SetMaxValue
     bar.SetColors = Bar_SetColors
 
     return bar
@@ -1364,6 +1458,7 @@ function I.CreateAura_Bars(name, parent, num)
     bars.ShowDuration = Icons_ShowDuration
     bars.ShowStack = Icons_ShowStack
     bars.SetMaxValue = Bars_SetMaxValue
+    bars.SetupGlow = I.Glow_SetupForChildren
     bars.UpdatePixelPerfect = Icons_UpdatePixelPerfect
 
     for i = 1, num do
@@ -1611,40 +1706,11 @@ local function Glow_SetCooldown(glow, start, duration)
         glow._elapsed = nil
     end
 
-    glow:Show()
-
-    local glowOptions = glow.glowOptions
-    local glowType = glowOptions[1]
-
-    if glowType == "Normal" then
-        LCG.PixelGlow_Stop(glow)
-        LCG.AutoCastGlow_Stop(glow)
-        LCG.ProcGlow_Stop(glow)
-        LCG.ButtonGlow_Start(glow, glowOptions[2])
-    elseif glowType == "Pixel" then
-        LCG.ButtonGlow_Stop(glow)
-        LCG.AutoCastGlow_Stop(glow)
-        LCG.ProcGlow_Stop(glow)
-        -- color, N, frequency, length, thickness
-        LCG.PixelGlow_Start(glow, glowOptions[2], glowOptions[3], glowOptions[4], glowOptions[5], glowOptions[6])
-    elseif glowType == "Shine" then
-        LCG.ButtonGlow_Stop(glow)
-        LCG.PixelGlow_Stop(glow)
-        LCG.ProcGlow_Stop(glow)
-        -- color, N, frequency, scale
-        LCG.AutoCastGlow_Start(glow, glowOptions[2], glowOptions[3], glowOptions[4], glowOptions[5])
-    elseif glowType == "Proc" then
-        LCG.ButtonGlow_Stop(glow)
-        LCG.PixelGlow_Stop(glow)
-        LCG.AutoCastGlow_Stop(glow)
-        -- color, duration
-        LCG.ProcGlow_Start(glow, {color=glowOptions[2], duration=glowOptions[3], startAnim=false})
-    else
-        LCG.ButtonGlow_Stop(glow)
-        LCG.PixelGlow_Stop(glow)
-        LCG.AutoCastGlow_Stop(glow)
-        LCG.ProcGlow_Stop(glow)
+    if frame.glowType == "None" then
         glow:Hide()
+    else
+        glow:Show()
+        glow:StartGlow()
     end
 end
 
@@ -1660,9 +1726,7 @@ function I.CreateAura_Glow(name, parent)
         glow.fadeOut = fadeOut
     end
 
-    function glow:UpdateGlowOptions(options)
-        glow.glowOptions = options
-    end
+    glow.SetupGlow = Shared_SetupGlow
 
     -- glow:SetScript("OnHide", function()
     --     LCG.ButtonGlow_Stop(glow)
@@ -2102,6 +2166,7 @@ function I.CreateAura_Block(name, parent)
     frame.ShowStack = Shared_ShowStack
     frame.ShowDuration = Shared_ShowDuration
     frame.SetCooldown = Block_SetCooldown_Duration
+    frame.SetupGlow = Shared_SetupGlow
     frame.UpdatePixelPerfect = Block_UpdatePixelPerfect
 
     local ag = frame:CreateAnimationGroup()
@@ -2207,6 +2272,7 @@ function I.CreateAura_Blocks(name, parent, num)
     blocks.SetNumPerLine = Icons_SetNumPerLine
     blocks.ShowDuration = Icons_ShowDuration
     blocks.ShowStack = Icons_ShowStack
+    blocks.SetupGlow = I.Glow_SetupForChildren
     blocks.UpdatePixelPerfect = Icons_UpdatePixelPerfect
 
     for i = 1, num do

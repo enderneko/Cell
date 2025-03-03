@@ -209,6 +209,7 @@ function I.CreateDefensiveCooldowns(parent)
     defensiveCooldowns.SetOrientation = I.Cooldowns_SetOrientation
     defensiveCooldowns.ShowDuration = I.Cooldowns_ShowDuration
     defensiveCooldowns.ShowAnimation = I.Cooldowns_ShowAnimation
+    defensiveCooldowns.SetupGlow = I.Glow_SetupForChildren
     defensiveCooldowns.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
 
     for i = 1, 5 do
@@ -233,6 +234,7 @@ function I.CreateExternalCooldowns(parent)
     externalCooldowns.SetOrientation = I.Cooldowns_SetOrientation
     externalCooldowns.ShowDuration = I.Cooldowns_ShowDuration
     externalCooldowns.ShowAnimation = I.Cooldowns_ShowAnimation
+    externalCooldowns.SetupGlow = I.Glow_SetupForChildren
     externalCooldowns.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
 
     for i = 1, 5 do
@@ -257,6 +259,7 @@ function I.CreateAllCooldowns(parent)
     allCooldowns.SetOrientation = I.Cooldowns_SetOrientation
     allCooldowns.ShowDuration = I.Cooldowns_ShowDuration
     allCooldowns.ShowAnimation = I.Cooldowns_ShowAnimation
+    allCooldowns.SetupGlow = I.Glow_SetupForChildren
     allCooldowns.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
 
     for i = 1, 5 do

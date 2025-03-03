@@ -342,7 +342,7 @@ local function HandleIndicators(b)
         end
         -- update glow
         if t["glowOptions"] then
-            indicator:UpdateGlowOptions(t["glowOptions"])
+            indicator:SetupGlow(t["glowOptions"])
         end
         -- update smooth
         if type(t["smooth"]) == "boolean" then
@@ -803,7 +803,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end, true)
         elseif setting == "glowOptions" then
             F.IterateAllUnitButtons(function(b)
-                b.indicators[indicatorName]:UpdateGlowOptions(value)
+                b.indicators[indicatorName]:SetupGlow(value)
                 UnitButton_UpdateAuras(b)
             end, true)
         elseif setting == "iconStyle" then
@@ -970,7 +970,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update glow
                 if value["glowOptions"] then
-                    indicator:UpdateGlowOptions(value["glowOptions"])
+                    indicator:SetupGlow(value["glowOptions"])
                 end
                 -- FirstRun: Healers
                 if value["auras"] and #value["auras"] ~= 0 then
@@ -2005,8 +2005,8 @@ local function UnitButton_UpdateVehicleStatus(self)
             self.states.displayedUnit = "vehicle"
         else
             -- local prefix, id, suffix = strmatch(unit, "([^%d]+)([%d]*)(.*)")
-            local prefix, id = strmatch(unit, "([^%d]+)([%d]+)")
-            self.states.displayedUnit = prefix.."pet"..id
+            local prefix, id = strmatch(unit, "([^%d]+)([%d]*)")
+            self.states.displayedUnit = prefix .. "pet" .. (id or "")
         end
         self.indicators.nameText:UpdateVehicleName()
     else

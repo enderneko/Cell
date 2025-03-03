@@ -1,4 +1,5 @@
 local _, Cell = ...
+---@class CellFuncs
 local F = Cell.funcs
 local B = Cell.bFuncs
 local P = Cell.pixelPerfectFuncs
@@ -145,6 +146,8 @@ local function CreateGroupHeader(group)
     --     self:SetHeight(header:GetAttribute("buttonHeight") or 46)
     -- ]])
 
+    -- header:SetAttribute("_initialAttributeNames", "refreshUnitChange")
+
     header:SetAttribute("template", "CellUnitButtonTemplate")
     header:SetAttribute("columnAnchorPoint", "LEFT")
     header:SetAttribute("point", "TOP")
@@ -200,13 +203,14 @@ end
 -------------------------------------------------
 -- update
 -------------------------------------------------
-local function GetPoints(layout)
-    local orientation = layout["main"]["orientation"]
-    local anchor = layout["main"]["anchor"]
-    local spacingX = layout["main"]["spacingX"]
-    local spacingY = layout["main"]["spacingY"]
+function F.GetRaidFramePoints(layout)
+    local orientation = layout["orientation"]
+    local anchor = layout["anchor"]
+    local spacingX = layout["spacingX"]
+    local spacingY = layout["spacingY"]
+    local width, height = unpack(layout["size"])
 
-    local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint
+    local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, unitSpacingX, unitSpacingY, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint
 
     if orientation == "vertical" then
         if anchor == "BOTTOMLEFT" then
@@ -215,28 +219,28 @@ local function GetPoints(layout)
             unitSpacing = spacingY
             groupSpacing = spacingX
             unitSpacingX, unitSpacingY = spacingX, spacingY
-            verticalSpacing = spacingY+layout["main"]["groupSpacing"]
+            verticalSpacing = spacingY + layout["groupSpacing"] + height * 5 + spacingY * 4
         elseif anchor == "BOTTOMRIGHT" then
             point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
             headerPoint, headerColumnAnchorPoint = "BOTTOM", "RIGHT"
             unitSpacing = spacingY
             groupSpacing = -spacingX
             unitSpacingX, unitSpacingY = spacingX, spacingY
-            verticalSpacing = spacingY+layout["main"]["groupSpacing"]
+            verticalSpacing = spacingY + layout["groupSpacing"] + height * 5 + spacingY * 4
         elseif anchor == "TOPLEFT" then
             point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
             headerPoint, headerColumnAnchorPoint = "TOP", "LEFT"
             unitSpacing = -spacingY
             groupSpacing = spacingX
             unitSpacingX, unitSpacingY = spacingX, -spacingY
-            verticalSpacing = -spacingY-layout["main"]["groupSpacing"]
+            verticalSpacing = -layout["groupSpacing"] - height * 5 - spacingY * 5
         elseif anchor == "TOPRIGHT" then
             point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
             headerPoint, headerColumnAnchorPoint = "TOP", "RIGHT"
             unitSpacing = -spacingY
             groupSpacing = -spacingX
             unitSpacingX, unitSpacingY = spacingX, -spacingY
-            verticalSpacing = -spacingY-layout["main"]["groupSpacing"]
+            verticalSpacing = -spacingY - layout["groupSpacing"] - height * 5 - spacingY * 4
         end
     else
         if anchor == "BOTTOMLEFT" then
@@ -245,28 +249,28 @@ local function GetPoints(layout)
             unitSpacing = spacingX
             groupSpacing = spacingY
             unitSpacingX, unitSpacingY = spacingX, spacingY
-            horizontalSpacing = spacingX+layout["main"]["groupSpacing"]
+            horizontalSpacing = spacingX + layout["groupSpacing"] + width * 5 + spacingX * 4
         elseif anchor == "BOTTOMRIGHT" then
             point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
             headerPoint, headerColumnAnchorPoint = "RIGHT", "BOTTOM"
             unitSpacing = -spacingX
             groupSpacing = spacingY
             unitSpacingX, unitSpacingY = -spacingX, spacingY
-            horizontalSpacing = -spacingX-layout["main"]["groupSpacing"]
+            horizontalSpacing = -spacingX - layout["groupSpacing"] - width * 5 - spacingX * 4
         elseif anchor == "TOPLEFT" then
             point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
             headerPoint, headerColumnAnchorPoint = "LEFT", "TOP"
             unitSpacing = spacingX
             groupSpacing = -spacingY
             unitSpacingX, unitSpacingY = spacingX, spacingY
-            horizontalSpacing = spacingX+layout["main"]["groupSpacing"]
+            horizontalSpacing = spacingX + layout["groupSpacing"] + width * 5 + spacingX * 4
         elseif anchor == "TOPRIGHT" then
             point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
             headerPoint, headerColumnAnchorPoint = "RIGHT", "TOP"
             unitSpacing = -spacingX
             groupSpacing = -spacingY
             unitSpacingX, unitSpacingY = -spacingX, spacingY
-            horizontalSpacing = -spacingX-layout["main"]["groupSpacing"]
+            horizontalSpacing = -spacingX - layout["groupSpacing"] - width * 5 - spacingX * 4
         end
     end
 
@@ -274,17 +278,15 @@ local function GetPoints(layout)
 end
 
 local function UpdateHeadersShowRaidAttribute()
-    local shouldShowRaid = CellDB["general"]["showRaid"]
-
     if Cell.vars.currentLayoutTable["main"]["combineGroups"] then
-        combinedHeader:SetAttribute("showRaid", shouldShowRaid)
+        combinedHeader:SetAttribute("showRaid", true)
         for _, header in ipairs(separatedHeaders) do
             header:SetAttribute("showRaid", nil)
         end
     else
         combinedHeader:SetAttribute("showRaid", nil)
         for _, header in ipairs(separatedHeaders) do
-            header:SetAttribute("showRaid", shouldShowRaid)
+            header:SetAttribute("showRaid", true)
         end
     end
 end
@@ -327,6 +329,16 @@ local function UpdateHeader(header, layout, which)
     end
 end
 
+-- local function RemoveInitialAttribute(header)
+--     header:SetAttribute("_initialAttribute-refreshUnitChange", nil)
+-- end
+
+-- local function SetInitialAttribute(header, relativeTo)
+--     header:SetAttribute("_initialAttribute-refreshUnitChange", [[
+
+--     ]])
+-- end
+
 local init, previousLayout
 local function RaidFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "raid" and init then return end
@@ -360,7 +372,7 @@ local function RaidFrame_UpdateLayout(layout, which)
         end
     end
 
-    local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, unitSpacingX, unitSpacingY, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint = GetPoints(layout)
+    local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, unitSpacingX, unitSpacingY, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint = F.GetRaidFramePoints(layout["main"])
 
     if not which or which == "main-arrangement" or which == "pet-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "groupFilter" then
         local petSpacingX = layout["pet"]["sameArrangementAsMain"] and unitSpacingX or layout["pet"]["spacingX"]
@@ -472,7 +484,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                         headerCol = headerCol == 0 and headersPerRow or headerCol
 
                         if headerCol == 1 then -- first column on each row
-                            header:SetPoint(point, separatedHeaders[shownGroups[i-headersPerRow]], anchorPoint, 0, verticalSpacing)
+                            header:SetPoint(point, separatedHeaders[shownGroups[i-headersPerRow]], 0, verticalSpacing)
                         else
                             header:SetPoint(point, separatedHeaders[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
                         end
@@ -497,7 +509,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                         headerRow = headerRow == 0 and headersPerCol or headerRow
 
                         if headerRow == 1 then -- first row on each column
-                            header:SetPoint(point, separatedHeaders[shownGroups[i-headersPerCol]], anchorPoint, horizontalSpacing, 0)
+                            header:SetPoint(point, separatedHeaders[shownGroups[i-headersPerCol]], point, horizontalSpacing, 0)
                         else
                             header:SetPoint(point, separatedHeaders[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
                         end
