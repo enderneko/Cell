@@ -98,6 +98,8 @@ local supporters1 = { -- wowIDs
         "|cffff8000Reatvoker-Silvermoon (EU)|r",
     }, -- Reat
     {"Daydream-Dalaran (EU)"}, -- luana11
+    {"Aschgewitter-Eredar (EU)"}, -- Aschgewitter - Eredar
+    {"三号-熊猫酒仙 (CN)"}, -- 爱发电用户_sUE4
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -202,6 +204,8 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Shichiki-EU-Antonidas", "Ko-fi"}, -- 2024-10-03
     {"|cffff8000露露缇娅|r", "爱发电"}, -- 2024-12-20
     {"luana11", "Ko-fi"}, -- 2025-01-25
+    {"Aschgewitter - Eredar", "Ko-fi"}, -- 2025-02-27
+    {"爱发电用户_sUE4", "爱发电"}, -- 2025-03-02
 }
 
 -------------------------------------------------
