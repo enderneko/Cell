@@ -3264,6 +3264,26 @@ function F.Revise()
             if type(layout.pet.soloEnabled) ~= "boolean" then
                 layout.pet.soloEnabled = true
             end
+
+            for _, i in pairs(layout["indicators"]) do
+                if i.indicatorName == "defensiveCooldowns" or i.indicatorName == "externalCooldowns" or i.indicatorName == "allCooldowns"
+                or i.type == "icon" or i.type == "icons" or i.type == "bar" or i.type == "bars"
+                or i.type == "rect" or i.type == "block" or i.type == "blocks"then
+                    if not i.glowOptions then
+                        i.glowOptions = {"None", {0.95, 0.95, 0.32, 1}}
+                    end
+                end
+            end
+        end
+
+        for instanceId, iTable in pairs(CellDB["raidDebuffs"]) do
+            for bossId, bTable in pairs(iTable) do
+                for spellId, sTable in pairs(bTable) do
+                    if not sTable["glowTarget"] then
+                        sTable["glowTarget"] = "button"
+                    end
+                end
+            end
         end
 
         if strfind(CellDB["snippets"][0]["code"], "CELL_SHOW_RAID_PET_OWNER_NAME") then

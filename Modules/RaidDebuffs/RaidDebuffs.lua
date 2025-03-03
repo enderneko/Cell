@@ -189,9 +189,11 @@ Cell.snippetVars.loadedDebuffs = loadedDebuffs
 --     glowType = (string),
 --     glowOptions = (table),
 --     glowCondition = (table),
+--     glowTarget = (string),
+--     useElapsedTime = (boolean),
 -- }
 
-local indices = {"order", "trackByID", "condition", "glowType", "glowOptions", "glowCondition", "useElapsedTime"}
+local indices = {"order", "trackByID", "condition", "glowType", "glowOptions", "glowCondition", "glowTarget", "useElapsedTime"}
 
 local function LoadDB(instanceId, bossId, bossTable)
     if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
@@ -1277,7 +1279,7 @@ end
 -------------------------------------------------
 local spellIcon, spellNameText, spellIdText, enabledCB, trackByIdCB, useElapsedTimeCB
 local conditionDropDown, conditionFrame, conditionOperator, conditionValue
-local glowTypeText, glowTypeDropdown, glowOptionsFrame, glowConditionType, glowConditionOperator, glowConditionValue, glowColor, glowLines, glowParticles, glowDuration, glowFrequency, glowLength, glowThickness, glowScale
+local glowTypeText, glowTypeDropdown, glowTargetDropdown, glowOptionsFrame, glowConditionType, glowConditionOperator, glowConditionValue, glowColor, glowLines, glowParticles, glowDuration, glowFrequency, glowLength, glowThickness, glowScale
 
 local LoadCondition, UpdateCondition
 local UpdateGlowType, LoadGlowOptions, LoadGlowCondition, ShowGlowPreview
@@ -1549,6 +1551,7 @@ local function CreateDetailsFrame()
                     Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
                     LoadGlowOptions()
                 end
+                glowTargetDropdown:Hide()
             end,
         },
         {
@@ -1581,9 +1584,44 @@ local function CreateDetailsFrame()
         },
     })
 
+    -- glowTarget
+    glowTargetDropdown = Cell.CreateDropdown(detailsContentFrame, 117)
+    glowTargetDropdown:SetEnabled(false) -- TODO:
+    glowTargetDropdown:SetPoint("TOPLEFT", glowTypeDropdown, "BOTTOMLEFT", 0, -5)
+    glowTargetDropdown:SetItems({
+        {
+            ["text"] = L["Unit Button"],
+            ["value"] = "button",
+            ["onClick"] = function()
+                -- update db
+                local tIndex = isGeneral and "general" or loadedBoss
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId]["glowTarget"] = "button"
+                -- update loadedDebuffs
+                local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
+                t["glowTarget"] = "button"
+                -- notify debuff list changed
+                Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+            end,
+        },
+        {
+            ["text"] = L["Icon"],
+            ["value"] = "icon",
+            ["onClick"] = function()
+                -- update db
+                local tIndex = isGeneral and "general" or loadedBoss
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId]["glowTarget"] = "icon"
+                -- update loadedDebuffs
+                local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
+                t["glowTarget"] = "icon"
+                -- notify debuff list changed
+                Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+            end,
+        },
+    })
+
     -- glow options
     glowOptionsFrame = CreateFrame("Frame", nil, detailsContentFrame)
-    glowOptionsFrame:SetPoint("TOPLEFT", glowTypeDropdown, "BOTTOMLEFT", -5, -10)
+    glowOptionsFrame:SetPoint("TOPLEFT", glowTargetDropdown, "BOTTOMLEFT", -5, -10)
     glowOptionsFrame:SetPoint("BOTTOMRIGHT")
 
     -- glowCondition
@@ -1790,7 +1828,7 @@ LoadCondition = function(condition)
     end
 
     -- update scroll
-    detailsFrame.scrollFrame:SetContentHeight(200+glowOptionsHeight+glowConditionHeight+conditionHeight)
+    detailsFrame.scrollFrame:SetContentHeight(225 + glowOptionsHeight + glowConditionHeight + conditionHeight)
     detailsFrame.scrollFrame:ResetScroll()
 end
 
@@ -1808,6 +1846,7 @@ UpdateGlowType = function(newType)
                 ["trackByID"] = false,
                 ["condition"] = {"None"},
                 ["glowType"] = newType,
+                ["glowTarget"] = "button",
             }
             if newType == "Normal" then
                 CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId]["glowOptions"] = {{0.95,0.95,0.32,1}}
@@ -1901,6 +1940,7 @@ UpdateGlowType = function(newType)
         -- notify debuff list changed
         Cell.Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end
+    glowTargetDropdown:Show()
 end
 
 ShowGlowPreview = function(glowType, glowOptions, refresh)
@@ -1976,14 +2016,16 @@ end
 
 LoadGlowOptions = function(glowType, glowOptions)
     if not glowType or glowType == "None" or not glowOptions then
+        glowTargetDropdown:Hide()
         glowOptionsFrame:Hide()
         ShowGlowPreview("None")
         glowOptionsHeight = 0
-        detailsFrame.scrollFrame:SetContentHeight(200+conditionHeight)
+        detailsFrame.scrollFrame:SetContentHeight(225 + conditionHeight)
         detailsFrame.scrollFrame:ResetScroll()
         return
     end
 
+    glowTargetDropdown:Show()
     ShowGlowPreview(glowType, glowOptions)
     glowColor:SetColor(glowOptions[1])
 
@@ -2035,7 +2077,7 @@ LoadGlowOptions = function(glowType, glowOptions)
 
     glowOptionsFrame:Show()
 
-    detailsFrame.scrollFrame:SetContentHeight(200+glowOptionsHeight+glowConditionHeight+conditionHeight)
+    detailsFrame.scrollFrame:SetContentHeight(225 + glowOptionsHeight + glowConditionHeight + conditionHeight)
     detailsFrame.scrollFrame:ResetScroll()
 end
 
@@ -2057,7 +2099,7 @@ LoadGlowCondition = function(glowCondition)
         glowColor:SetPoint("TOPLEFT", glowConditionType, "BOTTOMLEFT", 0, -10)
         glowConditionHeight = 40
     end
-    detailsFrame.scrollFrame:SetContentHeight(200+glowOptionsHeight+glowConditionHeight+conditionHeight)
+    detailsFrame.scrollFrame:SetContentHeight(225 + glowOptionsHeight + glowConditionHeight + conditionHeight)
     detailsFrame.scrollFrame:ResetScroll()
 end
 
@@ -2117,13 +2159,16 @@ ShowDetails = function(spell)
 
     local glowType = spellTable["glowType"] or "None"
     glowTypeDropdown:SetSelected(L[glowType])
+    glowTargetDropdown:SetSelectedValue(spellTable["glowTarget"])
 
     if glowType == "None" then
         LoadGlowCondition()
         LoadGlowOptions()
+        glowTargetDropdown:Hide()
     else
         LoadGlowCondition(spellTable["glowCondition"])
         LoadGlowOptions(glowType, spellTable["glowOptions"])
+        glowTargetDropdown:Show()
     end
 
     -- check deletion

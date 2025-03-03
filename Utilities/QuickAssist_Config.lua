@@ -512,7 +512,7 @@ local function UpdatePreviewButton()
     local ogt = spellTable["offensives"]["glow"]
     local offensiveGlow = previewButton.offensiveGlow
     offensiveGlow:SetFadeOut(ogt["fadeOut"])
-    offensiveGlow:UpdateGlowOptions(ogt["options"])
+    offensiveGlow:SetupGlow(ogt["options"])
 
     -- buffIcons
     local bit = spellTable["mine"]["icon"]
