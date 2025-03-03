@@ -6416,18 +6416,23 @@ local function CreateSetting_MaxValue(parent)
         settingWidgets["maxValue"] = widget
 
         widget.cb = Cell.CreateCheckButton(widget, L["Set Bar Max Value"], function(checked)
-            widget.maxValue:SetEnabled(checked)
-            widget.allowSmaller:SetEnabled(checked)
+            Cell.SetEnabled(checked, widget.maxValue, widget.secText, widget.allowSmaller)
             widget.func({checked, tonumber(widget.maxValue:GetText()) or 0, widget.allowSmaller:GetChecked()})
         end)
         widget.cb:SetPoint("TOPLEFT", 5, -8)
 
         widget.maxValue = Cell.CreateEditBox(widget, 50, 20, nil, nil, true)
         widget.maxValue:SetPoint("TOPLEFT", widget.cb, "BOTTOMLEFT", 0, -8)
-        widget.maxValue:SetMaxLetters(5)
+        widget.maxValue:SetMaxLetters(3)
         widget.maxValue:AddConfirmButton(function()
-            widget.func({widget.cb:GetChecked(), tonumber(widget.maxValue:GetText()) or 0, widget.allowSmaller:GetChecked()})
+            local value = tonumber(widget.maxValue:GetText()) or 0
+            widget.maxValue:SetText(value)
+            widget.func({widget.cb:GetChecked(), value, widget.allowSmaller:GetChecked()})
         end, "number")
+
+        widget.secText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.secText:SetPoint("LEFT", widget.maxValue, "RIGHT", 5, 0)
+        widget.secText:SetText(L["sec"])
 
         widget.allowSmaller = Cell.CreateCheckButton(widget, L["Allow smaller value"], function(checked)
             widget.func({widget.cb:GetChecked(), tonumber(widget.maxValue:GetText()) or 0, checked})
@@ -6443,9 +6448,8 @@ local function CreateSetting_MaxValue(parent)
         function widget:SetDBValue(maxValue)
             widget.cb:SetChecked(maxValue[1])
             widget.maxValue:SetText(maxValue[2])
-            widget.maxValue:SetEnabled(maxValue[1])
             widget.allowSmaller:SetChecked(maxValue[3])
-            widget.allowSmaller:SetEnabled(maxValue[1])
+            Cell.SetEnabled(maxValue[1], widget.maxValue, widget.secText, widget.allowSmaller)
         end
     else
         widget = settingWidgets["maxValue"]
