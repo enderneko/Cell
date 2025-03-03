@@ -1325,12 +1325,12 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
 end
 
 local function Bar_SetMaxValue(bar, maxValue)
-    if maxValue[1] == 0 then
+    if maxValue[1]then
+        bar.maxValue = maxValue[2]
+        bar.allowSmaller = maxValue[3]
+    else
         bar.maxValue = nil
         bar.allowSmaller = nil
-    else
-        bar.maxValue = maxValue[1]
-        bar.allowSmaller = maxValue[2]
     end
 end
 
@@ -1353,6 +1353,8 @@ function I.CreateAura_Bar(name, parent)
     bar.SetCooldown = Bar_SetCooldown
     bar.ShowStack = Shared_ShowStack
     bar.ShowDuration = Shared_ShowDuration
+    bar.SetMaxValue = Bar_SetMaxValue
+    bar.SetupGlow = Shared_SetupGlow
     bar.SetColors = Bar_SetColors
 
     return bar
@@ -1412,8 +1414,8 @@ local function Bars_SetCooldown(bar, start, duration, debuffType, texture, count
             bar.duration:Show()
         end
 
-        if bar.parent.maxValue then
-            bar:SetMinMaxValues(0, bar.parent.allowSmaller and min(bar.parent.maxValue, duration) or bar.parent.maxValue)
+        if bar.maxValue then
+            bar:SetMinMaxValues(0, bar.allowSmaller and min(bar.maxValue, duration) or bar.maxValue)
         else
             bar:SetMinMaxValues(0, duration)
         end
@@ -1429,12 +1431,8 @@ local function Bars_SetCooldown(bar, start, duration, debuffType, texture, count
 end
 
 local function Bars_SetMaxValue(bars, maxValue)
-    if maxValue[1] == 0 then
-        bars.maxValue = nil
-        bars.allowSmaller = nil
-    else
-        bars.maxValue = maxValue[1]
-        bars.allowSmaller = maxValue[2]
+    for _, bar in ipairs(bars) do
+        bar:SetMaxValue(maxValue)
     end
 end
 

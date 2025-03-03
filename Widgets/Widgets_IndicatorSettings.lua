@@ -6412,40 +6412,25 @@ local function CreateSetting_MaxValue(parent)
     local widget
 
     if not settingWidgets["maxValue"] then
-        widget = Cell.CreateFrame("CellIndicatorSettings_MaxValue", parent, 240, 70)
+        widget = Cell.CreateFrame("CellIndicatorSettings_MaxValue", parent, 240, 80)
         settingWidgets["maxValue"] = widget
 
-        widget.maxValue = Cell.CreateDropdown(widget, 245)
-        widget.maxValue:SetPoint("TOPLEFT", 5, -20)
-        local items = {
-            {
-                ["text"] = L["Disabled"],
-                ["value"] = 0,
-                ["onClick"] = function()
-                    widget.allowSmaller:SetEnabled(false)
-                    widget.func({0, widget.allowSmaller:GetChecked()})
-                end,
-            }
-        }
-        local values = {5, 10, 15, 20, 25, 30}
-        for _, v in pairs(values) do
-            tinsert(items, {
-                ["text"] = v .. " " .. L["sec"],
-                ["value"] = v,
-                ["onClick"] = function()
-                    widget.allowSmaller:SetEnabled(true)
-                    widget.func({v, widget.allowSmaller:GetChecked()})
-                end,
-            })
-        end
-        widget.maxValue:SetItems(items)
+        widget.cb = Cell.CreateCheckButton(widget, L["Set Bar Max Value"], function(checked)
+            widget.maxValue:SetEnabled(checked)
+            widget.allowSmaller:SetEnabled(checked)
+            widget.func({checked, tonumber(widget.maxValue:GetText()) or 0, widget.allowSmaller:GetChecked()})
+        end)
+        widget.cb:SetPoint("TOPLEFT", 5, -8)
 
-        widget.maxValueText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.maxValueText:SetText(L["Set Bar Max Value"])
-        widget.maxValueText:SetPoint("BOTTOMLEFT", widget.maxValue, "TOPLEFT", 0, 1)
+        widget.maxValue = Cell.CreateEditBox(widget, 50, 20, nil, nil, true)
+        widget.maxValue:SetPoint("TOPLEFT", widget.cb, "BOTTOMLEFT", 0, -8)
+        widget.maxValue:SetMaxLetters(5)
+        widget.maxValue:AddConfirmButton(function()
+            widget.func({widget.cb:GetChecked(), tonumber(widget.maxValue:GetText()) or 0, widget.allowSmaller:GetChecked()})
+        end, "number")
 
         widget.allowSmaller = Cell.CreateCheckButton(widget, L["Allow smaller value"], function(checked)
-            widget.func({widget.maxValue:GetSelected(), checked})
+            widget.func({widget.cb:GetChecked(), tonumber(widget.maxValue:GetText()) or 0, checked})
         end)
         widget.allowSmaller:SetPoint("TOPLEFT", widget.maxValue, "BOTTOMLEFT", 0, -8)
 
@@ -6456,9 +6441,11 @@ local function CreateSetting_MaxValue(parent)
 
         -- show db value
         function widget:SetDBValue(maxValue)
-            widget.maxValue:SetSelectedValue(maxValue[1])
-            widget.allowSmaller:SetChecked(maxValue[2])
-            widget.allowSmaller:SetEnabled(maxValue[1] ~= 0)
+            widget.cb:SetChecked(maxValue[1])
+            widget.maxValue:SetText(maxValue[2])
+            widget.maxValue:SetEnabled(maxValue[1])
+            widget.allowSmaller:SetChecked(maxValue[3])
+            widget.allowSmaller:SetEnabled(maxValue[1])
         end
     else
         widget = settingWidgets["maxValue"]

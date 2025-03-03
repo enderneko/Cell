@@ -1965,14 +1965,6 @@ local function ShowIndicatorSettings(id)
                 Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
             end)
 
-        -- maxValue
-        elseif currentSetting == "maxValue" then
-            w:SetDBValue(indicatorTable["maxValue"])
-            w:SetFunc(function(value)
-                indicatorTable["maxValue"] = value
-                Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "maxValue", value)
-            end)
-
         -- colors
         elseif currentSetting == "colors" then
             w:SetDBValue(indicatorTable["colors"], indicatorTable["auraType"])
