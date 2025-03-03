@@ -3276,6 +3276,16 @@ function F.Revise()
             end
         end
 
+        for instanceId, iTable in pairs(CellDB["raidDebuffs"]) do
+            for bossId, bTable in pairs(iTable) do
+                for spellId, sTable in pairs(bTable) do
+                    if not sTable["glowTarget"] then
+                        sTable["glowTarget"] = "button"
+                    end
+                end
+            end
+        end
+
         if strfind(CellDB["snippets"][0]["code"], "CELL_SHOW_RAID_PET_OWNER_NAME") then
             CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"]:gsub("CELL_SHOW_RAID_PET_OWNER_NAME", "CELL_SHOW_GROUP_PET_OWNER_NAME")
             CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"]:gsub("show raid pet owner name", "show group pet owner name")
