@@ -3298,6 +3298,11 @@ function F.Revise()
         elseif not strfind(CellDB["snippets"][0]["code"], "CELL_SHOW_GROUP_PET_OWNER_NAME") then
             CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- show group pet owner name (\"VEHICLE\", \"NAME\", nil)\nCELL_SHOW_GROUP_PET_OWNER_NAME = nil"
         end
+
+        if not CellDB["tools"]["battleResTimer"] then
+            CellDB["tools"]["battleResTimer"] = {CellDB["tools"]["showBattleRes"] and true or false, false, {}}
+            CellDB["tools"]["showBattleRes"] = nil
+        end
     end
 
     -- ----------------------------------------------------------------------- --

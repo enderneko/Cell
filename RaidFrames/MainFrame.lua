@@ -203,7 +203,7 @@ menuFrame.fadeIn:SetScript("OnPlay", function()
     menuFrame.fadeOut:Finish()
     fadingIn = true
 
-    if Cell.frames.battleResFrame and CellDB["general"]["menuPosition"] == "top_bottom" then
+    if Cell.frames.battleResFrame and not CellDB["tools"]["battleResTimer"][2] and CellDB["general"]["menuPosition"] == "top_bottom" then
         Cell.frames.battleResFrame:OnMenuShow()
     end
 end)
@@ -229,7 +229,7 @@ menuFrame.fadeOut:SetScript("OnPlay", function()
     menuFrame.fadeIn:Finish()
     fadingOut = true
 
-    if Cell.frames.battleResFrame and CellDB["general"]["menuPosition"] == "top_bottom" then
+    if Cell.frames.battleResFrame and not CellDB["tools"]["battleResTimer"][2] and CellDB["general"]["menuPosition"] == "top_bottom" then
         Cell.frames.battleResFrame:OnMenuHide()
     end
 end)

@@ -94,7 +94,7 @@ end
 -- show
 -------------------------------------------------
 local utilityHeight = {
-    ["raidTools"] = 320,
+    ["raidTools"] = 340,
     ["spellRequest"] = 400,
     ["dispelRequest"] = 420,
     ["quickAssist"] = 510,

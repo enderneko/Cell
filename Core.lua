@@ -240,7 +240,7 @@ function eventFrame:ADDON_LOADED(arg1)
         -- tools ----------------------------------------------------------------------------------
         if type(CellDB["tools"]) ~= "table" then
             CellDB["tools"] = {
-                ["showBattleRes"] = true,
+                ["battleResTimer"] = {true, false, {}},
                 ["buffTracker"] = {false, "left-to-right", 32, {}},
                 ["deathReport"] = {false, 10},
                 ["readyAndPull"] = {false, "text_button", {"default", 7}, {}},

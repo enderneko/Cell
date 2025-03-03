@@ -8,7 +8,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 -- raid tools
 -------------------------------------------------
 local rtPane
-local resCB, reportCB, buffCB, buffDropdown, sizeEditBox, readyPullCB, styleDropdown, pullDropdown, secEditBox, marksBarCB, marksDropdown, marksShowSoloCB, fadeOutToolsCB
+local resCB, resDetachCB, reportCB, buffCB, buffDropdown, sizeEditBox, readyPullCB, styleDropdown, pullDropdown, secEditBox, marksBarCB, marksDropdown, marksShowSoloCB, fadeOutToolsCB
 
 local function CreateRTPane()
     rtPane = Cell.CreateTitledPane(Cell.frames.utilitiesTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 167)
@@ -35,18 +35,25 @@ local function CreateRTPane()
 
     -- battle res
     resCB = Cell.CreateCheckButton(rtPane, L["Battle Res Timer"], function(checked, self)
-        CellDB["tools"]["showBattleRes"] = checked
-        Cell.Fire("UpdateTools", "battleRes")
+        CellDB["tools"]["battleResTimer"][1] = checked
+        resDetachCB:SetEnabled(checked)
+        Cell.Fire("UpdateTools", "battleResTimer")
     end, L["Battle Res Timer"], L["Only show during encounter or in mythic+"])
     resCB:SetPoint("TOPLEFT", rtPane, "TOPLEFT", 5, -27)
     resCB:SetEnabled(Cell.isRetail)
+
+    resDetachCB = Cell.CreateCheckButton(rtPane, L["Detached"], function(checked, self)
+        CellDB["tools"]["battleResTimer"][2] = checked
+        Cell.Fire("UpdateTools", "battleResTimer")
+    end)
+    resDetachCB:SetPoint("TOPLEFT", resCB, "BOTTOMRIGHT", 5, -5)
 
     -- death report
     reportCB = Cell.CreateCheckButton(rtPane, L["Death Report"], function(checked, self)
         CellDB["tools"]["deathReport"][1] = checked
         Cell.Fire("UpdateTools", "deathReport")
     end)
-    reportCB:SetPoint("TOPLEFT", resCB, "BOTTOMLEFT", 0, -15)
+    reportCB:SetPoint("TOPLEFT", resCB, "BOTTOMLEFT", 0, -35)
     reportCB:HookScript("OnEnter", function()
         CellTooltip:SetOwner(reportCB, "ANCHOR_TOPLEFT", 0, 2)
         CellTooltip:AddLine(L["Death Report"].." |cffff2727"..L["HIGH CPU USAGE"])
@@ -352,7 +359,9 @@ local function ShowUtilitySettings(which)
         init = true
 
         -- raid tools
-        resCB:SetChecked(CellDB["tools"]["showBattleRes"])
+        resCB:SetChecked(CellDB["tools"]["battleResTimer"][1])
+        resDetachCB:SetChecked(CellDB["tools"]["battleResTimer"][2])
+        resDetachCB:SetEnabled(CellDB["tools"]["battleResTimer"][1])
         reportCB:SetChecked(CellDB["tools"]["deathReport"][1])
 
         buffCB:SetChecked(CellDB["tools"]["buffTracker"][1])
