@@ -3273,6 +3273,12 @@ function F.Revise()
                         i.glowOptions = {"None", {0.95, 0.95, 0.32, 1}}
                     end
                 end
+
+                if i.type == "bar" or i.type == "bars" then
+                    if type(i.maxValue) ~= "table" or #i.maxValue ~= 3 then
+                        i.maxValue = {false, 10, true}
+                    end
+                end
             end
         end
 

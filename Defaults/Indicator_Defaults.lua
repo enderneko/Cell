@@ -68,6 +68,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             },
             ["showStack"] = false,
             ["showDuration"] = false,
+            ["maxValue"] = {false, 10, true},
             ["auraType"] = auraType,
             ["auras"] = {},
             ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
@@ -91,7 +92,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             },
             ["showStack"] = false,
             ["showDuration"] = false,
-            ["maxValue"] = {0, true},
+            ["maxValue"] = {false, 10, true},
             ["auraType"] = auraType,
             ["auras"] = {},
             ["glowOptions"] = {"None", {0.95, 0.95, 0.32, 1}}
