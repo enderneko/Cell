@@ -320,20 +320,17 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- appearance -----------------------------------------------------------------------------
         if type(CellDB["appearance"]) ~= "table" then
-            -- get recommended scale
-            local pScale = P.GetPixelPerfectScale()
-            local scale
-            if pScale >= 0.7 then
-                scale = 1
-            elseif pScale >= 0.5 then
-                scale = 1.4
-            else
-                scale = 2
-            end
-
             CellDB["appearance"] = F.Copy(Cell.defaults.appearance)
             -- update recommended scale
-            CellDB["appearance"]["scale"] = scale
+            local pScale = P.GetPixelPerfectScale()
+            if pScale >= 0.71 then -- 1080
+                pScale = pScale
+            elseif pScale >= 0.53 then -- 1440
+                pScale = pScale + 0.2
+            else -- 2160
+                pScale = pScale + 0.3
+            end
+            CellDB["appearance"]["scale"] = F.Round(pScale / UIParent:GetScale(), 2)
         end
 
         -- color ---------------------------------------------------------------------------------
