@@ -90,11 +90,19 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r247-release (Mar 4, 2025, 17:50 GMT+8)</h1>
+        <p>! Due to changes in scaling behavior, you might need to readjust the size and position of Cell.</p>
+        <p>* Updated TWW season 2 debuffs (Thanks 钛锬).</p>
+        <p>* Fixed scaling issue.</p>
+        <p>* Fixed positioning issue.</p>
+        <p>* Fixed Glow indicator.</p>
+        <br/>
+
         <h1>r246-release (Mar 4, 2025, 13:00 GMT+8)</h1>
         <p>! Cell now scales with UIParent.</p>
         <p>+ Added maxValue settings to custom Bar indicator (#337).</p>
         <p>+ Added glow to some indicators.</p>
-        <p>+ Implemented layout hiding, removed old options under General tab.</p>
+        <p>+ Implemented layout hiding (under Layout Auto Switch), removed old options under General tab.</p>
         <p>+ Implemented solo pet hiding.</p>
         <p>* Fixed hidden menu clickthrough issue.</p>
         <p>* Fixed dispel check.</p>
