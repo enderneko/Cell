@@ -149,8 +149,6 @@ local function CreateColorPicker()
     colorPicker:SetPoint("CENTER")
     colorPicker.header.closeBtn:Hide()
 
-    colorPicker:SetScale(CellDB["appearance"]["scale"])
-
     --------------------------------------------------
     -- current
     --------------------------------------------------

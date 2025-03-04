@@ -170,7 +170,7 @@ end
 local buffTrackerFrame = CreateFrame("Frame", "CellBuffTrackerFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.buffTrackerFrame = buffTrackerFrame
 P.Size(buffTrackerFrame, 102, 50)
-PixelUtil.SetPoint(buffTrackerFrame, "BOTTOMLEFT", UIParent, "CENTER", 1, 1)
+PixelUtil.SetPoint(buffTrackerFrame, "BOTTOMLEFT", CellParent, "CENTER", 1, 1)
 buffTrackerFrame:SetClampedToScreen(true)
 buffTrackerFrame:SetMovable(true)
 buffTrackerFrame:RegisterForDrag("LeftButton")

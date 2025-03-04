@@ -6,11 +6,11 @@ local P = Cell.pixelPerfectFuncs
 -- Tooltip
 -----------------------------------------
 local function CreateTooltip(name, hasIcon)
-    local tooltip = CreateFrame("GameTooltip", name, UIParent, "CellTooltipTemplate,BackdropTemplate")
+    local tooltip = CreateFrame("GameTooltip", name, CellParent, "CellTooltipTemplate,BackdropTemplate")
     tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = 1})
     tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
     tooltip:SetBackdropBorderColor(Cell.GetAccentColorRGB())
-    tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+    tooltip:SetOwner(CellParent, "ANCHOR_NONE")
 
     if hasIcon then
         local iconBG = tooltip:CreateTexture(nil, "BACKGROUND")

@@ -275,7 +275,7 @@ Cell.RegisterCallback("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_Upda
 -- end
 -- Cell.RegisterCallback("UpdateVisibility", "PartyFrame_UpdateVisibility", PartyFrame_UpdateVisibility)
 
--- local f = CreateFrame("Frame", nil, UIParent, "SecureFrameTemplate")
+-- local f = CreateFrame("Frame", nil, CellParent, "SecureFrameTemplate")
 -- RegisterAttributeDriver(f, "state-group", "[@raid1,exists] raid;[@party1,exists] party; solo")
 -- SecureHandlerWrapScript(f, "OnAttributeChanged", f, [[
 --     print(name, value)

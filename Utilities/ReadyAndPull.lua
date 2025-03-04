@@ -9,7 +9,7 @@ local readyBtn, pullBtn
 local buttonsFrame = CreateFrame("Frame", "CellReadyAndPullFrame", Cell.frames.mainFrame, "SecureFrameTemplate,BackdropTemplate")
 Cell.frames.readyAndPullFrame = buttonsFrame
 P.Size(buttonsFrame, 60, 55)
-PixelUtil.SetPoint(buttonsFrame, "TOPRIGHT", UIParent, "CENTER", -1, -1)
+PixelUtil.SetPoint(buttonsFrame, "TOPRIGHT", CellParent, "CENTER", -1, -1)
 buttonsFrame:SetClampedToScreen(true)
 buttonsFrame:SetMovable(true)
 buttonsFrame:RegisterForDrag("LeftButton")

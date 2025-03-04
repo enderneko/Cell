@@ -36,7 +36,7 @@ function P.PixelPerfectPoint(frame)
     local top = frame:GetTop()
 
     frame:ClearAllPoints()
-    frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", math.floor(left + 0.5), math.floor(top + 0.5))
+    frame:SetPoint("TOPLEFT", CellParent, "BOTTOMLEFT", math.floor(left + 0.5), math.floor(top + 0.5))
 end
 
 --------------------------------------------
@@ -85,6 +85,7 @@ end
 
 local scale = 1
 local mult = 1
+---@deprecated
 function P.SetRelativeScale(s)
     mult = 1 / s
     scale = s
@@ -119,7 +120,7 @@ end
 local GetNearestPixelSize = PixelUtil.GetNearestPixelSize
 
 function P.Scale(desiredPixels)
-    return GetNearestPixelSize(desiredPixels, UIParent:GetScale() * scale)
+    return GetNearestPixelSize(desiredPixels, CellParent:GetEffectiveScale())
 end
 
 function P.Size(frame, width, height)
@@ -262,7 +263,7 @@ function P.LoadPosition(frame, positionTable)
         return true
     elseif #positionTable == 3 then
         P.ClearPoints(frame)
-        frame:SetPoint(positionTable[1], UIParent, positionTable[2], positionTable[3])
+        frame:SetPoint(positionTable[1], CellParent, positionTable[2], positionTable[3])
         return true
     end
 end
@@ -275,26 +276,26 @@ local function Round(num, numDecimalPlaces)
     return floor(num + 0.5)
 end
 
-function P.CalcPoint(owner)
+function P.CalcPoint(frame)
     local point, x, y
-    local centerX, centerY = UIParent:GetCenter()
-    local width = UIParent:GetRight()
-    x, y = owner:GetCenter()
+    local centerX, centerY = CellParent:GetCenter()
+    local width = CellParent:GetRight()
+    x, y = frame:GetCenter()
 
     if y >= centerY then
         point = "TOP"
-            y = -(UIParent:GetTop() - owner:GetTop())
+            y = -(CellParent:GetTop() - frame:GetTop())
     else
         point = "BOTTOM"
-            y = owner:GetBottom()
+            y = frame:GetBottom()
     end
 
     if x >= (width * 2 / 3) then
         point = point.."RIGHT"
-            x = owner:GetRight() - width
+            x = frame:GetRight() - width
     elseif x <= (width / 3) then
         point = point.."LEFT"
-            x = owner:GetLeft()
+            x = frame:GetLeft()
     else
         x = x - centerX
     end

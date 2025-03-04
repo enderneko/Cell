@@ -1811,32 +1811,21 @@ local function UpdateAppearance(which)
 
     -- scale
     if not which or which == "scale" then
-        local scale = CellDB["appearance"]["scale"]
-        P.SetRelativeScale(scale) -- just pass the scale value
+        CellParent:SetScale(CellDB["appearance"]["scale"])
 
-        Cell.frames.mainFrame:SetScale(scale)
-
-        CellTooltip:SetScale(scale)
         CellTooltip:UpdatePixelPerfect()
-
-        CellSpellTooltip:SetScale(scale)
         CellSpellTooltip:UpdatePixelPerfect()
-
-        Cell.menu:SetScale(scale)
         Cell.menu:UpdatePixelPerfect()
 
         if Cell.frames.changelogsFrame then
-            Cell.frames.changelogsFrame:SetScale(scale)
             Cell.frames.changelogsFrame:UpdatePixelPerfect()
         end
 
         if Cell.frames.codeSnippetsFrame then
-            Cell.frames.codeSnippetsFrame:SetScale(scale)
             Cell.frames.codeSnippetsFrame:UpdatePixelPerfect()
         end
 
         if CellColorPicker then
-            CellColorPicker:SetScale(scale)
             CellColorPicker:UpdatePixelPerfect()
         end
     end

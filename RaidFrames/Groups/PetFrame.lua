@@ -15,7 +15,7 @@ Cell.frames.petFrame = petFrame
 -------------------------------------------------
 local anchorFrame = CreateFrame("Frame", "CellPetAnchorFrame", petFrame, "BackdropTemplate")
 Cell.frames.petFrameAnchor = anchorFrame
-anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+anchorFrame:SetPoint("TOPLEFT", CellParent, "CENTER")
 anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
 -- Cell.StylizeFrame(anchorFrame, {1, 0, 0, 0.4})

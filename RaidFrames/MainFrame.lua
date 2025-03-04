@@ -30,7 +30,7 @@ local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 -------------------------------------------------
 -- CellMainFrame
 -------------------------------------------------
-local cellMainFrame = CreateFrame("Frame", "CellMainFrame", UIParent, "SecureFrameTemplate")
+local cellMainFrame = CreateFrame("Frame", "CellMainFrame", CellParent, "SecureFrameTemplate")
 Cell.frames.mainFrame = cellMainFrame
 
 local hoverFrame = CreateFrame("Frame", "CellMenuHoverDetector", cellMainFrame, "BackdropTemplate")
@@ -38,7 +38,7 @@ local hoverFrame = CreateFrame("Frame", "CellMenuHoverDetector", cellMainFrame, 
 
 local anchorFrame = CreateFrame("Frame", "CellAnchorFrame", cellMainFrame)
 Cell.frames.anchorFrame = anchorFrame
-PixelUtil.SetPoint(anchorFrame, "TOPLEFT", UIParent, "CENTER", 1, -1)
+PixelUtil.SetPoint(anchorFrame, "TOPLEFT", CellParent, "CENTER", 1, -1)
 P.Size(anchorFrame, 20, 10)
 anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
@@ -549,7 +549,7 @@ local function MainFrame_UpdateLayout(layout, which)
         if not P.LoadPosition(anchorFrame, layout["main"]["position"]) then
             P.ClearPoints(anchorFrame)
             -- no position, use default
-            PixelUtil.SetPoint(anchorFrame, "TOPLEFT", UIParent, "CENTER", 1, -1)
+            PixelUtil.SetPoint(anchorFrame, "TOPLEFT", CellParent, "CENTER", 1, -1)
         end
     end
 end

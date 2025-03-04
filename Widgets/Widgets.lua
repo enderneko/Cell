@@ -339,7 +339,7 @@ end
 
 
 function Cell.CreateMovableFrame(title, name, width, height, frameStrata, frameLevel, notUserPlaced)
-    local f = CreateFrame("Frame", name, UIParent, "BackdropTemplate")
+    local f = CreateFrame("Frame", name, CellParent, "BackdropTemplate")
     f:EnableMouse(true)
     -- f:SetResizable(false)
     f:SetMovable(true)
@@ -2144,7 +2144,7 @@ end
 -----------------------------------------
 -- cascading menu
 -----------------------------------------
-local menu = Cell.CreateFrame(addonName.."CascadingMenu", UIParent, 100, 20)
+local menu = Cell.CreateFrame(addonName.."CascadingMenu", CellParent, 100, 20)
 Cell.menu = menu
 tinsert(UISpecialFrames, menu:GetName())
 menu:SetClampedToScreen(true)
@@ -2749,7 +2749,7 @@ function Cell.CreateScrollFrame(parent, top, bottom, color, border)
         if button ~= 'LeftButton' then return end
         local offsetY = select(5, scrollThumb:GetPoint(1))
         local mouseY = select(2, GetCursorPosition())
-        local uiScale = UIParent:GetEffectiveScale() -- https://wowpedia.fandom.com/wiki/API_GetCursorPosition
+        local uiScale = CellParent:GetEffectiveScale() -- https://wowpedia.fandom.com/wiki/API_GetCursorPosition
         local currentScroll = scrollFrame:GetVerticalScroll()
         self:SetScript("OnUpdate", function(self)
             --------------------- y offset before dragging + mouse offset
@@ -2810,8 +2810,8 @@ end
 -- dropdown menu
 ------------------------------------------------
 local listInit, list, highlightTexture
-list = CreateFrame("Frame", addonName.."DropdownList", UIParent, "BackdropTemplate")
-list:SetIgnoreParentScale(true)
+list = CreateFrame("Frame", addonName.."DropdownList", CellParent, "BackdropTemplate")
+-- list:SetIgnoreParentScale(true)
 list:SetClampedToScreen(true)
 -- Cell.StylizeFrame(list, {0.115, 0.115, 0.115, 1})
 list:Hide()
@@ -2826,7 +2826,7 @@ highlightTexture = CreateFrame("Frame", nil, list, "BackdropTemplate")
 highlightTexture:Hide()
 
 list:SetScript("OnShow", function()
-    list:SetScale(list.menu:GetEffectiveScale())
+    -- list:SetScale(list.menu:GetEffectiveScale())
     list:SetFrameStrata(list.menu:GetFrameStrata())
     list:SetFrameLevel(list.menu:GetFrameLevel() + 20) -- top
 end)
@@ -3464,7 +3464,7 @@ function Cell.CreateReceivingFrame(parent)
     f:SetFrameLevel(277)
     f:SetClampedToScreen(true)
     P.Size(f, 249, 135)
-    f:SetPoint("TOPRIGHT", UIParent, "CENTER")
+    f:SetPoint("TOPRIGHT", CellParent, "CENTER")
     Cell.StylizeFrame(f)
 
     f:SetScript("OnDragStart", function() f:StartMoving() end)

@@ -58,12 +58,12 @@ function F.Print(msg)
     print("|cFFFF3030[Cell]|r " .. msg)
 end
 
-local IsInRaid = IsInRaid
-local IsInGroup = IsInGroup
-local GetNumGroupMembers = GetNumGroupMembers
-local GetRaidRosterInfo = GetRaidRosterInfo
-local UnitGUID = UnitGUID
--- local IsInBattleGround = C_PvP.IsBattleground -- NOTE: can't get valid value immediately after PLAYER_ENTERING_WORLD
+--------------------------------------------------
+-- CellParent
+--------------------------------------------------
+local CellParent = CreateFrame("Frame", "CellParent", UIParent)
+CellParent:SetAllPoints(UIParent)
+CellParent:SetFrameLevel(0)
 
 -------------------------------------------------
 -- layout
@@ -177,6 +177,12 @@ function eventFrame:VARIABLES_LOADED()
     SetCVar("predictedHealth", 1)
 end
 
+local IsInRaid = IsInRaid
+local IsInGroup = IsInGroup
+local GetNumGroupMembers = GetNumGroupMembers
+local GetRaidRosterInfo = GetRaidRosterInfo
+local UnitGUID = UnitGUID
+-- local IsInBattleGround = C_PvP.IsBattleground -- NOTE: can't get valid value immediately after PLAYER_ENTERING_WORLD
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
 
 -- local cellLoaded, omnicdLoaded
@@ -384,7 +390,6 @@ function eventFrame:ADDON_LOADED(arg1)
             -- update recommended scale
             CellDB["appearance"]["scale"] = scale
         end
-        P.SetRelativeScale(CellDB["appearance"]["scale"])
 
         -- color ---------------------------------------------------------------------------------
         if CellDB["appearance"]["accentColor"] then -- version < r103
@@ -834,7 +839,7 @@ end
 
 function eventFrame:UI_SCALE_CHANGED()
     if not InCombatLockdown() then
-        F.Debug("UI_SCALE_CHANGED: ", UIParent:GetScale())
+        F.Debug("UI_SCALE_CHANGED: ", CellParent:GetEffectiveScale())
         Cell.Fire("UpdatePixelPerfect")
         Cell.Fire("UpdateAppearance", "scale")
         PreUpdateLayout()
@@ -909,27 +914,27 @@ function SlashCmdList.CELL(msg, editbox)
     elseif command == "reset" then
         if rest == "position" then
             Cell.frames.anchorFrame:ClearAllPoints()
-            Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+            Cell.frames.anchorFrame:SetPoint("TOPLEFT", CellParent, "CENTER")
             Cell.vars.currentLayoutTable["position"] = {}
             P.ClearPoints(Cell.frames.readyAndPullFrame)
-            Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
+            Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", CellParent, "CENTER")
             CellDB["tools"]["readyAndPull"][4] = {}
             P.ClearPoints(Cell.frames.raidMarksFrame)
-            Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
+            Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", CellParent, "CENTER")
             CellDB["tools"]["marks"][4] = {}
             P.ClearPoints(Cell.frames.buffTrackerFrame)
-            Cell.frames.buffTrackerFrame:SetPoint("BOTTOMLEFT", UIParent, "CENTER")
+            Cell.frames.buffTrackerFrame:SetPoint("BOTTOMLEFT", CellParent, "CENTER")
             CellDB["tools"]["buffTracker"][4] = {}
 
         elseif rest == "all" then
             Cell.frames.anchorFrame:ClearAllPoints()
-            Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+            Cell.frames.anchorFrame:SetPoint("TOPLEFT", CellParent, "CENTER")
             Cell.frames.readyAndPullFrame:ClearAllPoints()
-            Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
+            Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", CellParent, "CENTER")
             Cell.frames.raidMarksFrame:ClearAllPoints()
-            Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
+            Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", CellParent, "CENTER")
             Cell.frames.buffTrackerFrame:ClearAllPoints()
-            Cell.frames.buffTrackerFrame:SetPoint("BOTTOMLEFT", UIParent, "CENTER")
+            Cell.frames.buffTrackerFrame:SetPoint("BOTTOMLEFT", CellParent, "CENTER")
             CellDB = nil
             ReloadUI()
 

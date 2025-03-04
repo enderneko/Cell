@@ -9,7 +9,7 @@ local marks, worldMarks
 local marksFrame = CreateFrame("Frame", "CellRaidMarksFrame", Cell.frames.mainFrame, "SecureFrameTemplate,BackdropTemplate")
 Cell.frames.raidMarksFrame = marksFrame
 marksFrame:SetSize(196, 40)
-PixelUtil.SetPoint(marksFrame, "BOTTOMRIGHT", UIParent, "CENTER", -1, 1)
+PixelUtil.SetPoint(marksFrame, "BOTTOMRIGHT", CellParent, "CENTER", -1, 1)
 marksFrame:SetClampedToScreen(true)
 marksFrame:SetMovable(true)
 marksFrame:RegisterForDrag("LeftButton")

@@ -334,7 +334,7 @@ local function UpdateTools(which)
                 P.ClearPoints(battleResFrame)
                 battleResFrame:SetPoint("BOTTOMLEFT", battleResMover)
                 if not P.LoadPosition(battleResMover, CellDB["tools"]["battleResTimer"][3]) then
-                    PixelUtil.SetPoint(battleResMover, "TOPLEFT", UIParent, "CENTER", 1, -100)
+                    PixelUtil.SetPoint(battleResMover, "TOPLEFT", CellParent, "CENTER", 1, -100)
                 end
             else
                 MoverHide()
