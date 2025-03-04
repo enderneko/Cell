@@ -1704,12 +1704,7 @@ local function Glow_SetCooldown(glow, start, duration)
         glow._elapsed = nil
     end
 
-    if frame.glowType == "None" then
-        glow:Hide()
-    else
-        glow:Show()
-        glow:StartGlow()
-    end
+    glow:Show()
 end
 
 function I.CreateAura_Glow(name, parent)
