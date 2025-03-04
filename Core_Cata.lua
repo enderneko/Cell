@@ -480,7 +480,7 @@ function eventFrame:ADDON_LOADED(arg1)
         -- validate layout
         for talent, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
             for groupType, layout in pairs(t) do
-                if not CellDB["layouts"][layout] then
+                if layout ~= "hide" and not CellDB["layouts"][layout] then
                     t[groupType] = "default"
                 end
             end
