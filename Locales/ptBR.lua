@@ -189,6 +189,8 @@ L["Delete layout"] = "Deletar layout"
 L["Delete spell?"] = "Deletar feitiço?"
 --[[Translation missing --]]
 --[[ L["Delimiter"] = "Delimiter"--]]
+--[[Translation missing --]]
+--[[ L["Detached"] = ""--]]
 L["Disabled"] = "Desabilitado"
 L["Disabled in battlegrounds and arenas"] = "Desabilitado em battlegrounds e arenas"
 L["Discard"] = "Descartar"
@@ -443,6 +445,7 @@ L["PENDING"] = "PENDENTE"
 L["Percentage"] = "Porcentagem"
 L["Pet"] = "Pet"
 L["PET"] = "Pet"
+L["Pets"] = "Pets de Raid"
 L["Pixel"] = "Pixel"
 L["Pixel Perfect"] = "Pixel Perfect"
 L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."] = "Reproduzir a animação quando a unidade usa um feitiço/item específico. A lista é compartilhada globalmente, não específica para o layout."
@@ -474,7 +477,6 @@ L["Raid Debuffs"] = "Debuffs de Raid"
 L["Raid Debuffs updated: %s."] = "Debuffs de Raid atualizados: %s."
 L["Raid Icon (player)"] = "Ícone de Raid (player)"
 L["Raid Icon (target)"] = "ícone de Raid (target)"
-L["Raid Pets"] = "Pets de Raid"
 L["Raid Tools"] = "Ferramentas de Raid"
 L["RAID_DEBUFFS_TIPS"] = "Dicas: [Arraste & Solte] para mudar a ordem de debuffs. [Double-Click] no nome de uma instância para abrir o Guia de Aventura. [Shift+Left Click] numa instância/nome de chefe pra compartilhar debuffs. A prioridade dos Debuffs Gerais é maior que dos Debuffs de Chefe."
 L["raidRosterTips"] = "[Right-Click] para promover/rebaixar (assist). [Alt+Right-Click] desconvidar."
@@ -571,9 +573,13 @@ L["Show friendly NPCs in a separate frame"] = "Mostre NPCs amigáveis ​​em u
 L["Show NPC Frame"] = "Mostrar o Frame de NPC"
 L["Show Party"] = "Mostrar grupo"
 L["Show Party/Arena Pets"] = "Mostrar Pets de Grupo/Arena"
+--[[Translation missing --]]
+--[[ L["Show pets in a separate frame"] = ""--]]
 L["Show Raid"] = "Exibir Raide"
 L["Show Raid Pets"] = "Mostrar pets de Raid"
 L["Show Solo"] = "Mostrar quando sozinho"
+--[[Translation missing --]]
+--[[ L["Show Solo Pet"] = ""--]]
 L["Show units you care about more in a separate frame"] = "Mostre as unidades mais importantes para você em um quadro separado"
 L["Show while in a party"] = "Mostrar durante um grupo"
 L["Show while in a raid"] = "Exibir quando estiver em uma raide."
@@ -597,8 +603,6 @@ L["SNIPPETS_TIPS"] = "[Double-Click] parar renomear. [Shift-Click] para deletar.
 L["Solid"] = "Sólido"
 L["Solo"] = "Solo"
 L["Sort By Role"] = "Classificar por Função"
---[[Translation missing --]]
---[[ L["Space"] = "Space"--]]
 L["Spacing"] = "Espaçamento"
 L["Spec"] = "Spec"
 L["Spec Filter"] = "Filtro de Spec"
