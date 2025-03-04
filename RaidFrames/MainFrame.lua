@@ -33,7 +33,7 @@ local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 local cellMainFrame = CreateFrame("Frame", "CellMainFrame", UIParent, "SecureFrameTemplate")
 Cell.frames.mainFrame = cellMainFrame
 
-local hoverFrame = CreateFrame("Frame", nil, cellMainFrame, "BackdropTemplate")
+local hoverFrame = CreateFrame("Frame", "CellMenuHoverDetector", cellMainFrame, "BackdropTemplate")
 -- Cell.StylizeFrame(hoverFrame, {1,0,0,0.3}, {0,0,0,0})
 
 local anchorFrame = CreateFrame("Frame", "CellAnchorFrame", cellMainFrame)
@@ -373,6 +373,7 @@ local function MainFrame_GroupTypeChanged(groupType)
     else
         raid:Hide()
     end
+    UpdateHoverFrame()
 end
 Cell.RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)
 
@@ -517,10 +518,14 @@ local function MainFrame_UpdateLayout(layout, which)
 
     -- visibility
     if layout == "hide" then
+        anchorFrame:Hide()
         menuFrame:Hide()
+        hoverFrame:Hide()
         return
     else
+        anchorFrame:Show()
         menuFrame:Show()
+        hoverFrame:Show()
     end
 
     if not init then
