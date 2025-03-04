@@ -415,8 +415,12 @@ local function UpdateLayoutPreview()
                 if i == 1 then
                     header:SetPoint(point)
                 else
-                    if i % selectedLayoutTable["main"]["maxColumns"] == 1 then -- first column on each row
-                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-selectedLayoutTable["main"]["maxColumns"]]], 0, verticalSpacing)
+                    local headersPerRow = selectedLayoutTable["main"]["maxColumns"]
+                    local headerCol = i % headersPerRow
+                    headerCol = headerCol == 0 and headersPerRow or headerCol
+
+                    if headerCol == 1 then -- first column on each row
+                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-headersPerRow]], 0, verticalSpacing)
                     else
                         header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
                     end
@@ -437,8 +441,12 @@ local function UpdateLayoutPreview()
                 if i == 1 then
                     header:SetPoint(point)
                 else
-                    if i % selectedLayoutTable["main"]["maxColumns"] == 1 then -- first row on each column
-                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-selectedLayoutTable["main"]["maxColumns"]]], horizontalSpacing, 0)
+                    local headersPerCol = selectedLayoutTable["main"]["maxColumns"]
+                    local headerRow = i % headersPerRow
+                    headerRow = headerRow == 0 and headersPerCol or headerRow
+
+                    if headerRow == 1 then -- first row on each column
+                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-headersPerCol]], horizontalSpacing, 0)
                     else
                         header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
                     end

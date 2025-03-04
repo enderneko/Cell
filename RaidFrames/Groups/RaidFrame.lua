@@ -480,7 +480,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                         header:SetPoint(point)
                     else
                         local headersPerRow = layout["main"]["maxColumns"]
-                        local headerCol = i % layout["main"]["maxColumns"]
+                        local headerCol = i % headersPerRow
                         headerCol = headerCol == 0 and headersPerRow or headerCol
 
                         if headerCol == 1 then -- first column on each row
@@ -505,7 +505,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                         header:SetPoint(point)
                     else
                         local headersPerCol = layout["main"]["maxColumns"]
-                        local headerRow = i % layout["main"]["maxColumns"]
+                        local headerRow = i % headersPerRow
                         headerRow = headerRow == 0 and headersPerCol or headerRow
 
                         if headerRow == 1 then -- first row on each column
