@@ -396,9 +396,19 @@ end
 function F.Round(num, numDecimalPlaces)
     if numDecimalPlaces and numDecimalPlaces >= 0 then
         local mult = 10 ^ numDecimalPlaces
-        return floor(num * mult + 0.5) / mult
+        num = num * mult
+        if num >= 0 then
+            return floor(num + 0.5) / mult
+        else
+            return ceil(num - 0.5) / mult
+        end
     end
-    return floor(num + 0.5)
+
+    if num >= 0 then
+        return floor(num + 0.5)
+    else
+        return ceil(num - 0.5)
+    end
 end
 
 local symbol_1K, symbol_10K, symbol_1B

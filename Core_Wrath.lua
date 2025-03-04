@@ -759,11 +759,20 @@ function eventFrame:PLAYER_LOGIN()
 end
 
 function eventFrame:UI_SCALE_CHANGED()
-    F.Debug("UI_SCALE_CHANGED: ", CellParent:GetEffectiveScale())
-    Cell.Fire("UpdatePixelPerfect")
-    Cell.Fire("UpdateAppearance", "scale")
-    PreUpdateLayout()
+    if not InCombatLockdown() then
+        F.Debug("UI_SCALE_CHANGED: ", UIParent:GetScale(), CellParent:GetEffectiveScale())
+        Cell.Fire("UpdatePixelPerfect")
+        Cell.Fire("UpdateAppearance", "scale")
+    end
 end
+
+hooksecurefunc(UIParent, "SetScale", function()
+    if not InCombatLockdown() then
+        F.Debug("UIParent:SetScale: ", UIParent:GetScale(), CellParent:GetEffectiveScale())
+        Cell.Fire("UpdatePixelPerfect")
+        Cell.Fire("UpdateAppearance", "scale")
+    end
+end)
 
 function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
     F.Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")

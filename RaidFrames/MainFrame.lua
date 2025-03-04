@@ -565,9 +565,8 @@ local function UpdatePixelPerfect()
     P.Repoint(loadingBar)
     P.Resize(loadingBar)
 
-    -- NOTE: update pixel perfect for each button moved to UpdateIndicators
-    -- F.IterateAllUnitButtons(function(b)
-    --     B.UpdatePixelPerfect(b)
-    -- end)
+    F.IterateAllUnitButtons(function(b)
+        B.UpdatePixelPerfect(b, true)
+    end, true)
 end
 Cell.RegisterCallback("UpdatePixelPerfect", "MainFrame_UpdatePixelPerfect", UpdatePixelPerfect)

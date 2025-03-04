@@ -839,12 +839,19 @@ end
 
 function eventFrame:UI_SCALE_CHANGED()
     if not InCombatLockdown() then
-        F.Debug("UI_SCALE_CHANGED: ", CellParent:GetEffectiveScale())
+        F.Debug("UI_SCALE_CHANGED: ", UIParent:GetScale(), CellParent:GetEffectiveScale())
         Cell.Fire("UpdatePixelPerfect")
         Cell.Fire("UpdateAppearance", "scale")
-        PreUpdateLayout()
     end
 end
+
+hooksecurefunc(UIParent, "SetScale", function()
+    if not InCombatLockdown() then
+        F.Debug("UIParent:SetScale: ", UIParent:GetScale(), CellParent:GetEffectiveScale())
+        Cell.Fire("UpdatePixelPerfect")
+        Cell.Fire("UpdateAppearance", "scale")
+    end
+end)
 
 -------------------------------------------------
 -- ACTIVE_TALENT_GROUP_CHANGED
