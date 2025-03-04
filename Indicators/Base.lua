@@ -1208,7 +1208,7 @@ function I.CreateAura_Rect(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     frame.indicatorType = "rect"
-    frame:SetBackdrop({edgeFile=Cell.vars.whiteTexture, edgeSize=P.Scale(1)})
+    frame:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
     frame:SetBackdropBorderColor(0, 0, 0, 1)
 
     local tex = frame:CreateTexture(nil, "BORDER", nil, -7)
@@ -2137,6 +2137,7 @@ local function Block_UpdatePixelPerfect(frame)
     P.Repoint(frame.stack)
     P.Repoint(frame.duration)
     P.Repoint(frame.cooldown)
+    P.Reborder(frame)
     if frame.cooldown.spark then
         P.Resize(frame.cooldown.spark)
     end
