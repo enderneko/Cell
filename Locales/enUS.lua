@@ -90,6 +90,19 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r246-release (Mar 4, 2025, 13:00 GMT+8)</h1>
+        <p>! Cell now scales with UIParent.</p>
+        <p>+ Added maxValue settings to custom Bar indicator (#337).</p>
+        <p>+ Added glow to some indicators.</p>
+        <p>+ Implemented layout hiding, removed old options under General tab.</p>
+        <p>+ Implemented solo pet hiding.</p>
+        <p>* Fixed hidden menu clickthrough issue.</p>
+        <p>* Fixed dispel check.</p>
+        <p>* Made BattleResTimer and PartyPets detachable.</p>
+        <p>* Made spacing options effective for solo/party pets.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
         <h1>r245-release (Feb 25, 2025, 19:35 GMT+8)</h1>
         <p>* Fixed a layout auto switch issue.</p>
         <p>* Fixed issues caused by spotlight on Classic.</p>

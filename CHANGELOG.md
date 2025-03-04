@@ -1,9 +1,14 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r244-release...106ad398539e0bcb5821fa5722d2a38147c61a4d)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r245-release...2a24099cde3870827aac4b50d69615ed81d06c05)
 
-- Fix a layout auto switch issue
-- Fix issues caused by spotlight on Classic
-- Fix import
-- Add nickname support for SpellRequest
-- Add "health2" for HealthText
-- HealthText no longer hide when dead/ghost
-- Update deDE, zhTW
+- Add maxValue settings to custom Bar indicator (#337)
+- Add glow to some indicators
+- Implement layout hiding, remove old options under General tab
+- Implement solo pet hiding
+- Fix hidden menu clickthrough issue
+- Slightly fix position of raid unit buttons
+- Fix dispel check
+- Make BattleResTimer detachable
+- Make party pets detachable
+- Make spacing options effective for solo/party pets
+- Update PixelPerfect, Cell now scales with UIParent
+- Update locales
