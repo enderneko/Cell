@@ -1815,7 +1815,7 @@ local function GetDropdownItems(indices, groupType)
         if value == "default" then
             name = _G.DEFAULT
         elseif value == "hide" then
-            name = L["Hide"]
+            name = "|cffababab" .. L["Hide"] .. "|r"
         else
             name = value
         end
