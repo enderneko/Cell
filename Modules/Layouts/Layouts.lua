@@ -2366,7 +2366,7 @@ local function CreateLayoutSetupPane()
     groupSpacingSlider:SetPoint("TOPLEFT", spacingYSlider, 0, -55)
 
     -- unitsPerColumn
-    unitsSlider = Cell.CreateSlider(L["Units Per Column"], pages.main, 2, 20, 117, 1, function(value)
+    unitsSlider = Cell.CreateSlider(L["Units Per Column"], pages.main, 2, Cell.isRetail and 20 or 25, 117, 1, function(value)
         selectedLayoutTable["main"]["unitsPerColumn"] = value
         if selectedLayout == Cell.vars.currentLayout then
             Cell.Fire("UpdateLayout", selectedLayout, "unitsPerColumn")
