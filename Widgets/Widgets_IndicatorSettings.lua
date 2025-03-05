@@ -6643,7 +6643,7 @@ local function CreateSetting_RoleFilters(parent)
 
         local last
         for class in F.IterateClasses() do
-            widget.filters[class] = CreateRoleFilter(widget, class, CLASS_ROLES[class])
+            widget.filters[class] = CreateRoleFilter(widget, class, Cell.isVanilla and {"TANK", "HEALER", "DAMAGER"} or CLASS_ROLES[class])
             if last then
                 widget.filters[class]:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -5)
             else

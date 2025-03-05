@@ -12,7 +12,42 @@ local selectedLayout, selectedLayoutTable
 -----------------------------------------
 -- power filter
 -----------------------------------------
-local CreatePowerFilter
+local CLASS_ROLES
+if Cell.isVanilla then
+    CLASS_ROLES = {
+        ["DRUID"] = {"TANK", "HEALER", "DAMAGER"},
+        ["HUNTER"] = {"TANK", "HEALER", "DAMAGER"},
+        ["MAGE"] = {"TANK", "HEALER", "DAMAGER"},
+        ["PALADIN"] = {"TANK", "HEALER", "DAMAGER"},
+        ["PRIEST"] = {"TANK", "HEALER", "DAMAGER"},
+        ["ROGUE"] = {"TANK", "HEALER", "DAMAGER"},
+        ["SHAMAN"] = {"TANK", "HEALER", "DAMAGER"},
+        ["WARLOCK"] = {"TANK", "HEALER", "DAMAGER"},
+        ["WARRIOR"] = {"TANK", "HEALER", "DAMAGER"},
+        ["PET"] = {"DAMAGER"},
+        ["VEHICLE"] = {"DAMAGER"},
+        ["NPC"] = {"DAMAGER"},
+    }
+else
+    CLASS_ROLES = {
+        ["DEATHKNIGHT"] = {"TANK", "DAMAGER"},
+        ["DEMONHUNTER"] = {"TANK", "DAMAGER"},
+        ["DRUID"] = {"TANK", "HEALER", "DAMAGER"},
+        ["EVOKER"] = {"HEALER", "DAMAGER"},
+        ["HUNTER"] = {"DAMAGER"},
+        ["MAGE"] = {"DAMAGER"},
+        ["MONK"] = {"TANK", "HEALER", "DAMAGER"},
+        ["PALADIN"] = {"TANK", "HEALER", "DAMAGER"},
+        ["PRIEST"] = {"HEALER", "DAMAGER"},
+        ["ROGUE"] = {"DAMAGER"},
+        ["SHAMAN"] = {"HEALER", "DAMAGER"},
+        ["WARLOCK"] = {"DAMAGER"},
+        ["WARRIOR"] = {"TANK", "DAMAGER"},
+        ["PET"] = {"DAMAGER"},
+        ["VEHICLE"] = {"DAMAGER"},
+        ["NPC"] = {"DAMAGER"},
+    }
+end
 
 local function UpdateButton(b, enabled)
     b.tex:SetDesaturated(not enabled)
@@ -31,10 +66,10 @@ local function UpdateButton(b, enabled)
     end
 end
 
-CreatePowerFilter = function(parent, class, buttons, width, height, color, bgColor)
+local function CreatePowerFilter(parent, class, buttons, color, bgColor)
     local filter = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     Cell.StylizeFrame(filter, color, bgColor)
-    P.Size(filter, width, height)
+    P.Size(filter, 135, 20)
 
     filter.text = filter:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     filter.text:SetPoint("LEFT", 5, 0)
@@ -47,9 +82,9 @@ CreatePowerFilter = function(parent, class, buttons, width, height, color, bgCol
     filter.buttons = {}
     local last
     for i = #buttons, 1, -1 do
-        local b = Cell.CreateButton(filter, nil, "accent-hover", {height, height})
+        local b = Cell.CreateButton(filter, nil, "accent-hover", {20, 20})
         filter.buttons[buttons[i]] = b
-        b:SetTexture(F.GetDefaultRoleIcon(buttons[i]), {height-4, height-4}, {"CENTER", 0, 0})
+        b:SetTexture(F.GetDefaultRoleIcon(buttons[i]), {16, 16}, {"CENTER", 0, 0})
 
         if last then
             b:SetPoint("BOTTOMRIGHT", last, "BOTTOMLEFT", P.Scale(1), 0)
@@ -94,26 +129,26 @@ end
 local dkF, dhF, druidF, evokerF, hunterF, mageF, monkF, paladinF, priestF, rogueF, shamanF, warlockF, warriorF, petF, vehicleF, npcF
 
 local function CreateFilters()
-    druidF = CreatePowerFilter(powerFilters, "DRUID", {"TANK", "HEALER", "DAMAGER"}, 135, 20)
-    hunterF = CreatePowerFilter(powerFilters, "HUNTER", {"DAMAGER"}, 135, 20)
-    mageF = CreatePowerFilter(powerFilters, "MAGE", {"DAMAGER"}, 135, 20)
-    paladinF = CreatePowerFilter(powerFilters, "PALADIN", {"TANK", "HEALER", "DAMAGER"}, 135, 20)
-    priestF = CreatePowerFilter(powerFilters, "PRIEST", {"HEALER", "DAMAGER"}, 135, 20)
-    rogueF = CreatePowerFilter(powerFilters, "ROGUE", {"DAMAGER"}, 135, 20)
-    shamanF = CreatePowerFilter(powerFilters, "SHAMAN", {"HEALER", "DAMAGER"}, 135, 20)
-    warlockF = CreatePowerFilter(powerFilters, "WARLOCK", {"DAMAGER"}, 135, 20)
-    warriorF = CreatePowerFilter(powerFilters, "WARRIOR", {"TANK", "DAMAGER"}, 135, 20)
-    petF = CreatePowerFilter(powerFilters, "PET", {"DAMAGER"}, 135, 20)
-    vehicleF = CreatePowerFilter(powerFilters, "VEHICLE", {"DAMAGER"}, 135, 20)
-    npcF = CreatePowerFilter(powerFilters, "NPC", {"DAMAGER"}, 135, 20)
+    druidF = CreatePowerFilter(powerFilters, "DRUID", CLASS_ROLES["DRUID"])
+    hunterF = CreatePowerFilter(powerFilters, "HUNTER", CLASS_ROLES["HUNTER"])
+    mageF = CreatePowerFilter(powerFilters, "MAGE", CLASS_ROLES["MAGE"])
+    paladinF = CreatePowerFilter(powerFilters, "PALADIN", CLASS_ROLES["PALADIN"])
+    priestF = CreatePowerFilter(powerFilters, "PRIEST", CLASS_ROLES["PRIEST"])
+    rogueF = CreatePowerFilter(powerFilters, "ROGUE", CLASS_ROLES["ROGUE"])
+    shamanF = CreatePowerFilter(powerFilters, "SHAMAN", CLASS_ROLES["SHAMAN"])
+    warlockF = CreatePowerFilter(powerFilters, "WARLOCK", CLASS_ROLES["WARLOCK"])
+    warriorF = CreatePowerFilter(powerFilters, "WARRIOR", CLASS_ROLES["WARRIOR"])
+    petF = CreatePowerFilter(powerFilters, "PET", CLASS_ROLES["PET"])
+    vehicleF = CreatePowerFilter(powerFilters, "VEHICLE", CLASS_ROLES["VEHICLE"])
+    npcF = CreatePowerFilter(powerFilters, "NPC", CLASS_ROLES["NPC"])
 
     if Cell.isRetail then
         P.Height(powerFilters, 205)
 
-        dkF =  CreatePowerFilter(powerFilters, "DEATHKNIGHT", {"TANK", "DAMAGER"}, 135, 20)
-        dhF = CreatePowerFilter(powerFilters, "DEMONHUNTER", {"TANK", "DAMAGER"}, 135, 20)
-        monkF = CreatePowerFilter(powerFilters, "MONK", {"TANK", "HEALER", "DAMAGER"}, 135, 20)
-        evokerF = CreatePowerFilter(powerFilters, "EVOKER", {"HEALER", "DAMAGER"}, 135, 20)
+        dkF = CreatePowerFilter(powerFilters, "DEATHKNIGHT", CLASS_ROLES["DEATHKNIGHT"])
+        dhF = CreatePowerFilter(powerFilters, "DEMONHUNTER", CLASS_ROLES["DEMONHUNTER"])
+        monkF = CreatePowerFilter(powerFilters, "MONK", CLASS_ROLES["MONK"])
+        evokerF = CreatePowerFilter(powerFilters, "EVOKER", CLASS_ROLES["EVOKER"])
 
         dkF:SetPoint("TOPLEFT", 5, -5)
         dhF:SetPoint("TOPLEFT", 145, -5)
@@ -135,7 +170,7 @@ local function CreateFilters()
     elseif Cell.isCata or Cell.isWrath then
         P.Height(powerFilters, 180)
 
-        dkF =  CreatePowerFilter(powerFilters, "DEATHKNIGHT", {"TANK", "DAMAGER"}, 135, 20)
+        dkF =  CreatePowerFilter(powerFilters, "DEATHKNIGHT", CLASS_ROLES["DEATHKNIGHT"])
 
         dkF:SetPoint("TOPLEFT", 5, -5)
         druidF:SetPoint("TOPLEFT", 145, -5)
