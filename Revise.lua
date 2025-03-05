@@ -3305,6 +3305,19 @@ function F.Revise()
         end
     end
 
+    -- r248-release
+    if CellDB["revise"] and dbRevision < 248 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.type == "icons" then -- Healers
+                    if not i.glowOptions then
+                        i.glowOptions = {"None", {0.95, 0.95, 0.32, 1}}
+                    end
+                end
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --
