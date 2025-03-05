@@ -36,6 +36,16 @@ local function CreateCellPane()
     end
     Cell.RegisterForCloseDropdown(scaleSlider)
 
+    -- recommended scale
+    local recScaleBtn = Cell.CreateButton(cellPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil, L["Apply Recommended Scale"])
+    recScaleBtn:SetPoint("BOTTOMRIGHT", scaleSlider, "TOPRIGHT", 0, 2)
+    recScaleBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\resize", {15, 15}, {"CENTER", 0, 0})
+    recScaleBtn:SetScript("OnClick", function()
+        local scale = P.GetRecommendedScale()
+        scaleSlider:SetValue(scale)
+        scaleSlider.afterValueChangedFn(scale)
+    end)
+
     -- options ui font size
     optionsFontSizeOffset = Cell.CreateSlider(L["Options UI Font Size"], cellPane, -5, 5, 141, 1)
     optionsFontSizeOffset:SetPoint("TOPLEFT", 222, -40)

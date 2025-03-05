@@ -147,6 +147,7 @@ L["Blacklist Target Player"] = "将目标加入黑名单"
 -------------------------------------------------
 L["Appearance"] = "外观"
 L["Scale"] = "缩放"
+L["Apply Recommended Scale"] = "应用推荐缩放"
 L["Strata"] = "层级"
 L["Non-integer scaling may result in abnormal display of options UI"] = "非整数缩放可能导致选项界面显示不正常"
 L["A UI reload is required.\nDo it now?"] = "需要重载界面。\n现在重载么？"

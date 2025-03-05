@@ -5,6 +5,24 @@
 local _, addon = ...
 addon.pixelPerfectFuncs = {}
 
+local function Round(num, numDecimalPlaces)
+    if numDecimalPlaces and numDecimalPlaces >= 0 then
+        local mult = 10 ^ numDecimalPlaces
+        num = num * mult
+        if num >= 0 then
+            return floor(num + 0.5) / mult
+        else
+            return ceil(num - 0.5) / mult
+        end
+    end
+
+    if num >= 0 then
+        return floor(num + 0.5)
+    else
+        return ceil(num - 0.5)
+    end
+end
+
 ---@class PixelPerfectFuncs
 local P = addon.pixelPerfectFuncs
 
@@ -23,6 +41,18 @@ function P.GetPixelPerfectScale()
     else -- windowed mode before 8.0, or maybe something goes wrong?
         return 1
     end
+end
+
+function P.GetRecommendedScale()
+    local pScale = P.GetPixelPerfectScale()
+    if pScale >= 0.71 then -- 1080
+        pScale = pScale
+    elseif pScale >= 0.53 then -- 1440
+        pScale = pScale + 0.2
+    else -- 2160
+        pScale = pScale + 0.3
+    end
+    return Round(pScale / UIParent:GetScale(), 2)
 end
 
 -- scale perfect!
@@ -265,24 +295,6 @@ function P.LoadPosition(frame, positionTable)
         P.ClearPoints(frame)
         frame:SetPoint(positionTable[1], CellParent, positionTable[2], positionTable[3])
         return true
-    end
-end
-
-local function Round(num, numDecimalPlaces)
-    if numDecimalPlaces and numDecimalPlaces >= 0 then
-        local mult = 10 ^ numDecimalPlaces
-        num = num * mult
-        if num >= 0 then
-            return floor(num + 0.5) / mult
-        else
-            return ceil(num - 0.5) / mult
-        end
-    end
-
-    if num >= 0 then
-        return floor(num + 0.5)
-    else
-        return ceil(num - 0.5)
     end
 end
 
