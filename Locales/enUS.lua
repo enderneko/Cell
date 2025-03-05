@@ -91,6 +91,10 @@ select(2, ...).L = setmetatable({
         <h2>The scaling "issue" isn't a bug; it's due to changes in the scaling method. Please readjust Cell's scale and dimensions.</h2>
         <br/>
 
+        <h1>r249-release (Mar 5, 2025, 19:12 GMT+8)</h1>
+        <p>* Fixed horizontal layout.</p>
+        <br/>
+
         <h1>r248-release (Mar 5, 2025, 18:30 GMT+8)</h1>
         <p>* Improved the accuracy of unit button spacing.</p>
         <p>* Fixed "Healers" indicator.</p>

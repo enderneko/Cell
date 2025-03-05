@@ -1,12 +1,3 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r247-release...601783d6462904cad6757ff2e2e42b8e8c3ba47b)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r248-release...d8426aad647e03fc6da26ec32d8b0540a82de344)
 
-- Improve the accuracy of unit button spacing
-- Fix "Healers" indicator
-- Fix layout hiding on classic
-- Fix pixel accuracy of Block(s)
-- Fix raid layout preview
-- Add "/cell rescale"
-- Add RecommendedScale button
-- Update power filter for vanilla
-- Update max unitsPerColumn on classic
-- Update locales
+- Fix horizontal layout
