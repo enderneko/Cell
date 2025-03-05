@@ -3305,6 +3305,11 @@ function F.Revise()
         end
     end
 
+    -- r247-release
+    if CellDB["revise"] and dbRevision < 247 then
+        CellDB["appearance"]["scale"] = 1
+    end
+
     -- r248-release
     if CellDB["revise"] and dbRevision < 248 then
         for _, layout in pairs(CellDB["layouts"]) do

@@ -75,11 +75,11 @@ end)
 
 function F.UpdateLayout(layoutGroupType)
     if InCombatLockdown() then
-        F.Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\") DELAYED")
+        F.Debug("|cFF7CFC00F.UpdateLayout(\""..layoutGroupType.."\") DELAYED")
         delayedLayoutGroupType = layoutGroupType
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
-        F.Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
+        F.Debug("|cFF7CFC00F.UpdateLayout(\""..layoutGroupType.."\")")
 
         Cell.vars.layoutAutoSwitch = CellCharacterDB["layoutAutoSwitch"][Cell.vars.activeTalentGroup]
 
@@ -337,7 +337,6 @@ function eventFrame:ADDON_LOADED(arg1)
         -- appearance -----------------------------------------------------------------------------
         if type(CellDB["appearance"]) ~= "table" then
             CellDB["appearance"] = F.Copy(Cell.defaults.appearance)
-            CellDB["appearance"]["scale"] = P.GetRecommendedScale()
         end
 
         -- color ---------------------------------------------------------------------------------

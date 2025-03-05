@@ -23,6 +23,8 @@ local function Round(num, numDecimalPlaces)
     end
 end
 
+local Clamp = Clamp
+
 ---@class PixelPerfectFuncs
 local P = addon.pixelPerfectFuncs
 
@@ -45,14 +47,15 @@ end
 
 function P.GetRecommendedScale()
     local pScale = P.GetPixelPerfectScale()
+    local mult
     if pScale >= 0.71 then -- 1080
-        pScale = pScale
+        mult = 1
     elseif pScale >= 0.53 then -- 1440
-        pScale = pScale + 0.2
+        mult = 1.2
     else -- 2160
-        pScale = pScale + 0.3
+        mult = 1.7
     end
-    return Round(pScale / UIParent:GetScale(), 2)
+    return Clamp(Round(pScale / UIParent:GetScale() * mult, 2), 0.5, 2)
 end
 
 -- scale perfect!
