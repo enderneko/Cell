@@ -86,8 +86,21 @@ select(2, ...).L = setmetatable({
     ["BACKUP_TIPS2"] = "Note for Classic players: Backups do not include Click-Castings and Layout Auto Switch of other characters",
 
     ["CHANGELOGS"] = [[
-        <h1>If there are any issues after an update, check through all code snippets first.</h1>
+        <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
+        <h2>The scaling "issue" isn't a bug; it's due to changes in the scaling method. Please readjust Cell's scale and dimensions.</h2>
+        <br/>
+
+        <h1>r248-release (Mar 5, 2025, 18:30 GMT+8)</h1>
+        <p>* Improved the accuracy of unit button spacing.</p>
+        <p>* Fixed "Healers" indicator.</p>
+        <p>* Fixed layout hiding on classic.</p>
+        <p>* Fixed pixel accuracy of Block(s).</p>
+        <p>* Fixed raid layout preview.</p>
+        <p>* Added "Apply Recommended Scale" button and "/cell rescale".</p>
+        <p>* Updated power filter for vanilla.</p>
+        <p>* Updated max unitsPerColumn on classic.</p>
+        <p>* Update locales.</p>
         <br/>
 
         <h1>r247-release (Mar 4, 2025, 17:50 GMT+8)</h1>

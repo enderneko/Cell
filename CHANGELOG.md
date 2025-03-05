@@ -1,6 +1,12 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r246-release...f826e89c98b803da8297e172d4a110fbe30967fd)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r247-release...601783d6462904cad6757ff2e2e42b8e8c3ba47b)
 
-- Update TWW season 2 debuffs (Thanks 钛锬)
-- Fix scaling issue
-- Fix positioning issue
-- Fix Glow indicator
+- Improve the accuracy of unit button spacing
+- Fix "Healers" indicator
+- Fix layout hiding on classic
+- Fix pixel accuracy of Block(s)
+- Fix raid layout preview
+- Add "/cell rescale"
+- Add RecommendedScale button
+- Update power filter for vanilla
+- Update max unitsPerColumn on classic
+- Update locales
