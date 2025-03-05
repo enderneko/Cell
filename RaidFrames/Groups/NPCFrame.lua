@@ -533,13 +533,13 @@ local function NPCFrame_UpdateLayout(layout, which)
 
                 elseif groupType == "party" then
                     if npcFrame:GetAttribute("pet") == "nopet" then
-                        npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, groupSpacing, 0)
+                        npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, P.Scale(groupSpacing), 0)
                     else
-                        npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, groupSpacing, 0)
+                        npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, P.Scale(groupSpacing), 0)
                     end
 
                 else -- solo
-                    npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, groupSpacing, 0)
+                    npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, P.Scale(groupSpacing), 0)
                 end
             end
         else
@@ -568,13 +568,13 @@ local function NPCFrame_UpdateLayout(layout, which)
 
                 elseif groupType == "party" then
                     if npcFrame:GetAttribute("pet") == "nopet" then
-                        npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, groupSpacing)
+                        npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, P.Scale(groupSpacing))
                     else
-                        npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, 0, groupSpacing)
+                        npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, 0, P.Scale(groupSpacing))
                     end
 
                 else -- solo
-                    npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, groupSpacing)
+                    npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, P.Scale(groupSpacing))
                 end
             end
         end
@@ -584,8 +584,8 @@ local function NPCFrame_UpdateLayout(layout, which)
         npcFrame:SetAttribute("point", point)
         npcFrame:SetAttribute("anchorPoint", anchorPoint)
         npcFrame:SetAttribute("groupAnchorPoint", groupAnchorPoint)
-        npcFrame:SetAttribute("unitSpacing", unitSpacing)
-        npcFrame:SetAttribute("groupSpacing", groupSpacing)
+        npcFrame:SetAttribute("unitSpacing", P.Scale(unitSpacing))
+        npcFrame:SetAttribute("groupSpacing", P.Scale(groupSpacing))
 
         local last
         for i = 1, 8 do
@@ -593,16 +593,16 @@ local function NPCFrame_UpdateLayout(layout, which)
             button.helper:SetAttribute("orientation", orientation)
             button.helper:SetAttribute("point", point)
             button.helper:SetAttribute("anchorPoint", anchorPoint)
-            button.helper:SetAttribute("unitSpacing", unitSpacing)
+            button.helper:SetAttribute("unitSpacing", P.Scale(unitSpacing))
 
             -- update each npc button now
             if button:IsVisible() then
                 button:ClearAllPoints()
                 if last then
                     if orientation == "vertical" then
-                        button:SetPoint(point, last, anchorPoint, 0, unitSpacing)
+                        button:SetPoint(point, last, anchorPoint, 0, P.Scale(unitSpacing))
                     else
-                        button:SetPoint(point, last, anchorPoint, unitSpacing, 0)
+                        button:SetPoint(point, last, anchorPoint, P.Scale(unitSpacing), 0)
                     end
                 else
                     button:SetPoint("TOPLEFT", npcFrame)

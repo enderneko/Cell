@@ -661,7 +661,7 @@ local dumbFS2 = menu:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 dumbFS2:SetText(L["Unit's Target"])
 
 function menu:UpdatePixelPerfect()
-    P.Size(menu, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*11+2)
+    menu:SetSize(ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + P.Scale(13), P.Scale(20) * 11 + P.Scale(2))
 
     Cell.StylizeFrame(menu, nil, Cell.GetAccentColorTable())
     target:UpdatePixelPerfect()
@@ -859,8 +859,8 @@ local function UpdateLayout(layout, which)
 
         menu:SetAttribute("point", point)
         menu:SetAttribute("anchorPoint", menuAnchorPoint)
-        menu:SetAttribute("xOffset", menuX)
-        menu:SetAttribute("yOffset", menuY)
+        menu:SetAttribute("xOffset", P.Scale(menuX))
+        menu:SetAttribute("yOffset", P.Scale(menuY))
         menu:Hide()
 
         local last
@@ -869,15 +869,15 @@ local function UpdateLayout(layout, which)
             if last then
                 if strfind(orientation, "^vertical") then
                     if i % 5 == 1 and orientation == "vertical" then
-                        f:SetPoint(point, placeholders[i-5], groupPoint, unitSpacingX, 0)
+                        f:SetPoint(point, placeholders[i-5], groupPoint, P.Scale(unitSpacingX), 0)
                     else
-                        f:SetPoint(point, last, anchorPoint, 0, unitSpacingY)
+                        f:SetPoint(point, last, anchorPoint, 0, P.Scale(unitSpacingY))
                     end
                 else
                     if i % 5 == 1 and orientation == "horizontal" then
-                        f:SetPoint(point, placeholders[i-5], groupPoint, 0, unitSpacingY)
+                        f:SetPoint(point, placeholders[i-5], groupPoint, 0, P.Scale(unitSpacingY))
                     else
-                        f:SetPoint(point, last, anchorPoint, unitSpacingX, 0)
+                        f:SetPoint(point, last, anchorPoint, P.Scale(unitSpacingX), 0)
                     end
                 end
             else
@@ -968,6 +968,7 @@ local function UpdatePixelPerfect()
     targetFrame:UpdatePixelPerfect()
     config:UpdatePixelPerfect()
     menu:UpdatePixelPerfect()
+    menu:SetSize(ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + P.Scale(13), P.Scale(20) * 11 + P.Scale(2))
 
     for _, p in pairs(placeholders) do
         Cell.StylizeFrame(p, {0, 0, 0, 0.27})

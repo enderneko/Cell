@@ -84,7 +84,7 @@ local function SoloFrame_UpdateLayout(layout, which)
                 petSpacing = -petSpacing
             end
 
-            petButton:SetPoint(point, playerButton, anchorPoint, 0, petSpacing)
+            petButton:SetPoint(point, playerButton, anchorPoint, 0, P.Scale(petSpacing))
         else
             -- anchor
             local point, anchorPoint
@@ -102,7 +102,7 @@ local function SoloFrame_UpdateLayout(layout, which)
                 petSpacing = -petSpacing
             end
 
-            petButton:SetPoint(point, playerButton, anchorPoint, petSpacing, 0)
+            petButton:SetPoint(point, playerButton, anchorPoint, P.Scale(petSpacing), 0)
         end
     end
 

@@ -289,9 +289,9 @@ local function PetFrame_UpdateLayout(layout, which)
                 unitSpacing = -spacingY
             end
 
-            header:SetAttribute("columnSpacing", spacingX)
+            header:SetAttribute("columnSpacing", P.Scale(spacingX))
             header:SetAttribute("xOffset", 0)
-            header:SetAttribute("yOffset", unitSpacing)
+            header:SetAttribute("yOffset", P.Scale(unitSpacing))
         else
             -- anchor
             if anchor == "BOTTOMLEFT" then
@@ -312,8 +312,8 @@ local function PetFrame_UpdateLayout(layout, which)
                 unitSpacing = -spacingX
             end
 
-            header:SetAttribute("columnSpacing", spacingY)
-            header:SetAttribute("xOffset", unitSpacing)
+            header:SetAttribute("columnSpacing", P.Scale(spacingY))
+            header:SetAttribute("xOffset", P.Scale(unitSpacing))
             header:SetAttribute("yOffset", 0)
         end
 

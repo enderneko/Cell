@@ -145,7 +145,7 @@ local function PartyFrame_UpdateLayout(layout, which)
             end
 
             header:SetAttribute("xOffset", 0)
-            header:SetAttribute("yOffset", playerSpacing)
+            header:SetAttribute("yOffset", P.Scale(playerSpacing))
         else
             -- anchor
             if anchor == "BOTTOMLEFT" then
@@ -170,7 +170,7 @@ local function PartyFrame_UpdateLayout(layout, which)
                 petSpacing = -petSpacingY
             end
 
-            header:SetAttribute("xOffset", playerSpacing)
+            header:SetAttribute("xOffset", P.Scale(playerSpacing))
             header:SetAttribute("yOffset", 0)
         end
 
@@ -184,9 +184,9 @@ local function PartyFrame_UpdateLayout(layout, which)
             -- update petButton's point
             header[j].petButton:ClearAllPoints()
             if orientation == "vertical" then
-                header[j].petButton:SetPoint(point, header[j], petAnchorPoint, petSpacing, 0)
+                header[j].petButton:SetPoint(point, header[j], petAnchorPoint, P.Scale(petSpacing), 0)
             else
-                header[j].petButton:SetPoint(point, header[j], petAnchorPoint, 0, petSpacing)
+                header[j].petButton:SetPoint(point, header[j], petAnchorPoint, 0, P.Scale(petSpacing))
             end
         end
         header:SetAttribute("unitsPerColumn", 5)

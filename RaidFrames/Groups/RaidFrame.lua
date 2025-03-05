@@ -219,28 +219,28 @@ function F.GetRaidFramePoints(layout)
             unitSpacing = spacingY
             groupSpacing = spacingX
             unitSpacingX, unitSpacingY = spacingX, spacingY
-            verticalSpacing = spacingY + layout["groupSpacing"] + height * 5 + spacingY * 4
+            verticalSpacing = P.Scale(spacingY) + P.Scale(layout["groupSpacing"]) + P.Scale(height) * 5 + P.Scale(spacingY) * 4
         elseif anchor == "BOTTOMRIGHT" then
             point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
             headerPoint, headerColumnAnchorPoint = "BOTTOM", "RIGHT"
             unitSpacing = spacingY
             groupSpacing = -spacingX
             unitSpacingX, unitSpacingY = spacingX, spacingY
-            verticalSpacing = spacingY + layout["groupSpacing"] + height * 5 + spacingY * 4
+            verticalSpacing = P.Scale(spacingY) + P.Scale(layout["groupSpacing"]) + P.Scale(height) * 5 + P.Scale(spacingY) * 4
         elseif anchor == "TOPLEFT" then
             point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
             headerPoint, headerColumnAnchorPoint = "TOP", "LEFT"
             unitSpacing = -spacingY
             groupSpacing = spacingX
             unitSpacingX, unitSpacingY = spacingX, -spacingY
-            verticalSpacing = -layout["groupSpacing"] - height * 5 - spacingY * 5
+            verticalSpacing = P.Scale(-layout["groupSpacing"]) + P.Scale(-height) * 5 + P.Scale(-spacingY) * 5
         elseif anchor == "TOPRIGHT" then
             point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
             headerPoint, headerColumnAnchorPoint = "TOP", "RIGHT"
             unitSpacing = -spacingY
             groupSpacing = -spacingX
             unitSpacingX, unitSpacingY = spacingX, -spacingY
-            verticalSpacing = -spacingY - layout["groupSpacing"] - height * 5 - spacingY * 4
+            verticalSpacing = P.Scale(-spacingY) + P.Scale(-layout["groupSpacing"]) + P.Scale(-height) * 5 + P.Scale(-spacingY) * 4
         end
     else
         if anchor == "BOTTOMLEFT" then
@@ -249,32 +249,32 @@ function F.GetRaidFramePoints(layout)
             unitSpacing = spacingX
             groupSpacing = spacingY
             unitSpacingX, unitSpacingY = spacingX, spacingY
-            horizontalSpacing = spacingX + layout["groupSpacing"] + width * 5 + spacingX * 4
+            horizontalSpacing = P.Scale(spacingX) + P.Scale(layout["groupSpacing"]) + P.Scale(width) * 5 + P.Scale(spacingX) * 4
         elseif anchor == "BOTTOMRIGHT" then
             point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
             headerPoint, headerColumnAnchorPoint = "RIGHT", "BOTTOM"
             unitSpacing = -spacingX
             groupSpacing = spacingY
             unitSpacingX, unitSpacingY = -spacingX, spacingY
-            horizontalSpacing = -spacingX - layout["groupSpacing"] - width * 5 - spacingX * 4
+            horizontalSpacing = P.Scale(-spacingX) + P.Scale(-layout["groupSpacing"]) + P.Scale(-width) * 5 + P.Scale(-spacingX) * 4
         elseif anchor == "TOPLEFT" then
             point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
             headerPoint, headerColumnAnchorPoint = "LEFT", "TOP"
             unitSpacing = spacingX
             groupSpacing = -spacingY
             unitSpacingX, unitSpacingY = spacingX, spacingY
-            horizontalSpacing = spacingX + layout["groupSpacing"] + width * 5 + spacingX * 4
+            horizontalSpacing = P.Scale(spacingX) + P.Scale(layout["groupSpacing"]) + P.Scale(width) * 5 + P.Scale(spacingX) * 4
         elseif anchor == "TOPRIGHT" then
             point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
             headerPoint, headerColumnAnchorPoint = "RIGHT", "TOP"
             unitSpacing = -spacingX
             groupSpacing = -spacingY
             unitSpacingX, unitSpacingY = -spacingX, spacingY
-            horizontalSpacing = -spacingX - layout["groupSpacing"] - width * 5 - spacingX * 4
+            horizontalSpacing = P.Scale(-spacingX) + P.Scale(-layout["groupSpacing"]) + P.Scale(-width) * 5 + P.Scale(-spacingX) * 4
         end
     end
 
-    return point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, unitSpacingX, unitSpacingY, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint
+    return point, anchorPoint, groupAnchorPoint, P.Scale(unitSpacing), P.Scale(groupSpacing), P.Scale(unitSpacingX), P.Scale(unitSpacingY), verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint
 end
 
 local function UpdateHeadersShowRaidAttribute()
@@ -375,8 +375,8 @@ local function RaidFrame_UpdateLayout(layout, which)
     local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, unitSpacingX, unitSpacingY, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint = F.GetRaidFramePoints(layout["main"])
 
     if not which or which == "main-arrangement" or which == "pet-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "groupFilter" then
-        local petSpacingX = layout["pet"]["sameArrangementAsMain"] and unitSpacingX or layout["pet"]["spacingX"]
-        local petSpacingY = layout["pet"]["sameArrangementAsMain"] and unitSpacingY or layout["pet"]["spacingY"]
+        local petSpacingX = layout["pet"]["sameArrangementAsMain"] and unitSpacingX or P.Scale(layout["pet"]["spacingX"])
+        local petSpacingY = layout["pet"]["sameArrangementAsMain"] and unitSpacingY or P.Scale(layout["pet"]["spacingY"])
 
         -- arena pets
         for k in ipairs(arenaPetButtons) do
