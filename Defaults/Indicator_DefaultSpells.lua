@@ -359,7 +359,7 @@ local defensives = { -- true: track by name, false: track by id
         [48792] = true, -- 冰封之韧 - Icebound Fortitude
         [49028] = true, -- 符文刃舞 - Dancing Rune Weapon
         [55233] = true, -- 吸血鬼之血 - Vampiric Blood
-        [49039] = true, -- 巫妖之躯 - Lichborne
+        [49039] = false, -- 巫妖之躯 - Lichborne
         [194679] = true, -- 符文分流 - Rune Tap
     },
 
