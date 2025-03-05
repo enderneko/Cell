@@ -57,6 +57,8 @@ L["Any Spells"] = "Qualsiasi Spell"
 L["Anyone"] = "Chiunque"
 L["AoE Healing"] = "Cure AoE"
 L["Appearance"] = "Aspetto"
+--[[Translation missing --]]
+--[[ L["Apply Recommended Scale"] = ""--]]
 L["Arena"] = "Arena"
 --[[Translation missing --]]
 --[[ L["assist"] = "Assist"--]]
@@ -170,9 +172,9 @@ L["castByMe"] = "Mostra solo buff lanciati da me"
 --[[Translation missing --]]
 --[[ L["Class Filter"] = ""--]]
 --[[Translation missing --]]
---[[ L["Clear"] = "Clear"--]]
---[[Translation missing --]]
 --[[ L["clear"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Clear"] = "Clear"--]]
 --[[Translation missing --]]
 --[[ L["clear unit"] = ""--]]
 --[[Translation missing --]]
@@ -271,6 +273,8 @@ L["Delete layout"] = "Elimina layout"
 L["Delete spell?"] = "Elimina spell?"
 --[[Translation missing --]]
 --[[ L["Delimiter"] = "Delimiter"--]]
+--[[Translation missing --]]
+--[[ L["Detached"] = ""--]]
 L["Disabled"] = "Disabilitato"
 L["Disabled in battlegrounds and arenas"] = "Disabilitato in campi di battaglie e arene"
 L["Discard"] = "Annullare"
@@ -590,9 +594,9 @@ L["Magic"] = "Magia"
 --[[ L["Max Rows"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Me"] = ""--]]
-L["Menu"] = "Menu"
 --[[Translation missing --]]
 --[[ L["menu"] = ""--]]
+L["Menu"] = "Menu"
 --[[Translation missing --]]
 --[[ L["Menu Position"] = "Menu Position"--]]
 --[[Translation missing --]]
@@ -720,9 +724,11 @@ L["PENDING"] = "IN ATTESA"
 --[[Translation missing --]]
 --[[ L["Percentage"] = "Percentage"--]]
 --[[Translation missing --]]
+--[[ L["PET"] = "Pet"--]]
+--[[Translation missing --]]
 --[[ L["Pet"] = "Pet"--]]
 --[[Translation missing --]]
---[[ L["PET"] = "Pet"--]]
+--[[ L["Pets"] = "Pets"--]]
 --[[Translation missing --]]
 --[[ L["Pixel"] = "Pixel"--]]
 --[[Translation missing --]]
@@ -781,8 +787,6 @@ L["Raid Debuffs"] = "Debuff Raid"
 --[[Translation missing --]]
 --[[ L["Raid Icon (target)"] = "Raid Icon (target)"--]]
 --[[Translation missing --]]
---[[ L["Raid Pets"] = "Raid Pets"--]]
---[[Translation missing --]]
 --[[ L["Raid Tools"] = "Raid Tools"--]]
 --[[Translation missing --]]
 --[[ L["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. [Alt+Left Click] on instance/boss name to reset debuffs. The priority of General Debuffs is higher than Boss Debuffs."--]]
@@ -821,9 +825,9 @@ L["Request"] = "Richiesta"
 --[[Translation missing --]]
 --[[ L["Require font support"] = "Require font support"--]]
 L["Require reload of the UI"] = "Richiede il reload dell'UI"
+L["Reset"] = "Reset"
 --[[Translation missing --]]
 --[[ L["RESET"] = "Cell requires a full reset after updating from a very old version"--]]
-L["Reset"] = "Reset"
 --[[Translation missing --]]
 --[[ L["Reset All"] = "Reset All"--]]
 --[[Translation missing --]]
@@ -944,9 +948,13 @@ L["Show friendly NPCs in a separate frame"] = "Mostra NPC amichevoli in un frame
 L["Show NPC Frame"] = "Mostra Frame NPC"
 L["Show Party"] = "Mostra Gruppo"
 L["Show Party/Arena Pets"] = "Mostra Pet Gruppo/Arena"
+--[[Translation missing --]]
+--[[ L["Show pets in a separate frame"] = ""--]]
 L["Show Raid"] = "Mostra Raid"
 L["Show Raid Pets"] = "Mostra Pet Raid"
 L["Show Solo"] = "Mostra in solo"
+--[[Translation missing --]]
+--[[ L["Show Solo Pet"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Show units you care about more in a separate frame"] = "Show units you care about more in a separate frame"--]]
 --[[Translation missing --]]
@@ -982,8 +990,6 @@ L["smooth"] = "graduale"
 --[[ L["Solo"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Sort By Role"] = ""--]]
---[[Translation missing --]]
---[[ L["Space"] = "Space"--]]
 --[[Translation missing --]]
 --[[ L["Spacing"] = ""--]]
 --[[Translation missing --]]

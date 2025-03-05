@@ -46,6 +46,8 @@ L["Any Spells"] = "Любые заклинания"
 L["Anyone"] = "Любой"
 L["AoE Healing"] = "АоЕ Исцеление"
 L["Appearance"] = "Внешний вид"
+--[[Translation missing --]]
+--[[ L["Apply Recommended Scale"] = ""--]]
 L["Arena"] = "Арена"
 L["assist"] = "Ассист"
 L["Assist"] = "Ассист"
@@ -185,6 +187,8 @@ L["Delete layout"] = "Удалить макет"
 L["Delete spell?"] = "Удалить заклинание?"
 --[[Translation missing --]]
 --[[ L["Delimiter"] = "Delimiter"--]]
+--[[Translation missing --]]
+--[[ L["Detached"] = ""--]]
 L["Disabled"] = "Отключено"
 L["Disabled in battlegrounds and arenas"] = "Отключено на аренах и полях боя"
 L["Discard"] = "Скинуть"
@@ -435,6 +439,7 @@ L["PENDING"] = "ОЖИДАНИЕ"
 L["Percentage"] = "Процент"
 L["Pet"] = "Питомец"
 L["PET"] = "ПИТОМЕЦ"
+L["Pets"] = "Петы рейда"
 L["Pixel"] = "Пиксель"
 L["Pixel Perfect"] = "С точностью до пикселя"
 L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."] = "Показывать анимацию, когда юнит использует конкретное заклинание/предмет. Список глобальный на весь аддон, а не конкретен для макета."
@@ -466,7 +471,6 @@ L["Raid Debuffs"] = "Дебаффы рейда"
 L["Raid Debuffs updated: %s."] = "Дебафы Рейда обновлены: %s."
 L["Raid Icon (player)"] = "Рейдовая иконка (игрок)"
 L["Raid Icon (target)"] = "Рейдовая иконка (цель)"
-L["Raid Pets"] = "Петы рейда"
 L["Raid Tools"] = "Рейд Тулзы"
 L["RAID_DEBUFFS_TIPS"] = "Совет: [Нажать и потянуть] что бы сменить порядок дебаффов. [Двойное Нажатие] на имя подземелья что бы открыть Путеводитель по Приключениям. [Shift+ЛКМ] на имени подземелья/босса что бы поделиться дебаффами. [ALT+ЛКМ] на имени подземелья/босса что бы сбросить дебаффы. Приоритет Основных Дебаффов выше приоритета Дебаффов Босса."
 L["raidRosterTips"] = "[ПКМ] что бы повысить/понизить (помощник). [Alt+ПКМ] что бы выгнать"
@@ -563,9 +567,13 @@ L["Show friendly NPCs in a separate frame"] = "Показывать дружес
 L["Show NPC Frame"] = "Показывать панель НЦП"
 L["Show Party"] = "Отображать в Группе"
 L["Show Party/Arena Pets"] = "Отображать Питомцев в Группе/Арене"
+--[[Translation missing --]]
+--[[ L["Show pets in a separate frame"] = ""--]]
 L["Show Raid"] = "Отображать в Рейде"
 L["Show Raid Pets"] = "Отображать Питомцев в Рейде"
 L["Show Solo"] = "Отображать соло"
+--[[Translation missing --]]
+--[[ L["Show Solo Pet"] = ""--]]
 L["Show units you care about more in a separate frame"] = "Показывает интересующих вас юнитов в отдельной панели"
 L["Show while in a party"] = "Показывать в группе"
 L["Show while in a raid"] = "Показывать в рейде"
@@ -589,8 +597,6 @@ L["SNIPPETS_TIPS"] = "[Дважды нажать] что бы переимено
 L["Solid"] = "Сплошной"
 L["Solo"] = "Соло"
 L["Sort By Role"] = "Сортировка по Роли"
---[[Translation missing --]]
---[[ L["Space"] = "Space"--]]
 L["Spacing"] = "Интервал"
 L["Spec"] = "Спек"
 L["Spec Filter"] = "Спек: фильтр"

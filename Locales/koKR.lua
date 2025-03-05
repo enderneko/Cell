@@ -64,6 +64,8 @@ L["Anchor Point"] = "고정 위치에서"
 --[[ L["Anyone"] = ""--]]
 L["AoE Healing"] = "광역 치유"
 L["Appearance"] = "외형"
+--[[Translation missing --]]
+--[[ L["Apply Recommended Scale"] = ""--]]
 L["Arena"] = "투기장"
 L["assist"] = "지원"
 L["Assist"] = "지원"
@@ -172,9 +174,9 @@ L["Class Color (dark)"] = "직업 색상 (어둡게)"
 --[[Translation missing --]]
 --[[ L["Class Filter"] = ""--]]
 --[[Translation missing --]]
---[[ L["Clear"] = "Clear"--]]
---[[Translation missing --]]
 --[[ L["clear"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Clear"] = "Clear"--]]
 --[[Translation missing --]]
 --[[ L["clear unit"] = ""--]]
 --[[Translation missing --]]
@@ -261,6 +263,8 @@ L["Delete layout"] = "배치 삭제"
 --[[ L["Delete spell?"] = "Delete spell?"--]]
 --[[Translation missing --]]
 --[[ L["Delimiter"] = "Delimiter"--]]
+--[[Translation missing --]]
+--[[ L["Detached"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Disabled"] = "Disabled"--]]
 L["Disabled in battlegrounds and arenas"] = "전장 및 투기장에서 꺼짐"
@@ -519,9 +523,9 @@ L["Max Displayed"] = "최대 아이콘"
 --[[ L["Max Rows"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Me"] = ""--]]
-L["Menu"] = "메뉴"
 --[[Translation missing --]]
 --[[ L["menu"] = ""--]]
+L["Menu"] = "메뉴"
 L["Menu Position"] = "메뉴 위치"
 L["Middle"] = "가운데 버튼"
 --[[Translation missing --]]
@@ -621,9 +625,10 @@ L["Party"] = "파티"
 L["PENDING"] = "대기"
 L["Percentage"] = "백분율"
 --[[Translation missing --]]
---[[ L["Pet"] = "Pet"--]]
---[[Translation missing --]]
 --[[ L["PET"] = "Pet"--]]
+--[[Translation missing --]]
+--[[ L["Pet"] = "Pet"--]]
+L["Pets"] = "공격대 소환수"
 L["Pixel"] = "픽셀"
 L["Pixel Perfect"] = "완벽한 픽셀"
 --[[Translation missing --]]
@@ -669,7 +674,6 @@ L["Raid Debuffs"] = "공격대 약화 효과"
 --[[ L["Raid Debuffs updated: %s."] = "Raid Debuffs updated: %s."--]]
 L["Raid Icon (player)"] = "공격대 아이콘 (플레이어)"
 L["Raid Icon (target)"] = "공격대 아이콘 (대상)"
-L["Raid Pets"] = "공격대 소환수"
 L["Raid Tools"] = "공격대 도구"
 --[[Translation missing --]]
 --[[ L["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. [Alt+Left Click] on instance/boss name to reset debuffs. The priority of General Debuffs is higher than Boss Debuffs."--]]
@@ -820,9 +824,13 @@ L["Show NPC Frame"] = "NPC 창 표시"
 L["Show Party"] = "파티시 표시"
 L["Show Party/Arena Pets"] = "파티/투기장 소환수 표시"
 --[[Translation missing --]]
+--[[ L["Show pets in a separate frame"] = ""--]]
+--[[Translation missing --]]
 --[[ L["Show Raid"] = ""--]]
 L["Show Raid Pets"] = "공격대 소환수 표시"
 L["Show Solo"] = "솔로잉시 표시"
+--[[Translation missing --]]
+--[[ L["Show Solo Pet"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Show units you care about more in a separate frame"] = "Show units you care about more in a separate frame"--]]
 L["Show while in a party"] = "파티시에만 표시합니다."
@@ -862,8 +870,6 @@ L["Solid"] = "단색"
 --[[ L["Solo"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Sort By Role"] = ""--]]
---[[Translation missing --]]
---[[ L["Space"] = "Space"--]]
 --[[Translation missing --]]
 --[[ L["Spacing"] = ""--]]
 --[[Translation missing --]]

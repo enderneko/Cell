@@ -46,6 +46,8 @@ L["Any Spells"] = "Qualquer feitiço"
 L["Anyone"] = "Qualquer um"
 L["AoE Healing"] = "Cura AoE"
 L["Appearance"] = "Aparência"
+--[[Translation missing --]]
+--[[ L["Apply Recommended Scale"] = ""--]]
 L["Arena"] = "Arena"
 L["assist"] = "Assist"
 L["Assist"] = "Assist"

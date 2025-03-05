@@ -47,6 +47,8 @@ L["Any Spells"] = "Tous les sorts"
 L["Anyone"] = "N'importe qui"
 L["AoE Healing"] = "Soins de zone"
 L["Appearance"] = "Apparence"
+--[[Translation missing --]]
+--[[ L["Apply Recommended Scale"] = ""--]]
 L["Arena"] = "Arène"
 --[[Translation missing --]]
 --[[ L["assist"] = "Assist"--]]
@@ -145,9 +147,9 @@ L["Class Color"] = "Couleur de classe"
 L["Class Color (dark)"] = "Couleur de classe (sombre)"
 L["Class Filter"] = "Filtre de classe"
 --[[Translation missing --]]
---[[ L["Clear"] = "Clear"--]]
---[[Translation missing --]]
 --[[ L["clear"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Clear"] = "Clear"--]]
 --[[Translation missing --]]
 --[[ L["clear unit"] = ""--]]
 L["cleuAurasTips"] = "Vérifier les événements CLEU pour les auras invisibles"
@@ -224,6 +226,8 @@ L["Delete layout"] = "Supprimer la mise en page"
 L["Delete spell?"] = "Supprimer le sort ?"
 --[[Translation missing --]]
 --[[ L["Delimiter"] = "Delimiter"--]]
+--[[Translation missing --]]
+--[[ L["Detached"] = ""--]]
 L["Disabled"] = "Désactivé"
 L["Disabled in battlegrounds and arenas"] = "Désactivé en champs de bataille et arènes."
 --[[Translation missing --]]
@@ -500,8 +504,8 @@ L["marksTips"] = "\n|rMarqueur de cible\nClic gauche : |cffffffffdéfinir le ma
 L["Max Displayed"] = "Maximum affiché"
 L["Max Rows"] = "Nombre maximal de lignes"
 L["Me"] = "Moi"
-L["Menu"] = "Menu"
 L["menu"] = "menu"
+L["Menu"] = "Menu"
 L["Menu Position"] = "Position du menu"
 L["Middle"] = "Milieu"
 L["mine"] = "le mien"
@@ -599,8 +603,9 @@ L["Party"] = "Groupe"
 --[[ L["Party Assignment Icon"] = ""--]]
 L["PENDING"] = "EN ATTENTE"
 L["Percentage"] = "Pourcentage"
-L["Pet"] = "Famillier"
 L["PET"] = "FAMILLIER"
+L["Pet"] = "Famillier"
+L["Pets"] = "Familiers du raid"
 L["Pixel"] = "Pixel"
 --[[Translation missing --]]
 --[[ L["Pixel Perfect"] = "Pixel Perfect"--]]
@@ -645,7 +650,6 @@ L["Raid Debuffs"] = "Affaiblissements de raid"
 --[[ L["Raid Debuffs updated: %s."] = "Raid Debuffs updated: %s."--]]
 L["Raid Icon (player)"] = "Icône de raid (joueur)"
 L["Raid Icon (target)"] = "Icône de raid (cible)"
-L["Raid Pets"] = "Familiers du raid"
 L["Raid Tools"] = "Outils de raid"
 L["RAID_DEBUFFS_TIPS"] = "Astuces : [Glisser-déposer] pour modifier l'ordre des affaiblissements. [Double-cliquez] sur le nom de l'instance pour ouvrir le journal des rencontres. [Maj+clic gauche] sur le nom de l'instance/du boss pour partager les affaiblissements. [Alt+clic gauche] sur le nom de l'instance/du boss pour réinitialiser les affaiblissements. La priorité des affaiblissements généraux est supérieure à celle des affaiblissements de boss."
 L["raidRosterTips"] = "[Clic droit] promouvoir/rétrograder (assistant). [Alt+Clic droit] désinviter."
@@ -684,8 +688,8 @@ L["Request"] = "Requête"
 --[[Translation missing --]]
 --[[ L["Require font support"] = "Require font support"--]]
 L["Require reload of the UI"] = "Nécessite un rechargement de l'interface utilisateur"
-L["RESET"] = "Cell nécessite une réinitialisation complète après la mise à jour d'une très ancienne version"
 L["Reset"] = "Réinitialiser"
+L["RESET"] = "Cell nécessite une réinitialisation complète après la mise à jour d'une très ancienne version"
 L["Reset All"] = "Réinitialiser tout"
 L["reset all Cell settings"] = "réinitialiser tous les paramètres de Cell"
 L["reset all Click-Castings"] = "Réinitialiser tous les sorts à la souris"
@@ -786,11 +790,15 @@ L["Show All"] = "Tout afficher"
 --[[Translation missing --]]
 --[[ L["Show Party/Arena Pets"] = "Show Party/Arena Pets"--]]
 --[[Translation missing --]]
+--[[ L["Show pets in a separate frame"] = ""--]]
+--[[Translation missing --]]
 --[[ L["Show Raid"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Show Raid Pets"] = "Show Raid Pets"--]]
 --[[Translation missing --]]
 --[[ L["Show Solo"] = "Show Solo"--]]
+--[[Translation missing --]]
+--[[ L["Show Solo Pet"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Show units you care about more in a separate frame"] = "Show units you care about more in a separate frame"--]]
 --[[Translation missing --]]
@@ -829,8 +837,6 @@ L["SNIPPETS_TIPS"] = "[Double-clic] pour renommer. [Maj-clic] pour supprimer. To
 --[[ L["Solid"] = "Solid"--]]
 L["Solo"] = "Solo"
 L["Sort By Role"] = "Trier par rôle"
---[[Translation missing --]]
---[[ L["Space"] = "Space"--]]
 L["Spacing"] = "Espacement"
 --[[Translation missing --]]
 --[[ L["Spec"] = ""--]]
