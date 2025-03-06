@@ -1,8 +1,9 @@
 -------------------------------------------------
--- 2024-08-11 15:15:19 GMT+8
+-- 2025-03-07 15:11:04 GMT+8
 -- show tips for click-casting bindings (spell only)
 -- 点击施法所绑定法术的鼠标提示
 -------------------------------------------------
+local showOnlyCurrentModifiers = true
 local point = "TOPRIGHT"
 local relativePoint = "TOPLEFT"
 local relativeTo = CellMainFrame
@@ -118,14 +119,38 @@ local function DecodeDB(t)
 end
 
 local function ShowTips()
+    tooltip.isShown = true
     tooltip:SetOwner(CellMainFrame, "ANCHOR_NONE")
     tooltip:SetPoint(point, relativeTo, relativePoint, offsetX, offsetY)
+    P.Reborder(tooltip)
 
     local clickCastingTable = Cell.vars.clickCastings["useCommon"] and Cell.vars.clickCastings["common"] or Cell.vars.clickCastings[Cell.vars.playerSpecID]
     for i, t in pairs(clickCastingTable) do
         local modifier, bindKey, bindType, bindAction = DecodeDB(t)
 
-        if bindType == "spell" then
+        local show
+        if showOnlyCurrentModifiers then
+            if IsModifierKeyDown() then
+                if IsShiftKeyDown() then
+                    show = modifier:find("shift")
+                end
+                if IsControlKeyDown() then
+                    show = show or modifier:find("ctrl")
+                end
+                if IsAltKeyDown() then
+                    show = show or modifier:find("alt")
+                end
+                if IsMetaKeyDown() then
+                    show = show or modifier:find("meta")
+                end
+            else
+                show = modifier == ""
+            end
+        else
+            show = true
+        end
+
+        if show and bindType == "spell" then
             local bindActionDisplay, icon
             bindAction, icon = F.GetSpellInfo(bindAction)
             if bindAction then
@@ -142,7 +167,18 @@ local function ShowTips()
 end
 
 local function HideTips()
+    tooltip.isShown = false
     tooltip:Hide()
+end
+
+if showOnlyCurrentModifiers then
+    tooltip:RegisterEvent("MODIFIER_STATE_CHANGED")
+    tooltip:SetScript("OnEvent", function()
+        if tooltip.isShown then
+            HideTips()
+            ShowTips()
+        end
+    end)
 end
 
 F.IterateAllUnitButtons(function(b)
