@@ -139,7 +139,7 @@ local function CreateAssignmentButton(index)
             spotlight:SetAttribute("unit", nil)
             spotlight:SetAttribute("refreshOnUpdate", nil)
             spotlight:SetAttribute("updateOnTargetChanged", nil)
-            menu:GetFrameRef("assignment"..index):SetAttribute("text", "none")
+            menu:GetFrameRef("assignment"..index):SetAttribute("text", nil)
             menu:Hide()
 
             menu:CallMethod("Save", index, nil)
@@ -148,7 +148,11 @@ local function CreateAssignmentButton(index)
 
     b:SetScript("OnAttributeChanged", function(self, name, value)
         if name ~= "text" then return end
-        b:SetText(value == "none" and "|cffababab"..NONE or value)
+        b:SetText(value and value or "|cffababab" .. NONE)
+        placeholders[index].text:SetText(value and "|cffababab" .. value or "|cffababab" .. NONE)
+        if not value then
+            placeholders[index]:Hide()
+        end
     end)
 
     --! drag and set
@@ -256,13 +260,13 @@ for i = 1, 15 do
         self:GetFrameRef("placeholder"):Hide()
     ]])
     wrapFrame:WrapScript(b, "OnHide", [[
-        if self:GetAttribute("unit") and not self:GetAttribute("hidePlaceholder") then
+        if (self:GetAttribute("unit") or self:GetAttribute("specialUnit")) and not self:GetAttribute("hidePlaceholder") then
             self:GetFrameRef("placeholder"):Show()
         end
     ]])
     wrapFrame:WrapScript(b, "OnAttributeChanged", [[
         if name ~= "unit" then return end
-        if self:GetAttribute("unit") and not self:IsShown() and not self:GetAttribute("hidePlaceholder") then
+        if (self:GetAttribute("unit") or self:GetAttribute("specialUnit")) and not self:IsShown() and not self:GetAttribute("hidePlaceholder") then
             self:GetFrameRef("placeholder"):Show()
         else
             self:GetFrameRef("placeholder"):Hide()
@@ -271,11 +275,6 @@ for i = 1, 15 do
 
     b:HookScript("OnAttributeChanged", function(self, name, value)
         if name ~= "unit" then return end
-        if type(value) == "string" then
-            placeholders[i].text:SetText("|cffababab"..value)
-        else
-            placeholders[i].text:SetText("|cffababab"..NONE)
-        end
 
         self.unit = value
         F.UpdateOmniCDPosition("Cell-Spotlight")
@@ -319,6 +318,7 @@ target:SetAttribute("_onclick", [[
     local index = menu:GetAttribute("index")
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", "target")
+    spotlight:SetAttribute("specialUnit", nil)
     spotlight:SetAttribute("refreshOnUpdate", nil)
     spotlight:SetAttribute("updateOnTargetChanged", true)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "target")
@@ -336,6 +336,7 @@ targettarget:SetAttribute("_onclick", [[
     local index = menu:GetAttribute("index")
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", "targettarget")
+    spotlight:SetAttribute("specialUnit", nil)
     spotlight:SetAttribute("refreshOnUpdate", true)
     spotlight:SetAttribute("updateOnTargetChanged", nil)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "targettarget")
@@ -352,6 +353,7 @@ focus:SetAttribute("_onclick", [[
     local index = menu:GetAttribute("index")
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", "focus")
+    spotlight:SetAttribute("specialUnit", nil)
     spotlight:SetAttribute("refreshOnUpdate", nil)
     spotlight:SetAttribute("updateOnTargetChanged", nil)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "focus")
@@ -368,6 +370,7 @@ focustarget:SetAttribute("_onclick", [[
     local index = menu:GetAttribute("index")
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", "focustarget")
+    spotlight:SetAttribute("specialUnit", nil)
     spotlight:SetAttribute("refreshOnUpdate", true)
     spotlight:SetAttribute("updateOnTargetChanged", nil)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "focustarget")
@@ -383,6 +386,7 @@ unit:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
     local spotlight = menu:GetFrameRef("spotlight"..index)
+    spotlight:SetAttribute("specialUnit", nil)
     spotlight:SetAttribute("refreshOnUpdate", nil)
     spotlight:SetAttribute("updateOnTargetChanged", nil)
     self:CallMethod("SetUnit", index, "target")
@@ -406,6 +410,7 @@ unitname:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
     local spotlight = menu:GetFrameRef("spotlight"..index)
+    spotlight:SetAttribute("specialUnit", nil)
     spotlight:SetAttribute("refreshOnUpdate", nil)
     spotlight:SetAttribute("updateOnTargetChanged", nil)
     self:CallMethod("SetUnit", index, "target")
@@ -439,6 +444,7 @@ unitpet:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
     local spotlight = menu:GetFrameRef("spotlight"..index)
+    spotlight:SetAttribute("specialUnit", nil)
     spotlight:SetAttribute("refreshOnUpdate", nil)
     spotlight:SetAttribute("updateOnTargetChanged", nil)
     self:CallMethod("SetUnit", index, "target")
@@ -478,6 +484,7 @@ function unittarget:SetUnit(index, target)
             Cell.unitButtons.spotlight[index]:SetAttribute("updateOnTargetChanged", nil)
         end
         Cell.unitButtons.spotlight[index]:SetAttribute("unit", unitId)
+        Cell.unitButtons.spotlight[index]:SetAttribute("specialUnit", nil)
         assignmentButtons[index]:SetText(unitId)
         menu:Save(index, unitId)
     else
@@ -493,6 +500,7 @@ tank:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
     local spotlight = menu:GetFrameRef("spotlight"..index)
+    spotlight:SetAttribute("specialUnit", "tank")
     spotlight:SetAttribute("refreshOnUpdate", nil)
     spotlight:SetAttribute("updateOnTargetChanged", nil)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "tank")
@@ -515,6 +523,7 @@ boss1target:SetAttribute("_onclick", [[
     local index = menu:GetAttribute("index")
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", "boss1target")
+    spotlight:SetAttribute("specialUnit", nil)
     spotlight:SetAttribute("refreshOnUpdate", true)
     spotlight:SetAttribute("updateOnTargetChanged", nil)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "boss1target")
@@ -531,9 +540,10 @@ clear:SetAttribute("_onclick", [[
     local index = menu:GetAttribute("index")
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", nil)
+    spotlight:SetAttribute("specialUnit", nil)
     spotlight:SetAttribute("refreshOnUpdate", nil)
     spotlight:SetAttribute("updateOnTargetChanged", nil)
-    menu:GetFrameRef("assignment"..index):SetAttribute("text", "none")
+    menu:GetFrameRef("assignment"..index):SetAttribute("text", nil)
     menu:Hide()
 
     menu:CallMethod("Save", index, nil)
@@ -917,9 +927,11 @@ local function UpdateLayout(layout, which)
 
                 Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", nil)
                 Cell.unitButtons.spotlight[i]:SetAttribute("updateOnTargetChanged", nil)
+                Cell.unitButtons.spotlight[i]:SetAttribute("specialUnit", nil)
 
                 if unit == "tank" then -- tank
                     tanks[i] = true
+                    Cell.unitButtons.spotlight[i]:SetAttribute("specialUnit", "tank")
                 elseif unit and strfind(unit, "^:") then -- name
                     unit = strsub(unit, 2)
                     names[unit] = i
@@ -932,7 +944,7 @@ local function UpdateLayout(layout, which)
                     end
                 end
                 RegisterUnitWatch(Cell.unitButtons.spotlight[i])
-                assignmentButtons[i]:SetText(unit or "|cffababab"..NONE)
+                assignmentButtons[i]:SetAttribute("text", unit)
             end
             tankUpdateRequired = true
             UpdateTanks()
