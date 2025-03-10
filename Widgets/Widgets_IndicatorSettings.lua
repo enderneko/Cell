@@ -4316,7 +4316,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                 auraButtons[i].down:Show()
             end
         elseif i == n then -- last
-            auraButtons[i]:SetPoint("TOPLEFT", auraButtons[i-1], "BOTTOMLEFT", 0, 1)
+            auraButtons[i]:SetPoint("TOPLEFT", auraButtons[i-1], "BOTTOMLEFT", 0, P.Scale(1))
             -- update buttons
             if noUpDownButtons then
                 auraButtons[i].up:Hide()
@@ -4326,7 +4326,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                 auraButtons[i].down:Hide()
             end
         else
-            auraButtons[i]:SetPoint("TOPLEFT", auraButtons[i-1], "BOTTOMLEFT", 0, 1)
+            auraButtons[i]:SetPoint("TOPLEFT", auraButtons[i-1], "BOTTOMLEFT", 0, P.Scale(1))
             -- update buttons
             if noUpDownButtons then
                 auraButtons[i].down:Hide()
@@ -4679,13 +4679,15 @@ local function CreateSetting_Auras(parent, index)
             if not auraButtons[index] then auraButtons[index] = {} end
 
             CreateAuraButtons(widget.frame, auraButtons[index], t, noUpDownButtons, isZeroValid, hasColorPicker, function(diff)
-                widget.frame:SetHeight((#t+1)*19+1)
-                widget:SetHeight((#t+1)*19+1 + 22 + 7)
-                if diff then parent:SetHeight(parent:GetHeight()+diff) end
+                local height = (#t + 1) * P.Scale(19) + P.Scale(1)
+                widget.frame:SetHeight(height)
+                widget:SetHeight(height + P.Scale(22) + P.Scale(7))
+                if diff then parent:SetHeight(parent:GetHeight() + P.Scale(diff)) end
             end)
 
-            widget.frame:SetHeight((#t+1)*19+1)
-            widget:SetHeight((#t+1)*19+1 + 22 + 7)
+            local height = (#t + 1) * P.Scale(19) + P.Scale(1)
+            widget.frame:SetHeight(height)
+            widget:SetHeight(height + P.Scale(22) + P.Scale(7))
         end
     else
         widget = settingWidgets["auras"..index]
