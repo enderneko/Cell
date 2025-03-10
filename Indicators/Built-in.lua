@@ -2340,6 +2340,7 @@ function I.CreatePowerWordShield(parent)
 
     function powerWordShield:UpdatePixelPerfect()
         local size = powerWordShield.size
+        if not size then return end
 
         powerWordShield:_SetSize(P.Scale(size), P.Scale(size))
         innerBG:SetSize(P.Scale(ceil(size/2)+2), P.Scale(ceil(size/2)+2))
