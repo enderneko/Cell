@@ -99,7 +99,7 @@ local function ReCalcTexCoord(self, width, height)
 end
 
 local function VerticalCooldown_OnUpdate(self, elapsed)
-    self.elapsed = self.elapsed + elapsed
+    self.elapsed = (self.elapsed or 0) + elapsed
     if self.elapsed >= 0.1 then
         self:SetValue(self:GetValue() + self.elapsed)
         self.elapsed = 0
