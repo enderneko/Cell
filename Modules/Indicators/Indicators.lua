@@ -381,7 +381,6 @@ local function InitIndicator(indicatorName)
 
             self.highlight:Hide()
 
-            local i = 1
             for dispelType, showHighlight in pairs(dispelTypes) do
                 -- highlight
                 if not found and self.highlightType ~= "none" and dispelType and showHighlight then
@@ -398,15 +397,14 @@ local function InitIndicator(indicatorName)
                 end
                 -- icons
                 if self.showIcons then
-                    self[i]:SetDispel(dispelType)
-                    i = i + 1
+                    self[1]:SetDispel(dispelType)
                 end
             end
 
-            self:UpdateSize(i)
+            self:UpdateSize(1)
 
             -- hide unused
-            for j = i, 5 do
+            for j = 2, 5 do
                 self[j]:Hide()
             end
         end
