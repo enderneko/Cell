@@ -1722,6 +1722,7 @@ local function UnitButton_UpdateHealthStates(self, diff)
 
     if enabledIndicators["healthText"] then -- and not self.states.isDeadOrGhost then
         self.indicators.healthText:SetValue(health, healthMax, self.states.totalAbsorbs, self.states.healAbsorbs)
+        self.indicators.healthText:Show()
     else
         self.indicators.healthText:Hide()
     end
