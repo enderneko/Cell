@@ -28,6 +28,7 @@ local previewButton, previewButtonBG, previewAlphaSlider, previewScaleSlider, pr
 
 local function CreatePreviewButton()
     previewButton = CreateFrame("Button", "CellIndicatorsPreviewButton", indicatorsTab, "CellPreviewButtonTemplate")
+    B.UpdateBackdrop(previewButton)
     -- previewButton.type = "main" -- layout setup
     -- previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 10, -55)
     previewButton:UnregisterAllEvents()
@@ -130,7 +131,7 @@ local function UpdatePreviewButton()
     r, g, b = F.GetPowerBarColor("player", Cell.vars.playerClass)
     previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
 
-    -- alpha
+    -- bg alpha
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
 
     Cell.Fire("UpdatePreview", previewButton)

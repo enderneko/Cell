@@ -21,6 +21,7 @@ local previewButton
 
 local function CreatePreviewButton()
     previewButton = CreateFrame("Button", "CellLayoutsPreviewButton", layoutsTab, "CellPreviewButtonTemplate")
+    B.UpdateBackdrop(previewButton)
     previewButton:SetPoint("TOPRIGHT", layoutsTab, "TOPLEFT", -5, -20)
     previewButton:UnregisterAllEvents()
     previewButton:SetScript("OnEnter", nil)

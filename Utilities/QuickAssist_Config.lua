@@ -410,8 +410,10 @@ local function UpdatePreviewButton()
         previewButton:SetScript("OnUpdate", nil)
         previewButton:Show()
 
-        previewButton:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
-        previewButton:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
+        if CELL_BORDER_SIZE ~= 0 then
+            previewButton:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
+            previewButton:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
+        end
 
         previewButton.healthBar:SetPoint("TOPLEFT", previewButton, "TOPLEFT", P.Scale(1), P.Scale(-1))
         previewButton.healthBar:SetPoint("BOTTOMRIGHT", previewButton, "BOTTOMRIGHT", P.Scale(-1), P.Scale(1))

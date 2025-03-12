@@ -14,6 +14,7 @@ local icon, iconColorTable
 --------------------------------------------------
 local function CreatePreviewButton()
     previewButton = CreateFrame("Button", "CellIconPreviewButton", iconOptionsFrame, "CellPreviewButtonTemplate")
+    B.UpdateBackdrop(previewButton)
     -- previewButton.type = "main" -- layout setup
     previewButton:SetPoint("BOTTOMLEFT", iconOptionsFrame, "TOPLEFT", 0, 5)
     previewButton:UnregisterAllEvents()

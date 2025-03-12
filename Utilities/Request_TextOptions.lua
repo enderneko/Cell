@@ -12,6 +12,7 @@ local textOptionsFrame, previewButton
 --------------------------------------------------
 local function CreatePreviewButton()
     previewButton = CreateFrame("Button", "CellTextPreviewButton", textOptionsFrame, "CellPreviewButtonTemplate")
+    B.UpdateBackdrop(previewButton)
     -- previewButton.type = "main" -- layout setup
     previewButton:SetPoint("BOTTOMLEFT", textOptionsFrame, "TOPLEFT", 0, 5)
     previewButton:UnregisterAllEvents()
