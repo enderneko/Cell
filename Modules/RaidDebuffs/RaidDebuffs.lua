@@ -1183,6 +1183,7 @@ local previewButton
 
 local function CreatePreviewButton()
     previewButton = CreateFrame("Button", "CellRaidDebuffsPreviewButton", debuffsTab, "CellPreviewButtonTemplate")
+    B.UpdateBackdrop(previewButton)
     -- previewButton.type = "main" -- layout setup
     previewButton:SetPoint("TOPLEFT", debuffsTab, "TOPRIGHT", 5, -137)
     previewButton:UnregisterAllEvents()

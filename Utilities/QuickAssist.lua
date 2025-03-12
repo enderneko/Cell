@@ -1362,8 +1362,10 @@ Cell.RegisterCallback("AddonLoaded", "QuickAssist_AddonLoaded", AddonLoaded)
 
 local function UpdatePixelPerfect()
     for i = 1, 40 do
-        header[i]:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
-        header[i]:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
+        if CELL_BORDER_SIZE ~= 0 then
+            header[i]:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
+            header[i]:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
+        end
 
         header[i].healthBar:SetPoint("TOPLEFT", header[i], "TOPLEFT", P.Scale(1), P.Scale(-1))
         header[i].healthBar:SetPoint("BOTTOMRIGHT", header[i], "BOTTOMRIGHT", P.Scale(-1), P.Scale(1))

@@ -15,6 +15,7 @@ local glowOptionsFrame, previewButton
 --------------------------------------------------
 local function CreatePreviewButton()
     previewButton = CreateFrame("Button", "CellGlowsPreviewButton", glowOptionsFrame, "CellPreviewButtonTemplate")
+    B.UpdateBackdrop(previewButton)
     -- previewButton.type = "main" -- layout setup
     previewButton:SetPoint("BOTTOMLEFT", glowOptionsFrame, "TOPLEFT", 0, 5)
     previewButton:UnregisterAllEvents()

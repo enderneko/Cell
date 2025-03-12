@@ -311,6 +311,7 @@ local previewButton, previewButton2
 
 local function CreatePreviewButtons()
     previewButton = CreateFrame("Button", "CellAppearancePreviewButton", appearanceTab, "CellPreviewButtonTemplate")
+    B.UpdateBackdrop(previewButton)
     -- previewButton.type = "main" -- layout setup
     previewButton:SetPoint("TOPLEFT", previewIconsBG, "BOTTOMLEFT", 0, -50)
     previewButton:UnregisterAllEvents()
@@ -339,6 +340,7 @@ local function CreatePreviewButtons()
     previewText:SetText(Cell.GetAccentColorString()..L["Preview"].." 2")
 
     previewButton2 = CreateFrame("Button", "CellAppearancePreviewButton2", appearanceTab, "CellPreviewButtonTemplate")
+    B.UpdateBackdrop(previewButton2)
     -- previewButton2.type = "main" -- layout setup
     previewButton2:SetPoint("TOPLEFT", previewButton, "BOTTOMLEFT", 0, -50)
     previewButton2:UnregisterAllEvents()
@@ -504,12 +506,6 @@ local function UpdatePreviewButton(which)
         previewButton2.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
     end
 
-    if not which or which == "alpha" or which == "reset" then
-        -- alpha
-        previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
-        previewButton2:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
-    end
-
     if not which or which == "layout" then
         -- barOrientation
         B.SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
@@ -537,6 +533,10 @@ local function UpdatePreviewButton(which)
         r, g, b, lossR, lossG, lossB = F.GetHealthBarColor(0.6, false, F.GetClassColor(Cell.vars.playerClass))
         previewButton2.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
         previewButton2.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
+
+        -- bg alpha
+        previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
+        previewButton2:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
 
         -- shields
         UpdatePreviewShields(r, g, b)

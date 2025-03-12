@@ -1850,7 +1850,7 @@ end
 local function ShowPowerBar(b)
     b.widgets.powerBar:Show()
     b.widgets.powerBarLoss:Show()
-    b.widgets.gapTexture:Show()
+    b.widgets.gapTexture:SetShown(CELL_BORDER_SIZE ~= 0)
 
     P.ClearPoints(b.widgets.healthBar)
     P.ClearPoints(b.widgets.powerBar)
@@ -3580,6 +3580,18 @@ function B.HideFlash(button)
     button.widgets.damageFlashAG:Finish()
 end
 
+-- backdrop
+function B.UpdateBackdrop(button)
+    if CELL_BORDER_SIZE == 0 then
+        button:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+        button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
+    else
+        button:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
+        button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
+        button:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
+    end
+end
+
 -- pixel perfect
 function B.UpdatePixelPerfect(button, updateIndicators)
     if not InCombatLockdown() then P.Resize(button) end
@@ -3603,6 +3615,7 @@ function B.UpdatePixelPerfect(button, updateIndicators)
     P.Repoint(button.widgets.overAbsorbGlow)
 
     B.UpdateHighlightSize(button)
+    B.UpdateBackdrop(button)
 
     if updateIndicators then
         -- indicators
@@ -3674,9 +3687,9 @@ function CellUnitButton_OnLoad(button)
     -- button:SetAttribute("typerelease", "macro")
 
     -- backdrop
-    button:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
-    button:SetBackdropColor(0, 0, 0, 1)
-    button:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
+    -- button:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
+    -- button:SetBackdropColor(0, 0, 0, 1)
+    -- button:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
 
     -- healthbar
     local healthBar = CreateFrame("StatusBar", name.."HealthBar", button)
