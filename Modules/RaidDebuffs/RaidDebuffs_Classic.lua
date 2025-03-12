@@ -1878,6 +1878,7 @@ LoadGlowOptions = function(glowType, glowOptions)
         return
     end
 
+    glowTargetDropdown:SetSelectedValue("button")
     glowTargetDropdown:Show()
     ShowGlowPreview(glowType, glowOptions)
     glowColor:SetColor(glowOptions[1])
