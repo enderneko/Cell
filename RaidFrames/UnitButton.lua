@@ -1135,7 +1135,7 @@ local function HandleDebuffs(self, auraInfo)
                 if glowType and glowType ~= "None" then
                     auraInfo.raidDebuffGlowType = glowType
                     auraInfo.raidDebuffGlowOptions = glowOptions
-                    self._debuffs_glow_current[glowType] = true
+                    self._debuffs_glow_current[glowType] = glowOptions
                 end
             end
         end
