@@ -1406,7 +1406,7 @@ local function HandleBuff(self, auraInfo)
         end
 
         -- tankActiveMitigation
-        if enabledIndicators["tankActiveMitigation"] and I.IsTankActiveMitigation(name) then
+        if enabledIndicators["tankActiveMitigation"] and I.IsTankActiveMitigation(spellId) then
             self.indicators.tankActiveMitigation:SetCooldown(start, duration)
             self._buffs.tankActiveMitigationFound = true
         end
