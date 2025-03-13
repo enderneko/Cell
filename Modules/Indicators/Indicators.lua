@@ -1440,20 +1440,24 @@ local function CreateListPane()
     createBtn:SetScript("OnClick", function()
         local popup = Cell.CreateConfirmPopup(indicatorsTab, 220, L["Create new indicator"], function(self)
             local name = strtrim(self.editBox:GetText())
-            local indicatorName
             local indicatorType, indicatorAuraType = self.dropdown1:GetSelected(), self.dropdown2:GetSelected()
 
             local last = #currentLayoutTable["indicators"]
-            indicatorName = "indicator" .. (last - Cell.defaults.builtIns + 1)
+            local index = currentLayoutTable["indicators"][last]["indicatorName"]:match("%d+")
+            index = index and tonumber(index) or 0
+            index = index + 1
+
+            local indicatorName = "indicator" .. index
+            last = last + 1
 
             tinsert(currentLayoutTable["indicators"], I.GetDefaultCustomIndicatorTable(name, indicatorName, indicatorType, indicatorAuraType))
-            Cell.Fire("UpdateIndicators", F.GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
+            Cell.Fire("UpdateIndicators", F.GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last])
 
             LoadIndicatorList()
-            listButtons[last+1]:Click()
+            listButtons[last]:Click()
 
             -- check scroll
-            if last+1 > 15 then
+            if last > 15 then
                 listFrame.scrollFrame:ScrollToBottom()
             end
 

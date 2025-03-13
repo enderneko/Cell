@@ -3310,11 +3310,11 @@ function F.Revise()
         CellDB["appearance"]["scale"] = 1
     end
 
-    -- r248-release
-    if CellDB["revise"] and dbRevision < 248 then
+    -- r250-release
+    if CellDB["revise"] and dbRevision < 250 then
         for _, layout in pairs(CellDB["layouts"]) do
             for _, i in pairs(layout["indicators"]) do
-                if i.type == "icons" then -- Healers
+                if i.type == "icons" then -- fix Healers
                     if not i.glowOptions then
                         i.glowOptions = {"None", {0.95, 0.95, 0.32, 1}}
                     end
