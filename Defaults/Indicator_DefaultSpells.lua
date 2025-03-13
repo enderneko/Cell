@@ -939,7 +939,7 @@ local targetedSpells = {
     338606, -- 病态凝视 - Morbid Fixation
     343556, -- 病态凝视 - Morbid Fixation
     333479, -- 吐疫
-    -- Castle Nathria
+    -- 奈萨里奥的巢穴 - Castle Nathria
     344496, -- 震荡爆发 - Reverberating Eruption
     -- Halls of Atonement
     319941, -- 碎石之跃 - Stone Shattering Leap
@@ -957,9 +957,13 @@ local targetedSpells = {
     317963, -- 知识烦扰 - Burden of Knowledge
     -- Sanguine Depths
     319713, -- 巨兽奔袭 - Juggernaut Rush
-    -- Theater of Pain
+    -- 伤逝剧场 - Theater of Pain
     324079, -- 收割之镰 - Reaping Scythe
     333861, -- 回旋利刃 - Ricocheting Blade
+    342675, -- 骨矛
+    320644, -- 残酷连击
+    323515, -- 仇恨打击
+    1217138, -- 通灵箭
     -- Plaguefall
     -- 328429, -- 窒息勒压
     356924, -- 屠戮 - Carnage
@@ -1004,6 +1008,10 @@ local targetedSpells = {
     -- The War Within --------------
     -- 圣焰隐修院
     424420, -- 余烬冲击
+    424414, -- 贯穿护甲
+    427583, -- 忏悔
+    447270, -- 掷矛
+    448515, -- 神圣审判
     -- 艾拉-卡拉，回响之城
     439506, -- 钻地冲击
     434786, -- 蛛网箭
@@ -1018,6 +1026,16 @@ local targetedSpells = {
     431303, -- 暗夜箭
     -- 尼鲁巴尔王宫
     459524, -- 致命之箭
+    -- 暗焰裂口
+    421277, -- 暗焰之锄
+    427011, -- 暗影冲击
+    422245, -- 穿岩凿
+    422116, -- 鲁莽冲锋
+    -- 燧酿酒庄
+    432229, -- 醉酿投
+    439031, -- 干杯勾拳
+    436592, -- 点钞大炮
+    440134, -- 蜂蜜料汁
 }
 
 function I.GetDefaultTargetedSpellsList()
