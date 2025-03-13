@@ -46,8 +46,7 @@ L["Any Spells"] = "Любые заклинания"
 L["Anyone"] = "Любой"
 L["AoE Healing"] = "АоЕ Исцеление"
 L["Appearance"] = "Внешний вид"
---[[Translation missing --]]
---[[ L["Apply Recommended Scale"] = ""--]]
+L["Apply Recommended Scale"] = "Выбрать рекомендуемый масштаб"
 L["Arena"] = "Арена"
 L["assist"] = "Ассист"
 L["Assist"] = "Ассист"
@@ -120,8 +119,8 @@ L["circledStackNums"] = "Показывать цифры в кружках"
 L["Class Color"] = "Цвет класса"
 L["Class Color (dark)"] = "Цвет класса (тёмный)"
 L["Class Filter"] = "Класс: фильтр"
-L["Clear"] = "Отчистить"
 L["clear"] = "отчистить"
+L["Clear"] = "Отчистить"
 L["clear unit"] = "отчистить юнита"
 L["cleuAurasTips"] = "Проверять CLEU события на предмет невидимых аур"
 L["Click to preview"] = "Нажмите для предосмотра"
@@ -133,8 +132,7 @@ L["Color By"] = "Правило закрашивания"
 L["Color Duration Text"] = "Цвет текста длительности"
 L["Color Thresholds"] = "Цветные Пороги"
 L["Columns"] = "Столбцы"
---[[Translation missing --]]
---[[ L["Combat Icon"] = ""--]]
+L["Combat Icon"] = "Иконка боя"
 L["Combine Groups"] = "Объединить Группы"
 L["Common"] = "Общий"
 L["Condition"] = "Условие"
@@ -185,10 +183,8 @@ L["Delete debuff?"] = "Удалить дебафф?"
 L["Delete indicator"] = "Удалить индикатор"
 L["Delete layout"] = "Удалить макет"
 L["Delete spell?"] = "Удалить заклинание?"
---[[Translation missing --]]
---[[ L["Delimiter"] = "Delimiter"--]]
---[[Translation missing --]]
---[[ L["Detached"] = ""--]]
+L["Delimiter"] = "Разделитель"
+L["Detached"] = "Отдельно"
 L["Disabled"] = "Отключено"
 L["Disabled in battlegrounds and arenas"] = "Отключено на аренах и полях боя"
 L["Discard"] = "Скинуть"
@@ -209,8 +205,7 @@ L["Due to restrictions of the private aura system, this indicator can only use B
 L["durationFont"] = "Длительность: текст"
 L["Edit"] = "Редактировать"
 L["Edit spell"] = "Редактировать заклинание"
---[[Translation missing --]]
---[[ L["Effective"] = "Effective"--]]
+L["Effective"] = "Эффективное"
 L["En"] = "Англ."
 L["Enable"] = "Включить"
 L["Enable Color Gradient"] = "Включить Цветовой Градиент"
@@ -266,7 +261,7 @@ L["Gradient"] = "Градиент"
 L["Gradient Colors"] = "Градиент: цвет"
 L["Group Columns"] = "Групп в столбце"
 L["Group Filters"] = "Фильтр Групп"
-L["Group Rows"] = "Групп в строке"
+L["Group Rows"] = "Групп в столбце"
 L["Group Spacing"] = "Интервал групп"
 L["H"] = "Героический Талант"
 L["Half"] = "Половина"
@@ -414,8 +409,7 @@ L["Only one threshold is displayed at a time"] = "Только один из п�
 L["Only show during encounter or in mythic+"] = "Только во время боя с боссом или в М+"
 L["Only show when you have permission to do this"] = "Показывать только если у вас есть разрешения это делать"
 L["Only visible to me"] = "Видно только для меня"
---[[Translation missing --]]
---[[ L["onlyEnableNotInCombat"] = "Only when I'm not in combat"--]]
+L["onlyEnableNotInCombat"] = "Только когда я не в бою"
 L["onlyShowOvershields"] = "Показывать только сверхщиты"
 L["onlyShowTopGlow"] = "Показывать свечение только для первого дебаффа"
 L["Options"] = "Настройки"
@@ -437,8 +431,8 @@ L["Party"] = "Группа"
 L["Party Assignment Icon"] = "Иконка роли группы"
 L["PENDING"] = "ОЖИДАНИЕ"
 L["Percentage"] = "Процент"
-L["Pet"] = "Питомец"
 L["PET"] = "ПИТОМЕЦ"
+L["Pet"] = "Питомец"
 L["Pets"] = "Петы рейда"
 L["Pixel"] = "Пиксель"
 L["Pixel Perfect"] = "С точностью до пикселя"
@@ -456,8 +450,7 @@ L["Press Key to Bind"] = "Нажмите клавишу привязки"
 L["Preview"] = "Предосмотр"
 L["Primary Talents"] = "Основные Таланты"
 L["Private Auras"] = "Приватные Ауры"
---[[Translation missing --]]
---[[ L["Profile imported successfully."] = ""--]]
+L["Profile imported successfully."] = "Профиль успешно импортирован"
 L["Profiles"] = "Профили"
 L["Pull"] = "Пулл"
 L["Pull in %d sec"] = "Пулл через %d с"
@@ -481,10 +474,8 @@ L["readyCheckTips"] = "\n|rГотовность\nЛКМ: |cffffffffзапуст�
 L["Rect"] = "Прямоугольник"
 L["refresh unit buttons"] = "обновить фреймы юнитов"
 L["Refreshing unit buttons (%s)..."] = "Обновляет фреймы юнитов (%s)..."
---[[Translation missing --]]
---[[ L["Relative Point"] = ""--]]
---[[Translation missing --]]
---[[ L["Relative To"] = ""--]]
+L["Relative Point"] = "Точка крепления"
+L["Relative To"] = "Крепление к"
 L["Remaining Time"] = "Оставшееся время"
 L["Remember to backup your profile"] = "Не забывайте создавать бэкапы своего профиля"
 L["Remove"] = "Удалить"
@@ -554,8 +545,7 @@ L["Shield Bar"] = "Панель щитов"
 L["Shield Texture"] = "Текстура щита"
 L["shieldByMe"] = "Показывать только мой СС: Щит"
 L["shields"] = "щиты"
---[[Translation missing --]]
---[[ L["Shields"] = "Shields"--]]
+L["Shields"] = "Щиты"
 L["Shift+Enter: add a new line"] = "Shift+Enter: добавить новую строку"
 L["Shine"] = "Свечение"
 L["Show All"] = "Показать Все"
@@ -567,13 +557,11 @@ L["Show friendly NPCs in a separate frame"] = "Показывать дружес
 L["Show NPC Frame"] = "Показывать панель НЦП"
 L["Show Party"] = "Отображать в Группе"
 L["Show Party/Arena Pets"] = "Отображать Питомцев в Группе/Арене"
---[[Translation missing --]]
---[[ L["Show pets in a separate frame"] = ""--]]
+L["Show pets in a separate frame"] = "Показывать петов в отдельном фрейме"
 L["Show Raid"] = "Отображать в Рейде"
 L["Show Raid Pets"] = "Отображать Питомцев в Рейде"
 L["Show Solo"] = "Отображать соло"
---[[Translation missing --]]
---[[ L["Show Solo Pet"] = ""--]]
+L["Show Solo Pet"] = "Показывать Соло Пета"
 L["Show units you care about more in a separate frame"] = "Показывает интересующих вас юнитов в отдельной панели"
 L["Show while in a party"] = "Показывать в группе"
 L["Show while in a raid"] = "Показывать в рейде"
