@@ -1,7 +1,10 @@
 local addonName, Cell = ...
 local L = Cell.L
+---@type CellFuncs
 local F = Cell.funcs
+---@type CellIndicatorFuncs
 local I = Cell.iFuncs
+---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
@@ -4138,7 +4141,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                 end
                 parent.func(auraTable)
                 CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, hasColorPicker, updateHeightFunc)
-                updateHeightFunc(19)
+                updateHeightFunc(#auraTable, 19)
             else
                 F.Print(L["Invalid spell id."])
             end
@@ -4402,7 +4405,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             tremove(auraTable, i)
             parent.func(auraTable)
             CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, hasColorPicker, updateHeightFunc)
-            updateHeightFunc(-19)
+            updateHeightFunc(#auraTable, -19)
         end)
 
         auraButtons[i].up:SetScript("OnClick", function()
@@ -4678,14 +4681,23 @@ local function CreateSetting_Auras(parent, index)
 
             if not auraButtons[index] then auraButtons[index] = {} end
 
+<<<<<<< HEAD
             CreateAuraButtons(widget.frame, auraButtons[index], t, noUpDownButtons, isZeroValid, hasColorPicker, function(diff)
                 local height = (#t + 1) * P.Scale(19) + P.Scale(1)
+=======
+            CreateAuraButtons(widget.frame, auraButtons[index], t, noUpDownButtons, isZeroValid, hasColorPicker, function(n, diff)
+                local height = (n + 1) * P.Scale(20) - n * P.Scale(1)
+>>>>>>> 4d63b4f4242382c8194c9b54493bac32fc2cf8fb
                 widget.frame:SetHeight(height)
                 widget:SetHeight(height + P.Scale(22) + P.Scale(7))
                 if diff then parent:SetHeight(parent:GetHeight() + P.Scale(diff)) end
             end)
 
+<<<<<<< HEAD
             local height = (#t + 1) * P.Scale(19) + P.Scale(1)
+=======
+            local height = (#t + 1) * P.Scale(20) - #t * P.Scale(1)
+>>>>>>> 4d63b4f4242382c8194c9b54493bac32fc2cf8fb
             widget.frame:SetHeight(height)
             widget:SetHeight(height + P.Scale(22) + P.Scale(7))
         end

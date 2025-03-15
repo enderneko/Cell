@@ -91,6 +91,21 @@ select(2, ...).L = setmetatable({
         <h2>The scaling "issue" isn't a bug; it's due to changes in the scaling method. Please readjust Cell's scale and dimensions.</h2>
         <br/>
 
+        <h1>r250-release (Mar 13, 2025, 19:00 GMT+8)</h1>
+        <p>* (Classic) Fixed "Healers" indicator.</p>
+        <p>* Fixed healthText issue.</p>
+        <p>* Fixed raid debuff glow.</p>
+        <p>* Fixed size of Dispels.</p>
+        <p>* Fixed nil error #354 #355.</p>
+        <p>* Fixed spotlight placeholders.</p>
+        <p>* Changed TankActiveMitigation to spellID.</p>
+        <p>* Attempted to fix the aura list height.</p>
+        <p>* Updated Liberation of Undermine debuffs.</p>
+        <p>* Updated some targeted spells.</p>
+        <p>* Updated button backdrops.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
         <h1>r249-release (Mar 5, 2025, 19:12 GMT+8)</h1>
         <p>* Fixed horizontal layout.</p>
         <br/>

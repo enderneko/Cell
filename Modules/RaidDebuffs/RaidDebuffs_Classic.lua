@@ -2272,8 +2272,8 @@ local function CreateNoticeFrame()
     content:SetText([[
 |cffe52b50Raid Debuffs issues|r
 The instance/boss list is generated automatically on Retail.
-For this reason, there can be some mistake.
-But there's no plan to correct it by myself.
+For this reason, there can be some mistakes.
+But there's no plan for me to correct them.
 It's unnecessary in most cases, since the debuffs will work as expected.
 If you'd like to fix it, go check |cfffff2b2Cell\RaidDebuffs\ExpansionData\ExpansionData.lua|r (at the end of the file), then create a PR on GitHub.
 

@@ -3310,15 +3310,73 @@ function F.Revise()
         CellDB["appearance"]["scale"] = 1
     end
 
-    -- r248-release
-    if CellDB["revise"] and dbRevision < 248 then
+    -- r250-release
+    if CellDB["revise"] and dbRevision < 250 then
         for _, layout in pairs(CellDB["layouts"]) do
             for _, i in pairs(layout["indicators"]) do
-                if i.type == "icons" then -- Healers
+                if i.type == "icons" then -- fix Healers
                     if not i.glowOptions then
                         i.glowOptions = {"None", {0.95, 0.95, 0.32, 1}}
                     end
                 end
+            end
+        end
+
+        if Cell.isRetail then
+            -- 伤逝剧场
+            if not F.TContains(CellDB["targetedSpellsList"], 342675) then -- 骨矛
+                tinsert(CellDB["targetedSpellsList"], 342675)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 320644) then -- 残酷连击
+                tinsert(CellDB["targetedSpellsList"], 320644)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 323515) then -- 仇恨打击
+                tinsert(CellDB["targetedSpellsList"], 323515)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 1217138) then -- 通灵箭
+                tinsert(CellDB["targetedSpellsList"], 1217138)
+            end
+
+            -- 圣焰隐修院
+            if not F.TContains(CellDB["targetedSpellsList"], 424414) then -- 贯穿护甲
+                tinsert(CellDB["targetedSpellsList"], 424414)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 427583) then -- 忏悔
+                tinsert(CellDB["targetedSpellsList"], 427583)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 447270) then -- 掷矛
+                tinsert(CellDB["targetedSpellsList"], 447270)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 448515) then -- 神圣审判
+                tinsert(CellDB["targetedSpellsList"], 448515)
+            end
+
+            -- 暗焰裂口
+            if not F.TContains(CellDB["targetedSpellsList"], 421277) then -- 暗焰之锄
+                tinsert(CellDB["targetedSpellsList"], 421277)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 427011) then -- 暗影冲击
+                tinsert(CellDB["targetedSpellsList"], 427011)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 422245) then -- 穿岩凿
+                tinsert(CellDB["targetedSpellsList"], 422245)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 422116) then -- 鲁莽冲锋
+                tinsert(CellDB["targetedSpellsList"], 422116)
+            end
+
+            -- 燧酿酒庄
+            if not F.TContains(CellDB["targetedSpellsList"], 432229) then -- 醉酿投
+                tinsert(CellDB["targetedSpellsList"], 432229)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 439031) then -- 干杯勾拳
+                tinsert(CellDB["targetedSpellsList"], 439031)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 436592) then -- 点钞大炮
+                tinsert(CellDB["targetedSpellsList"], 436592)
+            end
+            if not F.TContains(CellDB["targetedSpellsList"], 440134) then -- 蜂蜜料汁
+                tinsert(CellDB["targetedSpellsList"], 440134)
             end
         end
     end

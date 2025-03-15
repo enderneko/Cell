@@ -102,6 +102,10 @@ local supporters1 = { -- wowIDs
     {"三号-熊猫酒仙 (CN)"}, -- 爱发电用户_sUE4
     {"远古列王守卫-回音山 (CN)"}, -- PPQ
     {"Huf-ArgentDawn (EU)"}, -- Huf
+<<<<<<< HEAD
+=======
+    {"吕小美-震地者 (CN)"}, -- 假寐的死神 (爱发电)
+>>>>>>> 4d63b4f4242382c8194c9b54493bac32fc2cf8fb
     {
         "Tdps-Ragnaros (EU)",
         "Rosehip-Ragnaros (EU)",
