@@ -1195,3 +1195,5 @@ bleedList = {
     [1079] = true, -- 割裂 - Rip
     [703] = true, -- 锁喉 - Garrote
 }
+
+Cell.vars.bleedList = bleedList
