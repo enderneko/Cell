@@ -4681,23 +4681,14 @@ local function CreateSetting_Auras(parent, index)
 
             if not auraButtons[index] then auraButtons[index] = {} end
 
-<<<<<<< HEAD
-            CreateAuraButtons(widget.frame, auraButtons[index], t, noUpDownButtons, isZeroValid, hasColorPicker, function(diff)
-                local height = (#t + 1) * P.Scale(19) + P.Scale(1)
-=======
             CreateAuraButtons(widget.frame, auraButtons[index], t, noUpDownButtons, isZeroValid, hasColorPicker, function(n, diff)
                 local height = (n + 1) * P.Scale(20) - n * P.Scale(1)
->>>>>>> 4d63b4f4242382c8194c9b54493bac32fc2cf8fb
                 widget.frame:SetHeight(height)
                 widget:SetHeight(height + P.Scale(22) + P.Scale(7))
                 if diff then parent:SetHeight(parent:GetHeight() + P.Scale(diff)) end
             end)
 
-<<<<<<< HEAD
-            local height = (#t + 1) * P.Scale(19) + P.Scale(1)
-=======
             local height = (#t + 1) * P.Scale(20) - #t * P.Scale(1)
->>>>>>> 4d63b4f4242382c8194c9b54493bac32fc2cf8fb
             widget.frame:SetHeight(height)
             widget:SetHeight(height + P.Scale(22) + P.Scale(7))
         end
