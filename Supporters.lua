@@ -45,7 +45,7 @@ local supporters1 = { -- wowIDs
     }, -- tithaya (Ko-fi)
     {
         "|cffff8000Everessian-Ravencrest (EU)|r",
-        "|cffff8000Thornar-Ravencrest (EU)|r",
+        "|cffff8000Grizzlekaz-Ravencrest (EU)|r",
         "|cffff8000Shylanelle-Ravencrest (EU)|r",
         "|cffff8000Alenlin-Ravencrest (EU)|r",
         "|cffff8000Kulresh-Ravencrest (EU)|r",
