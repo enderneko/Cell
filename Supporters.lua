@@ -45,7 +45,7 @@ local supporters1 = { -- wowIDs
     }, -- tithaya (Ko-fi)
     {
         "|cffff8000Everessian-Ravencrest (EU)|r",
-        "|cffff8000Thornar-Ravencrest (EU)|r",
+        "|cffff8000Grizzlekaz-Ravencrest (EU)|r",
         "|cffff8000Shylanelle-Ravencrest (EU)|r",
         "|cffff8000Alenlin-Ravencrest (EU)|r",
         "|cffff8000Kulresh-Ravencrest (EU)|r",
@@ -107,6 +107,7 @@ local supporters1 = { -- wowIDs
         "Tdps-Ragnaros (EU)",
         "Rosehip-Ragnaros (EU)",
     }, -- Tdps-Ragnaros
+    {"Daanior-Draenor (EU)"}, -- Daanior-Draenor (Ko-fi)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -218,6 +219,7 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"假寐的死神", "爱发电"}, -- 2025-03-05
     {"Tdps-Ragnaros", "Ko-fi"}, -- 2025-03-08
     {"PPQ", "爱发电"}, -- 2025-03-08
+    {"Daanior-Draenor", "Ko-fi"}, -- 2025-03-23
 }
 
 -------------------------------------------------
