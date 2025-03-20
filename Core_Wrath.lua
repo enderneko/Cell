@@ -702,7 +702,9 @@ function eventFrame:PLAYER_LOGIN()
     --! init bgMaxPlayers
     for i = 1, GetNumBattlegroundTypes() do
         local bgName, _, _, _, _, _, bgId, maxPlayers = GetBattlegroundInfo(i)
-        bgMaxPlayers[bgId] = maxPlayers
+        if bgId then
+            bgMaxPlayers[bgId] = maxPlayers
+        end
     end
 
     Cell.vars.playerGUID = UnitGUID("player")
