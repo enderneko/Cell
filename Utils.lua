@@ -118,11 +118,11 @@ elseif Cell.isWrath or Cell.isVanilla then
         local specName, specIcon, specFileName
 
         for i = 1, GetNumTalentTabs() do
-            local name, texture, pointsSpent, fileName = GetTalentTabInfo(i)
+            local id, name, description, icon, pointsSpent, background = GetTalentTabInfo(i)
             if pointsSpent > maxPoints then
                 maxPoints = pointsSpent
-                specIcon = texture
-                specName = fileName
+                specIcon = icon
+                specName = name
             -- elseif pointsSpent == maxPoints then
             --     specIcon = 132148
             end
