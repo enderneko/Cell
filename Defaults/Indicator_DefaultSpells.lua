@@ -779,14 +779,11 @@ local spells =  {
     119611, -- 复苏之雾 - Renewing Mist
     124682, -- 氤氲之雾 - Enveloping Mist
     325209, -- 氤氲之息 - Enveloping Breath
-    406139, -- 真气之茧 - Chi Cocoon
-    -- 386276, -- 骨尘酒
-    -- 115175, -- 抚慰之雾
-    -- 198533, -- 抚慰之雾
-    -- 387766, -- 滋养真气
-    -- 196725, -- 碧愈疾风 - Refreshing Jade Wind
+    406139, -- 真气之茧 - Chi Cocoon from Yu'lon
+    406220, -- 真气之茧 - Chi Cocoon from Chi-Ji
+    450769, -- 和谐化身 - Aspect of Harmony
     450805, -- 净化之魂 - Purified Spirit
-    423439, -- 真气宁和 - Chi Harmony
+    467281, -- 金创药 - Healing Elixir
 
     -- paladin
     53563, -- 圣光道标 - Beacon of Light
