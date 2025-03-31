@@ -108,6 +108,7 @@ local supporters1 = { -- wowIDs
         "Rosehip-Ragnaros (EU)",
     }, -- Tdps-Ragnaros
     {"Daanior-Draenor (EU)"}, -- Daanior-Draenor (Ko-fi)
+    {"血蹄凯恩嗯-加丁 (CN)"}, -- 爱发电用户_1e94c
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -220,6 +221,7 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Tdps-Ragnaros", "Ko-fi"}, -- 2025-03-08
     {"PPQ", "爱发电"}, -- 2025-03-08
     {"Daanior-Draenor", "Ko-fi"}, -- 2025-03-23
+    {"爱发电用户_1e94c", "爱发电"}, -- 2025-03-31
 }
 
 -------------------------------------------------
