@@ -2758,13 +2758,13 @@ local function UnitButton_OnEvent(self, event, unit, arg)
     else
         if event == "GROUP_ROSTER_UPDATE" then
             -- FIXME:
-            if IsDelveInProgress() then
-                self.__tickCount = 2
-                self.__updateElapsed = 0.25
-            else
+            -- if IsDelveInProgress() then
+            --     self.__tickCount = 2
+            --     self.__updateElapsed = 0.25
+            -- else
                 self._updateRequired = 1
                 self._powerUpdateRequired = 1
-            end
+            -- end
 
         elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
             UnitButton_UpdateLeader(self, event)
