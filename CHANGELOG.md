@@ -1,14 +1,19 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r249-release...70557d8982ca1a6778bce12bf60de73715fe0cfd)
+# [Full Changelog](https://github.com/enderneko/Cell/compare/r250-release...3e98e221e73a05275973d1872125ec9cf2d18f37)
 
-- Fix "Healers" indicator
-- Fix healthText issue
-- Fix raid debuff glow
-- Fix size of Dispels
-- Fix nil error #354 #355
-- Fix spotlight placeholders
-- Change TankActiveMitigation to spellID
-- Attempt to fix the aura list height
-- Update Liberation of Undermine debuffs
-- Update some targeted spells
-- Update button backdrops
-- Update locales
+Vollmer (1):
+
+- Update Bleed list for TWW S2 (#359)
+
+swirl (1):
+
+- Update mistweaver default spells (#364)
+
+enderneko (16):
+
+- Fix missing powerFilters on importing
+- Fix border indicator
+- Fix GetTalentTabInfo issue for Wrath 3.4.4
+- Fix height of aura list
+- Remove IsDelveInProgress check
+- Spotlight Tank is now available for Classic
+- Add Cell_ExpansionDataOverrides

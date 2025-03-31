@@ -91,6 +91,18 @@ select(2, ...).L = setmetatable({
         <h2>The scaling "issue" isn't a bug; it's due to changes in the scaling method. Please readjust Cell's scale and dimensions.</h2>
         <br/>
 
+        <h1>r251-release (Mar 31, 2025, 19:00 GMT+8)</h1>
+        <p>* Updated Bleed list for TWW S2 (#359).</p>
+        <p>* Updated mistweaver default spells (#364).</p>
+        <p>* Fixed missing powerFilters on importing.</p>
+        <p>* Fixed border indicator.</p>
+        <p>* Fixed height of aura list.</p>
+        <p>* Fixed issues for CN Wrath 3.4.4.</p>
+        <p>* Spotlight Tank is now available for Classic.</p>
+        <p>- Removed IsDelveInProgress check.</p>
+        <p>+ Added Cell_ExpansionDataOverrides.</p>
+        <br/>
+
         <h1>r250-release (Mar 13, 2025, 19:00 GMT+8)</h1>
         <p>* (Classic) Fixed "Healers" indicator.</p>
         <p>* Fixed healthText issue.</p>
