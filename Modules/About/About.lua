@@ -430,7 +430,7 @@ end
 
 local function CreateLinksPane()
     local linksPane = Cell.CreateTitledPane(aboutTab, L["Links"], 422, 100)
-    linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -460)
+    linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -480)
 
     local current
 
@@ -522,7 +522,7 @@ end
 -------------------------------------------------
 local function CreateImportExportPane()
     local iePane = Cell.CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
-    iePane:SetPoint("TOPLEFT", 5, -575)
+    iePane:SetPoint("TOPLEFT", 5, -595)
 
     local importBtn = Cell.CreateButton(iePane, L["Import"], "accent-hover", {134, 20})
     importBtn:SetPoint("TOPLEFT", 5, -27)
