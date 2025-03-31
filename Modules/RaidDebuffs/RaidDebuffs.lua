@@ -606,8 +606,8 @@ local function CreateBossesFrame()
     imageFrame.tex:SetPoint("TOPRIGHT")
 
     local bossNameText = imageFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    bossNameText:SetPoint("TOPLEFT", imageFrame, "BOTTOMLEFT")
-    bossNameText:SetPoint("TOPRIGHT", imageFrame, "BOTTOMRIGHT")
+    bossNameText:SetPoint("TOPLEFT", imageFrame, "BOTTOMLEFT", 0, -1)
+    bossNameText:SetPoint("TOPRIGHT", imageFrame, "BOTTOMRIGHT", 0, -1)
 
     imageFrame.bg:SetPoint("TOPLEFT", imageFrame, -2, 0)
     imageFrame.bg:SetPoint("BOTTOMRIGHT", bossNameText, 0, -1)

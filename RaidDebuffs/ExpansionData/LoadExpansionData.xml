@@ -7,4 +7,5 @@
 	<Script file="ExpansionData_ruRU.lua"/>
 	<Script file="ExpansionData_zhCN.lua"/>
 	<Script file="ExpansionData_zhTW.lua"/>
+	<Script file="ExpansionDataOverrides.lua"/>
 </Ui>
