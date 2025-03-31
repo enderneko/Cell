@@ -495,7 +495,6 @@ end
 tank = Cell.CreateButton(menu, _G.TANK, "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
 P.Point(tank, "TOPLEFT", unittarget, "BOTTOMLEFT")
 P.Point(tank, "TOPRIGHT", unittarget, "BOTTOMRIGHT")
-tank:SetEnabled(not Cell.isVanilla)
 tank:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
