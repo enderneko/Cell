@@ -1690,7 +1690,7 @@ local function Glow_OnUpdate(glow, elapsed)
 end
 
 local function Glow_SetCooldown(glow, start, duration)
-    if glow.fadeOut and duration ~= 0 then
+    if duration ~= 0 and glow.fadeOut then
         glow._start = start
         glow._duration = duration
         glow._elapsed = 0.1 -- update immediately
@@ -2299,7 +2299,7 @@ local function Border_SetFadeOut(border, fadeOut)
 end
 
 local function Border_SetCooldown(border, start, duration, _, _, _, _, color)
-    if border.fadeOut then
+    if duration ~= 0 and border.fadeOut then
         border._start = start
         border._duration = duration
         border._elapsed = 0.1 -- update immediately
