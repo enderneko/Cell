@@ -5,28 +5,10 @@
       "title": "BACKLOG",
       "cards": [
         {
-          "id": "16df86de-862e-43e0-bb56-dc16bb7c4d4e",
+          "id": "b6474dcc-f9ea-4d89-bf3e-788e4a4773e1",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "SoD buffs issue",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "a32ebae3-812a-45f6-8b49-67b5139960d3",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Spell list for AoE Healing indicator",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "066404c8-81f4-4a52-9606-45fd4f7690c5",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "BigDebuffs shortcut",
-          "description": "",
+          "title": "Raid group header advanced sort",
+          "description": "player always first\nranged / melee dps",
           "labels": [],
           "checkboxes": [],
           "comments": []
@@ -34,25 +16,7 @@
         {
           "id": "1f5eaefd-76a3-48eb-a1ba-12844a302d3e",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Feature to set position for each spotlight button",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "f8590391-546b-45b7-9696-c79e7f83e555",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Replace Widgets & PixelPerfect with AW",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "0fc1a21b-2116-482d-9185-8adb860a38bf",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Fix vertical overshields",
+          "title": "Spotlight groups",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -86,9 +50,36 @@
           "comments": []
         },
         {
-          "id": "73a9c8e5-fd9e-43b8-baf7-582aade21de0",
+          "id": "b7c2be9a-ade0-40a3-8b5f-a8c25e9d97c1",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Make each spotlight button \"positionable\"",
+          "title": "Reversed health bar",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "d784577e-950e-49b7-acec-f27449b994a4",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Indicator advanced conditions",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "bc577257-a0cc-462b-be1e-aba159d828d6",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Indicator load conditions",
+          "description": "combat\nspec\nclass\n...",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "49fa23b6-7197-45c5-b107-97210fb53fde",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Use ObjectPool to make indicators reusable",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -101,54 +92,27 @@
       "title": "TODO",
       "cards": [
         {
-          "id": "b6474dcc-f9ea-4d89-bf3e-788e4a4773e1",
+          "id": "4184180c-7ab0-4c97-b54d-cefab5d6386c",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Raid group header advanced sort",
-          "description": "player always first\nranged / melee dps",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "a711ba2d-5627-444a-b1a2-c563ce1663f7",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Add \"Hide\" to layout auto switch",
+          "title": "Remove global name of indicators",
           "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
         },
         {
-          "id": "1f228346-3228-4c81-a796-2deb4500e1c8",
+          "id": "7d616cba-3918-493c-a164-edd96bafd21b",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Class Spells for Click-Castings",
+          "title": "Show if not found (custom indicator)",
           "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
         },
         {
-          "id": "b7c2be9a-ade0-40a3-8b5f-a8c25e9d97c1",
+          "id": "1dbfa8df-937c-4b15-879c-09794547b4ff",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Reversed health bar",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "d784577e-950e-49b7-acec-f27449b994a4",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Indicator icon glow conditions",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "c40c2331-10eb-4748-a653-96e5103fd9da",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Combat related option for indicators",
+          "title": "New auras handler",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -159,95 +123,12 @@
     {
       "id": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
       "title": "IN PROGRESS",
-      "cards": [
-        {
-          "id": "9c356d02-9218-463c-ad83-e137293a05ce",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Raid group orientation",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "60bbeb92-2645-4703-b511-bf6ee0615520",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Fix raid group anchors ",
-          "description": "when first group of each row/column not full",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "abd28941-e6a1-4784-8465-e922be72f888",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Refactor Layouts",
-          "description": "Main/Spotlight/NPC/Pet can have their own layout",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "49fa23b6-7197-45c5-b107-97210fb53fde",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Use ObjectPool to make indicators reusable",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "de0f55f3-cb55-4d5b-9eff-ec182a2d9120",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Load indicator based on spec",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "7d616cba-3918-493c-a164-edd96bafd21b",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Show if not found (custom indicator)",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "4184180c-7ab0-4c97-b54d-cefab5d6386c",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Remove global name of indicators",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        }
-      ]
+      "cards": []
     },
     {
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
       "title": "DONE",
-      "cards": [
-        {
-          "id": "d0361c06-5cff-478c-b378-230c9d4df2e5",
-          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
-          "title": "New animation for Actions",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "cde22c90-c34e-47c5-af95-446eeda36e1d",
-          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
-          "title": "Icon style for Dispels",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        }
-      ]
+      "cards": []
     }
   ],
   "archive": {
