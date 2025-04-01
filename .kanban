@@ -77,9 +77,27 @@
           "comments": []
         },
         {
+          "id": "7d616cba-3918-493c-a164-edd96bafd21b",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Show if not found (custom indicator)",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
           "id": "49fa23b6-7197-45c5-b107-97210fb53fde",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
           "title": "Use ObjectPool to make indicators reusable",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "b63ab311-f807-459d-a2b8-175925502476",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Add class options for TankActiveMitigation",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -92,27 +110,18 @@
       "title": "TODO",
       "cards": [
         {
-          "id": "4184180c-7ab0-4c97-b54d-cefab5d6386c",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Remove global name of indicators",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "7d616cba-3918-493c-a164-edd96bafd21b",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Show if not found (custom indicator)",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "1dbfa8df-937c-4b15-879c-09794547b4ff",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
           "title": "New auras handler",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "ae214679-bcb6-421c-9c20-10dbcf09ab3d",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Refactor all indicators",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -128,7 +137,17 @@
     {
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
       "title": "DONE",
-      "cards": []
+      "cards": [
+        {
+          "id": "4184180c-7ab0-4c97-b54d-cefab5d6386c",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Remove global name of indicators",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        }
+      ]
     }
   ],
   "archive": {
