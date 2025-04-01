@@ -647,7 +647,7 @@ function I.CreateAura_BarIcon(name, parent)
     frame:SetBackdrop({bgFile = Cell.vars.whiteTexture})
     frame:SetBackdropColor(0, 0, 0, 1)
 
-    local icon = frame:CreateTexture(name.."Icon", "ARTWORK")
+    local icon = frame:CreateTexture(name and name.."Icon", "ARTWORK")
     frame.icon = icon
     -- icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
     P.Point(icon, "TOPLEFT", frame, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
@@ -920,7 +920,7 @@ function I.CreateAura_Icons(name, parent, num)
     icons.UpdatePixelPerfect = Icons_UpdatePixelPerfect
 
     for i = 1, num do
-        local name = name.."Icon"..i
+        local name = name and name.."Icon"..i
         local frame = I.CreateAura_BarIcon(name, icons)
         icons[i] = frame
     end
@@ -1460,7 +1460,7 @@ function I.CreateAura_Bars(name, parent, num)
     bars.UpdatePixelPerfect = Icons_UpdatePixelPerfect
 
     for i = 1, num do
-        local name = name.."Icons"..i
+        local name = name and name.."Icons"..i
         local frame = I.CreateAura_Bar(name, bars)
         bars[i] = frame
         frame.parent = bars
@@ -1846,7 +1846,7 @@ function I.CreateAura_QuickAssistBars(name, parent, num)
     bars.UpdatePixelPerfect = QuickAssistBars_UpdatePixelPerfect
 
     for i = 1, num do
-        local name = name.."Bar"..i
+        local name = name and name.."Bar"..i
         local bar = I.CreateAura_Bar(name, bars)
         bars[i] = bar
 
@@ -2270,7 +2270,7 @@ function I.CreateAura_Blocks(name, parent, num)
     blocks.UpdatePixelPerfect = Icons_UpdatePixelPerfect
 
     for i = 1, num do
-        local name = name.."Icons"..i
+        local name = name and name.."Icons"..i
         local frame = I.CreateAura_Block(name, blocks)
         blocks[i] = frame
         frame.SetCooldown = Blocks_SetCooldown
