@@ -51,8 +51,12 @@ local function DoImport(noReload)
 
         -- powerFilters
         for class, t in pairs(Cell.defaults.layout.powerFilters) do
-            if not layout["powerFilters"][class] then
-                layout["powerFilters"][class] = F.Copy(t)
+            if type(layout["powerFilters"][class]) ~= type(t) then
+                if type(t) == "table" then
+                    layout["powerFilters"][class] = F.Copy(t)
+                else
+                    layout["powerFilters"][class] = true
+                end
             end
         end
     end
