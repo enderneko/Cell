@@ -30,7 +30,7 @@ local function DoImport(overwriteExisting)
 
     -- powerFilters
     for class, t in pairs(Cell.defaults.layout.powerFilters) do
-        if not layout["powerFilters"][class] then
+        if type(t) == "table" and not layout["powerFilters"][class] then
             layout["powerFilters"][class] = F.Copy(t)
         end
     end
