@@ -91,6 +91,12 @@ select(2, ...).L = setmetatable({
         <h2>The scaling "issue" isn't a bug; it's due to changes in the scaling method. Please readjust Cell's scale and dimensions.</h2>
         <br/>
 
+        <h1>r252-release (Apr 1, 2025, 14:15 GMT+8)</h1>
+        <p>* Fixed powerfilter values (#367).</p>
+        <p>* Update locales.</p>
+        <p>- Removed global names for custom indicators.</p>
+        <br/>
+
         <h1>r251-release (Mar 31, 2025, 19:00 GMT+8)</h1>
         <p>* Updated Bleed list for TWW S2 (#359).</p>
         <p>* Updated mistweaver default spells (#364).</p>

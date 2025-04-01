@@ -1,19 +1,10 @@
-# [Full Changelog](https://github.com/enderneko/Cell/compare/r250-release...3e98e221e73a05275973d1872125ec9cf2d18f37)
+# [Full Changelog](https://github.com/enderneko/Cell/compare/r251-release...be06bd183a5fd9676ff6d96cdf04e1f4b0ce076a)
 
-Vollmer (1):
+Okami:
 
-- Update Bleed list for TWW S2 (#359)
+- Import fix due to powerfilter expected values (#367)
 
-swirl (1):
+enderneko:
 
-- Update mistweaver default spells (#364)
-
-enderneko (16):
-
-- Fix missing powerFilters on importing
-- Fix border indicator
-- Fix GetTalentTabInfo issue for Wrath 3.4.4
-- Fix height of aura list
-- Remove IsDelveInProgress check
-- Spotlight Tank is now available for Classic
-- Add Cell_ExpansionDataOverrides
+- Remove global names for custom indicators
+- Update locales
