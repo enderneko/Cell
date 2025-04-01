@@ -172,9 +172,9 @@ L["castByMe"] = "Mostra solo buff lanciati da me"
 --[[Translation missing --]]
 --[[ L["Class Filter"] = ""--]]
 --[[Translation missing --]]
---[[ L["clear"] = ""--]]
---[[Translation missing --]]
 --[[ L["Clear"] = "Clear"--]]
+--[[Translation missing --]]
+--[[ L["clear"] = ""--]]
 --[[Translation missing --]]
 --[[ L["clear unit"] = ""--]]
 --[[Translation missing --]]
@@ -594,9 +594,9 @@ L["Magic"] = "Magia"
 --[[ L["Max Rows"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Me"] = ""--]]
+L["Menu"] = "Menu"
 --[[Translation missing --]]
 --[[ L["menu"] = ""--]]
-L["Menu"] = "Menu"
 --[[Translation missing --]]
 --[[ L["Menu Position"] = "Menu Position"--]]
 --[[Translation missing --]]
@@ -724,9 +724,9 @@ L["PENDING"] = "IN ATTESA"
 --[[Translation missing --]]
 --[[ L["Percentage"] = "Percentage"--]]
 --[[Translation missing --]]
---[[ L["PET"] = "Pet"--]]
---[[Translation missing --]]
 --[[ L["Pet"] = "Pet"--]]
+--[[Translation missing --]]
+--[[ L["PET"] = "Pet"--]]
 --[[Translation missing --]]
 --[[ L["Pets"] = "Pets"--]]
 --[[Translation missing --]]
@@ -825,9 +825,9 @@ L["Request"] = "Richiesta"
 --[[Translation missing --]]
 --[[ L["Require font support"] = "Require font support"--]]
 L["Require reload of the UI"] = "Richiede il reload dell'UI"
-L["Reset"] = "Reset"
 --[[Translation missing --]]
 --[[ L["RESET"] = "Cell requires a full reset after updating from a very old version"--]]
+L["Reset"] = "Reset"
 --[[Translation missing --]]
 --[[ L["Reset All"] = "Reset All"--]]
 --[[Translation missing --]]

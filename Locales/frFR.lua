@@ -147,9 +147,9 @@ L["Class Color"] = "Couleur de classe"
 L["Class Color (dark)"] = "Couleur de classe (sombre)"
 L["Class Filter"] = "Filtre de classe"
 --[[Translation missing --]]
---[[ L["clear"] = ""--]]
---[[Translation missing --]]
 --[[ L["Clear"] = "Clear"--]]
+--[[Translation missing --]]
+--[[ L["clear"] = ""--]]
 --[[Translation missing --]]
 --[[ L["clear unit"] = ""--]]
 L["cleuAurasTips"] = "Vérifier les événements CLEU pour les auras invisibles"
@@ -504,8 +504,8 @@ L["marksTips"] = "\n|rMarqueur de cible\nClic gauche : |cffffffffdéfinir le ma
 L["Max Displayed"] = "Maximum affiché"
 L["Max Rows"] = "Nombre maximal de lignes"
 L["Me"] = "Moi"
-L["menu"] = "menu"
 L["Menu"] = "Menu"
+L["menu"] = "menu"
 L["Menu Position"] = "Position du menu"
 L["Middle"] = "Milieu"
 L["mine"] = "le mien"
@@ -603,8 +603,8 @@ L["Party"] = "Groupe"
 --[[ L["Party Assignment Icon"] = ""--]]
 L["PENDING"] = "EN ATTENTE"
 L["Percentage"] = "Pourcentage"
-L["PET"] = "FAMILLIER"
 L["Pet"] = "Famillier"
+L["PET"] = "FAMILLIER"
 L["Pets"] = "Familiers du raid"
 L["Pixel"] = "Pixel"
 --[[Translation missing --]]
@@ -688,8 +688,8 @@ L["Request"] = "Requête"
 --[[Translation missing --]]
 --[[ L["Require font support"] = "Require font support"--]]
 L["Require reload of the UI"] = "Nécessite un rechargement de l'interface utilisateur"
-L["Reset"] = "Réinitialiser"
 L["RESET"] = "Cell nécessite une réinitialisation complète après la mise à jour d'une très ancienne version"
+L["Reset"] = "Réinitialiser"
 L["Reset All"] = "Réinitialiser tout"
 L["reset all Cell settings"] = "réinitialiser tous les paramètres de Cell"
 L["reset all Click-Castings"] = "Réinitialiser tous les sorts à la souris"

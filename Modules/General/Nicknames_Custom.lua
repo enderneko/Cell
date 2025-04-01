@@ -269,7 +269,7 @@ LoadList = function()
                 newItem.nickname:SetText(nickname)
                 newItem.nickname.isValid = true
                 newItem.add:SetEnabled(true)
-                newItem.add:SetText(L["Update"])
+                newItem.add:SetText(_G.UPDATE)
                 newItem.updateIndex = i
                 newItem:Show()
             end

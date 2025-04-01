@@ -174,9 +174,9 @@ L["Class Color (dark)"] = "직업 색상 (어둡게)"
 --[[Translation missing --]]
 --[[ L["Class Filter"] = ""--]]
 --[[Translation missing --]]
---[[ L["clear"] = ""--]]
---[[Translation missing --]]
 --[[ L["Clear"] = "Clear"--]]
+--[[Translation missing --]]
+--[[ L["clear"] = ""--]]
 --[[Translation missing --]]
 --[[ L["clear unit"] = ""--]]
 --[[Translation missing --]]
@@ -523,9 +523,9 @@ L["Max Displayed"] = "최대 아이콘"
 --[[ L["Max Rows"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Me"] = ""--]]
+L["Menu"] = "메뉴"
 --[[Translation missing --]]
 --[[ L["menu"] = ""--]]
-L["Menu"] = "메뉴"
 L["Menu Position"] = "메뉴 위치"
 L["Middle"] = "가운데 버튼"
 --[[Translation missing --]]
@@ -625,9 +625,9 @@ L["Party"] = "파티"
 L["PENDING"] = "대기"
 L["Percentage"] = "백분율"
 --[[Translation missing --]]
---[[ L["PET"] = "Pet"--]]
---[[Translation missing --]]
 --[[ L["Pet"] = "Pet"--]]
+--[[Translation missing --]]
+--[[ L["PET"] = "Pet"--]]
 L["Pets"] = "공격대 소환수"
 L["Pixel"] = "픽셀"
 L["Pixel Perfect"] = "완벽한 픽셀"
