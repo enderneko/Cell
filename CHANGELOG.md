@@ -1,10 +1,5 @@
-# [Full Changelog](https://github.com/enderneko/Cell/compare/r251-release...be06bd183a5fd9676ff6d96cdf04e1f4b0ce076a)
+# [Full Changelog](https://github.com/enderneko/Cell/compare/r252-release...0b6035c9206c5c489f899305db34fe6cc69b3665)
 
-Okami:
-
-- Import fix due to powerfilter expected values (#367)
-
-enderneko:
-
-- Remove global names for custom indicators
-- Update locales
+- Update raid debuffs
+- Update targeted spells
+- Update libs

@@ -91,9 +91,14 @@ select(2, ...).L = setmetatable({
         <h2>The scaling "issue" isn't a bug; it's due to changes in the scaling method. Please readjust Cell's scale and dimensions.</h2>
         <br/>
 
+        <h1>r253-release (May 13, 2025, 20:30 GMT+8)</h1>
+        <p>* Updated libs.</p>
+        <p>* Updated targeted spells.</p>
+        <br/>
+
         <h1>r252-release (Apr 1, 2025, 14:15 GMT+8)</h1>
         <p>* Fixed powerfilter values (#367).</p>
-        <p>* Update locales.</p>
+        <p>* Updated locales.</p>
         <p>- Removed global names for custom indicators.</p>
         <br/>
 
