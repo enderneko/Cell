@@ -3381,6 +3381,36 @@ function F.Revise()
         end
     end
 
+    -- r253-release
+    if CellDB["revise"] and dbRevision < 253 then
+        -- 暴富矿区！！
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 263628) -- 充能护盾
+
+        -- 麦卡贡行动
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 1215411) -- 刺破
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 291928)  -- 巨力震击
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 292264)  -- 巨力震击
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 285152)  -- 索敌击飞
+
+        -- 驭雷栖巢
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 445457)  -- 湮灭波
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 430109)  -- 闪电箭
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 430238)  -- 虚空箭
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 474031)  -- 虚空碾压
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 430805)  -- 弧形虚空
+
+        -- 水闸行动
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 1213805) -- 射钉枪
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 465595)  -- 闪电箭
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 468631)  -- 鱼叉
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 459779)  -- 滚桶冲锋
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 459799)  -- 重击
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 473690)  -- 动能胶质炸药
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 473351)  -- 电气重碾
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 469478)  -- 淤泥之爪
+        F.TInsertIfNotExists(CellDB["targetedSpellsList"], 466190)  -- 雷霆重拳
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

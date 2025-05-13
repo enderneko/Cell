@@ -575,6 +575,28 @@ function F.TInsert(t, v)
     until done
 end
 
+function F.TInsertIfNotExists(t, ...)
+    local n = select("#", ...)
+    if n == 0 then return end
+
+    if n == 1 then
+        local v = ...
+        if not F.TContains(t, v) then
+            tinsert(t, v)
+        end
+    else
+        local values = F.ConvertTable(t, true)
+        for i = 1, n do
+            local v = select(i, ...)
+            if not values[v] then
+                tinsert(t, v)
+            end
+        end
+        values = nil
+    end
+
+end
+
 function F.TRemove(t, v)
     for i = #t, 1, -1 do
         if t[i] == v then
