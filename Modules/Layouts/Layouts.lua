@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 ---@type CellFuncs
 local F = Cell.funcs
@@ -6,10 +7,12 @@ local F = Cell.funcs
 local B = Cell.bFuncs
 ---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
-local layoutsTab = Cell.CreateFrame("CellOptionsFrame_LayoutsTab", Cell.frames.optionsFrame, nil, nil, true)
+local layoutsTab = Cell.CreateFrame("CellOptionsFrame_LayoutsTab", CellOptionsFrame, nil, nil, true)
 Cell.frames.layoutsTab = layoutsTab
-layoutsTab:SetAllPoints(Cell.frames.optionsFrame)
+layoutsTab:SetAllPoints(CellOptionsFrame)
 layoutsTab:Hide()
 
 local selectedLayout, selectedLayoutTable
@@ -122,14 +125,14 @@ local desaturation = {
 }
 
 local function CreateLayoutPreview()
-    layoutPreview = Cell.CreateFrame("CellLayoutPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
+    layoutPreview = Cell.CreateFrame("CellLayoutPreviewFrame", CellMainFrame, nil, nil, true)
     layoutPreview:EnableMouse(false)
     layoutPreview:SetFrameStrata("HIGH")
     layoutPreview:SetToplevel(true)
     layoutPreview:Hide()
 
     layoutPreviewAnchor = CreateFrame("Frame", "CellLayoutPreviewAnchorFrame", layoutPreview, "BackdropTemplate")
-    -- layoutPreviewAnchor:SetPoint("TOPLEFT", CellParent, "CENTER")
+    -- layoutPreviewAnchor:SetPoint("TOPLEFT", AFParent, "CENTER")
     P.Size(layoutPreviewAnchor, 20, 10)
     layoutPreviewAnchor:SetMovable(true)
     layoutPreviewAnchor:EnableMouse(true)
@@ -293,7 +296,7 @@ local function UpdateLayoutPreview()
     else
         if not P.LoadPosition(layoutPreviewAnchor, selectedLayoutTable["main"]["position"]) then
             layoutPreviewAnchor:ClearAllPoints()
-            layoutPreviewAnchor:SetPoint("TOPLEFT", CellParent, "CENTER")
+            layoutPreviewAnchor:SetPoint("TOPLEFT", AFParent, "CENTER")
         end
     end
     layoutPreviewName:SetText(L["Layout"]..": "..selectedLayout)
@@ -481,7 +484,7 @@ end
 -------------------------------------------------
 local npcPreview, npcPreviewAnchor, npcPreviewName
 local function CreateNPCPreview()
-    npcPreview = Cell.CreateFrame("CellNPCPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
+    npcPreview = Cell.CreateFrame("CellNPCPreviewFrame", CellMainFrame, nil, nil, true)
     npcPreview:EnableMouse(false)
     npcPreview:SetFrameStrata("HIGH")
     npcPreview:SetToplevel(true)
@@ -631,7 +634,7 @@ local function UpdateNPCPreview()
 
     if not P.LoadPosition(npcPreviewAnchor, selectedLayoutTable["npc"]["position"]) then
         npcPreviewAnchor:ClearAllPoints()
-        npcPreviewAnchor:SetPoint("TOPLEFT", CellParent, "CENTER")
+        npcPreviewAnchor:SetPoint("TOPLEFT", AFParent, "CENTER")
     end
     npcPreviewAnchor:Show()
     npcPreviewName:SetText(L["Layout"]..": "..selectedLayout.." (NPC)")
@@ -729,7 +732,7 @@ end
 local petPreview, petPreviewAnchor, petPreviewName
 local petNums = Cell.isRetail and 20 or 25
 local function CreatePetPreview()
-    petPreview = Cell.CreateFrame("CellPetPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
+    petPreview = Cell.CreateFrame("CellPetPreviewFrame", CellMainFrame, nil, nil, true)
     petPreview:EnableMouse(false)
     petPreview:SetFrameStrata("HIGH")
     petPreview:SetToplevel(true)
@@ -882,7 +885,7 @@ local function UpdatePetPreview()
 
     if not P.LoadPosition(petPreviewAnchor, selectedLayoutTable["pet"]["position"]) then
         petPreviewAnchor:ClearAllPoints()
-        petPreviewAnchor:SetPoint("TOPLEFT", CellParent, "CENTER")
+        petPreviewAnchor:SetPoint("TOPLEFT", AFParent, "CENTER")
     end
     petPreviewAnchor:Show()
     petPreviewName:SetText(L["Layout"]..": "..selectedLayout.." ("..L["Pets"]..")")
@@ -1009,7 +1012,7 @@ end
 -------------------------------------------------
 local spotlightPreview, spotlightPreviewAnchor, spotlightPreviewName
 local function CreateSpotlightPreview()
-    spotlightPreview = Cell.CreateFrame("CellSpotlightPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
+    spotlightPreview = Cell.CreateFrame("CellSpotlightPreviewFrame", CellMainFrame, nil, nil, true)
     spotlightPreview:EnableMouse(false)
     spotlightPreview:SetFrameStrata("HIGH")
     spotlightPreview:SetToplevel(true)
@@ -1157,7 +1160,7 @@ local function UpdateSpotlightPreview()
     else
         spotlightPreviewAnchor:EnableMouse(true)
         if not P.LoadPosition(spotlightPreviewAnchor, selectedLayoutTable["spotlight"]["position"]) then
-            spotlightPreviewAnchor:SetPoint("TOPLEFT", CellParent, "CENTER")
+            spotlightPreviewAnchor:SetPoint("TOPLEFT", AFParent, "CENTER")
         end
     end
     spotlightPreviewAnchor:Show()
@@ -2966,8 +2969,8 @@ local function ShowTab(tab)
             LoadAutoSwitchDropdowns()
 
             -- mask
-            F.ApplyCombatProtectionToFrame(layoutsTab)
-            F.ApplyCombatProtectionToFrame(autoSwitchFrame)
+            AF.ApplyCombatProtectionToFrame(layoutsTab)
+            AF.ApplyCombatProtectionToFrame(autoSwitchFrame)
             Cell.CreateMask(layoutsTab, nil, {1, -1, -1, 1})
             layoutsTab.mask:Hide()
             Cell.CreateMask(autoSwitchFrame, nil, {1, -1, -1, 1})

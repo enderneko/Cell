@@ -38,9 +38,6 @@ Cell.MIN_INDICATORS_VERSION = 245
 Cell.MIN_DEBUFFS_VERSION = 239
 Cell.MIN_QUICKASSIST_VERSION = 239
 
---@debug@
-local debugMode = true
---@end-debug@
 function F.Debug(arg, ...)
     if debugMode then
         if type(arg) == "string" or type(arg) == "number" then
@@ -59,12 +56,10 @@ function F.Print(msg)
     print("|cFFFF3030[Cell]|r " .. msg)
 end
 
---------------------------------------------------
--- CellParent
---------------------------------------------------
-local CellParent = CreateFrame("Frame", "CellParent", UIParent)
-CellParent:SetAllPoints(UIParent)
-CellParent:SetFrameLevel(0)
+
+---@type AbstractFramework
+local AF = _G.AbstractFramework
+AF.RegisterAddon("Cell")
 
 -------------------------------------------------
 -- layout
@@ -195,8 +190,6 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB) ~= "table" then CellDB = {} end
         if type(CellDBBackup) ~= "table" then CellDBBackup = {} end
 
-        if type(CellDB["optionsFramePosition"]) ~= "table" then CellDB["optionsFramePosition"] = {} end
-
         if type(CellDB["indicatorPreview"]) ~= "table" then
             CellDB["indicatorPreview"] = {
                 ["scale"] = 2,
@@ -224,9 +217,9 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["menuPosition"] = "top_bottom",
                 ["alwaysUpdateAuras"] = true,
                 ["framePriority"] = {
-                    {"Main", true},
-                    {"Spotlight", false},
-                    {"Quick Assist", false},
+                    "^CellNormalUnitFrame$",
+                    "^CellPlaceholder$",
+                    "^CellPlaceholder$",
                 },
                 ["useCleuHealthUpdater"] = false,
                 ["translit"] = false,
@@ -383,6 +376,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if CellDB["appearance"]["accentColor"] then -- version < r103
             if CellDB["appearance"]["accentColor"][1] == "custom" then
                 Cell.OverrideAccentColor(CellDB["appearance"]["accentColor"][2])
+                AF.SetAddonAccentColor("Cell", CellDB["appearance"]["accentColor"][2])
             end
         end
 
@@ -769,7 +763,7 @@ function eventFrame:PLAYER_LOGIN()
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    eventFrame:RegisterEvent("UI_SCALE_CHANGED")
+    -- eventFrame:RegisterEvent("UI_SCALE_CHANGED")
 
     Cell.vars.playerNameShort = GetUnitName("player")
     Cell.vars.playerNameFull = F.UnitFullName("player")
@@ -825,21 +819,21 @@ function eventFrame:PLAYER_LOGIN()
     F.UpdateFramePriority()
 end
 
-function eventFrame:UI_SCALE_CHANGED()
-    if not InCombatLockdown() then
-        F.Debug("UI_SCALE_CHANGED: ", UIParent:GetScale(), CellParent:GetEffectiveScale())
-        Cell.Fire("UpdatePixelPerfect")
-        Cell.Fire("UpdateAppearance", "scale")
-    end
-end
+-- function eventFrame:UI_SCALE_CHANGED()
+--     if not InCombatLockdown() then
+--         F.Debug("UI_SCALE_CHANGED: ", UIParent:GetScale(), AFParent:GetEffectiveScale())
+--         Cell.Fire("UpdatePixelPerfect")
+--         Cell.Fire("UpdateAppearance", "scale")
+--     end
+-- end
 
-hooksecurefunc(UIParent, "SetScale", function()
-    if not InCombatLockdown() then
-        F.Debug("UIParent:SetScale: ", UIParent:GetScale(), CellParent:GetEffectiveScale())
-        Cell.Fire("UpdatePixelPerfect")
-        Cell.Fire("UpdateAppearance", "scale")
-    end
-end)
+-- hooksecurefunc(UIParent, "SetScale", function()
+--     if not InCombatLockdown() then
+--         F.Debug("UIParent:SetScale: ", UIParent:GetScale(), AFParent:GetEffectiveScale())
+--         Cell.Fire("UpdatePixelPerfect")
+--         Cell.Fire("UpdateAppearance", "scale")
+--     end
+-- end)
 
 -------------------------------------------------
 -- ACTIVE_TALENT_GROUP_CHANGED
@@ -913,27 +907,27 @@ function SlashCmdList.CELL(msg, editbox)
     elseif command == "reset" then
         if rest == "position" then
             Cell.frames.anchorFrame:ClearAllPoints()
-            Cell.frames.anchorFrame:SetPoint("TOPLEFT", CellParent, "CENTER")
+            Cell.frames.anchorFrame:SetPoint("TOPLEFT", AFParent, "CENTER")
             Cell.vars.currentLayoutTable["position"] = {}
             P.ClearPoints(Cell.frames.readyAndPullFrame)
-            Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", CellParent, "CENTER")
+            Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", AFParent, "CENTER")
             CellDB["tools"]["readyAndPull"][4] = {}
             P.ClearPoints(Cell.frames.raidMarksFrame)
-            Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", CellParent, "CENTER")
+            Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", AFParent, "CENTER")
             CellDB["tools"]["marks"][4] = {}
             P.ClearPoints(Cell.frames.buffTrackerFrame)
-            Cell.frames.buffTrackerFrame:SetPoint("BOTTOMLEFT", CellParent, "CENTER")
+            Cell.frames.buffTrackerFrame:SetPoint("BOTTOMLEFT", AFParent, "CENTER")
             CellDB["tools"]["buffTracker"][4] = {}
 
         elseif rest == "all" then
             Cell.frames.anchorFrame:ClearAllPoints()
-            Cell.frames.anchorFrame:SetPoint("TOPLEFT", CellParent, "CENTER")
+            Cell.frames.anchorFrame:SetPoint("TOPLEFT", AFParent, "CENTER")
             Cell.frames.readyAndPullFrame:ClearAllPoints()
-            Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", CellParent, "CENTER")
+            Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", AFParent, "CENTER")
             Cell.frames.raidMarksFrame:ClearAllPoints()
-            Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", CellParent, "CENTER")
+            Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", AFParent, "CENTER")
             Cell.frames.buffTrackerFrame:ClearAllPoints()
-            Cell.frames.buffTrackerFrame:SetPoint("BOTTOMLEFT", CellParent, "CENTER")
+            Cell.frames.buffTrackerFrame:SetPoint("BOTTOMLEFT", AFParent, "CENTER")
             CellDB = nil
             ReloadUI()
 

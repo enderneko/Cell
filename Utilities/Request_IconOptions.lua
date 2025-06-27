@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
@@ -125,8 +126,8 @@ local function LoadIconOptions()
 end
 
 local function CreateIconOptionsFrame()
-    iconOptionsFrame = CreateFrame("Frame", "CellOptionsFrame_IconOptions", Cell.frames.optionsFrame)
-    iconOptionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.optionsFrame, "BOTTOMRIGHT", 5, 0)
+    iconOptionsFrame = CreateFrame("Frame", "CellOptionsFrame_IconOptions", CellOptionsFrame)
+    iconOptionsFrame:SetPoint("BOTTOMLEFT", CellOptionsFrame, "BOTTOMRIGHT", 5, 0)
     P.Size(iconOptionsFrame, 127, 335)
     iconOptionsFrame:Hide()
 

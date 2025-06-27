@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
@@ -167,10 +168,10 @@ end
 -------------------------------------------------
 -- frame
 -------------------------------------------------
-local buffTrackerFrame = CreateFrame("Frame", "CellBuffTrackerFrame", Cell.frames.mainFrame, "BackdropTemplate")
+local buffTrackerFrame = CreateFrame("Frame", "CellBuffTrackerFrame", CellMainFrame, "BackdropTemplate")
 Cell.frames.buffTrackerFrame = buffTrackerFrame
 P.Size(buffTrackerFrame, 102, 50)
-PixelUtil.SetPoint(buffTrackerFrame, "BOTTOMLEFT", CellParent, "CENTER", 1, 1)
+PixelUtil.SetPoint(buffTrackerFrame, "BOTTOMLEFT", AFParent, "CENTER", 1, 1)
 buffTrackerFrame:SetClampedToScreen(true)
 buffTrackerFrame:SetMovable(true)
 buffTrackerFrame:RegisterForDrag("LeftButton")

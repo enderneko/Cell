@@ -1,13 +1,16 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local RANK = _G.TRADESKILL_RANK_HEADER:gsub(" ", ""):gsub("%%d", "")
 
-local clickCastingsTab = Cell.CreateFrame("CellOptionsFrame_ClickCastingsTab", Cell.frames.optionsFrame, nil, nil, true)
+local clickCastingsTab = Cell.CreateFrame("CellOptionsFrame_ClickCastingsTab", CellOptionsFrame, nil, nil, true)
 Cell.frames.clickCastingsTab = clickCastingsTab
-clickCastingsTab:SetAllPoints(Cell.frames.optionsFrame)
+clickCastingsTab:SetAllPoints(CellOptionsFrame)
 clickCastingsTab:Hide()
 
 local listPane
@@ -1734,7 +1737,7 @@ local function ShowTab(tab)
             CreateTargetingPane()
             CreateSmartResPane()
             CreateListPane()
-            F.ApplyCombatProtectionToFrame(clickCastingsTab)
+            AF.ApplyCombatProtectionToFrame(clickCastingsTab)
         end
         clickCastingsTab:Show()
     else

@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local I = Cell.iFuncs
 
 local bleedList

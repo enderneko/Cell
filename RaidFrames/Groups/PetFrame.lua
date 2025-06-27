@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
@@ -7,7 +8,7 @@ local P = Cell.pixelPerfectFuncs
 
 local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 
-local petFrame = CreateFrame("Frame", "CellPetFrame", Cell.frames.mainFrame, "SecureHandlerAttributeTemplate")
+local petFrame = CreateFrame("Frame", "CellPetFrame", CellMainFrame, "SecureHandlerAttributeTemplate")
 Cell.frames.petFrame = petFrame
 
 -------------------------------------------------
@@ -15,7 +16,7 @@ Cell.frames.petFrame = petFrame
 -------------------------------------------------
 local anchorFrame = CreateFrame("Frame", "CellPetAnchorFrame", petFrame, "BackdropTemplate")
 Cell.frames.petFrameAnchor = anchorFrame
-anchorFrame:SetPoint("TOPLEFT", CellParent, "CENTER")
+anchorFrame:SetPoint("TOPLEFT", AFParent, "CENTER")
 anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
 -- Cell.StylizeFrame(anchorFrame, {1, 0, 0, 0.4})

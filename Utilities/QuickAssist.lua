@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
@@ -31,11 +32,11 @@ local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 -- ----------------------------------------------------------------------- --
 --                            quick assist frame                           --
 -- ----------------------------------------------------------------------- --
-local quickAssistFrame = CreateFrame("Frame", "CellQuickAssistFrame", Cell.frames.mainFrame, "SecureFrameTemplate")
+local quickAssistFrame = CreateFrame("Frame", "CellQuickAssistFrame", CellMainFrame, "SecureFrameTemplate")
 Cell.frames.quickAssistFrame = quickAssistFrame
 
 local anchorFrame = CreateFrame("Frame", "CellQuickAssistAnchorFrame", quickAssistFrame)
-PixelUtil.SetPoint(anchorFrame, "TOPLEFT", CellParent, "CENTER", 1, -1)
+PixelUtil.SetPoint(anchorFrame, "TOPLEFT", AFParent, "CENTER", 1, -1)
 anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
 

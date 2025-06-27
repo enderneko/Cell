@@ -2,10 +2,11 @@
 -- File: ExpansionDataOverrides.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2025-03-31 16:35 +08:00
--- Modified: 2025-03-31 17:17 +08:00
+-- Modified: 2025-06-27 14:58 +08:00
 ---------------------------------------------------------------------
 
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local F = Cell.funcs
 
 local expansions = {

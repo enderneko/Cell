@@ -2,10 +2,11 @@
 -- File: Cell\RaidDebuffs\RaidDebuffs_SL.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2020-12-09 20:59:11 +08:00
--- Modified: 2025-02-24 20:34 +08:00
+-- Modified: 2025-06-27 14:58 +08:00
 ---------------------------------------------------------------------
 
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local F = Cell.funcs
 
 local debuffs = {

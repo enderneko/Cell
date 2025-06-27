@@ -1,4 +1,4 @@
-## Interface: 110105
+## Interface: 110107
 ## Title: Cell
 ## Version: r253-release
 ## Author: enderneko
@@ -6,6 +6,7 @@
 ## SavedVariables: CellDB, CellDBBackup
 ## AddonCompartmentFunc: Cell_OnAddonCompartmentClick
 ## IconTexture: Interface\AddOns\Cell\Media\icon.tga
+## Dependencies: AbstractFramework
 
 ## X-Curse-Project-ID: 409666
 ## X-Wago-ID: qv63LLKb

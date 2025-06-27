@@ -1,11 +1,12 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
 local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
 
-local npcFrame = CreateFrame("Frame", "CellNPCFrame", Cell.frames.mainFrame, "SecureHandlerStateTemplate")
+local npcFrame = CreateFrame("Frame", "CellNPCFrame", CellMainFrame, "SecureHandlerStateTemplate")
 Cell.frames.npcFrame = npcFrame
 -- Cell.StylizeFrame(npcFrame, {1, 0.5, 0.5})
 
@@ -24,12 +25,12 @@ end
 -------------------------------------------------
 local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 
-local separateAnchor = CreateFrame("Frame", "CellSeparateNPCFrameAnchor", Cell.frames.mainFrame, "BackdropTemplate")
+local separateAnchor = CreateFrame("Frame", "CellSeparateNPCFrameAnchor", CellMainFrame, "BackdropTemplate")
 Cell.frames.separateNpcFrameAnchor = separateAnchor
 separateAnchor:SetMovable(true)
 separateAnchor:SetClampedToScreen(true)
 P.Size(separateAnchor, 20, 10)
-PixelUtil.SetPoint(separateAnchor, "TOPLEFT", CellParent, "CENTER", 1, -1)
+PixelUtil.SetPoint(separateAnchor, "TOPLEFT", AFParent, "CENTER", 1, -1)
 -- Cell.StylizeFrame(separateAnchor, {0, 1, 0, 0.4})
 
 local hoverFrame = CreateFrame("Frame", nil, npcFrame)

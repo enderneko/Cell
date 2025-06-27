@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
@@ -39,7 +40,7 @@ end
 -------------------------------------------------
 -- raid roster frame
 -------------------------------------------------
-local raidRosterFrame = Cell.CreateFrame("CellRaidRosterFrame", Cell.frames.mainFrame, 405, 230)
+local raidRosterFrame = Cell.CreateFrame("CellRaidRosterFrame", CellMainFrame, 405, 230)
 Cell.frames.raidRosterFrame = raidRosterFrame
 raidRosterFrame:SetFrameStrata("DIALOG")
 raidRosterFrame:SetFrameLevel(5)
@@ -615,7 +616,7 @@ local function UpdateLayout(layout, which)
     layout = Cell.vars.currentLayoutTable
     if not which or which == "main-arrangement" then
         raidRosterFrame:ClearAllPoints()
-        raidRosterFrame:SetPoint(layout["main"]["anchor"], Cell.frames.mainFrame)
+        raidRosterFrame:SetPoint(layout["main"]["anchor"], CellMainFrame)
 
         if modeBtn then UpdateModeBtnPosition() end
     end

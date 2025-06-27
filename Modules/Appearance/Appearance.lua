@@ -1,15 +1,18 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local LoadData, LoadButtonStyle, LoadDebuffTypeColor
 
-local appearanceTab = Cell.CreateFrame("CellOptionsFrame_AppearanceTab", Cell.frames.optionsFrame, nil, nil, true)
+local appearanceTab = Cell.CreateFrame("CellOptionsFrame_AppearanceTab", CellOptionsFrame, nil, nil, true)
 Cell.frames.appearanceTab = appearanceTab
-appearanceTab:SetAllPoints(Cell.frames.optionsFrame)
+appearanceTab:SetAllPoints(CellOptionsFrame)
 appearanceTab:Hide()
 
 -------------------------------------------------
@@ -1706,8 +1709,8 @@ local function ShowTab(tab)
             CreateUnitButtonStylePane()
             CreateIconOptionsFrame()
             CreateDebuffTypeColorPane()
-            F.ApplyCombatProtectionToWidget(scaleSlider)
-            F.ApplyCombatProtectionToWidget(strataDropdown)
+            AF.ApplyCombatProtectionToWidget(scaleSlider)
+            AF.ApplyCombatProtectionToWidget(strataDropdown)
         end
 
         appearanceTab:Show()
@@ -1821,7 +1824,7 @@ local function UpdateAppearance(which)
 
     -- scale
     if not which or which == "scale" then
-        CellParent:SetScale(CellDB["appearance"]["scale"])
+        CellMainFrame:SetScale(CellDB["appearance"]["scale"])
 
         CellTooltip:UpdatePixelPerfect()
         CellSpellTooltip:UpdatePixelPerfect()
@@ -1842,8 +1845,8 @@ local function UpdateAppearance(which)
 
     -- strata
     if not which or which == "strata" then
-        Cell.frames.mainFrame:SetFrameStrata(CellDB["appearance"]["strata"])
-        Cell.frames.optionsFrame:SetFrameStrata("DIALOG")
+        CellMainFrame:SetFrameStrata(CellDB["appearance"]["strata"])
+        CellOptionsFrame:SetFrameStrata("DIALOG")
         Cell.frames.raidRosterFrame:SetFrameStrata("DIALOG")
     end
 

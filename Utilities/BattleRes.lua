@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 ---@type PixelPerfectFuncs
@@ -9,7 +10,7 @@ local battleResMover
 -------------------------------------------------
 -- battle res
 -------------------------------------------------
-local battleResFrame = CreateFrame("Frame", "CellBattleResFrame", Cell.frames.mainFrame, "BackdropTemplate")
+local battleResFrame = CreateFrame("Frame", "CellBattleResFrame", CellMainFrame, "BackdropTemplate")
 Cell.frames.battleResFrame = battleResFrame
 battleResFrame:SetFrameLevel(5)
 P.Size(battleResFrame, 80, 20)
@@ -220,7 +221,7 @@ end)
 -------------------------------------------------
 -- mover
 -------------------------------------------------
-battleResMover = CreateFrame("Frame", nil, Cell.frames.mainFrame, "BackdropTemplate")
+battleResMover = CreateFrame("Frame", nil, CellMainFrame, "BackdropTemplate")
 P.Size(battleResMover, 80, 40)
 Cell.StylizeFrame(battleResMover, {0, 1, 0, 0.4}, {0, 0, 0, 0})
 battleResMover:SetClampedToScreen(true)
@@ -334,7 +335,7 @@ local function UpdateTools(which)
                 P.ClearPoints(battleResFrame)
                 battleResFrame:SetPoint("BOTTOMLEFT", battleResMover)
                 if not P.LoadPosition(battleResMover, CellDB["tools"]["battleResTimer"][3]) then
-                    PixelUtil.SetPoint(battleResMover, "TOPLEFT", CellParent, "CENTER", 1, -100)
+                    PixelUtil.SetPoint(battleResMover, "TOPLEFT", AFParent, "CENTER", 1, -100)
                 end
             else
                 MoverHide()

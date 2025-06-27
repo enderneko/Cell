@@ -1,29 +1,38 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
+---@class CellFuncs
 local F = Cell.funcs
-local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local lastShownTab
 
-local optionsFrame = Cell.CreateFrame("CellOptionsFrame", Cell.frames.mainFrame, 432, 401)
-Cell.frames.optionsFrame = optionsFrame
-PixelUtil.SetPoint(optionsFrame, "CENTER", CellParent, "CENTER", 1, -1)
+local optionsFrame = AF.CreateBorderedFrame(CellMainFrame, "CellOptionsFrame", 450, 400) -- 432, 401
+optionsFrame:Hide()
+optionsFrame:SetPoint("CENTER", AFParent)
 optionsFrame:SetFrameStrata("DIALOG")
-optionsFrame:SetFrameLevel(520)
+optionsFrame:SetFrameLevel(777)
 optionsFrame:SetClampedToScreen(true)
 optionsFrame:SetClampRectInsets(0, 0, 40, 0)
 optionsFrame:SetMovable(true)
+
+optionsFrame:SetScript("OnHide", function()
+    if not (InCombatLockdown() or IsFalling()) then
+        AF.Debug("|cffbbbbbbCellOptionsFrame_OnHide: |cffff7777collectgarbage")
+        collectgarbage("collect")
+        -- UpdateAddOnMemoryUsage() -- stuck like hell
+    end
+end)
 
 local function RegisterDragForOptionsFrame(frame)
     frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", function()
         optionsFrame:StartMoving()
-        optionsFrame:SetUserPlaced(false)
     end)
     frame:SetScript("OnDragStop", function()
         optionsFrame:StopMovingOrSizing()
-        P.PixelPerfectPoint(optionsFrame)
-        P.SavePosition(optionsFrame, CellDB["optionsFramePosition"])
+        AF.ReAnchorRegion(optionsFrame, "TOPLEFT")
     end)
 end
 
@@ -33,41 +42,47 @@ end
 local generalBtn, appearanceBtn, clickCastingsBtn, aboutBtn, layoutsBtn, indicatorsBtn, debuffsBtn, utilitiesBtn, closeBtn
 
 local function CreateTabButtons()
-    generalBtn = Cell.CreateButton(optionsFrame, L["General"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    appearanceBtn = Cell.CreateButton(optionsFrame, L["Appearance"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    layoutsBtn = Cell.CreateButton(optionsFrame, L["Layouts"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    clickCastingsBtn = Cell.CreateButton(optionsFrame, L["Click-Castings"], "accent-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    indicatorsBtn = Cell.CreateButton(optionsFrame, L["Indicators"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    debuffsBtn = Cell.CreateButton(optionsFrame, L["Raid Debuffs"], "accent-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    utilitiesBtn = Cell.CreateButton(optionsFrame, L["Utilities"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    aboutBtn = Cell.CreateButton(optionsFrame, L["About"], "accent-hover", {86, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    closeBtn = Cell.CreateButton(optionsFrame, "×", "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
-    closeBtn:SetScript("OnClick", function()
-        optionsFrame:Hide()
-    end)
+    -- row 1
+    layoutsBtn = AF.CreateButton(optionsFrame, L["Layouts"], "Cell_hover", 110, 20, nil, nil, nil, "AF_FONT_TITLE")
+    indicatorsBtn = AF.CreateButton(optionsFrame, L["Indicators"], "Cell_hover", 110, 20, nil, nil, nil, "AF_FONT_TITLE")
+    debuffsBtn = AF.CreateButton(optionsFrame, L["Raid Debuffs"], "Cell_hover", 120, 20, nil, nil, nil, "AF_FONT_TITLE")
+    utilitiesBtn = AF.CreateButton(optionsFrame, L["Utilities"], "Cell_hover", nil, 20, nil, nil, nil, "AF_FONT_TITLE")
 
-    -- line 1
-    layoutsBtn:SetPoint("BOTTOMLEFT", optionsFrame, "TOPLEFT", 0, P.Scale(-1))
-    indicatorsBtn:SetPoint("BOTTOMLEFT", layoutsBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
-    debuffsBtn:SetPoint("BOTTOMLEFT", indicatorsBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
-    utilitiesBtn:SetPoint("BOTTOMLEFT", debuffsBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
-    utilitiesBtn:SetPoint("BOTTOMRIGHT", optionsFrame, "TOPRIGHT", 0, P.Scale(-1))
-    -- line 2
-    generalBtn:SetPoint("BOTTOMLEFT", layoutsBtn, "TOPLEFT", 0, P.Scale(-1))
-    appearanceBtn:SetPoint("BOTTOMLEFT", generalBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
-    clickCastingsBtn:SetPoint("BOTTOMLEFT", appearanceBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
-    aboutBtn:SetPoint("BOTTOMLEFT", clickCastingsBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
-    closeBtn:SetPoint("BOTTOMLEFT", aboutBtn, "BOTTOMRIGHT", P.Scale(-1), 0)
-    closeBtn:SetPoint("BOTTOMRIGHT", utilitiesBtn, "TOPRIGHT", 0, P.Scale(-1))
+    AF.SetPoint(layoutsBtn, "BOTTOMLEFT", optionsFrame, "TOPLEFT", 0, -1)
+    AF.SetPoint(indicatorsBtn, "BOTTOMLEFT", layoutsBtn, "BOTTOMRIGHT", -1, 0)
+    AF.SetPoint(debuffsBtn, "BOTTOMLEFT", indicatorsBtn, "BOTTOMRIGHT", -1, 0)
+    AF.SetPoint(utilitiesBtn, "BOTTOMLEFT", debuffsBtn, "BOTTOMRIGHT", -1, 0)
+    AF.SetPoint(utilitiesBtn, "BOTTOMRIGHT", optionsFrame, "TOPRIGHT", 0, -1)
 
-    RegisterDragForOptionsFrame(generalBtn)
-    RegisterDragForOptionsFrame(appearanceBtn)
-    RegisterDragForOptionsFrame(layoutsBtn)
-    RegisterDragForOptionsFrame(clickCastingsBtn)
-    RegisterDragForOptionsFrame(indicatorsBtn)
-    RegisterDragForOptionsFrame(debuffsBtn)
-    RegisterDragForOptionsFrame(utilitiesBtn)
-    RegisterDragForOptionsFrame(aboutBtn)
+    -- row 2
+    generalBtn = AF.CreateButton(optionsFrame, L["General"], "Cell_hover", 110, 20, nil, nil, nil, "AF_FONT_TITLE")
+    appearanceBtn = AF.CreateButton(optionsFrame, L["Appearance"], "Cell_hover", 110, 20, nil, nil, nil, "AF_FONT_TITLE")
+    clickCastingsBtn = AF.CreateButton(optionsFrame, L["Click-Castings"], "Cell_hover", 120, 20, nil, nil, nil, "AF_FONT_TITLE")
+    aboutBtn = AF.CreateButton(optionsFrame, L["About"], "Cell_hover", nil, 20, nil, nil, nil, "AF_FONT_TITLE")
+    closeBtn = AF.CreateCloseButton(optionsFrame, optionsFrame, 20, 20)
+
+    AF.SetPoint(generalBtn, "BOTTOMLEFT", layoutsBtn, "TOPLEFT", 0, -1)
+    AF.SetPoint(appearanceBtn, "BOTTOMLEFT", generalBtn, "BOTTOMRIGHT", -1, 0)
+    AF.SetPoint(clickCastingsBtn, "BOTTOMLEFT", appearanceBtn, "BOTTOMRIGHT", -1, 0)
+    AF.SetPoint(aboutBtn, "BOTTOMLEFT", clickCastingsBtn, "BOTTOMRIGHT", -1, 0)
+    AF.SetPoint(aboutBtn, "BOTTOMRIGHT", closeBtn, "BOTTOMLEFT", 1, 0)
+    AF.SetPoint(closeBtn, "BOTTOMRIGHT", utilitiesBtn, "TOPRIGHT", 0, -1)
+
+    -- button group
+    local buttons = {
+        generalBtn,
+        appearanceBtn,
+        layoutsBtn,
+        clickCastingsBtn,
+        indicatorsBtn,
+        debuffsBtn,
+        utilitiesBtn,
+        aboutBtn,
+    }
+
+    for _, b in pairs(buttons) do
+        RegisterDragForOptionsFrame(b)
+    end
 
     generalBtn.id = "general"
     appearanceBtn.id = "appearance"
@@ -91,7 +106,7 @@ local function CreateTabButtons()
 
     local function ShowTab(tab)
         if lastShownTab ~= tab then
-            P.Height(optionsFrame, tabHeight[tab])
+            AF.SetHeight(optionsFrame, tabHeight[tab])
             Cell.Fire("ShowOptionsTab", tab)
             lastShownTab = tab
         end
@@ -121,7 +136,7 @@ local function CreateTabButtons()
         end
     end
 
-    Cell.CreateButtonGroup({generalBtn, appearanceBtn, layoutsBtn, clickCastingsBtn, indicatorsBtn, debuffsBtn, utilitiesBtn, aboutBtn}, ShowTab, nil, nil, OnEnter, OnLeave)
+    AF.CreateButtonGroup(buttons, ShowTab, nil, nil, OnEnter, OnLeave)
 end
 
 -------------------------------------------------
@@ -131,8 +146,8 @@ local init
 local function Init()
     if not init then
         init = true
-        P.Resize(optionsFrame)
-        P.Reborder(optionsFrame, true)
+        optionsFrame:UpdatePixels()
+        AF.ReAnchorRegion(optionsFrame, "TOPLEFT")
         CreateTabButtons()
         F.CreateUtilityList(utilitiesBtn)
     end
@@ -147,103 +162,28 @@ function F.ShowOptionsFrame()
     end
 
     if not lastShownTab then
-        generalBtn:Click()
+        generalBtn:SilentClick()
     end
 
     optionsFrame:Show()
 end
 
-optionsFrame:SetScript("OnShow", function()
-    if not P.LoadPosition(optionsFrame, CellDB["optionsFramePosition"]) then
-        P.PixelPerfectPoint(optionsFrame)
-    end
-end)
-
-optionsFrame:SetScript("OnHide", function()
-    -- stolen from dbm
-    if not InCombatLockdown() and not UnitAffectingCombat("player") and not IsFalling() then
-        F.Debug("|cffbbbbbbCellOptionsFrame_OnHide: |cffff7777collectgarbage")
-        collectgarbage("collect")
-        -- UpdateAddOnMemoryUsage() -- stuck like hell
-    end
-end)
-
--- optionsFrame:SetScript("OnShow", function()
---     P.PixelPerfectPoint(optionsFrame)
--- end)
-
 -- for Raid Debuffs import
 function F.ShowRaidDebuffsTab()
     Init()
     optionsFrame:Show()
-    debuffsBtn:Click()
+    debuffsBtn:SilentClick()
 end
 
 -- for layout import
 function F.ShowLayousTab()
     Init()
     optionsFrame:Show()
-    layoutsBtn:Click()
+    layoutsBtn:SilentClick()
 end
 
 function F.ShowUtilitiesTab()
     Init()
     optionsFrame:Show()
-    utilitiesBtn:Click()
+    utilitiesBtn:SilentClick()
 end
-
--------------------------------------------------
--- InCombatLockdown
--------------------------------------------------
-local protectedFrames = {}
-function F.ApplyCombatProtectionToFrame(f, x1, y1, x2, y2)
-    tinsert(protectedFrames, f)
-    Cell.CreateCombatMask(f, x1, y1, x2, y2)
-
-    if InCombatLockdown() then
-        f.combatMask:Show()
-    end
-
-    f:HookScript("OnShow", function()
-        if InCombatLockdown() then
-            f.combatMask:Show()
-        end
-    end)
-end
-
-local protectedWidgets = {}
-function F.ApplyCombatProtectionToWidget(widget)
-    tinsert(protectedWidgets, widget)
-
-    if InCombatLockdown() then
-        widget:SetEnabled(false)
-    end
-end
-
-optionsFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-optionsFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-optionsFrame:SetScript("OnEvent", function(self, event)
-    if event == "PLAYER_REGEN_DISABLED" then
-        for _, f in pairs(protectedFrames) do
-            f.combatMask:Show()
-        end
-        for _, w in pairs(protectedWidgets) do
-            w:SetEnabled(false)
-        end
-    elseif event == "PLAYER_REGEN_ENABLED" then
-        for _, f in pairs(protectedFrames) do
-            f.combatMask:Hide()
-        end
-        for _, w in pairs(protectedWidgets) do
-            w:SetEnabled(true)
-        end
-    end
-end)
-
--------------------------------------------------
--- callbacks
--------------------------------------------------
-local function UpdatePixelPerfect()
-    P.Resize(optionsFrame)
-end
-Cell.RegisterCallback("UpdatePixelPerfect", "OptionsFrame_UpdatePixelPerfect", UpdatePixelPerfect)

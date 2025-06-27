@@ -1,11 +1,12 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
-local utilitiesTab = Cell.CreateFrame("CellOptionsFrame_UtilitiesTab", Cell.frames.optionsFrame, nil, nil, true)
+local utilitiesTab = Cell.CreateFrame("CellOptionsFrame_UtilitiesTab", CellOptionsFrame, nil, nil, true)
 Cell.frames.utilitiesTab = utilitiesTab
-utilitiesTab:SetAllPoints(Cell.frames.optionsFrame)
+utilitiesTab:SetAllPoints(CellOptionsFrame)
 utilitiesTab:Hide()
 
 -------------------------------------------------
@@ -24,7 +25,7 @@ local function UpdateFontString(b)
 end
 
 function F.CreateUtilityList(anchor)
-    listFrame = CreateFrame("Frame", nil, Cell.frames.optionsFrame, "BackdropTemplate")
+    listFrame = CreateFrame("Frame", nil, CellOptionsFrame, "BackdropTemplate")
     Cell.StylizeFrame(listFrame, {0,1,0,0.1}, {0,0,0,1})
     listFrame:SetPoint("TOPLEFT", anchor, "TOPRIGHT", 1, 0)
     listFrame:Hide()
@@ -117,7 +118,7 @@ end
 Cell.RegisterCallback("ShowOptionsTab", "UtilitiesTab_ShowTab", ShowTab)
 
 Cell.RegisterCallback("ShowUtilitySettings", "UtilitiesTab_ShowUtilitySettings", function(which)
-    P.Height(Cell.frames.optionsFrame, utilityHeight[which])
+    P.Height(CellOptionsFrame, utilityHeight[which])
 end)
 
 function F.ShowQuickAssistTab()

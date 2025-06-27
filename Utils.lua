@@ -5,8 +5,12 @@ local L = Cell.L
 local F = Cell.funcs
 ---@type CellIndicatorFuncs
 local I = Cell.iFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 Cell.vars.playerFaction = UnitFactionGroup("player")
+
+local tinsert = table.insert
 
 -------------------------------------------------
 -- game version
@@ -2034,28 +2038,13 @@ local spotlightPriorityEnabled
 local quickAssistPriorityEnabled
 
 function F.UpdateFramePriority()
-    wipe(frame_priorities)
     wipe(modified_priorities)
-    spotlightPriorityEnabled = nil
-    quickAssistPriorityEnabled = nil
 
-    for i, t  in pairs(CellDB["general"]["framePriority"]) do
-        if t[2] then
-            if t[1] == "Main" then
-                tinsert(frame_priorities, i, "^CellNormalUnitFrame$")
-            elseif t[1] == "Spotlight" then
-                tinsert(frame_priorities, i, "^CellSpotlightUnitFrame$")
-                spotlightPriorityEnabled = true
-            else
-                tinsert(frame_priorities, i, "^CellQuickAssistUnitFrame$")
-                quickAssistPriorityEnabled = true
-            end
-        else
-            tinsert(frame_priorities, i, "^CellPlaceholder$")
-        end
-    end
-
+    frame_priorities = CellDB["general"]["framePriority"]
     F.Debug(frame_priorities)
+
+    spotlightPriorityEnabled = AF.Contains(frame_priorities, "^CellSpotlightUnitFrame$")
+    quickAssistPriorityEnabled = AF.Contains(frame_priorities, "^CellQuickAssistUnitFrame$")
 end
 
 function Cell.GetUnitFramesForLGF(unit, frames, priorities)
@@ -2093,7 +2082,7 @@ function Cell.GetUnitFramesForLGF(unit, frames, priorities)
 
     if not modified_priorities[priorities] then
         modified_priorities[priorities] = true
-        for i, p in ipairs(frame_priorities) do
+        for i, p in next, frame_priorities do
             priorities[i] = p
         end
     end
@@ -2348,91 +2337,5 @@ function F.IsInRange(unit, check)
         end
 
         return true
-    end
-end
-
--------------------------------------------------
--- RangeCheck debug
--------------------------------------------------
-local debug = CreateFrame("Frame", "CellRangeCheckDebug", CellParent, "BackdropTemplate")
-debug:SetBackdrop({bgFile = Cell.vars.whiteTexture})
-debug:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
-debug:SetBackdropBorderColor(0, 0, 0, 1)
-debug:SetPoint("LEFT", 300, 0)
-debug:Hide()
-
-debug.text = debug:CreateFontString(nil, "OVERLAY")
-debug.text:SetFont(GameFontNormal:GetFont(), 13, "")
-debug.text:SetShadowColor(0, 0, 0)
-debug.text:SetShadowOffset(1, -1)
-debug.text:SetJustifyH("LEFT")
-debug.text:SetSpacing(5)
-debug.text:SetPoint("LEFT", 5, 0)
-
-local function GetResult1()
-    local inRange, checked = UnitInRange("target")
-
-    return "UnitID: " .. (F.GetTargetUnitID("target") or "target") ..
-        "\n|cffffff00F.IsInRange:|r " .. (F.IsInRange("target") and "true" or "false") ..
-        "\nUnitInRange: " .. (checked and "checked" or "unchecked") .. " " .. (inRange and "true" or "false") ..
-        "\nUnitIsVisible: " .. (UnitIsVisible("target") and "true" or "false") ..
-        "\n\nUnitCanAssist: " .. (UnitCanAssist("player", "target") and "true" or "false") ..
-        "\nUnitCanCooperate: " .. (UnitCanCooperate("player", "target") and "true" or "false") ..
-        "\nUnitCanAttack: " .. (UnitCanAttack("player", "target") and "true" or "false") ..
-        "\n\nUnitIsConnected: " .. (UnitIsConnected("target") and "true" or "false") ..
-        "\nUnitInSamePhase: " .. (UnitInSamePhase("target") and "true" or "false") ..
-        "\nUnitIsDead: " .. (UnitIsDead("target") and "true" or "false") ..
-        "\n\nspell_friend: " .. (spell_friend and (spell_friend .. " " .. (UnitInSpellRange(spell_friend, "target") and "true" or "false")) or "none") ..
-        "\nspell_dead: " .. (spell_dead and (spell_dead .. " " .. (UnitInSpellRange(spell_dead, "target") and "true" or "false")) or "none") ..
-        "\nspell_pet: " .. (spell_pet and (spell_pet .. " " .. (UnitInSpellRange(spell_pet, "target") and "true" or "false")) or "none") ..
-        "\nspell_harm: " .. (spell_harm and (spell_harm .. " " .. (UnitInSpellRange(spell_harm, "target") and "true" or "false")) or "none")
-end
-
-local function GetResult2()
-    if UnitCanAttack("player", "target") then
-        return "IsItemInRange: " .. (IsItemInRange(harmItems[playerClass], "target") and "true" or "false") ..
-            "\nCheckInteractDistance(28y): " .. (CheckInteractDistance("target", 4) and "true" or "false")
-    else
-        return "IsItemInRange: " .. (InCombatLockdown() and "notAvailable" or (IsItemInRange(harmItems[playerClass], "target") and "true" or "false")) ..
-            "\nCheckInteractDistance(28y): " .. (InCombatLockdown() and "notAvailable" or (CheckInteractDistance("target", 4) and "true" or "false"))
-    end
-end
-
-debug:SetScript("OnUpdate", function(self, elapsed)
-    self.elapsed = (self.elapsed or 0) + elapsed
-    if self.elapsed >= 0.25 then
-        self.elapsed = 0
-        local result = GetResult1() .. "\n\n" .. GetResult2()
-        result = string.gsub(result, "none", "|cffabababnone|r")
-        result = string.gsub(result, "true", "|cff00ff00true|r")
-        result = string.gsub(result, "false", "|cffff0000false|r")
-        result = string.gsub(result, " checked", " |cff00ff00checked|r")
-        result = string.gsub(result, "unchecked", "|cffff0000unchecked|r")
-
-        debug.text:SetText("|cffff0066Cell Range Check (Target)|r\n\n" .. result)
-
-        debug:SetSize(debug.text:GetStringWidth() + 10, debug.text:GetStringHeight() + 20)
-    end
-end)
-
-debug:SetScript("OnEvent", function()
-    if not UnitExists("target") then
-        debug:Hide()
-        return
-    end
-
-    debug:Show()
-end)
-
-SLASH_CELLRC1 = "/cellrc"
-function SlashCmdList.CELLRC()
-    if debug:IsEventRegistered("PLAYER_TARGET_CHANGED") then
-        debug:UnregisterEvent("PLAYER_TARGET_CHANGED")
-        debug:Hide()
-    else
-        debug:RegisterEvent("PLAYER_TARGET_CHANGED")
-        if UnitExists("target") then
-            debug:Show()
-        end
     end
 end

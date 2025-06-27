@@ -1,11 +1,12 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local F = Cell.funcs
 local B = Cell.bFuncs
 local P = Cell.pixelPerfectFuncs
 
-local soloFrame = CreateFrame("Frame", "CellSoloFrame", Cell.frames.mainFrame, "SecureFrameTemplate")
+local soloFrame = CreateFrame("Frame", "CellSoloFrame", CellMainFrame, "SecureFrameTemplate")
 Cell.frames.soloFrame = soloFrame
-soloFrame:SetAllPoints(Cell.frames.mainFrame)
+soloFrame:SetAllPoints(CellMainFrame)
 
 local playerButton = CreateFrame("Button", soloFrame:GetName().."Player", soloFrame, "CellUnitButtonTemplate")
 -- playerButton.type = "main" -- layout setup

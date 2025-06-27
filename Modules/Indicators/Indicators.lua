@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 ---@type CellFuncs
 local F = Cell.funcs
@@ -12,9 +13,9 @@ local LCG = LibStub("LibCustomGlow-1.0")
 
 CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS = false
 
-local indicatorsTab = Cell.CreateFrame("CellOptionsFrame_IndicatorsTab", Cell.frames.optionsFrame, nil, nil, true)
+local indicatorsTab = Cell.CreateFrame("CellOptionsFrame_IndicatorsTab", CellOptionsFrame, nil, nil, true)
 Cell.frames.indicatorsTab = indicatorsTab
-indicatorsTab:SetAllPoints(Cell.frames.optionsFrame)
+indicatorsTab:SetAllPoints(CellOptionsFrame)
 
 local selected, currentLayout, currentLayoutTable
 local LoadIndicatorList

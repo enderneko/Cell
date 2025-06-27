@@ -174,8 +174,6 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
         if type(CellDBBackup) ~= "table" then CellDBBackup = {} end
 
-        if type(CellDB["optionsFramePosition"]) ~= "table" then CellDB["optionsFramePosition"] = {} end
-
         if type(CellDB["indicatorPreview"]) ~= "table" then
             CellDB["indicatorPreview"] = {
                 ["scale"] = 2,

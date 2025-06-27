@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
@@ -6,10 +7,10 @@ local A = Cell.animations
 
 local marks, worldMarks
 
-local marksFrame = CreateFrame("Frame", "CellRaidMarksFrame", Cell.frames.mainFrame, "SecureFrameTemplate,BackdropTemplate")
+local marksFrame = CreateFrame("Frame", "CellRaidMarksFrame", CellMainFrame, "SecureFrameTemplate,BackdropTemplate")
 Cell.frames.raidMarksFrame = marksFrame
 marksFrame:SetSize(196, 40)
-PixelUtil.SetPoint(marksFrame, "BOTTOMRIGHT", CellParent, "CENTER", -1, 1)
+PixelUtil.SetPoint(marksFrame, "BOTTOMRIGHT", AFParent, "CENTER", -1, 1)
 marksFrame:SetClampedToScreen(true)
 marksFrame:SetMovable(true)
 marksFrame:RegisterForDrag("LeftButton")

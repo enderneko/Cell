@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
@@ -6,9 +7,9 @@ local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")
 
-local debuffsTab = Cell.CreateFrame("CellOptionsFrame_RaidDebuffsTab", Cell.frames.optionsFrame, nil, nil, true)
+local debuffsTab = Cell.CreateFrame("CellOptionsFrame_RaidDebuffsTab", CellOptionsFrame, nil, nil, true)
 Cell.frames.raidDebuffsTab = debuffsTab
-debuffsTab:SetAllPoints(Cell.frames.optionsFrame)
+debuffsTab:SetAllPoints(CellOptionsFrame)
 debuffsTab:Hide()
 
 -- vars

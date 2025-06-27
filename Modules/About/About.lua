@@ -1,11 +1,12 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
-local aboutTab = Cell.CreateFrame("CellOptionsFrame_AboutTab", Cell.frames.optionsFrame, nil, nil, true)
+local aboutTab = Cell.CreateFrame("CellOptionsFrame_AboutTab", CellOptionsFrame, nil, nil, true)
 Cell.frames.aboutTab = aboutTab
-aboutTab:SetAllPoints(Cell.frames.optionsFrame)
+aboutTab:SetAllPoints(CellOptionsFrame)
 aboutTab:Hide()
 
 local authorText, specialThanksText, supportersText1, supportersText2

@@ -1,11 +1,12 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local F = Cell.funcs
 local B = Cell.bFuncs
 local P = Cell.pixelPerfectFuncs
 
-local partyFrame = CreateFrame("Frame", "CellPartyFrame", Cell.frames.mainFrame, "SecureFrameTemplate")
+local partyFrame = CreateFrame("Frame", "CellPartyFrame", CellMainFrame, "SecureFrameTemplate")
 Cell.frames.partyFrame = partyFrame
-partyFrame:SetAllPoints(Cell.frames.mainFrame)
+partyFrame:SetAllPoints(CellMainFrame)
 
 local header = CreateFrame("Frame", "CellPartyFrameHeader", partyFrame, "SecureGroupHeaderTemplate")
 header:SetAttribute("template", "CellUnitButtonTemplate")
@@ -275,7 +276,7 @@ Cell.RegisterCallback("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_Upda
 -- end
 -- Cell.RegisterCallback("UpdateVisibility", "PartyFrame_UpdateVisibility", PartyFrame_UpdateVisibility)
 
--- local f = CreateFrame("Frame", nil, CellParent, "SecureFrameTemplate")
+-- local f = CreateFrame("Frame", nil, AFParent, "SecureFrameTemplate")
 -- RegisterAttributeDriver(f, "state-group", "[@raid1,exists] raid;[@party1,exists] party; solo")
 -- SecureHandlerWrapScript(f, "OnAttributeChanged", f, [[
 --     print(name, value)

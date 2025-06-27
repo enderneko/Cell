@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
@@ -9,19 +10,19 @@ local LoadList
 local customs = {}
 
 local function CreateNicknameBlacklistFrame()
-    nicknameBlacklistFrame = CreateFrame("Frame", "CellOptionsFrame_Nicknames", Cell.frames.generalTab, "BackdropTemplate")
+    nicknameBlacklistFrame = CreateFrame("Frame", "CellOptionsFrame_Nicknames", CellOptionsFrame_GeneralTab, "BackdropTemplate")
     Cell.StylizeFrame(nicknameBlacklistFrame, nil, Cell.GetAccentColorTable())
-    nicknameBlacklistFrame:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)
+    nicknameBlacklistFrame:SetFrameLevel(CellOptionsFrame_GeneralTab:GetFrameLevel() + 50)
     nicknameBlacklistFrame:Hide()
 
-    nicknameBlacklistFrame:SetPoint("LEFT", Cell.frames.generalTab.customNicknamesBtn, "RIGHT", 5, 0)
+    nicknameBlacklistFrame:SetPoint("LEFT", CellOptionsFrame_GeneralTab.customNicknamesBtn, "RIGHT", 5, 0)
     nicknameBlacklistFrame:SetPoint("BOTTOMRIGHT", -5, 5)
     nicknameBlacklistFrame:SetHeight(412)
 
     nicknameBlacklistFrame:SetScript("OnHide", function()
         nicknameBlacklistFrame:Hide()
-        Cell.frames.generalTab.mask:Hide()
-        Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 2)
+        CellOptionsFrame_GeneralTab.mask:Hide()
+        CellOptionsFrame_GeneralTab.customNicknamesBtn:SetFrameLevel(CellOptionsFrame_GeneralTab:GetFrameLevel() + 2)
     end)
 
     -- button
@@ -109,11 +110,11 @@ function F.ShowNicknameBlacklist()
 
     if nicknameBlacklistFrame:IsShown() then
         nicknameBlacklistFrame:Hide()
-        Cell.frames.generalTab.nicknameBlacklistBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 2)
+        CellOptionsFrame_GeneralTab.nicknameBlacklistBtn:SetFrameLevel(CellOptionsFrame_GeneralTab:GetFrameLevel() + 2)
     else
         nicknameBlacklistFrame:Show()
-        Cell.frames.generalTab.nicknameBlacklistBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)
-        Cell.frames.generalTab.mask:Show()
+        CellOptionsFrame_GeneralTab.nicknameBlacklistBtn:SetFrameLevel(CellOptionsFrame_GeneralTab:GetFrameLevel() + 50)
+        CellOptionsFrame_GeneralTab.mask:Show()
         LoadList()
     end
 end

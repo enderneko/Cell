@@ -1,12 +1,13 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 ---@class CellFuncs
 local F = Cell.funcs
 local B = Cell.bFuncs
 local P = Cell.pixelPerfectFuncs
 
-local raidFrame = CreateFrame("Frame", "CellRaidFrame", Cell.frames.mainFrame, "SecureHandlerAttributeTemplate")
+local raidFrame = CreateFrame("Frame", "CellRaidFrame", CellMainFrame, "SecureHandlerAttributeTemplate")
 Cell.frames.raidFrame = raidFrame
-raidFrame:SetAllPoints(Cell.frames.mainFrame)
+raidFrame:SetAllPoints(CellMainFrame)
 
 local npcFrameAnchor = CreateFrame("Frame", "CellNPCFrameAnchor", raidFrame, "SecureFrameTemplate,BackDropTemplate")
 raidFrame:SetFrameRef("npcAnchor", npcFrameAnchor)

@@ -21,7 +21,7 @@ local tooltip = CreateFrame("GameTooltip", "CellClickCastingTips", CellMainFrame
 tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
 tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
 tooltip:SetBackdropBorderColor(Cell.GetAccentColorRGB())
-tooltip:SetOwner(CellParent, "ANCHOR_NONE")
+tooltip:SetOwner(AFParent, "ANCHOR_NONE")
 
 local mouseKeyIDs = {
     ["Left"] = 1,

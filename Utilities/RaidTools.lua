@@ -1,8 +1,11 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 -------------------------------------------------
 -- raid tools
@@ -350,7 +353,7 @@ local function ShowUtilitySettings(which)
     if which == "raidTools" then
         if not init then
             CreateRTPane()
-            F.ApplyCombatProtectionToFrame(rtPane, -4, 4, 4, -4)
+            AF.ApplyCombatProtectionToFrame(rtPane, -4, 4, 4, -4)
         end
 
         rtPane:Show()

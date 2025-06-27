@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
@@ -17,12 +18,12 @@ local NONE = strlower(_G.NONE)
 -------------------------------------------------
 -- spotlightFrame
 -------------------------------------------------
-local spotlightFrame = CreateFrame("Frame", "CellSpotlightFrame", Cell.frames.mainFrame, "SecureFrameTemplate")
+local spotlightFrame = CreateFrame("Frame", "CellSpotlightFrame", CellMainFrame, "SecureFrameTemplate")
 Cell.frames.spotlightFrame = spotlightFrame
 
 local anchorFrame = CreateFrame("Frame", "CellSpotlightAnchorFrame", spotlightFrame)
 Cell.frames.spotlightFrameAnchor = anchorFrame
-PixelUtil.SetPoint(anchorFrame, "TOPLEFT", CellParent, "CENTER", 1, -1)
+PixelUtil.SetPoint(anchorFrame, "TOPLEFT", AFParent, "CENTER", 1, -1)
 anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
 
@@ -95,7 +96,7 @@ function targetFrame:StartMoving()
     local scale = targetFrame:GetEffectiveScale()
     targetFrame:SetScript("OnUpdate", function()
         local x, y = GetCursorPosition()
-        targetFrame:SetPoint("BOTTOMLEFT", CellParent, x/scale, y/scale)
+        targetFrame:SetPoint("BOTTOMLEFT", AFParent, x/scale, y/scale)
         targetFrame:SetWidth(targetFrame.label:GetWidth() + 10)
     end)
 end
@@ -968,7 +969,7 @@ local function UpdateLayout(layout, which)
     if not P.LoadPosition(anchorFrame, layout["spotlight"]["position"]) then
         P.ClearPoints(anchorFrame)
         -- no position, use default
-        anchorFrame:SetPoint("TOPLEFT", CellParent, "CENTER")
+        anchorFrame:SetPoint("TOPLEFT", AFParent, "CENTER")
     end
 end
 Cell.RegisterCallback("UpdateLayout", "SpotlightFrame_UpdateLayout", UpdateLayout)

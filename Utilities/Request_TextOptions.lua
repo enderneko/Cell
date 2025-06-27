@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
@@ -124,7 +125,7 @@ end
 
 local function CreateTextOptionsFrame()
     textOptionsFrame = Cell.CreateFrame("CellOptionsFrame_TextOptions", textOptionsFrame, 127, 325)
-    textOptionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.optionsFrame, "BOTTOMRIGHT", 5, 0)
+    textOptionsFrame:SetPoint("BOTTOMLEFT", CellOptionsFrame, "BOTTOMRIGHT", 5, 0)
 
     -- textType
     textType = Cell.CreateDropdown(textOptionsFrame, 117)

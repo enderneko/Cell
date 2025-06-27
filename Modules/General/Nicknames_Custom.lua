@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
@@ -9,19 +10,19 @@ local LoadList
 local customs = {}
 
 local function CreateCustomNicknamesFrame()
-    customNicknamesFrame = CreateFrame("Frame", "CellOptionsFrame_Nicknames", Cell.frames.generalTab, "BackdropTemplate")
+    customNicknamesFrame = CreateFrame("Frame", "CellOptionsFrame_Nicknames", CellOptionsFrame_GeneralTab, "BackdropTemplate")
     Cell.StylizeFrame(customNicknamesFrame, nil, Cell.GetAccentColorTable())
-    customNicknamesFrame:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)
+    customNicknamesFrame:SetFrameLevel(CellOptionsFrame_GeneralTab:GetFrameLevel() + 50)
     customNicknamesFrame:Hide()
 
-    customNicknamesFrame:SetPoint("LEFT", Cell.frames.generalTab.customNicknamesBtn, "RIGHT", 5, 0)
+    customNicknamesFrame:SetPoint("LEFT", CellOptionsFrame_GeneralTab.customNicknamesBtn, "RIGHT", 5, 0)
     customNicknamesFrame:SetPoint("BOTTOMRIGHT", -5, 5)
     customNicknamesFrame:SetHeight(425)
 
     customNicknamesFrame:SetScript("OnHide", function()
         customNicknamesFrame:Hide()
-        Cell.frames.generalTab.mask:Hide()
-        Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 2)
+        CellOptionsFrame_GeneralTab.mask:Hide()
+        CellOptionsFrame_GeneralTab.customNicknamesBtn:SetFrameLevel(CellOptionsFrame_GeneralTab:GetFrameLevel() + 2)
         newItem:Hide()
     end)
 
@@ -306,11 +307,11 @@ function F.ShowCustomNicknames()
 
     if customNicknamesFrame:IsShown() then
         customNicknamesFrame:Hide()
-        Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 2)
+        CellOptionsFrame_GeneralTab.customNicknamesBtn:SetFrameLevel(CellOptionsFrame_GeneralTab:GetFrameLevel() + 2)
     else
         customNicknamesFrame:Show()
-        Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)
-        Cell.frames.generalTab.mask:Show()
+        CellOptionsFrame_GeneralTab.customNicknamesBtn:SetFrameLevel(CellOptionsFrame_GeneralTab:GetFrameLevel() + 50)
+        CellOptionsFrame_GeneralTab.mask:Show()
         LoadData()
     end
 end

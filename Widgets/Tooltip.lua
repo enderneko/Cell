@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
@@ -6,11 +7,11 @@ local P = Cell.pixelPerfectFuncs
 -- Tooltip
 -----------------------------------------
 local function CreateTooltip(name, hasIcon)
-    local tooltip = CreateFrame("GameTooltip", name, CellParent, "CellTooltipTemplate,BackdropTemplate")
+    local tooltip = CreateFrame("GameTooltip", name, AFParent, "CellTooltipTemplate,BackdropTemplate")
     tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = 1})
     tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
     tooltip:SetBackdropBorderColor(Cell.GetAccentColorRGB())
-    tooltip:SetOwner(CellParent, "ANCHOR_NONE")
+    tooltip:SetOwner(AFParent, "ANCHOR_NONE")
 
     if hasIcon then
         local iconBG = tooltip:CreateTexture(nil, "BACKGROUND")
@@ -91,8 +92,8 @@ function F.ShowTooltips(anchor, tooltipType, unit, aura, filter)
     if CellDB["general"]["tooltipsPosition"][2] == "Default" then
         GameTooltip_SetDefaultAnchor(GameTooltip, anchor)
     elseif CellDB["general"]["tooltipsPosition"][2] == "Cell" then
-        GameTooltip:SetOwner(Cell.frames.mainFrame, "ANCHOR_NONE")
-        GameTooltip:SetPoint(CellDB["general"]["tooltipsPosition"][1], Cell.frames.mainFrame, CellDB["general"]["tooltipsPosition"][3], CellDB["general"]["tooltipsPosition"][4], CellDB["general"]["tooltipsPosition"][5])
+        GameTooltip:SetOwner(CellMainFrame, "ANCHOR_NONE")
+        GameTooltip:SetPoint(CellDB["general"]["tooltipsPosition"][1], CellMainFrame, CellDB["general"]["tooltipsPosition"][3], CellDB["general"]["tooltipsPosition"][4], CellDB["general"]["tooltipsPosition"][5])
     elseif CellDB["general"]["tooltipsPosition"][2] == "Unit Button" then
         GameTooltip:SetOwner(anchor, "ANCHOR_NONE")
         GameTooltip:SetPoint(CellDB["general"]["tooltipsPosition"][1], anchor, CellDB["general"]["tooltipsPosition"][3], CellDB["general"]["tooltipsPosition"][4], CellDB["general"]["tooltipsPosition"][5])

@@ -1,10 +1,13 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local U = Cell.uFuncs
 local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 -- ----------------------------------------------------------------------- --
 --                                 defaults                                --
@@ -3578,8 +3581,8 @@ local function ShowUtilitySettings(which)
             CreateSpellsPane()
             CreateAutoSwitchFrame()
 
-            F.ApplyCombatProtectionToFrame(quickAssistTab)
-            F.ApplyCombatProtectionToFrame(autoSwitchFrame)
+            AF.ApplyCombatProtectionToFrame(quickAssistTab)
+            AF.ApplyCombatProtectionToFrame(autoSwitchFrame)
         end
 
         if not init then

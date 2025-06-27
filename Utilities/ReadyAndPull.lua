@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
@@ -6,10 +7,10 @@ local A = Cell.animations
 
 local readyBtn, pullBtn
 
-local buttonsFrame = CreateFrame("Frame", "CellReadyAndPullFrame", Cell.frames.mainFrame, "SecureFrameTemplate,BackdropTemplate")
+local buttonsFrame = CreateFrame("Frame", "CellReadyAndPullFrame", CellMainFrame, "SecureFrameTemplate,BackdropTemplate")
 Cell.frames.readyAndPullFrame = buttonsFrame
 P.Size(buttonsFrame, 60, 55)
-PixelUtil.SetPoint(buttonsFrame, "TOPRIGHT", CellParent, "CENTER", -1, -1)
+PixelUtil.SetPoint(buttonsFrame, "TOPRIGHT", AFParent, "CENTER", -1, -1)
 buttonsFrame:SetClampedToScreen(true)
 buttonsFrame:SetMovable(true)
 buttonsFrame:RegisterForDrag("LeftButton")

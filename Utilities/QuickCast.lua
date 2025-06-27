@@ -1,9 +1,12 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local U = Cell.uFuncs
 local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
@@ -740,7 +743,7 @@ local function ShowUtilitySettings(which)
             CreateGlowBuffsPane()
             CreateGlowCastsPane()
 
-            F.ApplyCombatProtectionToFrame(qcPane, -4, 4, 4, -4)
+            AF.ApplyCombatProtectionToFrame(qcPane, -4, 4, 4, -4)
 
             qcPane:SetScript("OnShow", function()
                 if quickCastTable["enabled"] then
@@ -799,8 +802,8 @@ local glowBuffs, glowCasts = {}, {}
 local outerBuff, innerBuff
 local borderSize, glowBuffsColor, glowCastsColor
 
-local quickCastFrame = CreateFrame("Frame", "CellQuickCastFrame", Cell.frames.mainFrame, "SecureHandlerAttributeTemplate")
-PixelUtil.SetPoint(quickCastFrame, "TOPLEFT", CellParent, "CENTER", -1, -1)
+local quickCastFrame = CreateFrame("Frame", "CellQuickCastFrame", CellMainFrame, "SecureHandlerAttributeTemplate")
+PixelUtil.SetPoint(quickCastFrame, "TOPLEFT", AFParent, "CENTER", -1, -1)
 quickCastFrame:SetSize(16, 16)
 quickCastFrame:SetClampedToScreen(true)
 quickCastFrame:SetMovable(true)
@@ -837,7 +840,7 @@ function targetFrame:StartMoving()
     local scale = targetFrame:GetEffectiveScale()
     targetFrame:SetScript("OnUpdate", function()
         local x, y = GetCursorPosition()
-        targetFrame:SetPoint("BOTTOMLEFT", CellParent, x/scale, y/scale)
+        targetFrame:SetPoint("BOTTOMLEFT", AFParent, x/scale, y/scale)
         targetFrame:SetWidth(targetFrame.label:GetWidth() + 10)
     end)
 end

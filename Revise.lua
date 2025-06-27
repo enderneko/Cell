@@ -3411,6 +3411,17 @@ function F.Revise()
         F.TInsertIfNotExists(CellDB["targetedSpellsList"], 466190)  -- 雷霆重拳
     end
 
+    -- r254-release
+    if CellDB["revise"] and dbRevision < 254 then
+        if type(CellDB["general"]["framePriority"][1]) ~= "string" then
+            CellDB["general"]["framePriority"] = {
+                "^CellNormalUnitFrame$",
+                "^CellPlaceholder$",
+                "^CellPlaceholder$",
+            }
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

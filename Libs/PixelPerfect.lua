@@ -69,7 +69,7 @@ function P.PixelPerfectPoint(frame)
     local top = frame:GetTop()
 
     frame:ClearAllPoints()
-    frame:SetPoint("TOPLEFT", CellParent, "BOTTOMLEFT", math.floor(left + 0.5), math.floor(top + 0.5))
+    frame:SetPoint("TOPLEFT", AFParent, "BOTTOMLEFT", math.floor(left + 0.5), math.floor(top + 0.5))
 end
 
 --------------------------------------------
@@ -153,7 +153,7 @@ end
 local GetNearestPixelSize = PixelUtil.GetNearestPixelSize
 
 function P.Scale(desiredPixels)
-    return GetNearestPixelSize(desiredPixels, CellParent:GetEffectiveScale())
+    return GetNearestPixelSize(desiredPixels, AFParent:GetEffectiveScale())
 end
 
 function P.Size(frame, width, height)
@@ -296,20 +296,20 @@ function P.LoadPosition(frame, positionTable)
         return true
     elseif #positionTable == 3 then
         P.ClearPoints(frame)
-        frame:SetPoint(positionTable[1], CellParent, positionTable[2], positionTable[3])
+        frame:SetPoint(positionTable[1], AFParent, positionTable[2], positionTable[3])
         return true
     end
 end
 
 function P.CalcPoint(frame)
     local point, x, y
-    local centerX, centerY = CellParent:GetCenter()
-    local width = CellParent:GetRight()
+    local centerX, centerY = AFParent:GetCenter()
+    local width = AFParent:GetRight()
     x, y = frame:GetCenter()
 
     if y >= centerY then
         point = "TOP"
-            y = -(CellParent:GetTop() - frame:GetTop())
+            y = -(AFParent:GetTop() - frame:GetTop())
     else
         point = "BOTTOM"
             y = frame:GetBottom()
@@ -332,50 +332,3 @@ function P.CalcPoint(frame)
 
     return point, x, y
 end
-
----------------------------------------------------------------------
--- pixel perfect (ElvUI)
----------------------------------------------------------------------
-local function CheckPixelSnap(frame, snap)
-    if (frame and not frame:IsForbidden()) and frame.PixelSnapDisabled and snap then
-        frame.PixelSnapDisabled = nil
-    end
-end
-
-local function DisablePixelSnap(frame)
-    if (frame and not frame:IsForbidden()) and not frame.PixelSnapDisabled then
-        if frame.SetSnapToPixelGrid then
-            frame:SetSnapToPixelGrid(false)
-            frame:SetTexelSnappingBias(0)
-            frame.PixelSnapDisabled = true
-        elseif frame.GetStatusBarTexture then
-            local texture = frame:GetStatusBarTexture()
-            if type(texture) == "table" and texture.SetSnapToPixelGrid then
-                texture:SetSnapToPixelGrid(false)
-                texture:SetTexelSnappingBias(0)
-                frame.PixelSnapDisabled = true
-            end
-        end
-    end
-end
-
-local function UpdateMetatable(obj)
-    local t = getmetatable(obj).__index
-
-    if not obj.DisabledPixelSnap and (t.SetSnapToPixelGrid or t.SetStatusBarTexture or t.SetColorTexture or t.SetVertexColor or t.CreateTexture or t.SetTexCoord or t.SetTexture) then
-        if t.SetSnapToPixelGrid then hooksecurefunc(t, "SetSnapToPixelGrid", CheckPixelSnap) end
-        if t.SetStatusBarTexture then hooksecurefunc(t, "SetStatusBarTexture", DisablePixelSnap) end
-        if t.SetColorTexture then hooksecurefunc(t, "SetColorTexture", DisablePixelSnap) end
-        if t.SetVertexColor then hooksecurefunc(t, "SetVertexColor", DisablePixelSnap) end
-        if t.CreateTexture then hooksecurefunc(t, "CreateTexture", DisablePixelSnap) end
-        if t.SetTexCoord then hooksecurefunc(t, "SetTexCoord", DisablePixelSnap) end
-        if t.SetTexture then hooksecurefunc(t, "SetTexture", DisablePixelSnap) end
-
-        t.DisabledPixelSnap = true
-    end
-end
-
-local obj = CreateFrame("Frame")
-UpdateMetatable(CreateFrame("StatusBar"))
-UpdateMetatable(obj:CreateTexture())
-UpdateMetatable(obj:CreateMaskTexture())

@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 
@@ -378,7 +379,7 @@ end)
 
 local function ShowReceivingFrame(type, playerName, name1, name2)
     if not Cell.frames.receivingFrame then
-        Cell.frames.receivingFrame = Cell.CreateReceivingFrame(Cell.frames.mainFrame)
+        Cell.frames.receivingFrame = Cell.CreateReceivingFrame(CellMainFrame)
         Cell.frames.receivingFrame:SetOnCancel(function(b)
             isRequesting = false
         end)

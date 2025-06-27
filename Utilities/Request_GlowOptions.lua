@@ -1,4 +1,5 @@
-local _, Cell = ...
+---@class Cell
+local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
@@ -218,8 +219,8 @@ local function SliderValueChanged(index, value, refresh)
 end
 
 local function CreateGlowOptionsFrame()
-    glowOptionsFrame = Cell.CreateFrame("CellOptionsFrame_GlowOptions", Cell.frames.optionsFrame, 127, 371)
-    glowOptionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.optionsFrame, "BOTTOMRIGHT", 5, 0)
+    glowOptionsFrame = Cell.CreateFrame("CellOptionsFrame_GlowOptions", CellOptionsFrame, 127, 371)
+    glowOptionsFrame:SetPoint("BOTTOMLEFT", CellOptionsFrame, "BOTTOMRIGHT", 5, 0)
 
     local glowTypeText = glowOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     glowTypeText:SetText(L["Glow Type"])
