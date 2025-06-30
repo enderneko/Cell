@@ -41,7 +41,10 @@ end
 -------------------------------------------------
 local generalBtn, appearanceBtn, clickCastingsBtn, aboutBtn, layoutsBtn, indicatorsBtn, debuffsBtn, utilitiesBtn, closeBtn
 
-local function CreateTabButtons()
+local function InitOptionsFrame()
+    optionsFrame:UpdatePixels()
+    AF.ReAnchorRegion(optionsFrame, "TOPLEFT")
+
     -- row 1
     layoutsBtn = AF.CreateButton(optionsFrame, L["Layouts"], "Cell_hover", 110, 20, nil, nil, nil, "AF_FONT_TITLE")
     indicatorsBtn = AF.CreateButton(optionsFrame, L["Indicators"], "Cell_hover", 110, 20, nil, nil, nil, "AF_FONT_TITLE")
@@ -67,6 +70,12 @@ local function CreateTabButtons()
     AF.SetPoint(aboutBtn, "BOTTOMLEFT", clickCastingsBtn, "BOTTOMRIGHT", -1, 0)
     AF.SetPoint(aboutBtn, "BOTTOMRIGHT", closeBtn, "BOTTOMLEFT", 1, 0)
     AF.SetPoint(closeBtn, "BOTTOMRIGHT", utilitiesBtn, "TOPRIGHT", 0, -1)
+
+    -- frame shadow
+    AF.ShowNormalGlow(optionsFrame, "shadow", 2)
+    AF.ClearPoints(optionsFrame.normalGlow)
+    AF.SetPoint(optionsFrame.normalGlow, "TOPLEFT", generalBtn, -2, 2)
+    AF.SetPoint(optionsFrame.normalGlow, "BOTTOMRIGHT", f, 2, -2)
 
     -- button group
     local buttons = {
@@ -146,9 +155,7 @@ local init
 local function Init()
     if not init then
         init = true
-        optionsFrame:UpdatePixels()
-        AF.ReAnchorRegion(optionsFrame, "TOPLEFT")
-        CreateTabButtons()
+        InitOptionsFrame()
         F.CreateUtilityList(utilitiesBtn)
     end
 end
