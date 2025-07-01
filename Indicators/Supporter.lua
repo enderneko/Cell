@@ -177,7 +177,7 @@ end
 --     if b then
 --         local fs = b.indicators.nameText.name
 --         -- stop rainbow
---         fs.rainbow = nil
+--         fs._rainbow = nil
 --         if fs.updater then
 --             fs.updater:SetScript("OnUpdate", nil)
 --             fs:GetParent():UpdateName()

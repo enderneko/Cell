@@ -51,7 +51,7 @@ local function CreateDRPane()
 
         U.HideGlowOptions()
         U.HideTextOptions()
-        Cell.StopRainbowText(drTypeOptionsBtn:GetFontString())
+        AF.RainbowText_Stop(drTypeOptionsBtn:GetFontString())
     end)
     drEnabledCB:SetPoint("TOPLEFT", drPane, "TOPLEFT", 5, -80)
     ---------------------------------------------------------------------------------
@@ -226,7 +226,7 @@ local function CreateDRPane()
             ["onClick"] = function()
                 U.HideGlowOptions()
                 U.HideTextOptions()
-                Cell.StopRainbowText(drTypeOptionsBtn:GetFontString())
+                AF.RainbowText_Stop(drTypeOptionsBtn:GetFontString())
                 drTypeOptionsBtn:SetText(L["Text Options"])
                 CellDB["dispelRequest"]["type"] = "text"
                 drType = "text"
@@ -239,7 +239,7 @@ local function CreateDRPane()
             ["onClick"] = function()
                 U.HideGlowOptions()
                 U.HideTextOptions()
-                Cell.StopRainbowText(drTypeOptionsBtn:GetFontString())
+                AF.RainbowText_Stop(drTypeOptionsBtn:GetFontString())
                 drTypeOptionsBtn:SetText(L["Glow Options"])
                 CellDB["dispelRequest"]["type"] = "glow"
                 drType = "glow"
@@ -259,10 +259,10 @@ local function CreateDRPane()
     drTypeOptionsBtn:SetPoint("TOPLEFT", drTypeDD, "BOTTOMLEFT", 0, -15)
     drTypeOptionsBtn:SetScript("OnClick", function()
         local fs = drTypeOptionsBtn:GetFontString()
-        if fs.rainbow then
-            Cell.StopRainbowText(fs)
+        if fs._rainbow then
+            AF.RainbowText_Stop(fs)
         else
-            Cell.StartRainbowText(fs)
+            AF.RainbowText_Start(fs)
         end
 
         if drType == "text" then
@@ -272,7 +272,7 @@ local function CreateDRPane()
         end
     end)
     drTypeOptionsBtn:SetScript("OnHide", function()
-        Cell.StopRainbowText(drTypeOptionsBtn:GetFontString())
+        AF.RainbowText_Stop(drTypeOptionsBtn:GetFontString())
     end)
     Cell.RegisterForCloseDropdown(drTypeOptionsBtn)
     ---------------------------------------------------------------------------------

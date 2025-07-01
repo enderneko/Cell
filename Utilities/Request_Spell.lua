@@ -20,7 +20,7 @@ local srSelectedSpell, canEdit, srType
 local function ShowSpellOptions(index)
     U.HideGlowOptions()
     U.HideIconOptions()
-    Cell.StopRainbowText(srTypeOptionsBtn:GetFontString())
+    AF.RainbowText_Stop(srTypeOptionsBtn:GetFontString())
 
     srSelectedSpell = index
 
@@ -83,7 +83,7 @@ end
 local function HideSpellOptions()
     U.HideGlowOptions()
     U.HideIconOptions()
-    Cell.StopRainbowText(srTypeOptionsBtn:GetFontString())
+    AF.RainbowText_Stop(srTypeOptionsBtn:GetFontString())
 
     srSelectedSpell = nil
     canEdit = nil
@@ -376,7 +376,7 @@ local function CreateSRPane()
             ["onClick"] = function()
                 U.HideGlowOptions()
                 U.HideIconOptions()
-                Cell.StopRainbowText(srTypeOptionsBtn:GetFontString())
+                AF.RainbowText_Stop(srTypeOptionsBtn:GetFontString())
                 srTypeOptionsBtn:SetText(L["Icon Options"])
                 CellDB["spellRequest"]["spells"][srSelectedSpell]["type"] = "icon"
                 srType = "icon"
@@ -390,7 +390,7 @@ local function CreateSRPane()
             ["onClick"] = function()
                 U.HideGlowOptions()
                 U.HideIconOptions()
-                Cell.StopRainbowText(srTypeOptionsBtn:GetFontString())
+                AF.RainbowText_Stop(srTypeOptionsBtn:GetFontString())
                 srTypeOptionsBtn:SetText(L["Glow Options"])
                 CellDB["spellRequest"]["spells"][srSelectedSpell]["type"] = "glow"
                 srType = "glow"
@@ -411,10 +411,10 @@ local function CreateSRPane()
     srTypeOptionsBtn:SetPoint("TOPLEFT", srTypeDD, "TOPRIGHT", 7, 0)
     srTypeOptionsBtn:SetScript("OnClick", function()
         local fs = srTypeOptionsBtn:GetFontString()
-        if fs.rainbow then
-            Cell.StopRainbowText(fs)
+        if fs._rainbow then
+            AF.RainbowText_Stop(fs)
         else
-            Cell.StartRainbowText(fs)
+            AF.RainbowText_Start(fs)
         end
 
         if srType == "icon" then
@@ -424,7 +424,7 @@ local function CreateSRPane()
         end
     end)
     srTypeOptionsBtn:SetScript("OnHide", function()
-        Cell.StopRainbowText(srTypeOptionsBtn:GetFontString())
+        AF.RainbowText_Stop(srTypeOptionsBtn:GetFontString())
     end)
     Cell.RegisterForCloseDropdown(srTypeOptionsBtn)
     ---------------------------------------------------------------------------------

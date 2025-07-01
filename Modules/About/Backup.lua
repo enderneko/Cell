@@ -2,7 +2,8 @@
 local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
-local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local backupFrame
 local buttons = {}
@@ -13,89 +14,97 @@ local DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 -- create item
 ---------------------------------------------------------------------
 local function CreateItem(index)
-    local b = Cell.CreateButton(backupFrame.list.content, nil, "accent-hover", {20, 20})
+    local b = AF.CreateButton(backupFrame.list.slotFrame, nil, "Cell_hover", 20, 20)
 
-    b.version = b:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    b.version = AF.CreateFontString(b)
     b.version:SetJustifyH("LEFT")
-    b.version:SetPoint("LEFT", 5, 0)
+    AF.SetPoint(b.version, "LEFT", 5, 0)
 
-    b.text = b:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    b.text = AF.CreateFontString(b)
     b.text:SetJustifyH("LEFT")
     b.text:SetWordWrap(false)
-    b.text:SetPoint("LEFT", 100, 0)
-    b.text:SetPoint("RIGHT", -45, 0)
+    AF.SetPoint(b.text, "LEFT", 100, 0)
+    AF.SetPoint(b.text, "RIGHT", -45, 0)
 
     -- restore
     b:SetScript("OnClick", function()
         if b.isInvalid then return end
 
-        backupFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 20)
-        Cell.frames.aboutTab.mask:Show()
+        AF.SetFrameLevel(backupFrame, 20)
+        AF.ShowMask(CellOptionsFrame_AboutTab)
 
-        local text = "|cFFFF7070"..L["Restore backup"].."?|r\n"..CellDBBackup[index]["desc"].."\n|cFFB7B7B7"..CellDBBackup[index]["version"]
-        local popup = Cell.CreateConfirmPopup(Cell.frames.aboutTab, 200, text, function()
-            backupFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
+        local text = "|cFFFF7070" .. L["Restore backup"] .. "?|r\n" .. CellDBBackup[index]["desc"] .. "\n|cFFB7B7B7" .. CellDBBackup[index]["version"]
+        local dialog = AF.GetDialog(CellOptionsFrame_AboutTab, text)
+        dialog:SetOnConfirm(function()
+            AF.SetFrameLevel(backupFrame, 50)
             CellDB = CellDBBackup[index]["DB"]
             if CellCharacterDB then
                 CellCharacterDB = CellDBBackup[index]["CharacterDB"]
             end
             ReloadUI()
-        end, function()
-            backupFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
         end)
-        popup:SetPoint("TOP", backupFrame, 0, -50)
+        dialog:SetOnCancel(function()
+            AF.SetFrameLevel(backupFrame, 50)
+        end)
+        AF.SetPoint(popup, "TOP", backupFrame, 0, -50)
     end)
 
     -- delete
-    b.del = Cell.CreateButton(b, "", "none", {20, 20}, true, true)
-    b.del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete2", {18, 18}, {"CENTER", 0, 0})
+    b.del = AF.CreateButton(b, nil, "none", 20, 20, nil, nil, "")
+    b.del:SetTexture(AF.GetIcon("Close_Square"))
     b.del:SetPoint("RIGHT")
-    b.del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
-    b.del:SetScript("OnEnter", function()
-        b:GetScript("OnEnter")(b)
-        b.del.tex:SetVertexColor(1, 1, 1, 1)
+    b.del:SetTextureColor("gray")
+    b.del:SetOnEnter(function()
+        b:InvokeOnEnter()
+        b.del:SetTextureColor("white")
     end)
-    b.del:SetScript("OnLeave",  function()
-        b:GetScript("OnLeave")(b)
-        b.del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+    b.del:SetOnLeave(function()
+        b:InvokeOnLeave()
+        b.del:SetTextureColor("gray")
     end)
-    b.del:SetScript("OnClick", function()
-        backupFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 20)
-        Cell.frames.aboutTab.mask:Show()
+    b.del:SetOnClick(function()
+        AF.SetFrameLevel(backupFrame, 20)
+        AF.ShowMask(CellOptionsFrame_AboutTab)
 
-        local text = "|cFFFF7070"..L["Delete backup"].."?|r\n"..CellDBBackup[index]["desc"]
-        local popup = Cell.CreateConfirmPopup(Cell.frames.aboutTab, 200, text, function()
-            backupFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
+        local text = AF.WrapTextInColor(L["Delete backup"] .. "?", "firebrick") .. "\n" .. CellDBBackup[index]["desc"]
+        local dialog = AF.GetDialog(CellOptionsFrame_AboutTab, text)
+        AF.SetPoint(dialog, "CENTER", backupFrame)
+        dialog:SetOnConfirm(function()
+            AF.SetFrameLevel(backupFrame, 50)
             tremove(CellDBBackup, index)
             LoadBackups()
-        end, function()
-            backupFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
         end)
-        popup:SetPoint("TOP", backupFrame, 0, -50)
+        dialog:SetOnCancel(function()
+            AF.SetFrameLevel(backupFrame, 50)
+        end)
     end)
 
     -- rename
-    b.rename = Cell.CreateButton(b, "", "none", {20, 20}, true, true)
-    b.rename:SetPoint("RIGHT", b.del, "LEFT", 1, 0)
-    b.rename:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\rename", {18, 18}, {"CENTER", 0, 0})
-    b.rename.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
-    b.rename:SetScript("OnEnter", function()
-        b:GetScript("OnEnter")(b)
-        b.rename.tex:SetVertexColor(1, 1, 1, 1)
+    b.rename = AF.CreateButton(b, nil, "none", 20, 20, nil, nil, "")
+    AF.SetPoint(b.rename, "RIGHT", b.del, "LEFT", 1, 0)
+    b.rename:SetTexture(AF.GetIcon("Rename"))
+    b.rename:SetTextureColor("gray")
+    b.rename:SetOnEnter(function()
+        b:InvokeOnEnter()
+        b.rename:SetTextureColor("white")
     end)
-    b.rename:SetScript("OnLeave",  function()
-        b:GetScript("OnLeave")(b)
-        b.rename.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+    b.rename:SetOnLeave(function()
+        b:InvokeOnLeave()
+        b.rename:SetTextureColor("gray")
     end)
-    b.rename:SetScript("OnClick", function()
-        local popup = Cell.CreatePopupEditBox(backupFrame, function(text)
-            if strtrim(text) == "" then text = date() end
+    b.rename:SetOnClick(function()
+        backupFrame.editbox:SetAllPoints(b)
+        backupFrame.editbox:SetText(CellDBBackup[index]["desc"])
+        AF.SetFrameLevel(backupFrame.editbox, 10, b)
+        backupFrame.editbox:Show()
+        backupFrame.editbox:SetFocus()
+
+        backupFrame.editbox:SetOnEnterPressed(function(text)
+            if AF.IsBlank(text) then text = date(DATE_FORMAT) end
             CellDBBackup[index]["desc"] = text
             b.text:SetText(text)
+            backupFrame.editbox:Hide()
         end)
-        popup:SetPoint("TOPLEFT", b)
-        popup:SetPoint("BOTTOMRIGHT", b)
-        popup:ShowEditBox(CellDBBackup[index]["desc"])
     end)
 
     return b
@@ -105,129 +114,120 @@ end
 -- create frame
 ---------------------------------------------------------------------
 local function CreateBackupFrame()
-    backupFrame = CreateFrame("Frame", "CellOptionsFrame_Backup", Cell.frames.aboutTab, "BackdropTemplate")
+    backupFrame = AF.CreateBorderedFrame(CellOptionsFrame_AboutTab, "CellOptionsFrame_Backup", nil, 210)
     backupFrame:Hide()
-    Cell.StylizeFrame(backupFrame, nil, Cell.GetAccentColorTable())
+    backupFrame:SetBorderColor("Cell")
     backupFrame:EnableMouse(true)
-    backupFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
-    P.Size(backupFrame, 430, 185)
-    backupFrame:SetPoint("BOTTOMLEFT", P.Scale(1), 27)
-
-    if not Cell.frames.aboutTab.mask then
-        Cell.CreateMask(Cell.frames.aboutTab, nil, {1, -1, -1, 1})
-        Cell.frames.aboutTab.mask:Hide()
-    end
+    AF.SetFrameLevel(backupFrame, 50)
+    AF.SetPoint(backupFrame, "BOTTOMLEFT", 1, 1)
+    AF.SetPoint(backupFrame, "BOTTOMRIGHT", -1, 1)
 
     -- title
-    local title = backupFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
-    title:SetPoint("TOPLEFT", 5, -5)
-    title:SetText(L["Backups"])
+    local title = AF.CreateFontString(backupFrame, L["Backups"], "Cell")
+    AF.SetPoint(title, "TOPLEFT", 5, -5)
 
     -- tips
-    local tips = Cell.CreateScrollTextFrame(backupFrame, "|cffb7b7b7"..L["BACKUP_TIPS"], 0.02, nil, 2)
-    tips:SetPoint("TOPRIGHT", -30, -1)
-    tips:SetPoint("LEFT", title, "RIGHT", 5, 0)
+    local tips = AF.CreateScrollingText(backupFrame)
+    AF.SetPoint(tips, "TOPRIGHT", -30, -1)
+    AF.SetPoint(tips, "LEFT", title, "RIGHT", 5, 0)
+    tips:SetText(L["BACKUP_TIPS"], "gray")
 
     -- close
-    local closeBtn = Cell.CreateButton(backupFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
-    closeBtn:SetPoint("TOPRIGHT", P.Scale(-5), P.Scale(-1))
-    closeBtn:SetScript("OnClick", function() backupFrame:Hide() end)
+    local closeBtn = AF.CreateCloseButton(backupFrame, nil, 18, 18)
+    AF.SetPoint(closeBtn, "TOPRIGHT", -5, -2)
 
     -- list
-    local listFrame = Cell.CreateFrame(nil, backupFrame)
-    listFrame:SetPoint("TOPLEFT", 5, -25)
-    listFrame:SetPoint("BOTTOMRIGHT", -5, 5)
-    listFrame:Show()
-
-    Cell.CreateScrollFrame(listFrame)
-    backupFrame.list = listFrame.scrollFrame
-    Cell.StylizeFrame(listFrame.scrollFrame, {0, 0, 0, 0}, Cell.GetAccentColorTable())
-    listFrame.scrollFrame:SetScrollStep(25)
+    local listFrame = AF.CreateScrollList(backupFrame, nil, 5, 5, 7, 20, 5)
+    backupFrame.list = listFrame
+    AF.SetPoint(listFrame, "TOPLEFT", 5, -25)
+    AF.SetPoint(listFrame, "TOPRIGHT", -5, -25)
 
     -- create new
-    buttons[0] = Cell.CreateButton(listFrame.scrollFrame.content, " ", "accent-hover", {20, 20})
-    buttons[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create", {18, 18}, {"LEFT", 2, 0})
-    buttons[0]:SetScript("OnClick", function(self)
-        local popup = Cell.CreatePopupEditBox(backupFrame, function(text)
-            if strtrim(text) == "" then text = date(DATE_FORMAT) end
+    local newBtn = AF.CreateButton(listFrame.slotFrame, nil, "Cell_hover")
+    backupFrame.newBtn = newBtn
+    newBtn:SetTexture(AF.GetIcon("Create_Square"), nil, {"LEFT", 2, 0})
+    newBtn:SetScript("OnClick", function(self)
+        backupFrame.editbox:SetAllPoints(self)
+        backupFrame.editbox:SetText(date(DATE_FORMAT))
+        AF.SetFrameLevel(backupFrame.editbox, 10, self)
+        backupFrame.editbox:Show()
+        backupFrame.editbox:SetFocus()
+
+        backupFrame.editbox:SetOnEnterPressed(function(text)
+            if AF.IsBlank(text) then text = date(DATE_FORMAT) end
             tinsert(CellDBBackup, {
                 ["desc"] = text,
                 ["version"] = Cell.version,
                 ["versionNum"] = Cell.versionNum,
-                ["DB"] = F.Copy(CellDB),
-                ["CharacterDB"] = CellCharacterDB and F.Copy(CellCharacterDB),
+                ["DB"] = AF.Copy(CellDB),
+                ["CharacterDB"] = CellCharacterDB and AF.Copy(CellCharacterDB),
             })
             LoadBackups()
+            backupFrame.editbox:Hide()
         end)
-        popup:SetPoint("TOPLEFT", self)
-        popup:SetPoint("BOTTOMRIGHT", self)
-        popup:ShowEditBox(date(DATE_FORMAT))
     end)
-    Cell.SetTooltips(buttons[0], "ANCHOR_TOPLEFT", 0, 3, L["Create Backup"], L["BACKUP_TIPS2"])
+    newBtn:SetTooltip(L["Create Backup"], L["BACKUP_TIPS2"])
+
+    -- editbox
+    local editbox = AF.CreateEditBox(backupFrame)
+    backupFrame.editbox = editbox
+    editbox:SetBorderColor("Cell")
+    editbox:SetOnHide(function()
+        editbox:Hide()
+        editbox:Clear()
+    end)
+    editbox:Hide()
 
     -- OnHide
-    backupFrame:SetScript("OnHide", function()
+    backupFrame:SetOnHide(function()
         backupFrame:Hide()
-        -- hide mask
-        Cell.frames.aboutTab.mask:Hide()
+        AF.HideMask(CellOptionsFrame_AboutTab)
     end)
 
     -- OnShow
-    backupFrame:SetScript("OnShow", function()
+    backupFrame:SetOnShow(function()
         -- raise frame level
-        backupFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
-        Cell.frames.aboutTab.mask:Show()
+        AF.SetFrameLevel(backupFrame, 50)
+        AF.ShowMask(CellOptionsFrame_AboutTab)
     end)
 end
 
 ---------------------------------------------------------------------
 -- load
 ---------------------------------------------------------------------
-function LoadBackups()
-    backupFrame.list:ResetScroll()
+LoadBackups = function()
+    backupFrame.list:Reset()
+
+    local widgets = {}
 
     -- backups
     for i, t in pairs(CellDBBackup) do
         if not buttons[i] then
             buttons[i] = CreateItem(i)
-
-            if i == 1 then
-                buttons[i]:SetPoint("TOPLEFT", 5, -5)
-            else
-                buttons[i]:SetPoint("TOPLEFT", buttons[i-1], "BOTTOMLEFT", 0, -5)
-            end
-            buttons[i]:SetPoint("RIGHT", -5, 0)
         end
 
         if t["versionNum"] < Cell.MIN_VERSION then
-            buttons[i].version:SetText("|cffff2222"..L["Invalid"])
+            buttons[i].version:SetText("|cffff2222" .. L["Invalid"])
             buttons[i].isInvalid = true
         else
             buttons[i].version:SetText(t["version"])
             buttons[i].isInvalid = nil
         end
         buttons[i].text:SetText(t["desc"])
-        buttons[i]:Show()
+
+        tinsert(widgets, buttons[i])
     end
 
-    local n = #CellDBBackup
-
-    -- creation button
-    buttons[0]:ClearAllPoints()
-    buttons[0]:SetPoint("RIGHT", -5, 0)
-    if n == 0 then
-        buttons[0]:SetPoint("TOPLEFT", 5, -5)
-    else
-        buttons[0]:SetPoint("TOPLEFT", buttons[n], "BOTTOMLEFT", 0, -5)
-    end
+    -- new button
+    tinsert(widgets, backupFrame.newBtn)
 
     -- hide unused
-    for i = n + 1, #buttons do
+    for i = #CellDBBackup + 1, #buttons do
         buttons[i]:Hide()
     end
 
-    -- scroll range
-    backupFrame.list:SetContentHeight((n + 1) * P.Scale(20) + (n + 2) * P.Scale(5))
+    -- set
+    backupFrame.list:SetWidgets(widgets)
 end
 
 ---------------------------------------------------------------------

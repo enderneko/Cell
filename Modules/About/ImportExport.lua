@@ -2,7 +2,8 @@
 local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
-local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local Serializer = LibStub:GetLibrary("LibSerialize")
 local LibDeflate = LibStub:GetLibrary("LibDeflate")
@@ -10,7 +11,7 @@ local deflateConfig = {level = 9}
 
 local isImport, imported, exported = false, nil, ""
 
-local importExportFrame, importBtn, title, textArea, includeNicknamesCB, includeCharacterCB
+local importExportFrame, importBtn, closeBtn, title, textArea, includeNicknamesCB, includeCharacterCB
 local confirmationFrame
 local ignoredIndices = {}
 
@@ -38,7 +39,7 @@ local function DoImport(noReload)
     local builtInFound = {}
     for _, layout in pairs(imported["layouts"]) do
         -- indicators
-        for i =  #layout["indicators"], 1, -1 do
+        for i = #layout["indicators"], 1, -1 do
             if layout["indicators"][i]["type"] == "built-in" then -- remove unsupported built-in
                 local indicatorName = layout["indicators"][i]["indicatorName"]
                 builtInFound[indicatorName] = true
@@ -82,7 +83,6 @@ local function DoImport(noReload)
             clickCastings = nil
         end
         imported["clickCastings"] = nil
-
     elseif imported["characterDB"] and imported["characterDB"]["clickCastings"] then
         if (Cell.isVanilla or Cell.isWrath or Cell.isCata) and imported["characterDB"]["clickCastings"]["class"] == Cell.vars.playerClass then -- WRATH -> WRATH, same class
             clickCastings = imported["characterDB"]["clickCastings"]
@@ -104,7 +104,6 @@ local function DoImport(noReload)
             layoutAutoSwitch = nil
         end
         imported["layoutAutoSwitch"] = nil
-
     elseif imported["characterDB"] and imported["characterDB"]["layoutAutoSwitch"] then
         if Cell.isVanilla or Cell.isWrath or Cell.isCata then -- WRATH -> WRATH
             layoutAutoSwitch = imported["characterDB"]["layoutAutoSwitch"]
@@ -138,6 +137,9 @@ local function DoImport(noReload)
             imported[index] = nil
         end
     end
+
+    --! ignore optionsFramePosition
+    imported["optionsFramePosition"] = nil
 
     --! overwrite
     if Cell.isRetail then
@@ -173,7 +175,7 @@ end
 -- generate export string
 ---------------------------------------------------------------------
 local function GetExportString(includeNicknames, includeCharacter)
-    local prefix = "!CELL:"..Cell.versionNum..":ALL!"
+    local prefix = "!CELL:" .. Cell.versionNum .. ":ALL!"
 
     local db = F.Copy(CellDB)
 
@@ -191,34 +193,33 @@ local function GetExportString(includeNicknames, includeCharacter)
     str = LibDeflate:CompressDeflate(str, deflateConfig) -- compress
     str = LibDeflate:EncodeForPrint(str) -- encode
 
-    return prefix..str
+    return prefix .. str
 end
 
 ---------------------------------------------------------------------
 -- import confirmation
 ---------------------------------------------------------------------
 local function CreateImportConfirmationFrame()
-    confirmationFrame = CreateFrame("Frame", nil, Cell.frames.aboutTab, "BackdropTemplate")
-    confirmationFrame:SetSize(361, 165)
-    Cell.StylizeFrame(confirmationFrame, {0.1, 0.1, 0.1, 0.95}, Cell.GetAccentColorTable())
+    confirmationFrame = AF.CreateBorderedFrame(CellOptionsFrame_AboutTab, nil, 361, 165, nil, "Cell")
     confirmationFrame:EnableMouse(true)
-    confirmationFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 300)
-    confirmationFrame:SetPoint("TOP", importExportFrame, 0, -25)
+    confirmationFrame:SetBackgroundColor(AF.GetColorTable("background", 0.95))
+    AF.SetFrameLevel(confirmationFrame, 100)
+    AF.SetPoint(confirmationFrame, "CENTER", importExportFrame)
     confirmationFrame:Hide()
 
     -- no
-    local button2 = Cell.CreateButton(confirmationFrame, L["No"], "red", {55, 17})
+    local button2 = AF.CreateButton(confirmationFrame, L["No"], "red", 55, 18)
     button2:SetPoint("BOTTOMRIGHT")
-    button2:SetBackdropBorderColor(Cell.GetAccentColorRGB())
+    button2:SetBorderColor("Cell")
     button2:SetScript("OnClick", function()
         confirmationFrame:Hide()
         importExportFrame:Hide()
     end)
 
     -- yes
-    local button1 = Cell.CreateButton(confirmationFrame, L["Yes"], "green", {55, 17})
-    button1:SetPoint("BOTTOMRIGHT", button2, "BOTTOMLEFT", P.Scale(1), 0)
-    button1:SetBackdropBorderColor(Cell.GetAccentColorRGB())
+    local button1 = AF.CreateButton(confirmationFrame, L["Yes"], "green", 55, 18)
+    AF.SetPoint(button1, "BOTTOMRIGHT", button2, "BOTTOMLEFT", 1, 0)
+    button1:SetBorderColor("Cell")
     button1:SetScript("OnClick", function()
         DoImport()
         confirmationFrame:Hide()
@@ -226,50 +227,45 @@ local function CreateImportConfirmationFrame()
     end)
 
     -- message
-    local text1 = confirmationFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
-    text1:SetPoint("LEFT", 10, 0)
-    text1:SetPoint("RIGHT", -10, 0)
-    text1:SetPoint("TOP", 0, -10)
-    text1:SetSpacing(5)
-    text1:SetText("|cFFFF7070"..L["Cell settings will be overwritten!"])
+    local text1 = AF.CreateFontString(confirmationFrame, L["Cell settings will be overwritten!"], "firebrick", "AF_FONT_TITLE")
+    AF.SetPoint(text1, "LEFT", 10, 0)
+    AF.SetPoint(text1, "RIGHT", -10, 0)
+    AF.SetPoint(text1, "TOP", 0, -10)
 
-    local text2 = confirmationFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    text2:SetPoint("LEFT", 10, 0)
-    text2:SetPoint("RIGHT", -10, 0)
-    text2:SetPoint("TOP", text1, "BOTTOM", 0, -5)
-    text2:SetSpacing(5)
-    text2:SetText( "|cFFB7B7B7"..L["Unselected settings will remain"])
+    local text2 = AF.CreateFontString(confirmationFrame, L["Unselected settings will remain"], "gray")
+    AF.SetPoint(text2, "LEFT", 10, 0)
+    AF.SetPoint(text2, "RIGHT", -10, 0)
+    AF.SetPoint(text2, "TOP", text1, "BOTTOM", 0, -5)
 
-    local text3 = confirmationFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    text3:SetPoint("BOTTOMLEFT", 5, 5)
-    text3:SetPoint("RIGHT", button1, "LEFT", -10, 0)
+    local text3 = AF.CreateFontString(confirmationFrame, L["Remember to backup your profile"], "gray")
+    AF.SetPoint(text3, "BOTTOMLEFT", 5, 5)
+    AF.SetPoint(text3, "RIGHT", button1, "LEFT", -10, 0)
     text3:SetJustifyH("LEFT")
-    text3:SetText( "|cFFABABAB"..L["Remember to backup your profile"])
 
     -- checkboxes
     local checkboxes = {}
 
     -- 1:general
-    checkboxes.general = Cell.CreateCheckButton(confirmationFrame, L["General"], function(checked)
+    checkboxes.general = AF.CreateCheckButton(confirmationFrame, L["General"], function(checked)
         ignoredIndices["general"] = not checked
     end)
-    checkboxes.general:SetPoint("TOPLEFT", 15, -55)
+    AF.SetPoint(checkboxes.general, "TOPLEFT", 15, -55)
 
     -- 2:appearance
-    checkboxes.appearance = Cell.CreateCheckButton(confirmationFrame, L["Appearance"], function(checked)
+    checkboxes.appearance = AF.CreateCheckButton(confirmationFrame, L["Appearance"], function(checked)
         ignoredIndices["appearance"] = not checked
         ignoredIndices["debuffTypeColor"] = not checked
     end)
-    checkboxes.appearance:SetPoint("TOPLEFT", checkboxes.general, 165, 0)
+    AF.SetPoint(checkboxes.appearance, "TOPLEFT", checkboxes.general, 165, 0)
 
     -- 3:click-castings
-    checkboxes.clickCastings = Cell.CreateCheckButton(confirmationFrame, L["Click-Castings"], function(checked)
+    checkboxes.clickCastings = AF.CreateCheckButton(confirmationFrame, L["Click-Castings"], function(checked)
         ignoredIndices["clickCastings"] = not checked
     end)
-    checkboxes.clickCastings:SetPoint("TOPLEFT", checkboxes.general, "BOTTOMLEFT", 0, -7)
+    AF.SetPoint(checkboxes.clickCastings, "TOPLEFT", checkboxes.general, "BOTTOMLEFT", 0, -7)
 
     -- 4:layouts
-    checkboxes.layouts = Cell.CreateCheckButton(confirmationFrame, L["Layouts"] .. " & " .. L["Indicators"], function(checked)
+    checkboxes.layouts = AF.CreateCheckButton(confirmationFrame, L["Layouts"] .. " & " .. L["Indicators"], function(checked)
         ignoredIndices["layouts"] = not checked
         ignoredIndices["layoutAutoSwitch"] = not checked
         ignoredIndices["dispelBlacklist"] = not checked
@@ -285,40 +281,40 @@ local function CreateImportConfirmationFrame()
         ignoredIndices["indicatorPreview"] = not checked
         ignoredIndices["customTextures"] = not checked
     end)
-    checkboxes.layouts:SetPoint("TOPLEFT", checkboxes.appearance, "BOTTOMLEFT", 0, -7)
+    AF.SetPoint(checkboxes.layouts, "TOPLEFT", checkboxes.appearance, "BOTTOMLEFT", 0, -7)
 
     -- 5:raid debuffs
-    checkboxes.raidDebuffs = Cell.CreateCheckButton(confirmationFrame, L["Raid Debuffs"], function(checked)
+    checkboxes.raidDebuffs = AF.CreateCheckButton(confirmationFrame, L["Raid Debuffs"], function(checked)
         ignoredIndices["raidDebuffs"] = not checked
     end)
-    checkboxes.raidDebuffs:SetPoint("TOPLEFT", checkboxes.clickCastings, "BOTTOMLEFT", 0, -7)
+    AF.SetPoint(checkboxes.raidDebuffs, "TOPLEFT", checkboxes.clickCastings, "BOTTOMLEFT", 0, -7)
 
     -- 6:utilities
-    checkboxes.utilities = Cell.CreateCheckButton(confirmationFrame, L["Utilities"], function(checked)
+    checkboxes.utilities = AF.CreateCheckButton(confirmationFrame, L["Utilities"], function(checked)
         ignoredIndices["tools"] = not checked
         ignoredIndices["spellRequest"] = not checked
         ignoredIndices["dispelRequest"] = not checked
         ignoredIndices["quickAssist"] = not checked
         ignoredIndices["quickCast"] = not checked
     end)
-    checkboxes.utilities:SetPoint("TOPLEFT", checkboxes.layouts, "BOTTOMLEFT", 0, -7)
+    AF.SetPoint(checkboxes.utilities, "TOPLEFT", checkboxes.layouts, "BOTTOMLEFT", 0, -7)
 
     -- 7:code snippets
-    checkboxes.snippets = Cell.CreateCheckButton(confirmationFrame, L["Code Snippets"], function(checked)
+    checkboxes.snippets = AF.CreateCheckButton(confirmationFrame, L["Code Snippets"], function(checked)
         ignoredIndices["snippets"] = not checked
     end)
-    checkboxes.snippets:SetPoint("TOPLEFT", checkboxes.raidDebuffs, "BOTTOMLEFT", 0, -7)
+    AF.SetPoint(checkboxes.snippets, "TOPLEFT", checkboxes.raidDebuffs, "BOTTOMLEFT", 0, -7)
 
     -- 8:nickname
-    checkboxes.nickname = Cell.CreateCheckButton(confirmationFrame, L["Nickname"], function(checked)
+    checkboxes.nickname = AF.CreateCheckButton(confirmationFrame, L["Nickname"], function(checked)
         ignoredIndices["nicknames"] = not checked
     end)
-    checkboxes.nickname:SetPoint("TOPLEFT", checkboxes.utilities, "BOTTOMLEFT", 0, -7)
+    AF.SetPoint(checkboxes.nickname, "TOPLEFT", checkboxes.utilities, "BOTTOMLEFT", 0, -7)
 
     -- OnHide
     confirmationFrame:SetScript("OnHide", function()
         confirmationFrame:Hide()
-        if Cell.frames.aboutTab.mask then Cell.frames.aboutTab.mask:Hide() end
+        AF.HideMask(CellOptionsFrame_AboutTab)
     end)
 
     -- OnShow
@@ -341,74 +337,68 @@ end
 -- import/export frame
 ---------------------------------------------------------------------
 local function CreateImportExportFrame()
-    importExportFrame = CreateFrame("Frame", "CellOptionsFrame_ImportExport", Cell.frames.aboutTab, "BackdropTemplate")
+    importExportFrame = AF.CreateBorderedFrame(CellOptionsFrame_AboutTab, "CellOptionsFrame_ImportExport", nil, 230, nil, "Cell")
     importExportFrame:Hide()
-    Cell.StylizeFrame(importExportFrame, nil, Cell.GetAccentColorTable())
+    AF.SetPoint(importExportFrame, "BOTTOMLEFT", 1, 1)
+    AF.SetPoint(importExportFrame, "BOTTOMRIGHT", -1, 1)
+    AF.SetFrameLevel(importExportFrame, 50)
     importExportFrame:EnableMouse(true)
-    importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
-    P.Size(importExportFrame, 430, 170)
-    importExportFrame:SetPoint("BOTTOMLEFT", P.Scale(1), 27)
-
-    if not Cell.frames.aboutTab.mask then
-        Cell.CreateMask(Cell.frames.aboutTab, nil, {1, -1, -1, 1})
-        Cell.frames.aboutTab.mask:Hide()
-    end
 
     -- close
-    local closeBtn = Cell.CreateButton(importExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
-    closeBtn:SetPoint("TOPRIGHT", P.Scale(-5), P.Scale(-1))
-    closeBtn:SetScript("OnClick", function() importExportFrame:Hide() end)
+    closeBtn = AF.CreateCloseButton(importExportFrame, nil, 18, 18)
+    AF.SetPoint(closeBtn, "TOPRIGHT", -5, -2)
 
     -- import
-    importBtn = Cell.CreateButton(importExportFrame, L["Import"], "green", {57, 18})
+    importBtn = AF.CreateButton(importExportFrame, L["Import"], "green", 57, 18)
     importBtn:Hide()
-    importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", P.Scale(1), 0)
+    AF.SetPoint(importBtn, "TOPRIGHT", closeBtn, "TOPLEFT", 1, 0)
     importBtn:SetScript("OnClick", function()
         -- lower frame level
-        importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 20)
-
+        AF.SetFrameLevel(importExportFrame, 20)
         confirmationFrame:Show()
 
         -- local text = "|cFFFF7070"..L["All Cell settings will be overwritten!"].."|r\n"..
         --     "|cFFB7B7B7"..L["Autorun will be disabled for all code snippets"].."|r\n"..
         --     L["|cff1Aff1AYes|r - Overwrite"].."\n".."|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
-        -- local popup = Cell.CreateConfirmPopup(Cell.frames.aboutTab, 200, text, function(self)
+        -- local popup = Cell.CreateConfirmPopup(CellOptionsFrame_AboutTab, 200, text, function(self)
         --     DoImport()
         -- end, function()
         --     importExportFrame:Hide()
         -- end, true)
-        -- popup:SetPoint("TOPLEFT", importExportFrame, 117, -25)
+        -- AF.SetPoint(popup, "TOPLEFT", importExportFrame, 117, -25)
 
         textArea.eb:ClearFocus()
     end)
 
     -- title
-    title = importExportFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
-    title:SetPoint("TOPLEFT", 5, -5)
+    title = AF.CreateFontString(importExportFrame)
+    AF.SetPoint(title, "TOPLEFT", 5, -5)
+    title:SetColor("Cell")
 
     -- export include nickname settings
-    includeNicknamesCB = Cell.CreateCheckButton(importExportFrame, L["Include Nickname Settings"], function(checked)
+    includeNicknamesCB = AF.CreateCheckButton(importExportFrame, L["Include Nickname Settings"], function(checked)
         exported = GetExportString(checked, includeCharacterCB:GetChecked())
         textArea:SetText(exported)
     end)
-    includeNicknamesCB:SetPoint("TOPLEFT", 5, -25)
+    AF.SetPoint(includeNicknamesCB, "TOPLEFT", 5, -25)
     includeNicknamesCB:Hide()
 
     -- export include character settings
-    includeCharacterCB = Cell.CreateCheckButton(importExportFrame, L["Include Character Settings"], function(checked)
+    includeCharacterCB = AF.CreateCheckButton(importExportFrame, L["Include Character Settings"], function(checked)
         exported = GetExportString(includeNicknamesCB:GetChecked(), checked)
         textArea:SetText(exported)
     end)
-    includeCharacterCB:SetPoint("TOPLEFT", includeNicknamesCB, "TOPRIGHT", 200, 0)
+    AF.SetPoint(includeCharacterCB, "TOPLEFT", includeNicknamesCB, "TOPRIGHT", 200, 0)
     includeCharacterCB:Hide()
-    Cell.SetTooltips(includeCharacterCB, "ANCHOR_TOPLEFT", 0, 2, L["Click-Castings"]..", "..L["Layout Auto Switch"])
+    includeCharacterCB:SetTooltip(L["Click-Castings"] .. ", " .. L["Layout Auto Switch"])
 
     -- textArea
-    textArea = Cell.CreateScrollEditBox(importExportFrame, function(eb, userChanged)
+    textArea = AF.CreateScrollEditBox(importExportFrame)
+    AF.SetPoint(textArea, "BOTTOMLEFT", 5, 5)
+    textArea:SetOnTextChanged(function(text, userChanged)
         if userChanged then
             if isImport then
                 imported = nil
-                local text = eb:GetText()
                 -- check
                 local version, data = string.match(text, "^!CELL:(%d+):ALL!(.+)$")
                 version = tonumber(version)
@@ -421,37 +411,32 @@ local function CreateImportExportFrame()
                         success, data = Serializer:Deserialize(data) -- deserialize
 
                         if success and data then
-                            title:SetText(L["Import"]..": r"..version)
+                            title:SetText(L["Import"] .. ": r" .. version)
                             importBtn:SetEnabled(true)
                             imported = data
                         else
-                            title:SetText(L["Import"]..": |cffff2222"..L["Error"])
+                            title:SetText(L["Import"] .. ": |cffff2222" .. L["Error"])
                             importBtn:SetEnabled(false)
                         end
                     else -- incompatible version
-                        title:SetText(L["Import"]..": |cffff2222"..L["Incompatible Version"])
+                        title:SetText(L["Import"] .. ": |cffff2222" .. L["Incompatible Version"])
                         importBtn:SetEnabled(false)
                     end
                 else
-                    title:SetText(L["Import"]..": |cffff2222"..L["Error"])
+                    title:SetText(L["Import"] .. ": |cffff2222" .. L["Error"])
                     importBtn:SetEnabled(false)
                 end
             else
-                eb:SetText(exported)
-                eb:SetCursorPosition(0)
-                eb:HighlightText()
+                textArea:SetText(exported)
+                textArea:HighlightText()
             end
         end
     end)
-    Cell.StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell.GetAccentColorTable())
-    textArea:SetPoint("TOPLEFT", 5, -20)
-    textArea:SetPoint("BOTTOMRIGHT", -5, 5)
 
     -- highlight text
-    textArea.eb:SetScript("OnEditFocusGained", function() textArea.eb:HighlightText() end)
     textArea.eb:SetScript("OnMouseUp", function()
         if not isImport then
-            textArea.eb:HighlightText()
+            textArea:HighlightText()
         end
     end)
 
@@ -461,13 +446,13 @@ local function CreateImportExportFrame()
         exported = ""
         imported = nil
         -- hide mask
-        Cell.frames.aboutTab.mask:Hide()
+        AF.HideMask(CellOptionsFrame_AboutTab)
     end)
 
     importExportFrame:SetScript("OnShow", function()
         -- raise frame level
-        importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
-        Cell.frames.aboutTab.mask:Show()
+        AF.SetFrameLevel(importExportFrame, 50)
+        AF.ShowMask(CellOptionsFrame_AboutTab)
     end)
 end
 
@@ -489,13 +474,12 @@ function F.ShowImportFrame()
 
     exported = ""
     title:SetText(L["Import"])
-    textArea:SetText("")
-    textArea.eb:SetFocus(true)
+    textArea:Clear()
+    textArea:SetFocus()
 
     includeNicknamesCB:Hide()
     includeCharacterCB:Hide()
-    textArea:SetPoint("TOPLEFT", 5, -20)
-    P.Height(importExportFrame, 200)
+    AF.SetPoint(textArea, "TOPRIGHT", closeBtn, "BOTTOMRIGHT", 0, -1)
 end
 
 ---------------------------------------------------------------------
@@ -512,12 +496,12 @@ function F.ShowExportFrame()
     isImport = false
     importBtn:Hide()
 
-    title:SetText(L["Export"]..": "..Cell.version)
+    title:SetText(L["Export"] .. ": " .. Cell.version)
 
     exported = GetExportString(false)
 
     textArea:SetText(exported)
-    textArea.eb:SetFocus(true)
+    textArea:SetFocus()
 
     includeNicknamesCB:SetChecked(false)
     includeNicknamesCB:Show()
@@ -525,14 +509,12 @@ function F.ShowExportFrame()
         includeCharacterCB:SetChecked(false)
         includeCharacterCB:Show()
     end
-    textArea:SetPoint("TOPLEFT", 5, -50)
-    P.Height(importExportFrame, 230)
+    AF.SetPoint(textArea, "TOPRIGHT", closeBtn, "BOTTOMRIGHT", 0, -30)
 end
 
 ---------------------------------------------------------------------
 -- for "installer" addons
 ---------------------------------------------------------------------
-
 ---@param profileString string
 ---@param profileName string? not used for now
 ---@param ignoredIndicesExternal table?
@@ -556,10 +538,10 @@ function Cell.ImportProfile(profileString, profileName, ignoredIndicesExternal)
     end
 
     if ignoredIndicesExternal then
-      wipe(ignoredIndices)
-      for index, value in pairs(ignoredIndicesExternal) do
-        ignoredIndices[index] = value
-      end
+        wipe(ignoredIndices)
+        for index, value in pairs(ignoredIndicesExternal) do
+            ignoredIndices[index] = value
+        end
     end
 
     if imported then

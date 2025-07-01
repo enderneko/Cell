@@ -160,7 +160,6 @@ local function Init()
         AF.LoadPosition(optionsFrame, CellDB["optionsFramePosition"], AF.UIParent)
         optionsFrame:UpdatePixels()
         AF.ReAnchorRegion(optionsFrame, "TOPLEFT")
-        print(optionsFrame:GetPoint(1))
     end
 end
 
