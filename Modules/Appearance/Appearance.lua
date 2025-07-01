@@ -553,7 +553,7 @@ end
 -- unit button style
 ---------------------------------------------------------------------
 local textureDropdown, barColorDropdown, barColorPicker, fullColorCB, fullColorPicker, lossColorDropdown, lossColorPicker, deathColorCB, deathColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
-local gradientCB, thresholdCP1, thresholdCP2, thresholdCP3, thresholdDropdown, colorThresholdDropdown2
+local gradientCB, thresholdCP1, thresholdCP2, thresholdCP3, thresholdDropdown1, thresholdDropdown2
 local gradientLossCB, thresholdLossCP1, thresholdLossCP2, thresholdLossCP3, thresholdLossDropdown1, thresholdLossDropdown2
 local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, absorbCB, invertColorCB, shieldCB, oversCB, reverseCB
 local predCustomCB, predColorPicker, absorbColorPicker, shieldColorPicker, oversColorPicker
@@ -835,8 +835,8 @@ local function UpdateColorPickers()
         thresholdCP2:Show()
         thresholdCP3:Show()
         thresholdCP3:SetEnabled(CellDB["appearance"]["barColor"][1] == "threshold1")
-        thresholdDropdown:Show()
-        colorThresholdDropdown2:Show()
+        thresholdDropdown1:Show()
+        thresholdDropdown2:Show()
         AF.ClearPoints(lossColorDropdown)
         AF.SetPoint(lossColorDropdown, "TOPLEFT", gradientCB, "BOTTOMLEFT", 0, -30)
     else
@@ -844,8 +844,8 @@ local function UpdateColorPickers()
         thresholdCP1:Hide()
         thresholdCP2:Hide()
         thresholdCP3:Hide()
-        thresholdDropdown:Hide()
-        colorThresholdDropdown2:Hide()
+        thresholdDropdown1:Hide()
+        thresholdDropdown2:Hide()
         AF.ClearPoints(lossColorDropdown)
         AF.SetPoint(lossColorDropdown, "TOPLEFT", barColorDropdown, "BOTTOMLEFT", 0, -30)
     end
@@ -1000,8 +1000,8 @@ local function CreateUnitButtonStylePane()
     end)
     AF.SetPoint(thresholdCP1, "LEFT", gradientCB, "RIGHT", 5, 0)
 
-    thresholdDropdown = AF.CreateDropdown(unitButtonPane, 50, nil, "vertical")
-    AF.SetPoint(thresholdDropdown, "LEFT", thresholdCP1, "RIGHT", 5, 0)
+    thresholdDropdown1 = AF.CreateDropdown(unitButtonPane, 50, 5, "vertical")
+    AF.SetPoint(thresholdDropdown1, "LEFT", thresholdCP1, "RIGHT", 5, 0)
     do
         local values = {0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5}
         local items = {}
@@ -1015,7 +1015,7 @@ local function CreateUnitButtonStylePane()
                 end,
             })
         end
-        thresholdDropdown:SetItems(items)
+        thresholdDropdown1:SetItems(items)
     end
 
     thresholdCP2 = AF.CreateColorPicker(unitButtonPane, nil, false, function(r, g, b)
@@ -1024,7 +1024,7 @@ local function CreateUnitButtonStylePane()
         CellDB["appearance"]["colorThresholds"][2][3] = b
         Cell.Fire("UpdateAppearance", "color")
     end)
-    AF.SetPoint(thresholdCP2, "LEFT", thresholdDropdown, "RIGHT", 5, 0)
+    AF.SetPoint(thresholdCP2, "LEFT", thresholdDropdown1, "RIGHT", 5, 0)
 
     thresholdCP3 = AF.CreateColorPicker(unitButtonPane, nil, false, function(r, g, b)
         CellDB["appearance"]["colorThresholds"][3][1] = r
@@ -1034,8 +1034,8 @@ local function CreateUnitButtonStylePane()
     end)
     AF.SetPoint(thresholdCP3, "LEFT", thresholdCP2, "RIGHT", 5, 0)
 
-    colorThresholdDropdown2 = AF.CreateDropdown(unitButtonPane, 50, nil, "vertical")
-    AF.SetPoint(colorThresholdDropdown2, "LEFT", thresholdCP3, "RIGHT", 5, 0)
+    thresholdDropdown2 = AF.CreateDropdown(unitButtonPane, 50, 5, "vertical")
+    AF.SetPoint(thresholdDropdown2, "LEFT", thresholdCP3, "RIGHT", 5, 0)
     do
         local values = {1, 0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5}
         local items = {}
@@ -1049,7 +1049,7 @@ local function CreateUnitButtonStylePane()
                 end,
             })
         end
-        colorThresholdDropdown2:SetItems(items)
+        thresholdDropdown2:SetItems(items)
     end
 
     -- loss color
@@ -1144,7 +1144,7 @@ local function CreateUnitButtonStylePane()
     end)
     AF.SetPoint(thresholdLossCP1, "LEFT", gradientLossCB, "RIGHT", 5, 0)
 
-    thresholdLossDropdown1 = AF.CreateDropdown(unitButtonPane, 50, nil, "vertical")
+    thresholdLossDropdown1 = AF.CreateDropdown(unitButtonPane, 50, 5, "vertical")
     AF.SetPoint(thresholdLossDropdown1, "LEFT", thresholdLossCP1, "RIGHT", 5, 0)
     do
         local values = {0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5}
@@ -1178,7 +1178,7 @@ local function CreateUnitButtonStylePane()
     end)
     AF.SetPoint(thresholdLossCP3, "LEFT", thresholdLossCP2, "RIGHT", 5, 0)
 
-    thresholdLossDropdown2 = AF.CreateDropdown(unitButtonPane, 50, nil, "vertical")
+    thresholdLossDropdown2 = AF.CreateDropdown(unitButtonPane, 50, 5, "vertical")
     AF.SetPoint(thresholdLossDropdown2, "LEFT", thresholdLossCP3, "RIGHT", 5, 0)
     do
         local values = {1, 0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5}
@@ -1580,8 +1580,8 @@ LoadButtonStyle = function()
     thresholdCP1:SetColor(c[1][1], c[1][2], c[1][3])
     thresholdCP2:SetColor(c[2][1], c[2][2], c[2][3])
     thresholdCP3:SetColor(c[3][1], c[3][2], c[3][3])
-    thresholdDropdown:SetSelectedValue(c[4])
-    colorThresholdDropdown2:SetSelectedValue(c[5])
+    thresholdDropdown1:SetSelectedValue(c[4])
+    thresholdDropdown2:SetSelectedValue(c[5])
 
     local d = CellDB["appearance"]["colorThresholdsLoss"]
     gradientLossCB:SetChecked(d[6])
