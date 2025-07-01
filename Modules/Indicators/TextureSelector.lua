@@ -3,6 +3,8 @@ local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local textureSelector, scrollFrame, confirmBtn, currentTexturePath
 local LoadTextures
@@ -106,7 +108,7 @@ LoadTextures = function()
             b = CreateFrame("Button", nil, scrollFrame.content, "BackdropTemplate")
             buttons[i] = b
             P.Size(b, 50, 50)
-            b:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+            b:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
             b:SetBackdropColor(0.115, 0.115, 0.115, 1)
             b:SetBackdropBorderColor(0, 0, 0, 1)
             b:SetScript("OnEnter", function()

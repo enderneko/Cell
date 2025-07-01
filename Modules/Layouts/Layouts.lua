@@ -1,11 +1,8 @@
 ---@class Cell
 local Cell = select(2, ...)
 local L = Cell.L
----@type CellFuncs
 local F = Cell.funcs
----@type CellUnitButtonFuncs
 local B = Cell.bFuncs
----@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 ---@type AbstractFramework
 local AF = _G.AbstractFramework
@@ -195,7 +192,7 @@ local function CreateLayoutPreview()
             -- header[j]:SetSize(30, 20)
 
             header[j].tex = header:CreateTexture(nil, "ARTWORK")
-            header[j].tex:SetTexture(Cell.vars.whiteTexture)
+            header[j].tex:SetTexture(AF.GetPlainTexture())
             header[j].tex:SetPoint("TOPLEFT", header[j], "TOPLEFT", P.Scale(1), P.Scale(-1))
             header[j].tex:SetPoint("BOTTOMRIGHT", header[j], "BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
 
@@ -235,7 +232,7 @@ local function CreateLayoutPreview()
         f:SetAlpha(0.555)
 
         f.tex = layoutPreview.combinedHeader:CreateTexture(nil, "ARTWORK")
-        f.tex:SetTexture(Cell.vars.whiteTexture)
+        f.tex:SetTexture(AF.GetPlainTexture())
         f.tex:SetPoint("TOPLEFT", f, "TOPLEFT", P.Scale(1), P.Scale(-1))
         f.tex:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
         f.tex:SetVertexColor(F.ConvertRGB(255, 0, 0, 1 + ((1 - i) * 0.02)))
@@ -536,7 +533,7 @@ local function CreateNPCPreview()
         npcPreview.header[i]:SetAlpha(0.555)
 
         npcPreview.header[i].tex = npcPreview.header:CreateTexture(nil, "ARTWORK")
-        npcPreview.header[i].tex:SetTexture(Cell.vars.whiteTexture)
+        npcPreview.header[i].tex:SetTexture(AF.GetPlainTexture())
 
         npcPreview.header[i].tex:SetPoint("TOPLEFT", npcPreview.header[i], "TOPLEFT", P.Scale(1), P.Scale(-1))
         npcPreview.header[i].tex:SetPoint("BOTTOMRIGHT", npcPreview.header[i], "BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
@@ -785,7 +782,7 @@ local function CreatePetPreview()
         petPreview.header[i]:SetAlpha(0.555)
 
         petPreview.header[i].tex = petPreview.header:CreateTexture(nil, "ARTWORK")
-        petPreview.header[i].tex:SetTexture(Cell.vars.whiteTexture)
+        petPreview.header[i].tex:SetTexture(AF.GetPlainTexture())
 
         petPreview.header[i].tex:SetPoint("TOPLEFT", petPreview.header[i], "TOPLEFT", P.Scale(1), P.Scale(-1))
         petPreview.header[i].tex:SetPoint("BOTTOMRIGHT", petPreview.header[i], "BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
@@ -1064,7 +1061,7 @@ local function CreateSpotlightPreview()
         spotlightPreview.header[i]:SetAlpha(0.555)
 
         spotlightPreview.header[i].tex = spotlightPreview.header:CreateTexture(nil, "ARTWORK")
-        spotlightPreview.header[i].tex:SetTexture(Cell.vars.whiteTexture)
+        spotlightPreview.header[i].tex:SetTexture(AF.GetPlainTexture())
 
         spotlightPreview.header[i].tex:SetPoint("TOPLEFT", spotlightPreview.header[i], "TOPLEFT", P.Scale(1), P.Scale(-1))
         spotlightPreview.header[i].tex:SetPoint("BOTTOMRIGHT", spotlightPreview.header[i], "BOTTOMRIGHT", P.Scale(-1), P.Scale(1))

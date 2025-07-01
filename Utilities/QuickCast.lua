@@ -54,8 +54,8 @@ local qcGlowCastsButtons = {}
 local qcGlowCastsPane, qcGlowCastsCP, qcGlowCastsAddBtn
 
 local function UpdateWidgets()
-    Cell.SetEnabled(quickCastTable["enabled"], qcNameDD, qcNameText, qcButtonsSlider, qcSizeSlider, qcOrientationDD, qcOrientationText, qcSpacingXSlider, qcSpacingYSlider, qcLinesSlider)
-    Cell.SetEnabled(quickCastTable["enabled"], qcOuterCP, qcOuterBtn, qcInnerCP, qcInnerBtn, qcGlowBuffsCP, qcGlowBuffsAddBtn, qcGlowCastsCP, qcGlowCastsAddBtn)
+    AF.SetEnabled(quickCastTable["enabled"], qcNameDD, qcNameText, qcButtonsSlider, qcSizeSlider, qcOrientationDD, qcOrientationText, qcSpacingXSlider, qcSpacingYSlider, qcLinesSlider)
+    AF.SetEnabled(quickCastTable["enabled"], qcOuterCP, qcOuterBtn, qcInnerCP, qcInnerBtn, qcGlowBuffsCP, qcGlowBuffsAddBtn, qcGlowCastsCP, qcGlowCastsAddBtn)
 
     for _, b in pairs(qcGlowBuffsButtons) do
         b:SetEnabled(quickCastTable["enabled"])
@@ -1018,7 +1018,7 @@ end
 -- ----------------------------------------------------------------------- --
 local function CreatePreviewButton(b)
     local p = CreateFrame("Frame", nil, CellMainFrame, "BackdropTemplate")
-    p:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+    p:SetBackdrop({bgFile = AF.GetPlainTexture()})
     p:SetBackdropColor(0.5, 0.5, 0.5, 0.7)
     p:SetAllPoints(b)
     p:SetFrameStrata("LOW")
@@ -1098,9 +1098,9 @@ CreateQuickCastButton = function(parent, name, isPreview)
     local outerCD = CreateFrame("Cooldown", name.."OuterCD", b, "BackdropTemplate,CooldownFrameTemplate")
     b.outerCD = outerCD
     outerCD:SetFrameLevel(b:GetFrameLevel() + 1)
-    outerCD:SetSwipeTexture(Cell.vars.whiteTexture)
+    outerCD:SetSwipeTexture(AF.GetPlainTexture())
     outerCD:SetDrawEdge(true)
-    -- outerCD:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+    -- outerCD:SetBackdrop({bgFile = AF.GetPlainTexture()})
     -- outerCD:SetBackdropColor(0, 0, 0, 0.5)
     outerCD.noCooldownCount = true -- disable omnicc
     outerCD:SetHideCountdownNumbers(true)
@@ -1119,9 +1119,9 @@ CreateQuickCastButton = function(parent, name, isPreview)
     local innerCD = CreateFrame("Cooldown", name.."InnerCD", b, "BackdropTemplate,CooldownFrameTemplate")
     b.innerCD = innerCD
     innerCD:SetFrameLevel(b:GetFrameLevel() + 2)
-    innerCD:SetSwipeTexture(Cell.vars.whiteTexture)
+    innerCD:SetSwipeTexture(AF.GetPlainTexture())
     innerCD:SetDrawEdge(true)
-    innerCD:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+    innerCD:SetBackdrop({bgFile = AF.GetPlainTexture()})
     innerCD:SetBackdropColor(0, 0, 0, 0.4)
     innerCD.noCooldownCount = true -- disable omnicc
     innerCD:SetHideCountdownNumbers(true)
@@ -1214,7 +1214,7 @@ CreateQuickCastButton = function(parent, name, isPreview)
         b:_SetSize(P.Scale(size), P.Scale(size))
 
         borderSize = floor(size/8)
-        b:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(borderSize)})
+        b:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(borderSize)})
         b:SetBackdropColor(b._r*0.2, b._g*0.2, b._b*0.2, 0.7)
         b:SetBackdropBorderColor(b._r, b._g, b._b, 0.9)
 

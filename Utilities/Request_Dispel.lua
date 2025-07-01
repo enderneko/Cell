@@ -4,6 +4,8 @@ local L = Cell.L
 local F = Cell.funcs
 local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local debuffItems = {}
 local LoadList
@@ -16,8 +18,8 @@ local drEnabledCB, drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, d
 local drType
 
 local function UpdateDRWidgets()
-    Cell.SetEnabled(CellDB["dispelRequest"]["enabled"], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drTypeDD, drTypeText, drTypeOptionsBtn)
-    Cell.SetEnabled(CellDB["dispelRequest"]["enabled"] and CellDB["dispelRequest"]["responseType"] == "specific", drDebuffsText)
+    AF.SetEnabled(CellDB["dispelRequest"]["enabled"], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drTypeDD, drTypeText, drTypeOptionsBtn)
+    AF.SetEnabled(CellDB["dispelRequest"]["enabled"] and CellDB["dispelRequest"]["responseType"] == "specific", drDebuffsText)
     if CellDB["dispelRequest"]["enabled"] and CellDB["dispelRequest"]["responseType"] == "specific" then
         drDebuffsList.mask:Hide()
     else

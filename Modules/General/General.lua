@@ -198,13 +198,13 @@ local function CreateNicknamePane()
     AF.SetPoint(syncCB, "TOPLEFT", nicknameEB, "BOTTOMLEFT", 0, -7)
 
     -- custom nicknames
-    local customNicknamesBtn = AF.CreateButton(nicknamePane, L["Custom Nicknames"], "accent_hover", 150, 20)
+    local customNicknamesBtn = AF.CreateButton(nicknamePane, L["Custom Nicknames"], "Cell_hover", 150, 20)
     AF.SetPoint(customNicknamesBtn, "TOPLEFT", syncCB, "BOTTOMLEFT", 0, -7)
     generalTab.customNicknamesBtn = customNicknamesBtn
     customNicknamesBtn:SetOnClick(F.ShowCustomNicknames)
 
     -- custom
-    local blacklistBtn = AF.CreateButton(nicknamePane, L["Nickname Blacklist"], "accent_hover", 150, 20)
+    local blacklistBtn = AF.CreateButton(nicknamePane, L["Nickname Blacklist"], "Cell_hover", 150, 20)
     AF.SetPoint(blacklistBtn, "TOPLEFT", customNicknamesBtn, "BOTTOMLEFT", 0, -7)
     generalTab.nicknameBlacklistBtn = blacklistBtn
     blacklistBtn:SetOnClick(F.ShowNicknameBlacklist)
@@ -245,94 +245,10 @@ end
 ---------------------------------------------------------------------
 local framePriorityWidget
 
--- TODO: move to Widgets.lua
-local function CreateFramePriorityWidget(parent)
-    local f = CreateFrame("Frame", nil, parent)
-    P.Size(f, 336, 20)
-
-    local function GetPriority(name)
-        for i, t in pairs(CellDB["general"]["framePriority"]) do
-            if t[1] == name then
-                return i
-            end
-        end
-    end
-
-    local buttons = {}
-
-    local function Comparator(a, b)
-        if a[2] ~= b[2] then
-            return a[2]
-        end
-
-        return buttons[a[1]]._priority < buttons[b[1]]._priority
-    end
-
-    for _, name in pairs({"Main", "Spotlight", "Quick Assist"}) do
-        buttons[name] = Cell.CreateButton(f, L[name], "accent-hover", {110, 20})
-        buttons[name]._priorityName = name
-
-        buttons[name].cb = Cell.CreateCheckButton(buttons[name], "", function(checked, self)
-            CellDB["general"]["framePriority"][GetPriority(name)][2] = checked
-            buttons[name]:SetEnabled(checked)
-            buttons[name]._enabled = checked
-            sort(CellDB["general"]["framePriority"], Comparator)
-            f:Load(CellDB["general"]["framePriority"])
-            F.UpdateFramePriority()
-        end)
-        buttons[name].cb:SetPoint("LEFT", 3, 0)
-
-        buttons[name].fs:SetPoint("LEFT", buttons[name].cb, "RIGHT", 3, 0)
-        buttons[name].fs:SetJustifyH("LEFT")
-
-        buttons[name]:SetMovable(true)
-        buttons[name]:RegisterForDrag("LeftButton")
-
-        buttons[name]:SetScript("OnDragStart", function(self)
-            self:SetFrameStrata("TOOLTIP")
-            self:StartMoving()
-            self:SetUserPlaced(false)
-        end)
-
-        buttons[name]:SetScript("OnDragStop", function(self)
-            if not self._enabled then return end
-            self:StopMovingOrSizing()
-            self:SetFrameStrata("LOW")
-            -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
-            C_Timer.After(0.05, function()
-                local b = F.GetMouseFocus()
-                if b ~= self and b and b._priority and b._enabled then
-                    -- print(self._priorityName, "->", b._priorityName)
-
-                    local temp = CellDB["general"]["framePriority"][self._priority]
-                    tremove(CellDB["general"]["framePriority"], self._priority)
-                    tinsert(CellDB["general"]["framePriority"], b._priority, temp)
-                end
-                f:Load(CellDB["general"]["framePriority"])
-                F.UpdateFramePriority()
-            end)
-        end)
-    end
-
-    function f:Load(t)
-        for i, p in pairs(t) do
-            buttons[p[1]]:SetFrameStrata(parent:GetFrameStrata())
-            buttons[p[1]]:Show()
-            buttons[p[1]]:ClearAllPoints()
-            buttons[p[1]]:SetPoint("TOPLEFT", (i-1)*(P.Scale(110)+P.Scale(3)), 0)
-            buttons[p[1]]._enabled = p[2]
-            buttons[p[1]]:SetEnabled(p[2])
-            buttons[p[1]].cb:SetChecked(p[2])
-            buttons[p[1]]._priority = i
-        end
-    end
-
-    return f
-end
-
 local function CreateLibGetFramePane()
-    local miscPane = Cell.CreateTitledPane(generalTab, "LibGetFrame", 422, 80)
-    AF.SetPoint(miscPane, "TOPLEFT", generalTab, 5, -450)
+    local miscPane = AF.CreateTitledPane(generalTab, "LibGetFrame", nil, 80)
+    AF.SetPoint(miscPane, "TOPLEFT", generalTab, 7, -450)
+    AF.SetPoint(miscPane, "TOPRIGHT", generalTab, -7, -450)
 
     local framePriorityText = miscPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     AF.SetPoint(framePriorityText, "TOPLEFT", 5, -27)
@@ -349,7 +265,7 @@ local function CreateLibGetFramePane()
         local name = L[names[i]]
         local value = values[i]
 
-        local b = AF.CreateButton(f, name, "accent_hover")
+        local b = AF.CreateButton(f, name, "Cell_hover")
         tinsert(widgets, b)
 
         b.cb = AF.CreateCheckButton(b, nil, function(checked)

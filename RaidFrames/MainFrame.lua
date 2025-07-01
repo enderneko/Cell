@@ -4,6 +4,8 @@ local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 Cell.unitButtons = {
     ["solo"] = {},
@@ -165,7 +167,7 @@ tools:SetAttribute("_onmousedown", [=[
 -------------------------------------------------
 local loadingBar = CreateFrame("StatusBar", "CellLoadingBar", options)
 loadingBar:Hide()
-loadingBar:SetStatusBarTexture(Cell.vars.whiteTexture)
+loadingBar:SetStatusBarTexture(AF.GetPlainTexture())
 loadingBar:SetStatusBarColor(0.5, 1, 0)
 P.Height(loadingBar, 1)
 P.Point(loadingBar, "BOTTOMLEFT", options, 1, 1)

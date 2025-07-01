@@ -5,6 +5,8 @@ local F = Cell.funcs
 local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 -------------------------------------------------
 -- spell request
@@ -112,10 +114,10 @@ local function LoadSpellsDropdown()
 end
 
 local function UpdateSRWidgets()
-    Cell.SetEnabled(CellDB["spellRequest"]["enabled"], waTips, srExistsCB, srKnownOnlyCB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn)
-    Cell.SetEnabled(CellDB["spellRequest"]["enabled"] and CellDB["spellRequest"]["knownSpellsOnly"], srFreeCDOnlyCB)
-    Cell.SetEnabled(CellDB["spellRequest"]["enabled"] and CellDB["spellRequest"]["knownSpellsOnly"] and CellDB["spellRequest"]["responseType"] ~= "all", srReplyCDCB)
-    Cell.SetEnabled(CellDB["spellRequest"]["enabled"] and CellDB["spellRequest"]["knownSpellsOnly"], srReplyCastEB)
+    AF.SetEnabled(CellDB["spellRequest"]["enabled"], waTips, srExistsCB, srKnownOnlyCB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn)
+    AF.SetEnabled(CellDB["spellRequest"]["enabled"] and CellDB["spellRequest"]["knownSpellsOnly"], srFreeCDOnlyCB)
+    AF.SetEnabled(CellDB["spellRequest"]["enabled"] and CellDB["spellRequest"]["knownSpellsOnly"] and CellDB["spellRequest"]["responseType"] ~= "all", srReplyCDCB)
+    AF.SetEnabled(CellDB["spellRequest"]["enabled"] and CellDB["spellRequest"]["knownSpellsOnly"], srReplyCastEB)
 end
 
 local function CreateSRPane()
@@ -673,7 +675,7 @@ function U.CreateSpellRequestIcon(parent)
     srIcon:SetFrameLevel(parent.widgets.indicatorFrame:GetFrameLevel()+110)
     srIcon:Hide()
 
-    -- srIcon:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+    -- srIcon:SetBackdrop({bgFile = AF.GetPlainTexture()})
     -- srIcon:SetBackdropColor(0, 0, 0, 1)
 
     srIcon.icon = srIcon:CreateTexture(nil, "ARTWORK")

@@ -3,6 +3,8 @@ local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local aboutTab = Cell.CreateFrame("CellOptionsFrame_AboutTab", CellOptionsFrame, nil, nil, true)
 Cell.frames.aboutTab = aboutTab
@@ -300,7 +302,7 @@ local function CreateSupportersPane()
     local bgTex = supportersPane:CreateTexture(nil, "BACKGROUND", nil, 0)
     bgTex:SetPoint("TOPLEFT", -5, 5)
     bgTex:SetPoint("BOTTOMRIGHT", 5, -5)
-    bgTex:SetTexture(Cell.vars.whiteTexture)
+    bgTex:SetTexture(AF.GetPlainTexture())
     bgTex:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 1), CreateColor(0.1, 0.1, 0.1, 0.7))
 
     local supportersFrame1 = CreateFrame("Frame", nil, supportersPane)
@@ -402,7 +404,7 @@ local links = {}
 local function CreateLink(parent, id, icon, onEnter)
     local f = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     P.Size(f, 34, 34)
-    f:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+    f:SetBackdrop({bgFile = AF.GetPlainTexture()})
     f:SetBackdropColor(0, 0, 0, 1)
 
     links[id] = f

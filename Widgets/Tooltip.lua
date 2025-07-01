@@ -2,13 +2,15 @@
 local Cell = select(2, ...)
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 -----------------------------------------
 -- Tooltip
 -----------------------------------------
 local function CreateTooltip(name, hasIcon)
     local tooltip = CreateFrame("GameTooltip", name, AFParent, "CellTooltipTemplate,BackdropTemplate")
-    tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = 1})
+    tooltip:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = 1})
     tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
     tooltip:SetBackdropBorderColor(Cell.GetAccentColorRGB())
     tooltip:SetOwner(AFParent, "ANCHOR_NONE")
@@ -66,7 +68,7 @@ local function CreateTooltip(name, hasIcon)
     end)
 
     function tooltip:UpdatePixelPerfect()
-        tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+        tooltip:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
         tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
         tooltip:SetBackdropBorderColor(Cell.GetAccentColorRGB())
         if hasIcon then

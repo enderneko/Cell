@@ -414,7 +414,7 @@ local function UpdatePreviewButton()
         previewButton:Show()
 
         if CELL_BORDER_SIZE ~= 0 then
-            previewButton:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
+            previewButton:SetBackdrop({edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(CELL_BORDER_SIZE)})
             previewButton:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
         end
 
@@ -472,7 +472,7 @@ local function UpdatePreviewButton()
     previewButton.nameText:SetPoint(unpack(styleTable["name"]["position"]))
 
     local font, fontSize, fontOutline, fontShadow = unpack(styleTable["name"]["font"])
-    font = F.GetFont(font)
+    font = AF.GetFont(font)
 
     local fontFlags
     if fontOutline == "None" then
@@ -603,7 +603,7 @@ local function UpdateLayoutPreview()
 
         for i = 1, 40 do
             layoutPreviewButtons[i] = CreateFrame("Frame", nil, layoutPreviewFrame, "BackdropTemplate")
-            layoutPreviewButtons[i]:SetBackdrop({bgFile=Cell.vars.whiteTexture, edgeFile=Cell.vars.whiteTexture, edgeSize=P.Scale(1)})
+            layoutPreviewButtons[i]:SetBackdrop({bgFile=AF.GetPlainTexture(), edgeFile=AF.GetPlainTexture(), edgeSize=P.Scale(1)})
             layoutPreviewButtons[i]:SetBackdropColor(0, 0, 0, 0.5)
             layoutPreviewButtons[i]:SetBackdropBorderColor(0, 0, 0, 1)
             layoutPreviewButtons[i]:EnableMouse(true)
@@ -751,14 +751,14 @@ local classButtons, buffButtons, castButtons = {}, {}, {}
 local buffsPane, buffsAddBtn, castsPane, castsAddBtn, offensivesEnabledCB
 
 local function UpdateWidgets(enabled)
-    Cell.SetEnabled(enabled, layoutBtn, styleBtn, spellBtn)
+    AF.SetEnabled(enabled, layoutBtn, styleBtn, spellBtn)
 
     -- NOTE: switch to layout on disable
-    Cell.SetEnabled(enabled, anchorDropdown, orientationDropdown, widthSlider, heightSlider, xSlider, ySlider, unitsSlider, maxSlider)
-    Cell.SetEnabled(enabled, autoSwitchFrame, filterTypeDropdown, hideSelfCB, roleFilter, classFilter, nameFilter)
+    AF.SetEnabled(enabled, anchorDropdown, orientationDropdown, widthSlider, heightSlider, xSlider, ySlider, unitsSlider, maxSlider)
+    AF.SetEnabled(enabled, autoSwitchFrame, filterTypeDropdown, hideSelfCB, roleFilter, classFilter, nameFilter)
 
     for _, b in pairs(filterButtons) do
-        Cell.SetEnabled(enabled, b)
+        AF.SetEnabled(enabled, b)
     end
 
     qaPopup:Hide()

@@ -2,11 +2,11 @@ local addonName = ...
 ---@class Cell
 local Cell = select(2, ...)
 local L = Cell.L
----@type CellFuncs
 local F = Cell.funcs
----@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 -----------------------------------------
 -- Color
@@ -175,33 +175,6 @@ function Cell.WrapTextInAccentColor(text)
 end
 
 -----------------------------------------
--- enable/disable
------------------------------------------
-function Cell.SetEnabled(isEnabled, ...)
-    for _, w in pairs({...}) do
-        if w:IsObjectType("FontString") then
-            if isEnabled then
-                w:SetTextColor(1, 1, 1, 1)
-            else
-                w:SetTextColor(0.4, 0.4, 0.4, 1)
-            end
-        elseif w:IsObjectType("Texture") then
-            if isEnabled then
-                w:SetDesaturated(false)
-            else
-                w:SetDesaturated(true)
-            end
-        elseif w.SetEnabled then
-            w:SetEnabled(isEnabled)
-        elseif isEnabled then
-            w:Show()
-        else
-            w:Hide()
-        end
-    end
-end
-
------------------------------------------
 -- rainbow text
 -----------------------------------------
 local colorSelect = CreateFrame("Colorselect")
@@ -317,7 +290,7 @@ function Cell.StylizeFrame(frame, color, borderColor)
     if not color then color = {0.1, 0.1, 0.1, 0.9} end
     if not borderColor then borderColor = {0, 0, 0, 1} end
 
-    frame:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+    frame:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
     frame:SetBackdropColor(unpack(color))
     frame:SetBackdropBorderColor(unpack(borderColor))
 end
@@ -572,14 +545,14 @@ function Cell.CreateButton(parent, text, buttonColor, size, noBorder, noBackgrou
     end
 
     if noBorder then
-        b:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+        b:SetBackdrop({bgFile = AF.GetPlainTexture()})
     else
         local n = P.Scale(1)
-        b:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = n, insets = {left=n, right=n, top=n, bottom=n}})
+        b:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = n, insets = {left=n, right=n, top=n, bottom=n}})
     end
 
     if buttonColor and string.find(buttonColor, "transparent") then -- drop down item
-        -- b:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+        -- b:SetBackdrop({bgFile = AF.GetPlainTexture()})
         if s then
             s:SetJustifyH("LEFT")
             s:SetPoint("LEFT", 5, 0)
@@ -682,7 +655,7 @@ function Cell.CreateButton(parent, text, buttonColor, size, noBorder, noBackgrou
             local currentBackdropBorderColor = {b:GetBackdropBorderColor()}
             -- update backdrop
             local n = P.Scale(1)
-            b:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = n, insets = {left=n, right=n, top=n, bottom=n}})
+            b:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = n, insets = {left=n, right=n, top=n, bottom=n}})
             -- restore colors
             b:SetBackdropColor(unpack(currentBackdropColor))
             b:SetBackdropBorderColor(unpack(currentBackdropBorderColor))
@@ -806,7 +779,7 @@ function Cell.CreateCheckButton(parent, label, onClick, ...)
         cb:SetHitRectInsets(0, -cb.label:GetStringWidth()-5, 0, 0)
     end
 
-    cb:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+    cb:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
     cb:SetBackdropColor(0.115, 0.115, 0.115, 0.9)
     cb:SetBackdropBorderColor(0, 0, 0, 1)
 
@@ -856,7 +829,7 @@ end
 function Cell.CreateColorPicker(parent, label, hasOpacity, onChange, onConfirm)
     local cp = CreateFrame("Button", nil, parent, "BackdropTemplate")
     P.Size(cp, 14, 14)
-    cp:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+    cp:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
     cp:SetBackdropBorderColor(0, 0, 0, 1)
     cp:SetScript("OnEnter", function()
         cp:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.5)
@@ -1565,14 +1538,14 @@ function Cell.CreateStatusBar(name, parent, width, height, maxValue, smooth, fun
     local bar = CreateFrame("StatusBar", name, parent, "BackdropTemplate")
 
     if not color then color = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 1} end
-    if not texture then texture = Cell.vars.whiteTexture end
+    if not texture then texture = AF.GetPlainTexture() end
     bar:SetStatusBarTexture(texture)
     bar:SetStatusBarColor(unpack(color))
     bar:GetStatusBarTexture():SetDrawLayer("BORDER", -1)
 
     P.Width(bar, width)
     P.Height(bar, height)
-    bar:SetBackdrop({bgFile=Cell.vars.whiteTexture, edgeFile=Cell.vars.whiteTexture, edgeSize=P.Scale(1)})
+    bar:SetBackdrop({bgFile=AF.GetPlainTexture(), edgeFile=AF.GetPlainTexture(), edgeSize=P.Scale(1)})
     bar:SetBackdropColor(0.07, 0.07, 0.07, 0.9)
     bar:SetBackdropBorderColor(0, 0, 0, 1)
 
@@ -1643,7 +1616,7 @@ function Cell.CreateStatusBarButton(parent, text, size, maxValue, template)
     bar:SetPoint("BOTTOMRIGHT", b)
     bar:SetStatusBarTexture("Interface\\AddOns\\Cell\\Media\\statusbar.tga")
     bar:SetStatusBarColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.5)
-    bar:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = 1})
+    bar:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = 1})
     bar:SetBackdropColor(0.115, 0.115, 0.115, 1)
     bar:SetBackdropBorderColor(0, 0, 0, 0)
     P.Size(bar, size[1], size[2])
@@ -1683,7 +1656,7 @@ function Cell.CreateStatusBarButton(parent, text, size, maxValue, template)
         local currentBackdropColor = {bar:GetBackdropColor()}
         local currentBackdropBorderColor = {bar:GetBackdropBorderColor()}
         -- update backdrop
-        bar:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+        bar:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
         -- restore colors
         bar:SetBackdropColor(unpack(currentBackdropColor))
         bar:SetBackdropBorderColor(unpack(currentBackdropBorderColor))
@@ -2154,7 +2127,7 @@ menu:SetFrameStrata("TOOLTIP")
 menu.items = {}
 
 function menu:UpdatePixelPerfect()
-    menu:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+    menu:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
     menu:SetBackdropColor(0.115, 0.115, 0.115, 0.977)
     menu:SetBackdropBorderColor(Cell.GetAccentColorRGB())
 end
@@ -2821,7 +2794,7 @@ list.items = {}
 
 -- highlight
 highlightTexture = CreateFrame("Frame", nil, list, "BackdropTemplate")
--- highlightTexture:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+-- highlightTexture:SetBackdrop({edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
 -- highlightTexture:SetBackdropBorderColor(unpack(accentColor.t))
 highlightTexture:Hide()
 
@@ -3020,7 +2993,7 @@ function Cell.CreateDropdown(parent, width, dropdownType, isMini, isHorizontal)
             Cell.CreateScrollFrame(list)
             list.scrollFrame:SetScrollStep(18)
             Cell.StylizeFrame(list, {0.115, 0.115, 0.115, 1})
-            highlightTexture:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+            highlightTexture:SetBackdrop({edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
             highlightTexture:SetBackdropBorderColor(unpack(accentColor.t))
         end
 
@@ -3284,7 +3257,7 @@ local function CreateGrid(parent, text, width)
     local grid = CreateFrame("Button", nil, parent, "BackdropTemplate")
     grid:SetFrameLevel(6)
     grid:SetSize(width, P.Scale(20))
-    grid:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+    grid:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
     grid:SetBackdropColor(0, 0, 0, 0)
     grid:SetBackdropBorderColor(0, 0, 0, 1)
 
@@ -3349,7 +3322,7 @@ function Cell.CreateBindingListButton(parent, modifier, bindKey, bindType, bindA
     local b = CreateFrame("Button", nil, parent, "BackdropTemplate")
     b:SetFrameLevel(5)
     P.Size(b, 100, 20)
-    b:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+    b:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
     b:SetBackdropColor(0.115, 0.115, 0.115, 1)
     b:SetBackdropBorderColor(0, 0, 0, 1)
     b:SetMovable(true)

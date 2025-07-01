@@ -5,6 +5,8 @@ local F = Cell.funcs
 local B = Cell.bFuncs
 local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local npcFrame = CreateFrame("Frame", "CellNPCFrame", CellMainFrame, "SecureHandlerStateTemplate")
 Cell.frames.npcFrame = npcFrame
@@ -153,7 +155,7 @@ for i = 1, 8 do
     --     button:SetAttribute("unit", "target")
     --     RegisterUnitWatch(button)
 
-    --     local bar = Cell.CreateStatusBar(nil, button, 10, 5, 1, false, nil, nil, Cell.vars.whiteTexture, {1, 1, 1, 1})
+    --     local bar = Cell.CreateStatusBar(nil, button, 10, 5, 1, false, nil, nil, AF.GetPlainTexture(), {1, 1, 1, 1})
     --     bar:SetFrameLevel(button.widgets.healthBar:GetFrameLevel() + 1)
     --     bar.border:Hide()
 

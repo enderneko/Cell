@@ -2,6 +2,8 @@ local addonName, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local colorPicker
 local current, original, hueSaturationBG, hueSaturation, brightness, alpha, picker
@@ -216,7 +218,7 @@ local function CreateColorPicker()
     }
     for i = 1, 6 do
         hueSaturation[i] = hueSaturation:CreateTexture(name.."HS_Gradient"..i, "ARTWORK", nil, 0)
-        hueSaturation[i]:SetTexture(Cell.vars.whiteTexture)
+        hueSaturation[i]:SetTexture(AF.GetPlainTexture())
         -- hueSaturation[i]:SetColorTexture(1, 1, 1, 1)
         -- hueSaturation[i]:SetVertexColor(1, 1, 1, 1)
         hueSaturation[i]:SetGradient("HORIZONTAL", CreateColor(color[i].r, color[i].g, color[i].b, 1), CreateColor(color[i+1].r, color[i+1].g, color[i+1].b, 1))
@@ -236,7 +238,7 @@ local function CreateColorPicker()
     -- add saturation
     local saturation = hueSaturation:CreateTexture(name.."HS_Saturation", "ARTWORK", nil, 1)
     saturation:SetBlendMode("BLEND")
-    saturation:SetTexture(Cell.vars.whiteTexture)
+    saturation:SetTexture(AF.GetPlainTexture())
     saturation:SetGradient("VERTICAL", CreateColor(1, 1, 1, 1), CreateColor(1, 1, 1, 0))
     saturation:SetAllPoints(hueSaturation)
 
@@ -266,7 +268,7 @@ local function CreateColorPicker()
     brightness.tex = brightness:CreateTexture(nil, "ARTWORK")
     brightness.tex:SetPoint("TOPLEFT", P.Scale(1), P.Scale(-1))
     brightness.tex:SetPoint("BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
-    brightness.tex:SetTexture(Cell.vars.whiteTexture)
+    brightness.tex:SetTexture(AF.GetPlainTexture())
 
     brightness.thumb1 = brightness:CreateTexture(nil, "ARTWORK")
     -- brightness.thumb1:SetColorTexture(0, 1, 0, 1)
@@ -312,7 +314,7 @@ local function CreateColorPicker()
     alpha.tex = alpha:CreateTexture(nil, "ARTWORK")
     alpha.tex:SetPoint("TOPLEFT", P.Scale(1), P.Scale(-1))
     alpha.tex:SetPoint("BOTTOMRIGHT", P.Scale(-1), P.Scale(1))
-    alpha.tex:SetTexture(Cell.vars.whiteTexture)
+    alpha.tex:SetTexture(AF.GetPlainTexture())
     alpha.tex:SetGradient("VERTICAL", CreateColor(0, 0, 0, 1), CreateColor(1, 1, 1, 1))
 
     alpha.thumb1 = alpha:CreateTexture(nil, "ARTWORK")
@@ -494,7 +496,7 @@ function Cell.ShowColorPicker(callback, onConfirm, hasAlpha, r, g, b, a)
 
     -- update all
     UpdateAll("rgb", oR, oG, oB, oA, true, true)
-    Cell.SetEnabled(hasAlpha, alpha, aEB, aEB.label)
+    AF.SetEnabled(hasAlpha, alpha, aEB, aEB.label)
 
     P.PixelPerfectPoint(colorPicker)
     colorPicker:Show()

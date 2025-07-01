@@ -1,12 +1,11 @@
 local addonName, Cell = ...
 local L = Cell.L
----@type CellFuncs
 local F = Cell.funcs
----@type CellIndicatorFuncs
 local I = Cell.iFuncs
----@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 -----------------------------------------
 -- Color
@@ -304,7 +303,7 @@ local function CreateSetting_ShieldBarPosition(parent)
                 ["value"] = point,
                 ["onClick"] = function()
                     widget.func({point, nil, widget.relativePoint:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
-                    Cell.SetEnabled(true, widget.relativePointText, widget.relativePoint, widget.x, widget.y)
+                    AF.SetEnabled(true, widget.relativePointText, widget.relativePoint, widget.x, widget.y)
                 end,
             })
         end
@@ -313,7 +312,7 @@ local function CreateSetting_ShieldBarPosition(parent)
             ["value"] = "HEALTH_BAR",
             ["onClick"] = function()
                 widget.func({"HEALTH_BAR", nil, widget.relativePoint:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
-                Cell.SetEnabled(false, widget.relativePointText, widget.relativePoint, widget.x, widget.y)
+                AF.SetEnabled(false, widget.relativePointText, widget.relativePoint, widget.x, widget.y)
             end,
         })
         widget.anchor:SetItems(items)
@@ -364,7 +363,7 @@ local function CreateSetting_ShieldBarPosition(parent)
             widget.x:SetValue(positionTable[4])
             widget.y:SetValue(positionTable[5])
 
-            Cell.SetEnabled(positionTable[1] ~= "HEALTH_BAR", widget.relativePointText, widget.relativePoint, widget.x, widget.y)
+            AF.SetEnabled(positionTable[1] ~= "HEALTH_BAR", widget.relativePointText, widget.relativePoint, widget.x, widget.y)
         end
     else
         widget = settingWidgets["shieldBarPosition"]
@@ -2104,7 +2103,7 @@ local function CreateSetting_Colors(parent)
 
         local percentCB = Cell.CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[2][1] = checked
-            Cell.SetEnabled(checked, percentColor, percentDropdown)
+            AF.SetEnabled(checked, percentColor, percentDropdown)
         end)
         percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
@@ -2121,7 +2120,7 @@ local function CreateSetting_Colors(parent)
 
         local secCB = Cell.CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[3][1] = checked
-            Cell.SetEnabled(checked, secColor, secEditBox, secText)
+            AF.SetEnabled(checked, secColor, secEditBox, secText)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
@@ -2234,9 +2233,9 @@ local function CreateSetting_Colors(parent)
             widget.colorsTable = colorsTable
 
             percentCB:SetChecked(colorsTable[2][1])
-            Cell.SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
+            AF.SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
             secCB:SetChecked(colorsTable[3][1])
-            Cell.SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
+            AF.SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
 
             normalColor:SetColor(colorsTable[1])
             percentColor:SetColor(colorsTable[2][3])
@@ -2303,7 +2302,7 @@ local function CreateSetting_BlockColors(parent)
 
         local percentCB = Cell.CreateCheckButton(durationPane, "", function(checked)
             widget.colorsTable[3][1] = checked
-            Cell.SetEnabled(checked, percentColor, percentDropdown)
+            AF.SetEnabled(checked, percentColor, percentDropdown)
         end)
         percentCB:SetPoint("TOPLEFT")
 
@@ -2320,7 +2319,7 @@ local function CreateSetting_BlockColors(parent)
 
         local secCB = Cell.CreateCheckButton(durationPane, "", function(checked)
             widget.colorsTable[4][1] = checked
-            Cell.SetEnabled(checked, secColor, secEditBox, secText)
+            AF.SetEnabled(checked, secColor, secEditBox, secText)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
@@ -2413,7 +2412,7 @@ local function CreateSetting_BlockColors(parent)
 
         local stackCB1 = Cell.CreateCheckButton(stackPane, "", function(checked)
             widget.colorsTable[3][1] = checked
-            Cell.SetEnabled(checked, stackColor1, stackEB1)
+            AF.SetEnabled(checked, stackColor1, stackEB1)
             widget.func(widget.colorsTable)
         end)
         stackCB1:SetPoint("TOPLEFT")
@@ -2431,7 +2430,7 @@ local function CreateSetting_BlockColors(parent)
 
         local stackCB2 = Cell.CreateCheckButton(stackPane, "", function(checked)
             widget.colorsTable[4][1] = checked
-            Cell.SetEnabled(checked, stackColor2, stackEB2)
+            AF.SetEnabled(checked, stackColor2, stackEB2)
             widget.func(widget.colorsTable)
         end)
         stackCB2:SetPoint("TOPLEFT", stackCB1, "BOTTOMLEFT", 0, -8)
@@ -2573,8 +2572,8 @@ local function CreateSetting_BlockColors(parent)
             normalColor:SetColor(colorsTable[2])
             borderColor:SetColor(colorsTable[5])
 
-            Cell.SetEnabled(colorsTable[3][1], percentColor, percentDropdown, stackColor1, stackEB1)
-            Cell.SetEnabled(colorsTable[4][1], secColor, secEditBox, secText, stackColor2, stackEB2)
+            AF.SetEnabled(colorsTable[3][1], percentColor, percentDropdown, stackColor1, stackEB1)
+            AF.SetEnabled(colorsTable[4][1], secColor, secEditBox, secText, stackColor2, stackEB2)
 
             percentCB:SetChecked(colorsTable[3][1])
             percentColor:SetColor(colorsTable[3][3])
@@ -2618,7 +2617,7 @@ local function CreateSetting_OverlayColors(parent)
 
         local percentCB = Cell.CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[2][1] = checked
-            Cell.SetEnabled(checked, percentColor, percentDropdown)
+            AF.SetEnabled(checked, percentColor, percentDropdown)
             widget.func(widget.colorsTable)
         end)
         percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
@@ -2636,7 +2635,7 @@ local function CreateSetting_OverlayColors(parent)
 
         local secCB = Cell.CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[3][1] = checked
-            Cell.SetEnabled(checked, secColor, secEditBox, secText)
+            AF.SetEnabled(checked, secColor, secEditBox, secText)
             widget.func(widget.colorsTable)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
@@ -2731,9 +2730,9 @@ local function CreateSetting_OverlayColors(parent)
             widget.colorsTable = colorsTable
 
             percentCB:SetChecked(colorsTable[2][1])
-            Cell.SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
+            AF.SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
             secCB:SetChecked(colorsTable[3][1])
-            Cell.SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
+            AF.SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
 
             normalColor:SetColor(colorsTable[1])
             percentColor:SetColor(colorsTable[2][3])
@@ -3522,7 +3521,7 @@ local function CreateSetting_Duration(parent)
         widget.durationRoundUpCB = Cell.CreateCheckButton(widget, L["Round Up Duration Text"], function(checked, self)
             CellDropdownList:Hide()
             widget.durationTbl[2] = checked
-            Cell.SetEnabled(not checked, widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
+            AF.SetEnabled(not checked, widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
             widget.func(widget.durationTbl)
         end)
         widget.durationRoundUpCB:SetPoint("TOPLEFT", widget.durationCB, "BOTTOMLEFT", 0, -8)
@@ -3563,7 +3562,7 @@ local function CreateSetting_Duration(parent)
             widget.durationTbl = durationTbl
             widget.durationCB:SetChecked(durationTbl[1])
             widget.durationRoundUpCB:SetChecked(durationTbl[2])
-            Cell.SetEnabled(not durationTbl[2], widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
+            AF.SetEnabled(not durationTbl[2], widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
             widget.durationDecimalDropdown:SetSelectedValue(durationTbl[3])
         end
     else
@@ -3593,7 +3592,7 @@ local function CreateSetting_Stack(parent)
         widget.circledStackCB = Cell.CreateCheckButton(widget, L["circledStackNums"], function(checked, self)
             CellDropdownList:Hide()
             widget.stackTbl[2] = checked
-            Cell.SetEnabled(not checked, widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
+            AF.SetEnabled(not checked, widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
             widget.func(widget.stackTbl)
         end, L["circledStackNums"], L["Require font support"])
         widget.circledStackCB:SetPoint("TOPLEFT", widget.stackCB, "BOTTOMLEFT", 0, -8)
@@ -3652,7 +3651,7 @@ local function CreateSetting_RoleTexture(parent)
                 ["value"] = v,
                 ["onClick"] = function()
                     widget.func({v, widget.eb1:GetText(), widget.eb2:GetText(), widget.eb3:GetText()})
-                    Cell.SetEnabled(v == "custom",
+                    AF.SetEnabled(v == "custom",
                         widget.text1, widget.text2, widget.text3,
                         widget.texture1, widget.texture2, widget.texture3,
                         widget.eb1, widget.eb2, widget.eb3
@@ -3722,7 +3721,7 @@ local function CreateSetting_RoleTexture(parent)
         -- show db value
         function widget:SetDBValue(t)
             widget.texture:SetSelectedValue(t[1])
-            Cell.SetEnabled(t[1] == "custom",
+            AF.SetEnabled(t[1] == "custom",
                 widget.text1, widget.text2, widget.text3,
                 widget.texture1, widget.texture2, widget.texture3,
                 widget.eb1, widget.eb2, widget.eb3
@@ -5064,7 +5063,7 @@ local function CreateSpellButtons(parent, class, spells, disableds)
     for spellId in pairs(spells) do
         if not spellButtons[buttonIndex] then
             spellButtons[buttonIndex] = CreateFrame("Button", "CellIndicatorSettings_BuiltIns_SpellButton"..buttonIndex, parent:GetParent(), "BackdropTemplate")
-            spellButtons[buttonIndex]:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+            spellButtons[buttonIndex]:SetBackdrop({bgFile = AF.GetPlainTexture()})
             P.Size(spellButtons[buttonIndex], 20, 20)
 
             spellButtons[buttonIndex].icon = spellButtons[buttonIndex]:CreateTexture(nil, "ARTWORK")
@@ -5216,7 +5215,7 @@ end
 
 local function CreateActionPreview(parent, style)
     local f = CreateFrame("Frame", "CellIndicatorSettings_ActionsPreview_Type"..style, parent, "BackdropTemplate")
-    f:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+    f:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
     f:SetBackdropColor(0.2, 0.2, 0.2, 1)
     f:SetBackdropBorderColor(0, 0, 0, 1)
 
@@ -6421,7 +6420,7 @@ local function CreateSetting_MaxValue(parent)
         settingWidgets["maxValue"] = widget
 
         widget.cb = Cell.CreateCheckButton(widget, L["Set Bar Max Value"], function(checked)
-            Cell.SetEnabled(checked, widget.maxValue, widget.secText, widget.allowSmaller)
+            AF.SetEnabled(checked, widget.maxValue, widget.secText, widget.allowSmaller)
             widget.func({checked, tonumber(widget.maxValue:GetText()) or 0, widget.allowSmaller:GetChecked()})
         end)
         widget.cb:SetPoint("TOPLEFT", 5, -8)
@@ -6454,7 +6453,7 @@ local function CreateSetting_MaxValue(parent)
             widget.cb:SetChecked(maxValue[1])
             widget.maxValue:SetText(maxValue[2])
             widget.allowSmaller:SetChecked(maxValue[3])
-            Cell.SetEnabled(maxValue[1], widget.maxValue, widget.secText, widget.allowSmaller)
+            AF.SetEnabled(maxValue[1], widget.maxValue, widget.secText, widget.allowSmaller)
         end
     else
         widget = settingWidgets["maxValue"]

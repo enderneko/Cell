@@ -1,10 +1,11 @@
 ---@class Cell
 local Cell = select(2, ...)
 local L = Cell.L
----@type CellFuncs
 local F = Cell.funcs
 ---@class CellIndicatorFuncs
 local I = Cell.iFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local UnitGUID = UnitGUID
 local UnitCanAttack = UnitCanAttack
@@ -157,26 +158,7 @@ function I.CreateTargetCounter(parent)
     text:SetPoint("CENTER", 1, 0)
 
     function targetCounter:SetFont(font, size, outline, shadow)
-        font = F.GetFont(font)
-
-        local flags
-        if outline == "None" then
-            flags = ""
-        elseif outline == "Outline" then
-            flags = "OUTLINE"
-        else
-            flags = "OUTLINE,MONOCHROME"
-        end
-
-        text:SetFont(font, size, flags)
-
-        if shadow then
-            text:SetShadowOffset(1, -1)
-            text:SetShadowColor(0, 0, 0, 1)
-        else
-            text:SetShadowOffset(0, 0)
-            text:SetShadowColor(0, 0, 0, 0)
-        end
+        AF.SetFont(text, font, size, outline, shadow)
 
         local point = targetCounter:GetPoint(1)
         text:ClearAllPoints()

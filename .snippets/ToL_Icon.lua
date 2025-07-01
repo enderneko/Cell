@@ -4,9 +4,10 @@
 -------------------------------------------------
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+local AF = _G.AbstractFramework
 
 local icon = CreateFrame("Frame", nil, CellMainFrame, "BackdropTemplate")
-icon:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+icon:SetBackdrop({bgFile = AF.GetPlainTexture()})
 icon:SetBackdropColor(0, 0, 0, 1)
 icon:SetSize(13, 13) -- 尺寸
 icon:Hide()

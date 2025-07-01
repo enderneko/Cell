@@ -4,6 +4,8 @@ local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local LCG = LibStub("LibCustomGlow-1.0")
 
@@ -481,7 +483,7 @@ local function CreateInstanceFrame()
     -- instance image frame
     local imageFrame = Cell.CreateFrame("RaidDebuffsTab_InstanceImage", debuffsTab, 128, 64, true)
     imageFrame.bg = imageFrame:CreateTexture(nil, "BACKGROUND")
-    imageFrame.bg:SetTexture(Cell.vars.whiteTexture)
+    imageFrame.bg:SetTexture(AF.GetPlainTexture())
     imageFrame.bg:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.1, 0.1, 0.1, 1))
 
     imageFrame.tex = imageFrame:CreateTexture(nil, "ARTWORK")
@@ -598,7 +600,7 @@ local function CreateBossesFrame()
     -- boss image frame
     local imageFrame = Cell.CreateFrame("RaidDebuffsTab_BossImage", debuffsTab, 128, 64, true)
     imageFrame.bg = imageFrame:CreateTexture(nil, "BACKGROUND")
-    imageFrame.bg:SetTexture(Cell.vars.whiteTexture)
+    imageFrame.bg:SetTexture(AF.GetPlainTexture())
     imageFrame.bg:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.1, 0.1, 0.1, 1))
     -- imageFrame.bg:SetAllPoints(imageFrame)
 

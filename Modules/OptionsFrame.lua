@@ -8,9 +8,9 @@ local AF = _G.AbstractFramework
 
 local lastShownTab
 
-local optionsFrame = AF.CreateBorderedFrame(CellMainFrame, "CellOptionsFrame", 450, 400) -- 432, 401
+local optionsFrame = AF.CreateBorderedFrame(CellMainFrame, "CellOptionsFrame", 450, 535) -- 432, 401
 optionsFrame:Hide()
-optionsFrame:SetPoint("CENTER", AFParent)
+optionsFrame:SetPoint("RIGHT", AF.UIParent, "CENTER", -100, 0)
 optionsFrame:SetFrameStrata("DIALOG")
 optionsFrame:SetFrameLevel(777)
 optionsFrame:SetClampedToScreen(true)
@@ -29,9 +29,11 @@ local function RegisterDragForOptionsFrame(frame)
     frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", function()
         optionsFrame:StartMoving()
+        optionsFrame:SetUserPlaced(false)
     end)
     frame:SetScript("OnDragStop", function()
         optionsFrame:StopMovingOrSizing()
+        AF.SavePositionAsTable(optionsFrame, CellDB["optionsFramePosition"])
         AF.ReAnchorRegion(optionsFrame, "TOPLEFT")
     end)
 end
@@ -42,9 +44,6 @@ end
 local generalBtn, appearanceBtn, clickCastingsBtn, aboutBtn, layoutsBtn, indicatorsBtn, debuffsBtn, utilitiesBtn, closeBtn
 
 local function InitOptionsFrame()
-    optionsFrame:UpdatePixels()
-    AF.ReAnchorRegion(optionsFrame, "TOPLEFT")
-
     -- row 1
     layoutsBtn = AF.CreateButton(optionsFrame, L["Layouts"], "Cell_hover", 110, 20, nil, nil, nil, "AF_FONT_TITLE")
     indicatorsBtn = AF.CreateButton(optionsFrame, L["Indicators"], "Cell_hover", 110, 20, nil, nil, nil, "AF_FONT_TITLE")
@@ -146,6 +145,8 @@ local function InitOptionsFrame()
     end
 
     AF.CreateButtonGroup(buttons, ShowTab, nil, nil, OnEnter, OnLeave)
+
+    F.CreateUtilityList(utilitiesBtn)
 end
 
 -------------------------------------------------
@@ -156,7 +157,10 @@ local function Init()
     if not init then
         init = true
         InitOptionsFrame()
-        F.CreateUtilityList(utilitiesBtn)
+        AF.LoadPosition(optionsFrame, CellDB["optionsFramePosition"], AF.UIParent)
+        optionsFrame:UpdatePixels()
+        AF.ReAnchorRegion(optionsFrame, "TOPLEFT")
+        print(optionsFrame:GetPoint(1))
     end
 end
 

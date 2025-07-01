@@ -1,11 +1,11 @@
 ---@class Cell
 local Cell = select(2, ...)
----@type CellFuncs
 local F = Cell.funcs
+local P = Cell.pixelPerfectFuncs
 ---@class CellIndicatorFuncs
 local I = Cell.iFuncs
----@type PixelPerfectFuncs
-local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 CELL_SUMMON_ICONS_ENABLED = false
 
@@ -101,7 +101,7 @@ function I.CreateStatusIcon(parent)
     bar:SetAllPoints(resurrectionIcon)
     bar:SetOrientation("VERTICAL")
     bar:SetReverseFill(true)
-    bar:SetStatusBarTexture(Cell.vars.whiteTexture)
+    bar:SetStatusBarTexture(AF.GetPlainTexture())
     bar:GetStatusBarTexture():SetAlpha(0)
     bar.elapsedTime = 0
     bar:SetScript("OnUpdate", function(self, elapsed)
@@ -113,7 +113,7 @@ function I.CreateStatusIcon(parent)
     end)
 
     local mask = resurrectionIcon:CreateMaskTexture()
-    mask:SetTexture(Cell.vars.whiteTexture, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture(AF.GetPlainTexture(), "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetPoint("TOPLEFT", bar:GetStatusBarTexture(), "BOTTOMLEFT")
     mask:SetPoint("BOTTOMRIGHT")
 

@@ -16,9 +16,10 @@ local offsetY = 0
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+local AF = _G.AbstractFramework
 
 local tooltip = CreateFrame("GameTooltip", "CellClickCastingTips", CellMainFrame, "CellTooltipTemplate,BackdropTemplate")
-tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+tooltip:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
 tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
 tooltip:SetBackdropBorderColor(Cell.GetAccentColorRGB())
 tooltip:SetOwner(AFParent, "ANCHOR_NONE")

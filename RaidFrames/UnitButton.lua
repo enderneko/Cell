@@ -1,18 +1,15 @@
 ---@class Cell
 local Cell = select(2, ...)
 local L = Cell.L
----@type CellFuncs
+local B = Cell.bFuncs
+local I = Cell.iFuncs
+local U = Cell.uFuncs
+local P = Cell.pixelPerfectFuncs
+local A = Cell.animations
 local F = Cell.funcs
 ---@class CellUnitButtonFuncs
-local B = Cell.bFuncs
----@type CellIndicatorFuncs
-local I = Cell.iFuncs
----@type CellUtilityFuncs
-local U = Cell.uFuncs
----@type PixelPerfectFuncs
-local P = Cell.pixelPerfectFuncs
----@type CellAnimations
-local A = Cell.animations
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 local LGI = LibStub:GetLibrary("LibGroupInfo")
 
 CELL_FADE_OUT_HEALTH_PERCENT = nil
@@ -3476,8 +3473,8 @@ function B.UpdateHighlightSize(button)
         end
 
         -- update thickness
-        targetHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(size)})
-        mouseoverHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(size)})
+        targetHighlight:SetBackdrop({edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(size)})
+        mouseoverHighlight:SetBackdrop({edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(size)})
 
         -- update color
         targetHighlight:SetBackdropBorderColor(unpack(CellDB["appearance"]["targetColor"]))
@@ -3585,10 +3582,10 @@ end
 -- backdrop
 function B.UpdateBackdrop(button)
     if CELL_BORDER_SIZE == 0 then
-        button:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+        button:SetBackdrop({bgFile = AF.GetPlainTexture()})
         button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
     else
-        button:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
+        button:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(CELL_BORDER_SIZE)})
         button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
         button:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
     end
@@ -3681,7 +3678,7 @@ function CellUnitButton_OnLoad(button)
     -- local background = button:CreateTexture(name.."Background", "BORDER")
     -- button.widgets.background = background
     -- background:SetAllPoints(button)
-    -- background:SetTexture(Cell.vars.whiteTexture)
+    -- background:SetTexture(AF.GetPlainTexture())
     -- background:SetVertexColor(0, 0, 0, 1)
 
     -- NOTE: SecureUnitButton has no OnActionButtonPressAndHoldRelease
@@ -3689,7 +3686,7 @@ function CellUnitButton_OnLoad(button)
     -- button:SetAttribute("typerelease", "macro")
 
     -- backdrop
-    -- button:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
+    -- button:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(CELL_BORDER_SIZE)})
     -- button:SetBackdropColor(0, 0, 0, 1)
     -- button:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
 
@@ -3840,7 +3837,7 @@ function CellUnitButton_OnLoad(button)
     -- flash
     local damageFlashTex = healthBar:CreateTexture(name.."DamageFlash", "ARTWORK", nil, -6)
     button.widgets.damageFlashTex = damageFlashTex
-    damageFlashTex:SetTexture(Cell.vars.whiteTexture)
+    damageFlashTex:SetTexture(AF.GetPlainTexture())
     damageFlashTex:SetVertexColor(1, 1, 1, 0.7)
     -- P.Point(damageFlashTex, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
     -- P.Point(damageFlashTex, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
@@ -3873,7 +3870,7 @@ function CellUnitButton_OnLoad(button)
     button.widgets.targetHighlight = targetHighlight
     targetHighlight:SetIgnoreParentAlpha(true)
     targetHighlight:SetFrameLevel(button:GetFrameLevel()+3)
-    -- targetHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+    -- targetHighlight:SetBackdrop({edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
     -- P.Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
     -- P.Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
     targetHighlight:Hide()
@@ -3883,7 +3880,7 @@ function CellUnitButton_OnLoad(button)
     button.widgets.mouseoverHighlight = mouseoverHighlight
     mouseoverHighlight:SetIgnoreParentAlpha(true)
     mouseoverHighlight:SetFrameLevel(button:GetFrameLevel()+4)
-    -- mouseoverHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+    -- mouseoverHighlight:SetBackdrop({edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
     -- P.Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
     -- P.Point(mouseoverHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
     mouseoverHighlight:Hide()
@@ -3893,7 +3890,7 @@ function CellUnitButton_OnLoad(button)
     -- button.widgets.readyCheckHighlight = readyCheckHighlight
     -- readyCheckHighlight:SetPoint("TOPLEFT", -1, 1)
     -- readyCheckHighlight:SetPoint("BOTTOMRIGHT", 1, -1)
-    -- readyCheckHighlight:SetTexture(Cell.vars.whiteTexture)
+    -- readyCheckHighlight:SetTexture(AF.GetPlainTexture())
     -- readyCheckHighlight:Hide()
 
     -- aggro bar

@@ -197,6 +197,8 @@ function eventFrame:ADDON_LOADED(arg1)
             }
         end
 
+        if type(CellDB["optionsFramePosition"]) ~= "table" then CellDB["optionsFramePosition"] = {} end
+
         if type(CellDB["customTextures"]) ~= "table" then CellDB["customTextures"] = {} end
 
         if type(CellDB["snippets"]) ~= "table" then CellDB["snippets"] = {} end
@@ -374,9 +376,11 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- color ---------------------------------------------------------------------------------
         if CellDB["appearance"]["accentColor"] then -- version < r103
-            if CellDB["appearance"]["accentColor"][1] == "custom" then
-                Cell.OverrideAccentColor(CellDB["appearance"]["accentColor"][2])
+            if CellDB["appearance"]["accentColor"][1] == "custom" then -- custom color
                 AF.SetAddonAccentColor("Cell", CellDB["appearance"]["accentColor"][2])
+            else -- class color
+                local class = UnitClassBase("player")
+                AF.SetAddonAccentColor("Cell", {AF.GetClassColor(class)})
             end
         end
 

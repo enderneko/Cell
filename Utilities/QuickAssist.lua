@@ -6,6 +6,8 @@ local I = Cell.iFuncs
 local U = Cell.uFuncs
 local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local UnitIsConnected = UnitIsConnected
 local InCombatLockdown = InCombatLockdown
@@ -636,7 +638,7 @@ function CellQuickAssist_OnLoad(button)
     local deadTex = healthBar:CreateTexture(nil, "OVERLAY")
     button.deadTex = deadTex
     deadTex:SetAllPoints(healthBar)
-    deadTex:SetTexture(Cell.vars.whiteTexture)
+    deadTex:SetTexture(AF.GetPlainTexture())
     deadTex:SetGradient("VERTICAL", CreateColor(0.545, 0, 0, 1), CreateColor(0, 0, 0, 1))
     deadTex:Hide()
 
@@ -1140,7 +1142,7 @@ local function UpdateQuickAssist(which)
             header[i].nameText:SetPoint(unpack(styleTable["name"]["position"]))
 
             local font, fontSize, fontOutline, fontShadow = unpack(styleTable["name"]["font"])
-            font = F.GetFont(font)
+            font = AF.GetFont(font)
 
             local fontFlags
             if fontOutline == "None" then
@@ -1194,8 +1196,8 @@ local function UpdateQuickAssist(which)
             end
 
             -- update thickness
-            targetHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(size)})
-            mouseoverHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(size)})
+            targetHighlight:SetBackdrop({edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(size)})
+            mouseoverHighlight:SetBackdrop({edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(size)})
 
             -- update color
             targetHighlight:SetBackdropBorderColor(unpack(styleTable["targetColor"]))
@@ -1364,7 +1366,7 @@ Cell.RegisterCallback("AddonLoaded", "QuickAssist_AddonLoaded", AddonLoaded)
 local function UpdatePixelPerfect()
     for i = 1, 40 do
         if CELL_BORDER_SIZE ~= 0 then
-            header[i]:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
+            header[i]:SetBackdrop({edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(CELL_BORDER_SIZE)})
             header[i]:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
         end
 

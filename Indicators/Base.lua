@@ -7,6 +7,8 @@ local F = Cell.funcs
 local I = Cell.iFuncs
 ---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local LCG = LibStub("LibCustomGlow-1.0")
 
@@ -36,26 +38,7 @@ function I.JustifyText(text, point)
 end
 
 function I.SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, yOffset, color)
-    font = F.GetFont(font)
-
-    local flags
-    if outline == "None" then
-        flags = ""
-    elseif outline == "Outline" then
-        flags = "OUTLINE"
-    else
-        flags = "OUTLINE,MONOCHROME"
-    end
-
-    fs:SetFont(font, size, flags)
-
-    if shadow then
-        fs:SetShadowOffset(1, -1)
-        fs:SetShadowColor(0, 0, 0, 1)
-    else
-        fs:SetShadowOffset(0, 0)
-        fs:SetShadowColor(0, 0, 0, 0)
-    end
+    AF.SetFont(fs, font, size, outline, shadow)
 
     P.ClearPoints(fs)
     P.Point(fs, anchor, anchorTo, anchor, xOffset, yOffset)
@@ -142,7 +125,7 @@ local function Shared_CreateCooldown_Vertical(frame)
     P.Point(cooldown, "BOTTOMRIGHT", frame.icon, "BOTTOMRIGHT", 0, CELL_BORDER_SIZE)
     cooldown:SetOrientation("VERTICAL")
     cooldown:SetReverseFill(true)
-    cooldown:SetStatusBarTexture(Cell.vars.whiteTexture)
+    cooldown:SetStatusBarTexture(AF.GetPlainTexture())
 
     local texture = cooldown:GetStatusBarTexture()
     texture:SetAlpha(0)
@@ -155,7 +138,7 @@ local function Shared_CreateCooldown_Vertical(frame)
     spark:SetPoint("TOPRIGHT", texture, "BOTTOMRIGHT")
 
     local mask = cooldown:CreateMaskTexture()
-    mask:SetTexture(Cell.vars.whiteTexture, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture(AF.GetPlainTexture(), "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetPoint("TOPLEFT")
     mask:SetPoint("BOTTOMRIGHT", texture)
 
@@ -181,7 +164,7 @@ local function Shared_CreateCooldown_Vertical_NoIcon(frame)
     P.Point(cooldown, "BOTTOMRIGHT", frame, -CELL_BORDER_SIZE, CELL_BORDER_SIZE + CELL_BORDER_SIZE)
     cooldown:SetOrientation("VERTICAL")
     cooldown:SetReverseFill(true)
-    cooldown:SetStatusBarTexture(Cell.vars.whiteTexture)
+    cooldown:SetStatusBarTexture(AF.GetPlainTexture())
 
     local texture = cooldown:GetStatusBarTexture()
     texture:SetVertexColor(0, 0, 0, 0.8)
@@ -206,7 +189,7 @@ local function Shared_CreateCooldown_Clock(frame)
     P.Point(cooldown, "BOTTOMRIGHT", frame, -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     cooldown:SetReverse(true)
     cooldown:SetDrawEdge(false)
-    cooldown:SetSwipeTexture(Cell.vars.whiteTexture)
+    cooldown:SetSwipeTexture(AF.GetPlainTexture())
     cooldown:SetSwipeColor(0, 0, 0, 0.77)
     -- cooldown:SetEdgeTexture([[Interface\Cooldown\UI-HUD-ActionBar-SecondaryCooldown]])
 
@@ -503,7 +486,7 @@ function I.CreateAura_BorderIcon(name, parent, borderSize)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     -- frame:SetSize(11, 11)
-    frame:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+    frame:SetBackdrop({bgFile = AF.GetPlainTexture()})
     frame:SetBackdropColor(0, 0, 0, 0.85)
 
     local border = frame:CreateTexture(name.."Border", "BORDER")
@@ -514,7 +497,7 @@ function I.CreateAura_BorderIcon(name, parent, borderSize)
     local cooldown = CreateFrame("Cooldown", name.."Cooldown", frame)
     frame.cooldown = cooldown
     cooldown:SetAllPoints(frame)
-    cooldown:SetSwipeTexture(Cell.vars.whiteTexture)
+    cooldown:SetSwipeTexture(AF.GetPlainTexture())
     cooldown:SetSwipeColor(1, 1, 1)
     cooldown:SetHideCountdownNumbers(true)
     -- disable omnicc
@@ -645,7 +628,7 @@ function I.CreateAura_BarIcon(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     -- frame:SetSize(11, 11)
-    frame:SetBackdrop({bgFile = Cell.vars.whiteTexture})
+    frame:SetBackdrop({bgFile = AF.GetPlainTexture()})
     frame:SetBackdropColor(0, 0, 0, 1)
 
     local icon = frame:CreateTexture(name and name.."Icon", "ARTWORK")
@@ -933,27 +916,7 @@ end
 -- CreateAura_Text
 -------------------------------------------------
 local function Text_SetFont(frame, font, size, outline, shadow)
-    font = F.GetFont(font)
-
-    local flags
-    if outline == "None" then
-        flags = ""
-    elseif outline == "Outline" then
-        flags = "OUTLINE"
-    else
-        flags = "OUTLINE,MONOCHROME"
-    end
-
-    frame.text:SetFont(font, size, flags)
-
-    if shadow then
-        frame.text:SetShadowOffset(1, -1)
-        frame.text:SetShadowColor(0, 0, 0, 1)
-    else
-        frame.text:SetShadowOffset(0, 0)
-        frame.text:SetShadowColor(0, 0, 0, 0)
-    end
-
+    AF.SetFont(frame.text, font, size, outline, shadow)
     frame:SetSize(size, size)
 end
 
@@ -1209,7 +1172,7 @@ function I.CreateAura_Rect(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     frame.indicatorType = "rect"
-    frame:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
+    frame:SetBackdrop({edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(CELL_BORDER_SIZE)})
     frame:SetBackdropBorderColor(0, 0, 0, 1)
 
     local tex = frame:CreateTexture(nil, "BORDER", nil, -7)
@@ -1601,7 +1564,7 @@ function I.CreateAura_Color(name, parent)
 
     local gradientTex = color:CreateTexture(nil, "ARTWORK")
     color.gradientTex = gradientTex
-    gradientTex:SetTexture(Cell.vars.whiteTexture)
+    gradientTex:SetTexture(AF.GetPlainTexture())
     gradientTex:SetAllPoints(color)
     gradientTex:Hide()
 
@@ -1931,7 +1894,7 @@ end
 
 function I.CreateAura_Overlay(name, parent)
     local overlay = CreateFrame("StatusBar", name, parent.widgets.healthBar)
-    overlay:SetStatusBarTexture(Cell.vars.whiteTexture)
+    overlay:SetStatusBarTexture(AF.GetPlainTexture())
     overlay:Hide()
     overlay.indicatorType = "overlay"
 
@@ -2149,7 +2112,7 @@ function I.CreateAura_Block(name, parent)
     frame:Hide()
     frame.indicatorType = "block"
 
-    frame:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(CELL_BORDER_SIZE)})
+    frame:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(CELL_BORDER_SIZE)})
 
     Shared_SetCooldownStyle(frame, CELL_COOLDOWN_STYLE, true)
 
@@ -2342,17 +2305,17 @@ function I.CreateAura_Border(name, parent)
 
     local mask = border:CreateMaskTexture()
     border.mask = mask
-    mask:SetTexture(Cell.vars.emptyTexture, "CLAMPTOWHITE","CLAMPTOWHITE")
+    mask:SetTexture(AF.GetEmptyTexture(), "CLAMPTOWHITE","CLAMPTOWHITE")
 
     local tex = border:CreateTexture(nil, "ARTWORK")
     border.tex = tex
     tex:SetAllPoints()
-    tex:SetTexture(Cell.vars.whiteTexture)
+    tex:SetTexture(AF.GetPlainTexture())
     tex:AddMaskTexture(mask)
 
     local mask2 = border:CreateMaskTexture()
     border.mask2 = mask2
-    mask2:SetTexture(Cell.vars.emptyTexture, "CLAMPTOWHITE","CLAMPTOWHITE")
+    mask2:SetTexture(AF.GetEmptyTexture(), "CLAMPTOWHITE","CLAMPTOWHITE")
 
     local tex2 = border:CreateTexture(nil, "ARTWORK", nil, -1)
     tex2:SetAllPoints()

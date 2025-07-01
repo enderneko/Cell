@@ -1,10 +1,11 @@
 ---@class Cell
 local Cell = select(2, ...)
 local L = Cell.L
----@type CellFuncs
 local F = Cell.funcs
 ---@class CellIndicatorFuncs
 local I = Cell.iFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local orientation, speed
 
@@ -67,11 +68,11 @@ local function CreateAnimationGroup_TypeA()
     -- texture
     local tex = f:CreateTexture(nil, "ARTWORK")
     tex:SetAllPoints(f)
-    tex:SetTexture(Cell.vars.whiteTexture)
+    tex:SetTexture(AF.GetPlainTexture())
 
     -- mask
     local mask = canvas:CreateMaskTexture()
-    mask:SetTexture(Cell.vars.whiteTexture, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture(AF.GetPlainTexture(), "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetAllPoints(canvas)
     -- mask:SetSnapToPixelGrid(true)
     tex:AddMaskTexture(mask)
@@ -168,7 +169,7 @@ local function CreateAnimationGroup_TypeB()
 
     -- mask
     local mask = canvas:CreateMaskTexture()
-    mask:SetTexture(Cell.vars.whiteTexture, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture(AF.GetPlainTexture(), "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetAllPoints(canvas)
     -- mask:SetSnapToPixelGrid(true)
     tex:AddMaskTexture(mask)
@@ -333,7 +334,7 @@ local function CreateAnimationGroup_TypeD()
 
     -- mask2
     local mask2 = canvas:CreateMaskTexture()
-    mask2:SetTexture(Cell.vars.whiteTexture, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask2:SetTexture(AF.GetPlainTexture(), "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask2:SetAllPoints(canvas)
     tex:AddMaskTexture(mask2)
 
@@ -414,7 +415,7 @@ local function CreateAnimationGroup_TypeE()
 
     -- mask
     local mask = canvas:CreateMaskTexture()
-    mask:SetTexture(Cell.vars.whiteTexture, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture(AF.GetPlainTexture(), "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetAllPoints(canvas)
     -- frame:SetSnapToPixelGrid(false)
     -- frame:SetTexelSnappingBias(0)
@@ -496,7 +497,7 @@ local function CreateAnimationGroup_TypeF()
 
     -- mask2
     local mask2 = canvas:CreateMaskTexture()
-    mask2:SetTexture(Cell.vars.whiteTexture, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask2:SetTexture(AF.GetPlainTexture(), "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask2:SetAllPoints(canvas)
     tex:AddMaskTexture(mask2)
 
@@ -573,7 +574,7 @@ local function CreateAnimationGroup_TypeG()
     -- texture
     local tex = f:CreateTexture(nil, "ARTWORK")
     tex:SetAllPoints(f)
-    tex:SetTexture(Cell.vars.whiteTexture)
+    tex:SetTexture(AF.GetPlainTexture())
 
     -- animation
     local ag = f:CreateAnimationGroup()

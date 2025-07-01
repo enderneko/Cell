@@ -1,14 +1,13 @@
 ---@class Cell
 local Cell = select(2, ...)
 local L = Cell.L
----@type CellFuncs
 local F = Cell.funcs
+local A = Cell.animations
+local P = Cell.pixelPerfectFuncs
 ---@class CellIndicatorFuncs
 local I = Cell.iFuncs
----@type CellAnimations
-local A = Cell.animations
----@type PixelPerfectFuncs
-local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
@@ -278,7 +277,7 @@ function I.CreateTankActiveMitigation(parent)
     parent.indicators.tankActiveMitigation = bar
     bar:Hide()
 
-    bar:SetStatusBarTexture(Cell.vars.whiteTexture)
+    bar:SetStatusBarTexture(AF.GetPlainTexture())
     bar:GetStatusBarTexture():SetAlpha(0)
     bar:SetReverseFill(true)
 
@@ -589,13 +588,13 @@ local function Dispels_SetDispels(self, dispelTypes)
                 found = true
                 local r, g, b = I.GetDebuffTypeColor(dispelType)
                 if self.highlightType == "entire" then
-                    self.highlight:SetTexture(Cell.vars.whiteTexture)
+                    self.highlight:SetTexture(AF.GetPlainTexture())
                     self.highlight:SetVertexColor(r, g, b, 0.5)
                 elseif self.highlightType == "current" or self.highlightType == "current+" then
                     self.highlight:SetTexture(Cell.vars.texture)
                     self.highlight:SetVertexColor(r, g, b, 1)
                 elseif self.highlightType == "gradient" or self.highlightType == "gradient-half" then
-                    self.highlight:SetTexture(Cell.vars.whiteTexture)
+                    self.highlight:SetTexture(AF.GetPlainTexture())
                     self.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0))
                 end
                 self.highlight:Show()
@@ -687,20 +686,20 @@ local function Dispels_UpdateHighlight(self, highlightType)
         -- self.highlight:SetParent(self.parent.widgets.indicatorFrame)
         self.highlight:ClearAllPoints()
         self.highlight:SetAllPoints(self.parent.widgets.healthBar)
-        self.highlight:SetTexture(Cell.vars.whiteTexture)
+        self.highlight:SetTexture(AF.GetPlainTexture())
         self.highlight:SetDrawLayer("ARTWORK", 0)
     elseif highlightType == "gradient-half" then
         -- self.highlight:SetParent(self.parent.widgets.indicatorFrame)
         self.highlight:ClearAllPoints()
         self.highlight:SetPoint("BOTTOMLEFT", self.parent.widgets.healthBar)
         self.highlight:SetPoint("TOPRIGHT", self.parent.widgets.healthBar, "RIGHT")
-        self.highlight:SetTexture(Cell.vars.whiteTexture)
+        self.highlight:SetTexture(AF.GetPlainTexture())
         self.highlight:SetDrawLayer("ARTWORK", 0)
     elseif highlightType == "entire" then
         -- self.highlight:SetParent(self.parent.widgets.indicatorFrame)
         self.highlight:ClearAllPoints()
         self.highlight:SetAllPoints(self.parent.widgets.healthBar)
-        self.highlight:SetTexture(Cell.vars.whiteTexture)
+        self.highlight:SetTexture(AF.GetPlainTexture())
         self.highlight:SetDrawLayer("ARTWORK", 0)
     elseif highlightType == "current" then
         -- self.highlight:SetParent(self.parent.widgets.healthBar)
@@ -1063,32 +1062,8 @@ function I.CreateNameText(parent)
     end)
 
     function nameText:SetFont(font, size, outline, shadow)
-        font = F.GetFont(font)
-
-        local flags
-        if outline == "None" then
-            flags = ""
-        elseif outline == "Outline" then
-            flags = "OUTLINE"
-        else
-            flags = "OUTLINE,MONOCHROME"
-        end
-
-        nameText.name:SetFont(font, size, flags)
-        nameText.vehicle:SetFont(font, size-2, flags)
-
-        if shadow then
-            nameText.name:SetShadowOffset(1, -1)
-            nameText.name:SetShadowColor(0, 0, 0, 1)
-            nameText.vehicle:SetShadowOffset(1, -1)
-            nameText.vehicle:SetShadowColor(0, 0, 0, 1)
-        else
-            nameText.name:SetShadowOffset(0, 0)
-            nameText.name:SetShadowColor(0, 0, 0, 0)
-            nameText.vehicle:SetShadowOffset(0, 0)
-            nameText.vehicle:SetShadowColor(0, 0, 0, 0)
-        end
-        nameText.shadow = shadow
+        AF.SetFont(nameText.name, font, size, outline, shadow)
+        AF.SetFont(nameText.vehicle, font, size - 2, outline, shadow)
 
         nameText:UpdateName()
         if parent.states.inVehicle or nameText.isPreview then
@@ -1254,33 +1229,8 @@ end
 -- status text
 -------------------------------------------------
 local function StatusText_SetFont(self, font, size, outline, shadow)
-    font = F.GetFont(font)
-
-    local flags
-    if outline == "None" then
-        flags = ""
-    elseif outline == "Outline" then
-        flags = "OUTLINE"
-    else
-        flags = "OUTLINE,MONOCHROME"
-    end
-
-    self.text:SetFont(font, size, flags)
-    self.timer:SetFont(font, size, flags)
-
-    if shadow then
-        self.text:SetShadowOffset(1, -1)
-        self.text:SetShadowColor(0, 0, 0, 1)
-        self.timer:SetShadowOffset(1, -1)
-        self.timer:SetShadowColor(0, 0, 0, 1)
-    else
-        self.text:SetShadowOffset(0, 0)
-        self.text:SetShadowColor(0, 0, 0, 0)
-        self.timer:SetShadowOffset(0, 0)
-        self.timer:SetShadowColor(0, 0, 0, 0)
-    end
-    self.shadow = shadow
-
+    AF.SetFont(self.text, font, size, outline, shadow)
+    AF.SetFont(self.timer, font, size, outline, shadow)
     self:SetHeight(self.text:GetHeight()+P.Scale(1)*2)
 end
 
@@ -1389,7 +1339,7 @@ function I.CreateStatusText(parent)
     statusText.parent = parent
 
     statusText.bg = statusText:CreateTexture(nil, "ARTWORK")
-    statusText.bg:SetTexture(Cell.vars.whiteTexture)
+    statusText.bg:SetTexture(AF.GetPlainTexture())
     -- statusText.bg:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, 0.777), CreateColor(0, 0, 0, 0))
     statusText.bg:SetAllPoints(statusText)
 
@@ -1540,27 +1490,7 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
 end
 
 local function HealthText_SetFont(self, font, size, outline, shadow)
-    font = F.GetFont(font)
-
-    local flags
-    if outline == "None" then
-        flags = ""
-    elseif outline == "Outline" then
-        flags = "OUTLINE"
-    else
-        flags = "OUTLINE,MONOCHROME"
-    end
-
-    self.text:SetFont(font, size, flags)
-
-    if shadow then
-        self.text:SetShadowOffset(1, -1)
-        self.text:SetShadowColor(0, 0, 0, 1)
-    else
-        self.text:SetShadowOffset(0, 0)
-        self.text:SetShadowColor(0, 0, 0, 0)
-    end
-
+    AF.SetFont(self.text, font, size, outline, shadow)
     self:SetSize(self.text:GetStringWidth(), size)
 end
 
@@ -1644,27 +1574,7 @@ local function SetPower_Number_Short(self, current, max)
 end
 
 local function PowerText_SetFont(self, font, size, outline, shadow)
-    font = F.GetFont(font)
-
-    local flags
-    if outline == "None" then
-        flags = ""
-    elseif outline == "Outline" then
-        flags = "OUTLINE"
-    else
-        flags = "OUTLINE,MONOCHROME"
-    end
-
-    self.text:SetFont(font, size, flags)
-
-    if shadow then
-        self.text:SetShadowOffset(1, -1)
-        self.text:SetShadowColor(0, 0, 0, 1)
-    else
-        self.text:SetShadowOffset(0, 0)
-        self.text:SetShadowColor(0, 0, 0, 0)
-    end
-
+    AF.SetFont(self.text, font, size, outline, shadow)
     self:SetSize(self.text:GetStringWidth(), size)
 end
 
@@ -1934,22 +1844,22 @@ function I.CreateAggroBorder(parent)
     local left = aggroBorder:CreateTexture(nil, "BORDER")
     local right = aggroBorder:CreateTexture(nil, "BORDER")
 
-    top:SetTexture(Cell.vars.whiteTexture)
+    top:SetTexture(AF.GetPlainTexture())
     top:SetPoint("TOPLEFT")
     top:SetPoint("TOPRIGHT")
     top:SetHeight(5)
 
-    bottom:SetTexture(Cell.vars.whiteTexture)
+    bottom:SetTexture(AF.GetPlainTexture())
     bottom:SetPoint("BOTTOMLEFT")
     bottom:SetPoint("BOTTOMRIGHT")
     bottom:SetHeight(5)
 
-    left:SetTexture(Cell.vars.whiteTexture)
+    left:SetTexture(AF.GetPlainTexture())
     left:SetPoint("TOPLEFT")
     left:SetPoint("BOTTOMLEFT")
     left:SetWidth(5)
 
-    right:SetTexture(Cell.vars.whiteTexture)
+    right:SetTexture(AF.GetPlainTexture())
     right:SetPoint("TOPRIGHT")
     right:SetPoint("BOTTOMRIGHT")
     right:SetWidth(5)
@@ -1987,7 +1897,7 @@ function I.CreateAggroBlink(parent)
     parent.indicators.aggroBlink = aggroBlink
     -- aggroBlink:SetPoint("TOPLEFT")
     -- aggroBlink:SetSize(10, 10)
-    aggroBlink:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+    aggroBlink:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
     aggroBlink:SetBackdropColor(1, 0, 0, 1)
     aggroBlink:SetBackdropBorderColor(0, 0, 0, 1)
     aggroBlink:Hide()
@@ -2018,7 +1928,7 @@ function I.CreateAggroBlink(parent)
     function aggroBlink:UpdatePixelPerfect()
         P.Resize(aggroBlink)
         P.Repoint(aggroBlink)
-        aggroBlink:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
+        aggroBlink:SetBackdrop({bgFile = AF.GetPlainTexture(), edgeFile = AF.GetPlainTexture(), edgeSize = P.Scale(1)})
         aggroBlink:SetBackdropColor(1, 0, 0, 1)
         aggroBlink:SetBackdropBorderColor(0, 0, 0, 1)
     end
@@ -2073,7 +1983,7 @@ function I.CreateShieldBar(parent)
     parent.indicators.shieldBar = shieldBar
     -- shieldBar:SetSize(4, 4)
     shieldBar:Hide()
-    shieldBar:SetBackdrop({edgeFile=Cell.vars.whiteTexture, edgeSize=P.Scale(1)})
+    shieldBar:SetBackdrop({edgeFile=AF.GetPlainTexture(), edgeSize=P.Scale(1)})
     shieldBar:SetBackdropBorderColor(0, 0, 0, 1)
 
     local tex = shieldBar:CreateTexture(nil, "BORDER", nil, -7)
@@ -2293,7 +2203,7 @@ function I.CreatePowerWordShield(parent)
     local shieldAmount = CreateFrame("Cooldown", parent:GetName().."PowerWordShieldAmount", powerWordShield)
     -- shieldAmount:SetAllPoints(powerWordShield)
     shieldAmount:SetSwipeTexture([[Interface\AddOns\Cell\Media\Shapes\circle_filled.tga]])
-    -- shieldAmount:SetSwipeTexture(Cell.vars.whiteTexture)
+    -- shieldAmount:SetSwipeTexture(AF.GetPlainTexture())
     shieldAmount:SetSwipeColor(1, 1, 0)
     shieldAmount.noCooldownCount = true -- disable omnicc
     shieldAmount:SetHideCountdownNumbers(true)

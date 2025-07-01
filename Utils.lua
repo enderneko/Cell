@@ -1546,12 +1546,10 @@ end
 -- LibSharedMedia
 -------------------------------------------------
 Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
-Cell.vars.emptyTexture = "Interface\\AddOns\\Cell\\Media\\empty.tga"
-Cell.vars.whiteTexture = "Interface\\AddOns\\Cell\\Media\\white.tga"
 
 local LSM = LibStub("LibSharedMedia-3.0", true)
-LSM:Register("statusbar", "Cell ".._G.DEFAULT, Cell.vars.texture)
-LSM:Register("font", "visitor", [[Interface\Addons\Cell\Media\Fonts\visitor.ttf]], 255)
+LSM:Register("statusbar", "Cell", Cell.vars.texture)
+LSM:Register("font", "Cell", AF.LSM_GetFont())
 
 function F.GetBarTexture()
     --! update Cell.vars.texture for further use in UnitButton_OnLoad
@@ -1570,28 +1568,9 @@ function F.GetBarTextureByName(name)
     return "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
 end
 
-function F.GetFont(font)
-    if font and LSM:IsValid("font", font) then
-        return LSM:Fetch("font", font)
-    elseif type(font) == "string" and strfind(strlower(font), ".ttf$") then
-        return font
-    else
-        if CellDB["appearance"]["useGameFont"] then
-            return GameFontNormal:GetFont()
-        else
-            return "Interface\\AddOns\\Cell\\Media\\Fonts\\Accidental_Presidency.ttf"
-        end
-    end
-end
-
-local defaultFontName = "Cell ".._G.DEFAULT
-local defaultFont
+local defaultFontName = "Cell"
 function F.GetFontItems()
-    if CellDB["appearance"]["useGameFont"] then
-        defaultFont = GameFontNormal:GetFont()
-    else
-        defaultFont = "Interface\\AddOns\\Cell\\Media\\Fonts\\Accidental_Presidency.ttf"
-    end
+    local defaultFont = AF.LSM_GetFont(defaultFontName)
 
     local items = {}
     local fonts, fontNames

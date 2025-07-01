@@ -1,10 +1,11 @@
 ---@class Cell
 local Cell = select(2, ...)
 local L = Cell.L
----@type CellFuncs
 local F = Cell.funcs
 ---@class CellIndicatorFuncs
 local I = Cell.iFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 -------------------------------------------------
 -- CreateAoEHealing -- not support for npc
@@ -53,7 +54,7 @@ function I.CreateAoEHealing(parent)
 
     aoeHealing.tex = aoeHealing:CreateTexture(nil, "ARTWORK")
     aoeHealing.tex:SetAllPoints(aoeHealing)
-    aoeHealing.tex:SetTexture(Cell.vars.whiteTexture)
+    aoeHealing.tex:SetTexture(AF.GetPlainTexture())
 
     local ag = aoeHealing:CreateAnimationGroup()
     local a1 = ag:CreateAnimation("Alpha")
