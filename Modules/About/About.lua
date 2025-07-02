@@ -527,12 +527,12 @@ local function CreateImportExportPane()
     importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import", {16, 16}, {"LEFT", 2, 0})
 
     local exportBtn = AF.CreateButton(iePane, L["Export"], "Cell_hover", 138, 20)
-    AF.SetPoint(exportBtn, "TOPLEFT", importBtn, "TOPRIGHT", 5, 0)
+    AF.SetPoint(exportBtn, "TOPLEFT", importBtn, "TOPRIGHT", 6, 0)
     exportBtn:SetOnClick(F.ShowExportFrame)
     exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export", {16, 16}, {"LEFT", 2, 0})
 
     local backupBtn = AF.CreateButton(iePane, L["Backups"], "Cell_hover", 138, 20)
-    AF.SetPoint(backupBtn, "TOPLEFT", exportBtn, "TOPRIGHT", 5, 0)
+    AF.SetPoint(backupBtn, "TOPLEFT", exportBtn, "TOPRIGHT", 6, 0)
     backupBtn:SetOnClick(F.ShowBackupFrame)
     backupBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\backup", {16, 16}, {"LEFT", 2, 0})
 end

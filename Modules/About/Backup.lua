@@ -33,7 +33,7 @@ local function CreateItem(index)
         AF.SetFrameLevel(backupFrame, 20)
         AF.ShowMask(CellOptionsFrame_AboutTab)
 
-        local text = "|cFFFF7070" .. L["Restore backup"] .. "?|r\n" .. CellDBBackup[index]["desc"] .. "\n|cFFB7B7B7" .. CellDBBackup[index]["version"]
+        local text = AF.WrapTextInColor(L["Restore backup"] .. "?", "firebrick") .. "\n" .. CellDBBackup[index]["desc"] .. "\n" .. AF.WrapTextInColor(CellDBBackup[index]["version"], "gray")
         local dialog = AF.GetDialog(CellOptionsFrame_AboutTab, text)
         dialog:SetOnConfirm(function()
             AF.SetFrameLevel(backupFrame, 50)
@@ -46,7 +46,7 @@ local function CreateItem(index)
         dialog:SetOnCancel(function()
             AF.SetFrameLevel(backupFrame, 50)
         end)
-        AF.SetPoint(popup, "TOP", backupFrame, 0, -50)
+        AF.SetPoint(dialog, "TOP", backupFrame, 0, -50)
     end)
 
     -- delete
@@ -93,17 +93,17 @@ local function CreateItem(index)
         b.rename:SetTextureColor("gray")
     end)
     b.rename:SetOnClick(function()
-        backupFrame.editbox:SetAllPoints(b)
-        backupFrame.editbox:SetText(CellDBBackup[index]["desc"])
-        AF.SetFrameLevel(backupFrame.editbox, 10, b)
-        backupFrame.editbox:Show()
-        backupFrame.editbox:SetFocus()
+        local eb = AF.GetEditBox(b)
+        eb:SetAllPoints(b)
+        eb:SetText(CellDBBackup[index]["desc"])
+        eb:SetBorderColor("Cell")
+        eb:Show()
 
-        backupFrame.editbox:SetOnEnterPressed(function(text)
+        eb:SetOnEnterPressed(function(text)
             if AF.IsBlank(text) then text = date(DATE_FORMAT) end
             CellDBBackup[index]["desc"] = text
             b.text:SetText(text)
-            backupFrame.editbox:Hide()
+            eb:Hide()
         end)
     end)
 
@@ -147,13 +147,13 @@ local function CreateBackupFrame()
     backupFrame.newBtn = newBtn
     newBtn:SetTexture(AF.GetIcon("Create_Square"), nil, {"LEFT", 2, 0})
     newBtn:SetScript("OnClick", function(self)
-        backupFrame.editbox:SetAllPoints(self)
-        backupFrame.editbox:SetText(date(DATE_FORMAT))
-        AF.SetFrameLevel(backupFrame.editbox, 10, self)
-        backupFrame.editbox:Show()
-        backupFrame.editbox:SetFocus()
+        local eb = AF.GetEditBox(self)
+        eb:SetAllPoints(self)
+        eb:SetText(date(DATE_FORMAT))
+        eb:SetBorderColor("Cell")
+        eb:Show()
 
-        backupFrame.editbox:SetOnEnterPressed(function(text)
+        eb:SetOnEnterPressed(function(text)
             if AF.IsBlank(text) then text = date(DATE_FORMAT) end
             tinsert(CellDBBackup, {
                 ["desc"] = text,
@@ -163,20 +163,10 @@ local function CreateBackupFrame()
                 ["CharacterDB"] = CellCharacterDB and AF.Copy(CellCharacterDB),
             })
             LoadBackups()
-            backupFrame.editbox:Hide()
+            eb:Hide()
         end)
     end)
     newBtn:SetTooltip(L["Create Backup"], L["BACKUP_TIPS2"])
-
-    -- editbox
-    local editbox = AF.CreateEditBox(backupFrame)
-    backupFrame.editbox = editbox
-    editbox:SetBorderColor("Cell")
-    editbox:SetOnHide(function()
-        editbox:Hide()
-        editbox:Clear()
-    end)
-    editbox:Hide()
 
     -- OnHide
     backupFrame:SetOnHide(function()
@@ -207,7 +197,7 @@ LoadBackups = function()
         end
 
         if t["versionNum"] < Cell.MIN_VERSION then
-            buttons[i].version:SetText("|cffff2222" .. L["Invalid"])
+            buttons[i].version:SetText(AF.WrapTextInColor(L["Invalid"], "red"))
             buttons[i].isInvalid = true
         else
             buttons[i].version:SetText(t["version"])
