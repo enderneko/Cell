@@ -40,7 +40,6 @@ local hoverFrame = CreateFrame("Frame", "CellMenuHoverDetector", cellMainFrame, 
 -- Cell.StylizeFrame(hoverFrame, {1,0,0,0.3}, {0,0,0,0})
 
 local anchorFrame = CreateFrame("Frame", "CellAnchorFrame", cellMainFrame)
-Cell.frames.anchorFrame = anchorFrame
 PixelUtil.SetPoint(anchorFrame, "TOPLEFT", AFParent, "CENTER", 1, -1)
 P.Size(anchorFrame, 20, 10)
 anchorFrame:SetMovable(true)

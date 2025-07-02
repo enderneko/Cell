@@ -139,8 +139,8 @@ local function CreateLayoutPreview()
 
     layoutPreviewAnchor:SetScript("OnDragStart", function()
         if selectedLayout == Cell.vars.currentLayout then
-            Cell.frames.anchorFrame:StartMoving()
-            Cell.frames.anchorFrame:SetUserPlaced(false)
+            CellAnchorFrame:StartMoving()
+            CellAnchorFrame:SetUserPlaced(false)
         else
         layoutPreviewAnchor:StartMoving()
         layoutPreviewAnchor:SetUserPlaced(false)
@@ -149,7 +149,7 @@ local function CreateLayoutPreview()
 
     layoutPreviewAnchor:SetScript("OnDragStop", function()
         if selectedLayout == Cell.vars.currentLayout then
-            Cell.frames.anchorFrame:StopMovingOrSizing()
+            CellAnchorFrame:StopMovingOrSizing()
         else
         layoutPreviewAnchor:StopMovingOrSizing()
         end
@@ -289,7 +289,7 @@ local function UpdateLayoutPreview()
     -- update layoutPreviewAnchor point
     layoutPreviewAnchor:ClearAllPoints()
     if selectedLayout == Cell.vars.currentLayout then
-        layoutPreviewAnchor:SetAllPoints(Cell.frames.anchorFrame)
+        layoutPreviewAnchor:SetAllPoints(CellAnchorFrame)
     else
         if not P.LoadPosition(layoutPreviewAnchor, selectedLayoutTable["main"]["position"]) then
             layoutPreviewAnchor:ClearAllPoints()

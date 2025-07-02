@@ -807,8 +807,8 @@ function SlashCmdList.CELL(msg, editbox)
 
     elseif command == "reset" then
         if rest == "position" then
-            Cell.frames.anchorFrame:ClearAllPoints()
-            Cell.frames.anchorFrame:SetPoint("TOPLEFT", CellParent, "CENTER")
+            CellAnchorFrame:ClearAllPoints()
+            CellAnchorFrame:SetPoint("TOPLEFT", CellParent, "CENTER")
             Cell.vars.currentLayoutTable["position"] = {}
             P.ClearPoints(Cell.frames.readyAndPullFrame)
             Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", CellParent, "CENTER")
@@ -821,8 +821,8 @@ function SlashCmdList.CELL(msg, editbox)
             CellDB["tools"]["buffTracker"][4] = {}
 
         elseif rest == "all" then
-            Cell.frames.anchorFrame:ClearAllPoints()
-            Cell.frames.anchorFrame:SetPoint("TOPLEFT", CellParent, "CENTER")
+            CellAnchorFrame:ClearAllPoints()
+            CellAnchorFrame:SetPoint("TOPLEFT", CellParent, "CENTER")
             Cell.frames.readyAndPullFrame:ClearAllPoints()
             Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", CellParent, "CENTER")
             Cell.frames.raidMarksFrame:ClearAllPoints()

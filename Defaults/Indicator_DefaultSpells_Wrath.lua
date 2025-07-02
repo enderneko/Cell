@@ -360,7 +360,7 @@ function F.FirstRun()
         end
     end
 
-    local popup = Cell.CreateConfirmPopup(Cell.frames.anchorFrame, 200, L["Would you like Cell to create a \"Healers\" indicator (icons)?"]..icons, function(self)
+    local popup = Cell.CreateConfirmPopup(CellAnchorFrame, 200, L["Would you like Cell to create a \"Healers\" indicator (icons)?"]..icons, function(self)
         local currentLayoutTable = Cell.vars.currentLayoutTable
 
         local last = #currentLayoutTable["indicators"]
