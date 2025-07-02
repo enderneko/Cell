@@ -319,6 +319,10 @@ local dispels = {
     -- MAGE -----------------
     [8] = {["Curse"] = true},
 
+    -- MONK -----------------
+    -- TODO: Add Magic which is only available to Mistweaver
+    [10] = {["Disease"] = true, ["Poison"] = true},
+
     -- PALADIN --------------
     [2] = {["Disease"] = true, ["Magic"] = "1,7", ["Poison"] = true, ["Bleed"] = true},
 
