@@ -127,6 +127,10 @@ local externals = { -- true: track by name, false: track by id
         [51052] = true, -- 反魔法领域
     },
 
+    ["MONK"] = {
+        [116849] = true, -- 作茧缚命 - Life Cocoon
+    },
+
     ["PALADIN"] = {
         [1022] = true, -- 保护祝福
         [6940] = true, -- 牺牲祝福
@@ -215,6 +219,11 @@ local defensives = { -- true: track by name, false: track by id
 
     ["MAGE"] = {
         [45438] = true, -- 寒冰屏障
+    },
+
+    ["MONK"] = {
+        -- TODO: Add defensives
+        [115]
     },
 
     ["PALADIN"] = {
