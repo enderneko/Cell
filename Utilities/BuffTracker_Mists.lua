@@ -39,6 +39,9 @@ local buffs = {
     -- 20217: Blessing of Kings
     ["BoK"] = {id=20217, glowColor={F.GetClassColor("PALADIN")}, provider="PALADIN", level=22},
 
+    -- 117666: Legacy of the Emperor
+    ["LotE"] = {id=117666, glowColor={F.GetClassColor("MONK")}, provider="MONK", level=22},
+
     -- 19740: Blessing of Might
     ["BoM"] = {id=19740, glowColor={F.GetClassColor("PALADIN")}, provider="PALADIN", level=56},
 }
@@ -55,22 +58,23 @@ do
     end
 end
 
-local order = {"PWF", "AB", "MotW", "BoK", "BoM", "BS", "CS"}
+local order = {"PWF", "AB", "MotW", "BoK", "LotE", "BoM", "BS", "CS"}
 
 -------------------------------------------------
 -- required buffs
 -------------------------------------------------
 local requiredBuffs = {
-    ["WARRIOR"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
-    ["PALADIN"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
-    ["HUNTER"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
-    ["ROGUE"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
-    ["PRIEST"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["CS"]=true},
-    ["DEATHKNIGHT"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
-    ["SHAMAN"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
-    ["MAGE"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["CS"]=true},
-    ["WARLOCK"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["CS"]=true},
-    ["DRUID"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
+    ["WARRIOR"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["LotE"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
+    ["PALADIN"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["LotE"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
+    ["HUNTER"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["LotE"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
+    ["ROGUE"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["LotE"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
+    ["PRIEST"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["LotE"]=true, ["CS"]=true},
+    ["DEATHKNIGHT"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["LotE"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
+    ["SHAMAN"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["LotE"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
+    ["MAGE"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["LotE"]=true, ["CS"]=true},
+    ["MONK"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["LotE"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
+    ["WARLOCK"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["LotE"]=true, ["CS"]=true},
+    ["DRUID"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["LotE"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true},
 }
 
 -------------------------------------------------

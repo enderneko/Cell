@@ -486,7 +486,7 @@ end
 -------------------------------------------------
 -- missing buffs, for indicator settings only
 -------------------------------------------------
-local buffsOrder = {"PWF", "AB", "MotW", "BoK", "BoM", "BS", "CS", "SP"}
+local buffsOrder = {"PWF", "AB", "MotW", "BoK", "LotE", "BoM", "BS", "CS"}
 local abbrToIndex = {}
 
 local missingBuffs = {
@@ -494,10 +494,10 @@ local missingBuffs = {
     ["AB"] = 1459,
     ["MotW"] = 1126,
     ["BoK"] = 20217,
+    ["LotE"] = 117666,
     ["BoM"] = 19740,
     ["BS"] = 6673,
     ["CS"] = 469,
-    ["SP"] = 27683,
 }
 
 do
@@ -533,10 +533,10 @@ end
 function I.GetMissingBuffsFilters()
     local indicies = {
         "PWF",
-        "SP",
         "AB",
         "MotW",
         {"PALADIN", {"BoK", "BoM"}},
+        "LotE",
         {"WARRIOR", {"BS", "CS"}},
     }
 
