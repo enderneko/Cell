@@ -1,4 +1,5 @@
 .vscode/
+.idea/
 .release/
 .resources/
 .utils/*.csv
