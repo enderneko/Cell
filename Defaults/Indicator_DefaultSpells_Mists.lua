@@ -50,6 +50,12 @@ local aoeHealings = {
     ["DRUID"] = {
         [740] = true, -- 宁静
     },
+    ["MONK"] = {
+        [115098] = true,   -- 真气波 - Chi Wave
+        [123986] = true,   -- 真气爆裂 - Chi Burst
+        [115310] = true,   -- 还魂术 - Revival
+        [116670] = true,   -- Uplift
+    },
     ["PALADIN"] = {
         [85222] = true, -- 黎明圣光
         [82327] = true, -- 圣光普照
