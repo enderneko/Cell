@@ -1,0 +1,15 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/FrameXML/UI_shared.xsd">
+    <Script file="Marks.lua"/>
+    <Script file="ReadyAndPull.lua"/>
+    <Script file="RaidRosterFrame.lua"/>
+    <Script file="DeathReport.lua"/>
+    <Script file="BuffTracker_Mists.lua"/>
+    <Script file="RaidTools.lua"/>
+    <Script file="Request_Spell.lua"/>
+    <Script file="Request_Dispel.lua"/>
+    <Script file="Request_Show.lua"/>
+    <Script file="Request_GlowOptions.lua"/>
+    <Script file="Request_IconOptions.lua"/>
+    <Script file="Request_TextOptions.lua"/>
+</Ui>
