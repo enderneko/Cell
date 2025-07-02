@@ -393,6 +393,11 @@ local spells =  {
     33763, -- 生命绽放
     48438, -- 野性成长
     50464, -- 滋养
+    -- monk
+    119611, -- Renewing Mist
+    132120, -- Enveloping Mist
+    115175, -- Soothing Mist
+    116849, -- Life Cocoon
     -- paladin
     53563, -- 圣光道标
     -- priest
