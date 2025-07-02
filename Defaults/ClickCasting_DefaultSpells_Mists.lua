@@ -55,6 +55,26 @@ local defaultSpells = {
         },
     },
 
+    ["MONK"] = {
+        ["common"] = {
+            -- Mistweaver
+            115151, -- Renewing Mist
+            115175, -- Soothing Mist
+            124682, -- Enveloping Mist
+            116694, -- Surging Mist
+            116849, -- Life Cocoon
+            115178, -- Resuscitate
+            -- talents
+            115098, -- Chi Wave
+            124081, -- Zen Sphere
+            -- dispel
+            115450, -- Detox
+            -- buff
+            115921, -- Legacy of the Emperor
+            116841, -- Tiger's Lust
+        },
+    },
+
     ["PALADIN"] = {
         ["common"] = {
             -- Holy
