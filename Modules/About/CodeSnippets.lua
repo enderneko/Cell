@@ -230,14 +230,6 @@ LoadList = function()
             AF.SetPoint(buttons[i].label, "RIGHT", buttons[i].del, "LEFT", -3, 0)
             buttons[i].label:SetJustifyH("LEFT")
             buttons[i].label:SetWordWrap(false)
-
-            -- tooltip
-            buttons[i]:HookOnEnter(function(self)
-                if self.label:IsTruncated() then
-                    AF.ShowTooltip(self, "ANCHOR_TOPLEFT", 0, 2, self.label:GetText())
-                end
-            end)
-            buttons[i]:HookOnLeave(AF.HideTooltip)
         end
 
         buttons[i].cb:SetChecked(t["autorun"])
@@ -275,7 +267,11 @@ LoadList = function()
     -- highlight
     AF.CreateButtonGroup(buttons, function(index)
         LoadSnippet(index)
-    end)
+    end, nil, nil, function(self)
+        if self.label:IsTruncated() then
+            AF.ShowTooltip(self, "ANCHOR_TOPLEFT", 0, 2, {self.label:GetText()})
+        end
+    end, AF.HideTooltip)
     buttons[selected]:SilentClick()
 
     -- update height
