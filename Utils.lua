@@ -24,6 +24,8 @@ Cell.isTWW = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WAR_WITHIN
 
 if Cell.isRetail then
     Cell.flavor = "retail"
+elseif Cell.isMists then
+    Cell.flavor = "mists"
 elseif Cell.isCata then
     Cell.flavor = "cata"
 elseif Cell.isWrath then
@@ -105,7 +107,7 @@ end
 -------------------------------------------------
 -- Classic
 -------------------------------------------------
-if Cell.isCata then
+if Cell.isCata or Cell.isMists then
     function F.GetActiveTalentInfo()
         local which = GetActiveTalentGroup() == 1 and L["Primary Talents"] or L["Secondary Talents"]
         return which, Cell.vars.playerSpecIcon, Cell.vars.playerSpecName

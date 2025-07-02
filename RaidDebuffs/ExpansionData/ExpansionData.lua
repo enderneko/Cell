@@ -25,6 +25,8 @@ Cell.RegisterCallback("AddonLoaded", "UpdateExpansionData", function()
         index = 3
     elseif Cell.isCata then
         index = 4
+    elseif Cell.isMists then
+        index = 5
     end
 
     for i = 1, #Cell_ExpansionData["expansions"] - index do
