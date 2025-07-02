@@ -19,7 +19,7 @@ Utils.lua
 Revise.lua
 Comm\LoadComm.xml
 Widgets\LoadWidgets_Classic.xml
-Defaults\LoadDefaults_Cata.xml
+Defaults\LoadDefaults_Mists.xml
 
 HideBlizzard.lua
 
