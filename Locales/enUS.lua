@@ -147,7 +147,7 @@ select(2, ...).L = setmetatable({
 
         <h1>r247-release (Mar 4, 2025, 17:50 GMT+8)</h1>
         <p>! Due to changes in scaling behavior, you might need to readjust the size and position of Cell.</p>
-        <p>* Updated TWW season 2 debuffs (Thanks 钛锬).</p>
+        <p>* Updated TWW season 2 debuffs (Thanks Taitan).</p>
         <p>* Fixed scaling issue.</p>
         <p>* Fixed positioning issue.</p>
         <p>* Fixed Glow indicator.</p>
@@ -183,7 +183,7 @@ select(2, ...).L = setmetatable({
         <p>* Updated Dispel Request text flipbook animation.</p>
         <p>* Refactored HealthText indicator.</p>
         <p>+ (Classic) Updated RaidDebuffs to include the Naxxramas raid (#294).</p>
-        <p>+ (TWW) Updated debuffs for season 2 (Thanks 钛锬).</p>
+        <p>+ (TWW) Updated debuffs for season 2 (Thanks Taitan).</p>
         <p>+ (TWW) Updated Liberation of Undermine debuffs (Thanks Reat).</p>
         <p>+ (Classic) Updated RoleIcon indicator and PowerBarFilters.</p>
         <p>+ Implemented CombatIcon indicator.</p>
@@ -521,7 +521,7 @@ select(2, ...).L = setmetatable({
         <br/>
 
         <h1>r206-release (Dec 9, 2023, 00:50 GMT+8)</h1>
-        <p>+ (Retail) New utility: Quick Assist. Thanks 钛锬(NGA) for offensive spells and testing.</p>
+        <p>+ (Retail) New utility: Quick Assist. Thanks Taitan(NGA) for offensive spells and testing.</p>
         <p>* Updated raid debuffs.</p>
         <p>* Updated Cell.GetUnitFrame.</p>
         <p>* (Retail) Updated dispel checker for Shaman.</p>
@@ -531,7 +531,7 @@ select(2, ...).L = setmetatable({
         <br/>
 
         <h1>r205-release (Nov 27, 2023, 12:27 GMT+8)</h1>
-        <p>* Updated raid debuffs, thanks to 钛锬(NGA) and Ulu2005(GitHub) for collecting and providing debuffs.</p>
+        <p>* Updated raid debuffs, thanks to Taitan(NGA) and Ulu2005(GitHub) for collecting and providing debuffs.</p>
         <p>+ New custom indicator type: Glow.</p>
         <p>+ (Retail) Added "Track by name" option for custom buff indicator.</p>
         <p>+ Added "Hide Placeholder Frames" for Spotlights.</p>
@@ -673,7 +673,7 @@ select(2, ...).L = setmetatable({
 
         <h1>r182-release (Jul 18, 2023, 05:07 GMT+8)</h1>
         <p>* Refactored Layouts.</p>
-        <p>* Updated debuffs for Dawn of the Infinite, thanks to 钛锬(NGA).</p>
+        <p>* Updated debuffs for Dawn of the Infinite, thanks to Taitan(NGA).</p>
         <p>+ Implemented import &amp; export for Click-Castings.</p>
         <br/>
 
@@ -741,7 +741,7 @@ select(2, ...).L = setmetatable({
         <br/>
 
         <h1>r170-release (May 26, 2023, 00:21 GMT+8)</h1>
-        <p>* Updated raid debuffs: Aberrus and M+. (Thanks to 钛锬)</p>
+        <p>* Updated raid debuffs: Aberrus and M+. (Thanks to Taitan)</p>
         <p>* Updated raid debuffs: ToC. (Thanks to 橘子味橙汁)</p>
         <p>* Added support for NickTag. To display nicknames from Details!, set CELL_NICKTAG_ENABLED to true in Code Snippets.</p>
         <p>* Updated Missing Buffs indicator and brought it to Wrath.</p>

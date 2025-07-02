@@ -2,44 +2,52 @@
 local Cell = select(2, ...)
 local L = Cell.L
 local F = Cell.funcs
-local P = Cell.pixelPerfectFuncs
+---@type AbstractFramework
+local AF = _G.AbstractFramework
 
 local changelogsFrame
 
 local function CreateChangelogsFrame()
-    changelogsFrame = Cell.CreateMovableFrame("Cell "..L["Changelogs"], "CellChangelogsFrame", 400, 450, "DIALOG", 1, true)
-    Cell.frames.changelogsFrame = changelogsFrame
+    changelogsFrame = AF.CreateHeaderedFrame(CellMainFrame, "CellChangelogsFrame", "Cell " .. L["Changelogs"], 400, 450, "DIALOG")
     changelogsFrame:SetToplevel(true)
+    changelogsFrame:Hide()
 
     changelogsFrame.header.closeBtn:HookScript("OnClick", function()
         CellDB["changelogsViewed"] = Cell.version
     end)
 
-    Cell.CreateScrollFrame(changelogsFrame)
-    changelogsFrame.scrollFrame:SetScrollStep(37)
+    local scrollFrame = AF.CreateScrollFrame(changelogsFrame, nil, nil, nil, "none", "none")
+    scrollFrame:SetAllPoints()
+    scrollFrame:SetScrollStep(37)
 
-    local content = CreateFrame("SimpleHTML", "CellChangelogsContent", changelogsFrame.scrollFrame.content)
+    local h1 = AF.CreateFont(nil, "CELL_FONT_CHANGELOG_H1", nil, 14, nil, true, "Cell", "LEFT", "TOP")
+    local h2 = AF.CreateFont(nil, "CELL_FONT_CHANGELOG_H2", nil, 13, nil, true, "Cell", "LEFT", "TOP")
+    local p = AF.CreateFont(nil, "CELL_FONT_CHANGELOG_P", nil, 12, nil, true, nil, "LEFT", "TOP")
+
+    local content = CreateFrame("SimpleHTML", "CellChangelogsContent", scrollFrame.scrollContent)
     content:SetSpacing("h1", 9)
     content:SetSpacing("h2", 7)
     content:SetSpacing("p", 5)
-    content:SetFontObject("h1", "CELL_FONT_CLASS_TITLE")
-    content:SetFontObject("h2", "CELL_FONT_CLASS")
-    if LOCALE_zhCN then
-        content:SetFontObject("p", "CELL_FONT_WIDGET")
-    else
-        content:SetFontObject("p", "CELL_FONT_CHINESE")
-    end
-    content:SetPoint("TOP", 0, -10)
-    content:SetWidth(changelogsFrame:GetWidth() - 30)
-    content:SetHyperlinkFormat("|H%s|h|cFFFFD100%s|r|h")
+    content:SetFontObject("h1", h1)
+    content:SetFontObject("h2", h2)
+    -- if LOCALE_zhCN then
+    --     content:SetFontObject("p", "CELL_FONT_WIDGET")
+    -- else
+        content:SetFontObject("p", p)
+    -- end
+    AF.SetPoint(content, "TOP", 0, -10)
+    -- AF.SetPoint(content, "LEFT", 15, 0)
+    -- AF.SetPoint(content, "RIGHT", -15, 0)
+    AF.SetWidth(content, 370) --! IMPORTANT
+    content:SetHyperlinkFormat("|H%s|h" .. AF.GetColorStr("Cell") .. "%s|r|h")
 
     changelogsFrame:SetScript("OnShow", function()
         content:SetText("<html><body>" .. L["CHANGELOGS"] .. "</body></html>")
         C_Timer.After(0, function()
             local height = content:GetContentHeight()
             content:SetHeight(height)
-            changelogsFrame.scrollFrame.content:SetHeight(height + 100)
-            P.PixelPerfectPoint(changelogsFrame)
+            scrollFrame:SetContentHeight(height + 30)
+            -- texplore(content:GetTextData())
         end)
     end)
 
@@ -53,8 +61,7 @@ local function CreateChangelogsFrame()
         C_Timer.After(0, function()
             local height = content:GetContentHeight()
             content:SetHeight(height)
-            changelogsFrame.scrollFrame.content:SetHeight(height + 30)
-            changelogsFrame.scrollFrame:ResetScroll()
+            scrollFrame:SetContentHeight(height + 30)
         end)
     end)
 end
@@ -70,7 +77,7 @@ function F.CheckWhatsNew(show)
             changelogsFrame:Hide()
         else
             changelogsFrame:ClearAllPoints()
-            changelogsFrame:SetPoint("CENTER")
+            changelogsFrame:SetPoint("CENTER", AF.UIParent)
             changelogsFrame:Show()
         end
     end
