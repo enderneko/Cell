@@ -38,7 +38,7 @@ RaidFrames\MainFrame.lua
 RaidDebuffs\ExpansionData\LoadExpansionData.xml
 Modules\LoadModules_Classic.xml
 Utilities\LoadUtilities_Mists.xml
-RaidDebuffs\LoadRaidDebuffs_Cata.xml
+RaidDebuffs\LoadRaidDebuffs_Mists.xml
 
 RaidFrames\UnitButton_Cata_Wrath.lua
 RaidFrames\UnitButton.xml
