@@ -46,10 +46,12 @@ anchorFrame:SetClampedToScreen(true)
 local function RegisterButtonEvents(frame)
     -- frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", function()
+        if InCombatLockdown() then return end
         anchorFrame:StartMoving()
         anchorFrame:SetUserPlaced(false)
     end)
     frame:SetScript("OnDragStop", function()
+        if InCombatLockdown() then return end
         anchorFrame:StopMovingOrSizing()
         P.SavePosition(anchorFrame, Cell.vars.currentLayoutTable["main"]["position"])
     end)
