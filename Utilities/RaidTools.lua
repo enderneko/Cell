@@ -79,6 +79,7 @@ local function CreateRTPane()
     -- L["Use |cFFFFB5C5/cell buff X|r to set icon size"],
     -- "|cffffffff" .. L["Current"]..": |cFFFFB5C5"..CellDB["tools"]["buffTracker"][3])
     buffCB:SetPoint("TOPLEFT", reportCB, "BOTTOMLEFT", 0, -15)
+    buffCB:SetEnabled(not Cell.isMists)
 
     buffDropdown = Cell.CreateDropdown(rtPane, 120)
     buffDropdown:SetPoint("TOPLEFT", buffCB, "BOTTOMRIGHT", 5, -5)

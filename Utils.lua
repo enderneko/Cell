@@ -19,10 +19,13 @@ Cell.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 -- Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+Cell.isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 Cell.isTWW = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WAR_WITHIN
 
 if Cell.isRetail then
     Cell.flavor = "retail"
+elseif Cell.isMists then
+    Cell.flavor = "mists"
 elseif Cell.isCata then
     Cell.flavor = "cata"
 elseif Cell.isWrath then
@@ -2435,4 +2438,11 @@ function SlashCmdList.CELLRC()
             debug:Show()
         end
     end
+end
+
+---------------------------------------------------------------------
+-- spec data
+---------------------------------------------------------------------
+if Cell.isMists then
+
 end

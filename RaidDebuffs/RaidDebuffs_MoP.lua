@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\RaidDebuffs_MoP.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-05 16:10:47 +08:00
--- Modified: 2025-02-20 16:08 +08:00
+-- Modified: 2025-07-03 19:37 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -272,5 +272,20 @@ local debuffs = {
         },
     },
 }
+
+if Cell.isMists then
+    debuffs[313] = { -- 青龙寺
+        ["general"] = {
+        },
+        [672] = { -- 贤者马里
+        },
+        [664] = { -- 游学者石步
+        },
+        [658] = { -- 刘·焰心
+        },
+        [335] = { -- 疑之煞
+        },
+    }
+end
 
 F.LoadBuiltInDebuffs(debuffs)

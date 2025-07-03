@@ -1552,7 +1552,7 @@ end
 local indicatorSettings
 local DEBUFFS_TOOLTIP1 = L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"]
 local DEBUFFS_TOOLTIP2 = L["This will make these icons not click-through-able"]
-if Cell.isRetail then
+if Cell.isRetail or Cell.isMists then
     indicatorSettings = {
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "position", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
@@ -1595,6 +1595,11 @@ if Cell.isRetail then
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {I.GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell.GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
+
+    if Cell.isMists then
+        indicatorSettings["missingBuffs"] = {LOCALE_zhCN and "暂不可用" or "Currently Unavailable"}
+    end
+
 elseif Cell.isCata or Cell.isWrath then
     indicatorSettings = {
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "position", "frameLevel", "font-noOffset"},

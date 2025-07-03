@@ -2,7 +2,7 @@
 -- File: Cell\Libs\LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-07-29 15:04 +08:00
--- Modified: 2024-08-11 17:03 +08:00
+-- Modified: 2025-07-03 11:15 +08:00
 ---------------------------------------------------------------------
 
 local MAJOR, MINOR = "LibGroupInfo", 7
@@ -21,6 +21,7 @@ local RETRY_INTERVAL = 1.5
 local MAX_ATTEMPTS = 3
 local IS_RETAIL = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 local IS_WRATH = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+local IS_MISTS = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 
 local debugMode = false
 local function Print(...)
@@ -143,8 +144,8 @@ local UnitIsDead = UnitIsDead
 local UnitIsConnected = UnitIsConnected
 local UnitIsVisible = UnitIsVisible
 local CanInspect = CanInspect
-local GetSpecialization = GetSpecialization
-local GetSpecializationInfo = GetSpecializationInfo
+local GetSpecialization = GetSpecialization or (C_SpecializationInfo and C_SpecializationInfo.GetSpecialization)
+local GetSpecializationInfo = GetSpecializationInfo or (C_SpecializationInfo and C_SpecializationInfo.GetSpecializationInfo)
 local GetInspectSpecialization = GetInspectSpecialization
 local UnitNameUnmodified = UnitNameUnmodified
 local GetNormalizedRealmName = GetNormalizedRealmName
@@ -160,6 +161,11 @@ local UnitInParty = UnitInParty
 local UnitInRaid = UnitInRaid
 local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 
+local locale = GetLocale()
+local GetSpecName = GetSpecName
+local GetSpecIcon = GetSpecIcon
+local GetSpecRole = GetSpecRole
+
 local GetNumTalentTabs = GetNumTalentTabs
 local GetTalentTabInfo = GetTalentTabInfo
 
@@ -173,27 +179,29 @@ frame:SetScript("OnEvent", function(self, event, ...)
 end)
 
 -- prepare spec data (name, icon, role)
-local function CacheSpecData()
-    for classId = 1, GetNumClasses() do
-        for specIndex = 1, GetNumSpecializationsForClassID(classId) do
-            local id, name, description, icon, role = GetSpecializationInfoForClassID(classId, specIndex)
-            specData[id] = {
-                ["name"] = name,
-                ["icon"] = icon,
-                ["role"] = specRoles[id],
-            }
-        end
-        -- initials
-        if IS_RETAIL then
-            local id, name, description, icon, role = GetSpecializationInfoForClassID(classId, 5)
-            specData[id] = {
-                ["name"] = name,
-                ["icon"] = icon,
-                ["role"] = specRoles[id],
-            }
-        end
-    end
-end
+-- local function CacheSpecData()
+--     for classId = 1, GetNumClasses() do
+--         for specIndex = 1, GetNumSpecializationsForClassID(classId) do
+--             local id, name, description, icon, role = GetSpecializationInfoForClassID(classId, specIndex)
+--             if id then
+--                 specData[id] = {
+--                     ["name"] = name,
+--                     ["icon"] = icon,
+--                     ["role"] = specRoles[id],
+--                 }
+--             end
+--         end
+--         -- initials
+--         if IS_RETAIL then
+--             local id, name, description, icon, role = GetSpecializationInfoForClassID(classId, 5)
+--             specData[id] = {
+--                 ["name"] = name,
+--                 ["icon"] = icon,
+--                 ["role"] = specRoles[id],
+--             }
+--         end
+--     end
+-- end
 
 local function UpdateBaseInfo(unit, guid)
     if not guid then return end
@@ -250,11 +258,11 @@ local function BuildAndNotify(unit)
     cache[guid].role = role
 
     -- spec
-    if specId and specData[specId] then
+    if specId then
         cache[guid].specId = specId
-        cache[guid].specName = specData[specId].name
-        cache[guid].specRole = specData[specId].role
-        cache[guid].specIcon = specData[specId].icon
+        cache[guid].specName = GetSpecName(specId, locale)
+        cache[guid].specRole = GetSpecRole(specId, locale)
+        cache[guid].specIcon = GetSpecIcon(specId, locale)
         cache[guid].inspected = true
     else
         cache[guid].specId = 0
@@ -320,7 +328,7 @@ local function Query(unit)
 
     if IsInGroup() and not (UnitInParty(unit) or UnitInRaid(unit)) then return end
 
-    if IS_RETAIL then
+    if IS_RETAIL or IS_MISTS then
         BuildAndNotify(unit)
     else
         BuildAndNotify_Wrath(unit)
@@ -333,9 +341,9 @@ end
 function frame:PLAYER_LOGIN()
     PLAYER_GUID = UnitGUID("player")
 
-    if IS_RETAIL then
+    if IS_RETAIL or IS_MISTS then
         cache[PLAYER_GUID] = {}
-        CacheSpecData()
+        -- CacheSpecData()
         frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     else
         cache[PLAYER_GUID] = {["talents"]={}}

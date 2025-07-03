@@ -36,7 +36,6 @@ Cell.MIN_CLICKCASTINGS_VERSION = 246
 Cell.MIN_LAYOUTS_VERSION = 246
 Cell.MIN_INDICATORS_VERSION = 246
 Cell.MIN_DEBUFFS_VERSION = 246
-Cell.MIN_QUICKASSIST_VERSION = 246
 
 --@debug@
 local debugMode = true
@@ -185,6 +184,9 @@ local GetRaidRosterInfo = GetRaidRosterInfo
 local UnitGUID = UnitGUID
 -- local IsInBattleGround = C_PvP.IsBattleground -- NOTE: can't get valid value immediately after PLAYER_ENTERING_WORLD
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
+local GetSpecsForClassID = GetSpecsForClassID
+local GetSpecialization = C_SpecializationInfo.GetSpecialization
+local GetSpecializationInfo = C_SpecializationInfo.GetSpecializationInfo
 
 -- local cellLoaded, omnicdLoaded
 function eventFrame:ADDON_LOADED(arg1)
@@ -357,23 +359,6 @@ function eventFrame:ADDON_LOADED(arg1)
             }
         end
 
-        -- quickAssist ----------------------------------------------------------------------------
-        if type(CellDB["quickAssist"]) ~= "table" then CellDB["quickAssist"] = {} end
-
-        -- quickCast ------------------------------------------------------------------------------
-        if type(CellDB["quickCast"]) ~= "table" then CellDB["quickCast"] = {} end
-        -- remove unused quick cast table
-        for c, ct in pairs(CellDB["quickCast"]) do
-            for s, st in pairs(ct) do
-                if not st["enabled"] and st["outerBuff"] == 0 and st["innerBuff"] == 0 then
-                    ct[s] = nil
-                end
-            end
-            if F.Getn(ct) == 0 then
-                CellDB["quickCast"][c] = nil
-            end
-        end
-
         -- appearance -----------------------------------------------------------------------------
         if type(CellDB["appearance"]) ~= "table" then
             CellDB["appearance"] = F.Copy(Cell.defaults.appearance)
@@ -408,17 +393,7 @@ function eventFrame:ADDON_LOADED(arg1)
             end
 
             -- https://wow.gamepedia.com/SpecializationID
-            local specs = {}
-            do
-                local specID
-                --! GetNumSpecializations / GetSpecializationInfo returns NOTHING at this time
-                for i = 1, GetNumSpecializationsForClassID(Cell.vars.playerClassID) do
-                    specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, i)
-                    tinsert(specs, specID)
-                end
-                specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, 5)
-                tinsert(specs, specID) -- "Initial" (no spec)
-            end
+            local specs = GetSpecsForClassID(Cell.vars.playerClassID)
 
             for _, specID in pairs(specs) do
                 CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][specID] = "disabled"
@@ -516,9 +491,6 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["targetedSpellsGlow"] = I.GetDefaultTargetedSpellsGlow()
         end
         Cell.vars.targetedSpellsGlow = CellDB["targetedSpellsGlow"]
-
-        -- crowdControls --------------------------------------------------------------------------
-        if type(CellDB["crowdControls"]) ~= "table" then CellDB["crowdControls"] = {["disabled"]={}, ["custom"]={}} end
 
         -- actions --------------------------------------------------------------------------------
         if type(CellDB["actions"]) ~= "table" then
@@ -769,6 +741,7 @@ function eventFrame:PLAYER_LOGIN()
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    eventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     eventFrame:RegisterEvent("UI_SCALE_CHANGED")
 
     Cell.vars.playerNameShort = GetUnitName("player")
@@ -801,8 +774,6 @@ function eventFrame:PLAYER_LOGIN()
     Cell.Fire("UpdateTools")
     -- update requests
     Cell.Fire("UpdateRequests")
-    -- update quick assist
-    -- Cell.Fire("UpdateQuickAssist") -- NOTE: update in GroupTypeChanged/SpecChanged
     -- update quick cast
     Cell.Fire("UpdateQuickCast")
     -- update raid debuff list
@@ -818,7 +789,6 @@ function eventFrame:PLAYER_LOGIN()
     I.UpdateAoEHealings(CellDB["aoeHealings"])
     I.UpdateDefensives(CellDB["defensives"])
     I.UpdateExternals(CellDB["externals"])
-    I.UpdateCrowdControls(CellDB["crowdControls"])
     -- update pixel perfect
     Cell.Fire("UpdatePixelPerfect")
     -- update LGF
@@ -887,6 +857,8 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
     end
 end
 
+eventFrame.PLAYER_SPECIALIZATION_CHANGED = eventFrame.ACTIVE_TALENT_GROUP_CHANGED
+
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     self[event](self, ...)
 end)
@@ -953,10 +925,6 @@ function SlashCmdList.CELL(msg, editbox)
             CellDB["snippets"] = {}
             CellDB["snippets"][0] = F.GetDefaultSnippet()
             ReloadUI()
-
-        elseif rest == "quickassist" then
-            CellDB["quickAssist"][Cell.vars.playerSpecID] = nil
-            ReloadUI()
         end
 
     elseif command == "report" then
@@ -973,16 +941,6 @@ function SlashCmdList.CELL(msg, editbox)
             F.Print(L["A 0-40 integer is required."])
         end
 
-    -- elseif command == "buff" then
-    --     rest = tonumber(rest:format("%d"))
-    --     if rest and rest > 0 then
-    --         CellDB["tools"]["buffTracker"][3] = rest
-    --         F.Print(string.format(L["Buff Tracker icon size is set to %d."], rest))
-    --         Cell.Fire("UpdateTools", "buffTracker")
-    --     else
-    --         F.Print(L["A positive integer is required."])
-    --     end
-
     else
         F.Print(L["Available slash commands"]..":\n"..
             "|cFFFFB5C5/cell options|r, |cFFFFB5C5/cell opt|r: "..L["show Cell options frame"]..".\n"..
@@ -994,7 +952,6 @@ function SlashCmdList.CELL(msg, editbox)
             "|cFFFFB5C5/cell reset clickcastings|r: "..L["reset all Click-Castings"]..".\n"..
             "|cFFFFB5C5/cell reset raiddebuffs|r: "..L["reset all Raid Debuffs"]..".\n"..
             "|cFFFFB5C5/cell reset snippets|r: "..L["reset all Code Snippets"]..".\n"..
-            "|cFFFFB5C5/cell reset quickassist|r: "..L["reset Quick Assist for current spec"]..".\n"..
             "|cFFFFB5C5/cell reset all|r: "..L["reset all Cell settings"].."."
         )
     end

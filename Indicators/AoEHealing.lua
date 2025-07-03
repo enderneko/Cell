@@ -35,7 +35,7 @@ eventFrame:SetScript("OnEvent", function()
     -- if (subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL") then print(subevent, sourceName, sourceGUID, destName, spellId, spellName) end
     if subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL" then
         if destGUID then
-            -- print(sourceGUID, playerSummoned[sourceGUID])
+            -- print(sourceGUID == Cell.vars.playerGUID, sourceGUID, playerSummoned[sourceGUID])
             if (sourceGUID == Cell.vars.playerGUID and I.IsAoEHealing(spellName, spellId)) or playerSummoned[sourceGUID] then
                 F.HandleUnitButton("guid", destGUID, Display)
             end

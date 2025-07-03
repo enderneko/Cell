@@ -75,9 +75,9 @@ local function DoImport(noReload)
     -- click-castings
     local clickCastings
     if imported["clickCastings"] then
-        if Cell.isRetail then -- RETAIL -> RETAIL
+        if Cell.flavor == imported.flavor then -- same flavor
             clickCastings = imported["clickCastings"]
-        else -- RETAIL -> WRATH
+        else -- RETAIL -> CLASSIC
             clickCastings = nil
         end
         imported["clickCastings"] = nil
@@ -97,7 +97,7 @@ local function DoImport(noReload)
     -- layout auto switch
     local layoutAutoSwitch
     if imported["layoutAutoSwitch"] then
-        if Cell.isRetail then -- RETAIL -> RETAIL
+        if Cell.flavor == imported.flavor then -- same flavor
             layoutAutoSwitch = imported["layoutAutoSwitch"]
         else -- RETAIL -> WRATH
             layoutAutoSwitch = nil
