@@ -101,9 +101,7 @@ Cell.defaults.layout = {
     ["groupFilter"] = {true, true, true, true, true, true, true, true},
     ["powerFilters"] = {
         ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},
-        ["DEMONHUNTER"] = {["TANK"] = true, ["DAMAGER"] = true},
         ["DRUID"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},
-        ["EVOKER"] = {["DAMAGER"] = true, ["HEALER"] = true},
         ["HUNTER"] = true,
         ["MAGE"] = true,
         ["MONK"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},
@@ -198,9 +196,7 @@ Cell.defaults.layout = {
             ["hideIfEmptyOrFull"] = true,
             ["filters"] = {
                 ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},
-                ["DEMONHUNTER"] = {["TANK"] = true, ["DAMAGER"] = true},
                 ["DRUID"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},
-                ["EVOKER"] = {["DAMAGER"] = true, ["HEALER"] = true},
                 ["HUNTER"] = true,
                 ["MAGE"] = true,
                 ["MONK"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},

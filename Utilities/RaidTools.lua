@@ -362,7 +362,7 @@ local function ShowUtilitySettings(which)
         -- raid tools
         resCB:SetChecked(CellDB["tools"]["battleResTimer"][1])
         resDetachCB:SetChecked(CellDB["tools"]["battleResTimer"][2])
-        resDetachCB:SetEnabled(CellDB["tools"]["battleResTimer"][1])
+        resDetachCB:SetEnabled(Cell.isRetail and CellDB["tools"]["battleResTimer"][1])
         reportCB:SetChecked(CellDB["tools"]["deathReport"][1])
 
         buffCB:SetChecked(CellDB["tools"]["buffTracker"][1])

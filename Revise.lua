@@ -3416,15 +3416,41 @@ function F.Revise()
     -- 254-release
     if CellDB["revise"] and dbRevision < 254 then
         if Cell.isMists then
+            -- disable buffTracker
             CellDB["tools"]["buffTracker"][1] = false
+
             for _, layout in pairs(CellDB["layouts"]) do
                 for _, i in pairs(layout["indicators"]) do
                     if i.indicatorName == "missingBuffs" then
+                        -- disable missingBuffs
                         i.enabled = false
+
+                    elseif i.indicatorName == "powerText" then
+                        -- reset powerText filter
+                        i.filters = F.Copy(Cell.defaults.layout.indicators[Cell.defaults.indicatorIndices.powerText].filters)
                     end
                 end
+
+                -- reset power filters
+                layout["powerFilters"] = F.Copy(Cell.defaults.layout.powerFilters)
             end
+
+            -- enable healAbsorb
             CellDB["appearance"]["healAbsorb"][1] = true
+
+            -- reset layoutAutoSwitch
+            CellDB["layoutAutoSwitch"] = {
+                ["role"] = {
+                    ["TANK"] = F.Copy(Cell.defaults.layoutAutoSwitch),
+                    ["HEALER"] = F.Copy(Cell.defaults.layoutAutoSwitch),
+                    ["DAMAGER"] = F.Copy(Cell.defaults.layoutAutoSwitch),
+                },
+                [Cell.vars.playerClass] = {}
+            }
+
+            if not next(CellDB["actions"]) then
+                CellDB["actions"] = I.GetDefaultActions()
+            end
         end
     end
 

@@ -143,10 +143,8 @@ local function PreUpdateLayout()
         elseif Cell.vars.groupType == "party" then
             F.UpdateLayout("party", true)
         else -- raid
-            if Cell.vars.inMythic then
-                F.UpdateLayout("raid_mythic", true)
-            elseif Cell.vars.inInstance then
-                F.UpdateLayout("raid_instance", true)
+            if Cell.vars.raidType then
+                F.UpdateLayout(Cell.vars.raidType, true)
             else
                 F.UpdateLayout("raid_outdoor", true)
             end
@@ -666,8 +664,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
 
     local isIn, iType = IsInInstance()
     instanceType = iType
-    Cell.vars.inInstance = isIn
-    Cell.vars.instanceType = iType
+    Cell.vars.raidType = nil
 
     if isIn then
         F.Debug("|cffff1111*** Entered Instance:|r", iType)
@@ -678,11 +675,14 @@ function eventFrame:PLAYER_ENTERING_WORLD()
         -- NOTE: delayed check mythic raid
         if iType == "raid" then
             C_Timer.After(0.5, function()
-                local difficultyID, difficultyName = select(3, GetInstanceInfo()) --! can't get difficultyID, difficultyName immediately after entering an instance
-                Cell.vars.inMythic = difficultyID == 16
-                if Cell.vars.inMythic then
-                    F.Debug("|cffff1111*** Entered Instance:|r", "raid-mythic")
-                    Cell.Fire("EnterInstance", iType)
+                --! can't get difficultyID, difficultyName immediately after entering an instance
+                local _, _, difficultyID, difficultyName, maxPlayers = GetInstanceInfo()
+                if maxPlayers == 10 then
+                    Cell.vars.raidType = "raid10"
+                elseif maxPlayers == 25 then
+                    Cell.vars.raidType = "raid25"
+                end
+                if Cell.vars.raidType then
                     PreUpdateLayout()
                 end
             end)

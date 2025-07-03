@@ -167,6 +167,27 @@ local function CreateFilters()
         vehicleF:SetPoint("TOPLEFT", warriorF, "BOTTOMLEFT", 0, -5)
         npcF:SetPoint("TOPLEFT", petF, "BOTTOMLEFT", 0, -5)
 
+    elseif Cell.isMists then
+        P.Height(powerFilters, 180)
+
+        dkF = CreatePowerFilter(powerFilters, "DEATHKNIGHT", CLASS_ROLES["DEATHKNIGHT"])
+        monkF = CreatePowerFilter(powerFilters, "MONK", CLASS_ROLES["MONK"])
+
+        dkF:SetPoint("TOPLEFT", 5, -5)
+        druidF:SetPoint("TOPLEFT", 145, -5)
+        hunterF:SetPoint("TOPLEFT", dkF, "BOTTOMLEFT", 0, -5)
+        mageF:SetPoint("TOPLEFT", druidF, "BOTTOMLEFT", 0, -5)
+        monkF:SetPoint("TOPLEFT", hunterF, "BOTTOMLEFT", 0, -5)
+        paladinF:SetPoint("TOPLEFT", mageF, "BOTTOMLEFT", 0, -5)
+        priestF:SetPoint("TOPLEFT", monkF, "BOTTOMLEFT", 0, -5)
+        rogueF:SetPoint("TOPLEFT", paladinF, "BOTTOMLEFT", 0, -5)
+        shamanF:SetPoint("TOPLEFT", priestF, "BOTTOMLEFT", 0, -5)
+        warlockF:SetPoint("TOPLEFT", rogueF, "BOTTOMLEFT", 0, -5)
+        warriorF:SetPoint("TOPLEFT", shamanF, "BOTTOMLEFT", 0, -5)
+        petF:SetPoint("TOPLEFT", warlockF, "BOTTOMLEFT", 0, -5)
+        vehicleF:SetPoint("TOPLEFT", warriorF, "BOTTOMLEFT", 0, -5)
+        npcF:SetPoint("TOPLEFT", petF, "BOTTOMLEFT", 0, -5)
+
     elseif Cell.isCata or Cell.isWrath then
         P.Height(powerFilters, 180)
 
@@ -246,13 +267,16 @@ function F.ShowPowerFilters(l, lt)
         vehicleF:Load()
         npcF:Load()
 
-        if Cell.isRetail or Cell.isCata or Cell.isWrath then
+        if Cell.isRetail or Cell.isMists or Cell.isCata or Cell.isWrath then
             dkF:Load()
+        end
+
+        if Cell.isRetail or Cell.isMists then
+            monkF:Load()
         end
 
         if Cell.isRetail then
             dhF:Load()
-            monkF:Load()
             evokerF:Load()
         end
     end
