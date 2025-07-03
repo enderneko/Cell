@@ -25,9 +25,7 @@ local function DoImport(noReload)
     end
 
     -- deal with invalid
-    if Cell.isRetail then
-        imported["appearance"]["useLibHealComm"] = false
-    elseif Cell.isVanilla or Cell.isWrath or Cell.isCata then
+    if Cell.isMists or Cell.isVanilla or Cell.isWrath or Cell.isCata then
         imported["quickCast"] = nil
         imported["quickAssist"] = nil
         imported["appearance"]["healAbsorb"][1] = false
@@ -139,7 +137,7 @@ local function DoImport(noReload)
     end
 
     --! overwrite
-    if Cell.isRetail then
+    if Cell.isRetail or Cell.isMists then
         if not ignoredIndices["clickCastings"] then
             CellDB["clickCastings"] = clickCastings
         end
