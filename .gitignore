@@ -10,6 +10,7 @@ Libs/*
 !Libs/PixelPerfect.lua
 !Libs/FAIAP.lua
 !Libs/utf8.lua
+!Libs/LibSpecData.lua
 !Libs/LibGroupInfo.lua
 !Libs/LibBadWords.lua
 !Libs/LoadLibs.xml
