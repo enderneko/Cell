@@ -3432,14 +3432,19 @@ function F.Revise()
             CellDB["appearance"]["healAbsorb"][1] = true
 
             -- reset layoutAutoSwitch
-            CellDB["layoutAutoSwitch"] = {
-                ["role"] = {
+            if not CellDB["layoutAutoSwitch"] then
+                CellDB["layoutAutoSwitch"] = {}
+            end
+            if not CellDB["layoutAutoSwitch"]["role"] then
+                CellDB["layoutAutoSwitch"]["role"] = {
                     ["TANK"] = F.Copy(Cell.defaults.layoutAutoSwitch),
                     ["HEALER"] = F.Copy(Cell.defaults.layoutAutoSwitch),
                     ["DAMAGER"] = F.Copy(Cell.defaults.layoutAutoSwitch),
-                },
-                [Cell.vars.playerClass] = {}
-            }
+                }
+            end
+            if not CellDB["layoutAutoSwitch"][Cell.vars.playerClass] then
+                CellDB["layoutAutoSwitch"][Cell.vars.playerClass] = {}
+            end
 
             if not next(CellDB["actions"]) then
                 CellDB["actions"] = I.GetDefaultActions()
