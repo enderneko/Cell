@@ -183,6 +183,8 @@ local function GetExportString(includeNicknames, includeCharacter)
     end
 
     db["flavor"] = Cell.flavor
+    db["fallbackGroupType"] = nil
+    db["fallbackInMythic"] = nil
 
     local str = Serializer:Serialize(db) -- serialize
     str = LibDeflate:CompressDeflate(str, deflateConfig) -- compress

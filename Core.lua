@@ -687,7 +687,18 @@ function eventFrame:GROUP_ROSTER_UPDATE()
 end
 
 local inInstance
-function eventFrame:PLAYER_ENTERING_WORLD()
+
+local function UpdateFallbackGroupType()
+    if IsInRaid() then
+        CellDB.fallbackGroupType = "raid"
+    elseif IsInGroup() then
+        CellDB.fallbackGroupType = "party"
+    else
+        CellDB.fallbackGroupType = "solo"
+    end
+end
+
+function eventFrame:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
     -- eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     F.Debug("|cffbbbbbb=== PLAYER_ENTERING_WORLD ===")
     Cell.vars.inMythic = false
@@ -697,9 +708,16 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     Cell.vars.inInstance = isIn
     Cell.vars.instanceType = iType
 
+    C_Timer.After(1, UpdateFallbackGroupType)
+
     if isIn then
         F.Debug("|cffff1111*** Entered Instance:|r", iType)
         Cell.Fire("EnterInstance", iType)
+
+        if isInitialLogin or isReloadingUi then
+            Cell.vars.groupType = CellDB.fallbackGroupType or "solo"
+            Cell.vars.inMythic = CellDB.fallbackInMythic or false
+        end
         PreUpdateLayout()
         inInstance = true
 
@@ -708,6 +726,8 @@ function eventFrame:PLAYER_ENTERING_WORLD()
             C_Timer.After(0.5, function()
                 local difficultyID, difficultyName = select(3, GetInstanceInfo()) --! can't get difficultyID, difficultyName immediately after entering an instance
                 Cell.vars.inMythic = difficultyID == 16
+                CellDB.fallbackInMythic = Cell.vars.inMythic
+
                 if Cell.vars.inMythic then
                     F.Debug("|cffff1111*** Entered Instance:|r", "raid-mythic")
                     Cell.Fire("EnterInstance", iType)
