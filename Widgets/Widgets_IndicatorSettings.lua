@@ -6116,63 +6116,6 @@ local function CreateSetting_Shape(parent)
     return widget
 end
 
-local function CreateSetting_MissingBuffsFilters(parent)
-    local widget
-
-    if not settingWidgets["missingBuffsFilters"] then
-        widget = Cell.CreateFrame("CellIndicatorSettings_MissingBuffsFilters", parent, 240, 30)
-        settingWidgets["missingBuffsFilters"] = widget
-
-        widget.buffByMe = Cell.CreateCheckButton(widget, L["buffByMe"])
-        widget.buffByMe:SetPoint("TOPLEFT", 5, -8)
-
-        local buffs = I.GetMissingBuffsFilters()
-        local indexToCB = {}
-
-        for i, t in ipairs(buffs) do
-            widget[i] = Cell.CreateCheckButton(widget, t[1])
-            indexToCB[t[2]] = widget[i]
-
-            if i == 1 then
-                widget[i]:SetPoint("TOPLEFT", widget.buffByMe, "BOTTOMLEFT", 0, -16)
-            else
-                widget[i]:SetPoint("TOPLEFT", widget[i-1], "BOTTOMLEFT", 0, -8)
-            end
-        end
-
-        P.Height(widget, (#buffs+1)*(14+8)+8+8)
-
-        -- callback
-        function widget:SetFunc(func)
-            widget.buffByMe.onClick = function(checked)
-                widget.filters.buffByMe = checked
-                func()
-            end
-
-            for k, cb in pairs(indexToCB) do
-                cb.onClick = function(checked)
-                    widget.filters[k] = checked
-                    func()
-                end
-            end
-        end
-
-        -- show db value
-        function widget:SetDBValue(filters)
-            widget.filters = filters
-            widget.buffByMe:SetChecked(filters["buffByMe"])
-            for k, cb in pairs(indexToCB) do
-                cb:SetChecked(filters[k])
-            end
-        end
-    else
-        widget = settingWidgets["missingBuffsFilters"]
-    end
-
-    widget:Show()
-    return widget
-end
-
 local function CreateSetting_TargetCounterFilters(parent)
     local widget
 
@@ -6847,7 +6790,6 @@ local builders = {
     ["thresholds"] = CreateSetting_Thresholds,
     ["privateAuraOptions"] = CreateSetting_PrivateAuraOptions,
     ["shape"] = CreateSetting_Shape,
-    ["missingBuffsFilters"] = CreateSetting_MissingBuffsFilters,
     ["targetCounterFilters"] = CreateSetting_TargetCounterFilters,
     ["dispelFilters"] = CreateSetting_DispelFilters,
     ["castBy"] = CreateSetting_CastBy,

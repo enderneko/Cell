@@ -30,7 +30,6 @@ Cell.defaults.indicatorIndices = {
     ["targetedSpells"] = 24,
     ["targetCounter"] = 25,
     ["actions"] = 26,
-    ["missingBuffs"] = 27,
 }
 
 Cell.defaults.layout = {
@@ -470,27 +469,6 @@ Cell.defaults.layout = {
             ["enabled"] = true,
             ["speed"] = 1,
         }, -- 26
-        {
-            ["name"] = "Missing Buffs",
-            ["indicatorName"] = "missingBuffs",
-            ["type"] = "built-in",
-            ["enabled"] = false,
-            ["filters"] = {
-                ["buffByMe"] = true,
-                ["PWF"] = true,
-                ["DS"] = true,
-                ["SP"] = true,
-                ["AB"] = true,
-                ["MotW"] = true,
-                ["BS"] = true,
-                ["PALADIN"] = true,
-            },
-            ["position"] = {"BOTTOMRIGHT", "button", "BOTTOMRIGHT", 0, 4},
-            ["frameLevel"] = 10,
-            ["size"] = {13, 13},
-            ["num"] = 3,
-            ["orientation"] = "right-to-left",
-        }, -- 27
     },
 }
 

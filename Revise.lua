@@ -3416,16 +3416,9 @@ function F.Revise()
     -- 254-release
     if CellDB["revise"] and dbRevision < 254 then
         if Cell.isMists then
-            -- disable buffTracker
-            CellDB["tools"]["buffTracker"][1] = false
-
             for _, layout in pairs(CellDB["layouts"]) do
                 for _, i in pairs(layout["indicators"]) do
-                    if i.indicatorName == "missingBuffs" then
-                        -- disable missingBuffs
-                        i.enabled = false
-
-                    elseif i.indicatorName == "powerText" then
+                    if i.indicatorName == "powerText" then
                         -- reset powerText filter
                         i.filters = F.Copy(Cell.defaults.layout.indicators[Cell.defaults.indicatorIndices.powerText].filters)
                     end

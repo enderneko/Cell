@@ -14,97 +14,323 @@ local UnitIsUnit = UnitIsUnit
 local UnitIsPlayer = UnitIsPlayer
 local UnitGUID = UnitGUID
 local UnitClassBase = UnitClassBase
+local UnitLevel = UnitLevel
 local IsInGroup = IsInGroup
 local IsInRaid = IsInRaid
 
--------------------------------------------------
--- buffs
--------------------------------------------------
-local buffs = {
-    -- Power Word: Fortitude - 真言术：韧
-    ["PWF"] = {id = 21562, glowColor = {F.GetClassColor("PRIEST")}, provider = "PRIEST", level = 6},
-    -- Mark of the Wild - 野性印记
-    ["MotW"] = {id = 1126, glowColor = {F.GetClassColor("DRUID")}, provider = "DRUID", level = 9},
-    -- Arcane Brilliance - 奥术智慧
-    ["AB"] = {id = 1459, glowColor = {F.GetClassColor("MAGE")}, provider = "MAGE", level = 8},
-    -- Battle Shout - 战斗怒吼
-    ["BS"] = {id = 6673, glowColor = {F.GetClassColor("WARRIOR")}, provider = "WARRIOR", level = 10},
-    -- Blessing of the Bronze - 青铜龙的祝福
-    ["BotB"] = {id = 364342, glowColor = {F.GetClassColor("EVOKER")}, provider = "EVOKER", level = 30},
-    -- Skyfury - 天怒
-    ["SF"] = {id = 462854, glowColor = {F.GetClassColor("SHAMAN")}, provider = "SHAMAN", level = 16},
-}
+local tinsert = table.insert
 
-do
-    for _, t in pairs(buffs) do
-        local name, icon = F.GetSpellInfo(t["id"])
-        t["name"] = name
-        t["icon"] = icon
-    end
+---------------------------------------------------------------------
+-- data
+---------------------------------------------------------------------
+local buffs = {}
+local requiredBuffs = {}
+local requiredByEveryone = {}
+local available = {}
+local unaffected = {}
+
+if Cell.isRetail then
+    buffs = {
+        stamina = {
+            tag = ITEM_MOD_STAMINA_SHORT, -- Stamina
+            icon = 135987,
+            order = 1,
+            provider = {
+                PRIEST = {id = 21562, level = 6}, -- Power Word: Fortitude - 真言术：韧
+            }
+        },
+        versatility = {
+            tag = STAT_VERSATILITY, -- Versatility
+            icon = 136078,
+            order = 2,
+            provider = {
+                DRUID = {id = 1126, level = 9}, -- Mark of the Wild - 野性印记
+            }
+        },
+        mastery = {
+            tag = STAT_MASTERY, -- Mastery
+            icon = 4630367,
+            order = 3,
+            provider = {
+                SHAMAN = {id = 462854, level = 16}, -- Skyfury - 天怒
+            }
+        },
+        intellect = {
+            tag = ITEM_MOD_INTELLECT_SHORT, -- Intellect
+            icon = 135932,
+            order = 4,
+            provider = {
+                MAGE = {id = 1459, level = 8}, -- Arcane Brilliance - 奥术智慧
+            }
+        },
+        attackPower = {
+            tag = RAID_BUFF_3, -- Attack Power
+            icon = 132333,
+            order = 5,
+            provider = {
+                WARRIOR = {id = 6673, level = 10}, -- Battle Shout - 战斗怒吼
+            }
+        },
+        movement = {
+            tag = TUTORIAL_TITLE2, -- Movement
+            icon = 4622448,
+            order = 6,
+            provider = {
+                EVOKER = {id = 364342, level = 30}, -- Blessing of the Bronze - 青铜龙的祝福
+            }
+        }
+    }
+
+    requiredBuffs = {
+        [250] = "attackPower", -- Blood
+        [251] = "attackPower", -- Frost
+        [252] = "attackPower", -- Unholy
+
+        [577] = "attackPower", -- Havoc
+        [581] = "attackPower", -- Vengeance
+
+        [102] = "intellect", -- Balance
+        [103] = "attackPower", -- Feral
+        [104] = "attackPower", -- Guardian
+        [105] = "intellect", -- Restoration
+
+        [1467] = "intellect", -- Devastation
+        [1468] = "intellect", -- Preservation
+
+        [253] = "attackPower", -- Beast Mastery
+        [254] = "attackPower", -- Marksmanship
+        [255] = "attackPower", -- Survival
+
+        [62] = "intellect", -- Arcane
+        [63] = "intellect", -- Fire
+        [64] = "intellect", -- Frost
+
+        [268] = "attackPower", -- Brewmaster
+        [269] = "attackPower", -- Windwalker
+        [270] = "intellect", -- Mistweaver
+
+        [65] = "intellect", -- Holy
+        [66] = "attackPower", -- Protection
+        [70] = "attackPower", -- Retribution
+
+        [256] = "intellect", -- Discipline
+        [257] = "intellect", -- Holy
+        [258] = "intellect", -- Shadow
+
+        [259] = "attackPower", -- Assassination
+        [260] = "attackPower", -- Outlaw
+        [261] = "attackPower", -- Subtlety
+
+        [262] = "intellect", -- Elemental
+        [263] = "attackPower", -- Enhancement
+        [264] = "intellect", -- Restoration
+
+        [265] = "intellect", -- Affliction
+        [266] = "intellect", -- Demonology
+        [267] = "intellect", -- Destruction
+
+        [71] = "attackPower", -- Arms
+        [72] = "attackPower", -- Fury
+        [73] = "attackPower", -- Protection
+    }
+
+    requiredByEveryone = {
+        stamina = true,
+        versatility = true,
+        mastery = true,
+        movement = true,
+    }
+
+    available = {
+        stamina = false,
+        versatility = false,
+        mastery = false,
+        intellect = false,
+        attackPower = false,
+        movement = false,
+    }
+
+    unaffected = {
+        stamina = {},
+        versatility = {},
+        mastery = {},
+        intellect = {},
+        attackPower = {},
+        movement = {},
+    }
+
+elseif Cell.isMists then
+    buffs = {
+        stamina = {
+            tag = RAID_BUFF_2, -- Stamina
+            icon = 135987,
+            order = 1,
+            provider = {
+                PRIEST = {id = 21562, level = 22}, -- Power Word: Fortitude
+                WARLOCK = {id = 109773, level = 82}, -- Dark Intent
+                WARRIOR = {id = 469, level = 68}, -- Commanding Shout
+            },
+        },
+        stats = {
+            tag = RAID_BUFF_1, -- Stats
+            icon = 136078,
+            order = 2,
+            provider = {
+                DRUID = {id = 1126, level = 62}, -- Mark of the Wild
+                MONK = {id = 115921, level = 22}, -- Legacy of the Emperor
+                PALADIN = {id = 20217, level = 30}, -- Blessing of Kings
+            }
+        },
+        spellPower = {
+            tag = RAID_BUFF_5, -- Spell Power
+            icon = 135932,
+            order = 3,
+            provider = {
+                MAGE = {id = {1459, 61316}, level = 58}, -- Arcane Brilliance / Dalaran Brilliance
+                SHAMAN = {id = 77747, level = 40}, -- Burning Wrath
+                WARLOCK = {id = 109773, level = 82}, -- Dark Intent
+            }
+        },
+        attackPower = {
+            tag = RAID_BUFF_3, -- Attack Power
+            icon = 132333,
+            order = 4,
+            provider = {
+                DEATHKNIGHT = {id = 57330, level = 65}, -- Horn of Winter
+                HUNTER = {id = 19506, level = 39}, -- Trueshot Aura
+                WARRIOR = {id = 6673, level = 42}, -- Battle Shout
+            }
+        },
+        mastery = {
+            tag = RAID_BUFF_7, -- Mastery
+            icon = 135908,
+            order = 5,
+            provider = {
+                PALADIN = {id = 19740, level = 81}, -- Blessing of Might
+                SHAMAN = {id = 116956, level = 80}, -- Grace of Air
+            }
+        }
+    }
+
+    requiredBuffs = {
+        [250] = "attackPower", -- Blood
+        [251] = "attackPower", -- Frost
+        [252] = "attackPower", -- Unholy
+
+        [102] = "spellPower", -- Balance
+        [103] = "attackPower", -- Feral
+        [104] = "attackPower", -- Guardian
+        [105] = "spellPower", -- Restoration
+
+        [253] = "attackPower", -- Beast Mastery
+        [254] = "attackPower", -- Marksmanship
+        [255] = "attackPower", -- Survival
+
+        [62] = "spellPower", -- Arcane
+        [63] = "spellPower", -- Fire
+        [64] = "spellPower", -- Frost
+
+        [268] = "attackPower", -- Brewmaster
+        [269] = "attackPower", -- Windwalker
+        [270] = "spellPower", -- Mistweaver
+
+        [65] = "spellPower", -- Holy
+        [66] = "attackPower", -- Protection
+        [70] = "attackPower", -- Retribution
+
+        [256] = "spellPower", -- Discipline
+        [257] = "spellPower", -- Holy
+        [258] = "spellPower", -- Shadow
+
+        [259] = "attackPower", -- Assassination
+        [260] = "attackPower", -- Outlaw
+        [261] = "attackPower", -- Subtlety
+
+        [262] = "spellPower", -- Elemental
+        [263] = "attackPower", -- Enhancement
+        [264] = "spellPower", -- Restoration
+
+        [265] = "spellPower", -- Affliction
+        [266] = "spellPower", -- Demonology
+        [267] = "spellPower", -- Destruction
+
+        [71] = "attackPower", -- Arms
+        [72] = "attackPower", -- Fury
+        [73] = "attackPower", -- Protection
+    }
+
+    requiredByEveryone = {
+        stamina = true,
+        stats = true,
+        mastery = true,
+    }
+
+    available = {
+        stamina = false,
+        stats = false,
+        spellPower = false,
+        attackPower = false,
+        mastery = false,
+    }
+
+    unaffected = {
+        stamina = {},
+        stats = {},
+        spellPower = {},
+        attackPower = {},
+        mastery = {},
+    }
 end
 
-local order = {"PWF", "MotW", "SF", "AB", "BS", "BotB"}
-local requiredByEveryone = {
-    ["PWF"] = true,
-    ["MotW"] = true,
-    ["SF"] = true,
+---------------------------------------------------------------------
+-- prepare
+---------------------------------------------------------------------
+local classBuffs = {
+    -- class = {
+    --     buff = level,
+    -- }
 }
+local buffOrder = {}
+local buffsProvidedByMe = {}
 
--------------------------------------------------
--- required buffs
--------------------------------------------------
-local requiredBuffs = {
-    [250] = "BS", -- Blood
-    [251] = "BS", -- Frost
-    [252] = "BS", -- Unholy
+do
+    local myClass = UnitClassBase("player")
 
-    [577] = "BS", -- Havoc
-    [581] = "BS", -- Vengeance
+    local function Insert(class, buffKey, name)
+        tinsert(buffs[buffKey]["names"], name)
+        if myClass == class then
+            buffsProvidedByMe[buffKey] = name
+        end
+    end
 
-    [102] = "AB", -- Balance
-    [103] = "BS", -- Feral
-    [104] = "BS", -- Guardian
-    [105] = "AB", -- Restoration
+    for buffKey, buffData in pairs(buffs) do
+        tinsert(buffOrder, buffKey)
+        buffData.names = {}
 
-    [1467] = "AB", -- Devastation
-    [1468] = "AB", -- Preservation
+        for class, info in pairs(buffData.provider) do
+            classBuffs[class] = classBuffs[class] or {}
+            classBuffs[class][buffKey] = info.level
 
-    [253] = "BS", -- Beast Mastery
-    [254] = "BS", -- Marksmanship
-    [255] = "BS", -- Survival
+            if type(info.id) == "table" then
+                for _, spellId in ipairs(info.id) do
+                    local name = F.GetSpellInfo(spellId)
+                    if name then
+                        Insert(class, buffKey, name)
+                    end
+                end
+            else
+                local name = F.GetSpellInfo(info.id)
+                if name then
+                    Insert(class, buffKey, name)
+                end
+            end
+        end
+    end
 
-    [62] = "AB", -- Arcane
-    [63] = "AB", -- Fire
-    [64] = "AB", -- Frost
-
-    [268] = "BS", -- Brewmaster
-    [269] = "BS", -- Windwalker
-    [270] = "AB", -- Mistweaver
-
-    [65] = "AB", -- Holy
-    [66] = "BS", -- Protection
-    [70] = "BS", -- Retribution
-
-    [256] = "AB", -- Discipline
-    [257] = "AB", -- Holy
-    [258] = "AB", -- Shadow
-
-    [259] = "BS", -- Assassination
-    [260] = "BS", -- Outlaw
-    [261] = "BS", -- Subtlety
-
-    [262] = "AB", -- Elemental
-    [263] = "BS", -- Enhancement
-    [264] = "AB", -- Restoration
-
-    [265] = "AB", -- Affliction
-    [266] = "AB", -- Demonology
-    [267] = "AB", -- Destruction
-
-    [71] = "BS", -- Arms
-    [72] = "BS", -- Fury
-    [73] = "BS", -- Protection
-}
+    table.sort(buffOrder, function(a, b)
+        return buffs[a]["order"] < buffs[b]["order"]
+    end)
+end
 
 -------------------------------------------------
 -- vars
@@ -113,25 +339,7 @@ local enabled
 local myUnit = ""
 local hasBuffProvider
 
-local available = {
-    ["PWF"] = false,
-    ["MotW"] = false,
-    ["SF"] = false,
-    ["AB"] = false,
-    ["BS"] = false,
-    ["BotB"] = false,
-}
-
-local unaffected = {
-    ["PWF"] = {},
-    ["MotW"] = {},
-    ["SF"] = {},
-    ["AB"] = {},
-    ["BS"] = {},
-    ["BotB"] = {},
-}
-
-local function Reset(which)
+local fl function Reset(which)
     if not which or which == "available" then
         for k, v in pairs(available) do
             available[k] = false
@@ -146,9 +354,9 @@ local function Reset(which)
     end
 end
 
-function F.GetUnaffectedString(spell)
-    local list = unaffected[spell]
-    local buff = buffs[spell]["name"]
+local function GetUnaffectedString(buff)
+    local list = unaffected[buff]
+    local name = buffs[buff]["tag"]
 
     local players = {}
     for unit in pairs(list) do
@@ -159,9 +367,9 @@ function F.GetUnaffectedString(spell)
     if #players == 0 then
         return
     elseif #players <= 10 then
-        return L["Missing Buff"] .. " (" .. buff .. "): " .. table.concat(players, ", ")
+        return L["Missing Buff"] .. " (" .. name .. "): " .. table.concat(players, ", ")
     else
-        return L["Missing Buff"] .. " (" .. buff .. "): " .. L["many"]
+        return L["Missing Buff"] .. " (" .. name .. "): " .. L["many"]
     end
 end
 
@@ -222,7 +430,7 @@ local function CreateFakeIcon(spellIcon)
 end
 
 do
-    for _, k in ipairs(order) do
+    for _, k in ipairs(buffOrder) do
         tinsert(fakeIcons, CreateFakeIcon(buffs[k]["icon"]))
     end
 end
@@ -259,20 +467,26 @@ local function UpdateSendChannel()
     end
 end
 
-local function CreateBuffButton(parent, size, spell, icon, index)
+local function CreateBuffButton(parent, buff)
     local b = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate,BackdropTemplate")
     if parent then b:SetFrameLevel(parent:GetFrameLevel() + 1) end
-    P.Size(b, size[1], size[2])
+    P.Size(b, 32, 32)
 
     b:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
-    b:SetAttribute("type1", "macro")
-    b:SetAttribute("macrotext1", "/cast [@player] " .. spell)
+
+    -- cast
+    if buffsProvidedByMe[buff] then
+        b:SetAttribute("type1", "macro")
+        b:SetAttribute("macrotext1", "/cast [@player] " .. buffsProvidedByMe[buff])
+    end
+
+    -- chat
     b:HookScript("OnClick", function(self, button, down)
         if button == "RightButton" and (down == GetCVarBool("ActionButtonUseKeyDown")) then
-            local msg = F.GetUnaffectedString(index)
+            local msg = GetUnaffectedString(buff)
             if msg then
                 UpdateSendChannel()
                 SendChatMessage(msg, sendChannel)
@@ -283,7 +497,7 @@ local function CreateBuffButton(parent, size, spell, icon, index)
     b.texture = b:CreateTexture(nil, "OVERLAY")
     P.Point(b.texture, "TOPLEFT", b, "TOPLEFT", 1, -1)
     P.Point(b.texture, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
-    b.texture:SetTexture(icon)
+    b.texture:SetTexture(buffs[buff]["icon"])
     b.texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
     b.count = b:CreateFontString(nil, "OVERLAY")
@@ -301,7 +515,7 @@ local function CreateBuffButton(parent, size, spell, icon, index)
         b:SetScript("OnEnter", function()
             if F.Getn(list) ~= 0 then
                 CellTooltip:SetOwner(b, "ANCHOR_TOPLEFT", 0, 3)
-                CellTooltip:AddLine(L["Unaffected"])
+                CellTooltip:AddLine(L["Unaffected"] .. " |cffb7b7b7" .. buffs[buff]["tag"])
                 for unit in pairs(list) do
                     local class = UnitClassBase(unit)
                     local name = UnitName(unit)
@@ -366,29 +580,29 @@ end
 local buttons = {}
 
 do
-    for _, k in ipairs(order) do
-        buttons[k] = CreateBuffButton(buffTrackerFrame, {32, 32}, buffs[k]["name"], buffs[k]["icon"], k)
-        buttons[k]:Hide()
-        buttons[k]:SetTooltips(unaffected[k])
+    for _, buff in ipairs(buffOrder) do
+        buttons[buff] = CreateBuffButton(buffTrackerFrame, buff)
+        buttons[buff]:Hide()
+        buttons[buff]:SetTooltips(unaffected[buff])
     end
 end
 
 local function UpdateButtons()
-    for _, k in pairs(order) do
-        if available[k] then
-            local n = F.Getn(unaffected[k])
+    for _, buff in pairs(buffOrder) do
+        if available[buff] then
+            local n = F.Getn(unaffected[buff])
             if n == 0 then
-                buttons[k].count:SetText("")
-                buttons[k]:SetAlpha(0.5)
-                buttons[k]:StopGlow()
+                buttons[buff].count:SetText("")
+                buttons[buff]:SetAlpha(0.5)
+                buttons[buff]:StopGlow()
             else
-                buttons[k].count:SetText(n)
-                buttons[k]:SetAlpha(1)
-                if unaffected[k][myUnit] then
+                buttons[buff].count:SetText(n)
+                buttons[buff]:SetAlpha(1)
+                if unaffected[buff][myUnit] then
                     -- color, N, frequency, length, thickness
-                    buttons[k]:StartGlow("Pixel", buffs[k]["glowColor"], 8, 0.25, P.Scale(8), P.Scale(2))
+                    buttons[buff]:StartGlow("Pixel", {1, 0.19, 0.19, 1}, 8, 0.25, P.Scale(8), P.Scale(2))
                 else
-                    buttons[k]:StopGlow()
+                    buttons[buff]:StopGlow()
                 end
             end
         end
@@ -419,7 +633,7 @@ local function RepointButtons()
         end
 
         local last
-        for _, k in pairs(order) do
+        for _, k in pairs(buffOrder) do
             P.ClearPoints(buttons[k])
             if available[k] then
                 buttons[k]:Show()
@@ -480,43 +694,47 @@ A.ApplyFadeInOutToParent(buffTrackerFrame, function()
     return CellDB["tools"]["fadeOut"] and not buffTrackerFrame.moverText:IsShown()
 end, unpack(fadeOuts))
 
+---------------------------------------------------------------------
+-- find aura
+---------------------------------------------------------------------
+local GetAuraDataBySpellName = C_UnitAuras.GetAuraDataBySpellName
+
+local function UnitBuffExists(unit, buff)
+    local names = buffs[buff]["names"]
+    for _, name in next, names do
+        if GetAuraDataBySpellName(unit, name, "HELPFUL") then
+            return true
+        end
+    end
+end
+
 -------------------------------------------------
 -- check
 -------------------------------------------------
 local function CheckUnit(unit, updateBtn)
-    I.HideMissingBuffs(unit)
-
     -- print("CheckUnit", unit)
     if not hasBuffProvider then return end
 
     if UnitIsConnected(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) then
         local info = LGI:GetCachedInfo(UnitGUID(unit))
-        local spec = info and info.specId or ""
+        local spec = info and info.specId
         local required = requiredBuffs[spec]
 
-        for k, v in pairs(available) do
-            if v then
-                if required == k or requiredByEveryone[k] then
-                    if not F.FindAuraById(unit, "BUFF", buffs[k]["id"]) then
-                        unaffected[k][unit] = true
-                        I.ShowMissingBuff(unit, k, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
+        for buff, hasProvider in next, available do
+            if hasProvider then
+                if required == buff or requiredByEveryone[buff] then
+                    if UnitBuffExists(unit, buff) then
+                        unaffected[buff][unit] = nil
                     else
-                        unaffected[k][unit] = nil
-                    end
-                elseif k == "BotB" then
-                    if not AuraUtil.FindAuraByName(buffs[k]["name"], unit, "HELPFUL") then
-                        unaffected[k][unit] = true
-                        I.ShowMissingBuff(unit, k, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
-                    else
-                        unaffected[k][unit] = nil
+                        unaffected[buff][unit] = true
                     end
                 end
             else
-                unaffected[k][unit] = nil
+                unaffected[buff][unit] = nil
             end
         end
     else
-        for k, t in pairs(unaffected) do
+        for k, t in next, unaffected do
             t[unit] = nil
         end
     end
@@ -528,37 +746,17 @@ local function IterateAllUnits()
     Reset("available")
     myUnit = ""
 
+    local class, level
     for unit in F.IterateGroupMembers() do
         if UnitIsConnected(unit) and UnitIsVisible(unit) then
-            if UnitClassBase(unit) == "PRIEST" then
-                if UnitLevel(unit) >= buffs["PWF"]["level"] then
-                    available["PWF"] = true
-                    hasBuffProvider = true
-                end
-            elseif UnitClassBase(unit) == "DRUID" then
-                if UnitLevel(unit) >= buffs["MotW"]["level"] then
-                    available["MotW"] = true
-                    hasBuffProvider = true
-                end
-            elseif UnitClassBase(unit) == "SHAMAN" then
-                if UnitLevel(unit) >= buffs["SF"]["level"] then
-                    available["SF"] = true
-                    hasBuffProvider = true
-                end
-            elseif UnitClassBase(unit) == "MAGE" then
-                if UnitLevel(unit) >= buffs["AB"]["level"] then
-                    available["AB"] = true
-                    hasBuffProvider = true
-                end
-            elseif UnitClassBase(unit) == "WARRIOR" then
-                if UnitLevel(unit) >= buffs["BS"]["level"] then
-                    available["BS"] = true
-                    hasBuffProvider = true
-                end
-            elseif UnitClassBase(unit) == "EVOKER" then
-                if UnitLevel(unit) >= buffs["BotB"]["level"] then
-                    available["BotB"] = true
-                    hasBuffProvider = true
+            class = UnitClassBase(unit)
+            level = UnitLevel(unit)
+            if classBuffs[class] then
+                for buff, lvl in pairs(classBuffs[class]) do
+                    if not available[buff] and level >= lvl then
+                        available[buff] = true
+                        hasBuffProvider = true
+                    end
                 end
             end
 
@@ -569,7 +767,6 @@ local function IterateAllUnits()
     end
 
     RepointButtons()
-
     Reset("unaffected")
 
     for unit in F.IterateGroupMembers() do
@@ -636,11 +833,11 @@ end
 
 function buffTrackerFrame:UNIT_AURA(unit)
     if IsInRaid() then
-        if string.match(unit, "raid%d") then
+        if unit:find("^raid%d+$") then
             CheckUnit(unit, true)
         end
     else
-        if string.match(unit, "party%d") or unit == "player" then
+        if unit:find("^party%d$") or unit == "player" then
             CheckUnit(unit, true)
         end
     end
@@ -682,11 +879,6 @@ local function UpdateTools(which)
 
             enabled = false
             ShowMover(false)
-
-            -- missingBuffs indicator
-            for unit in F.IterateGroupMembers() do
-                I.HideMissingBuffs(unit, true)
-            end
         end
 
         RepointButtons()

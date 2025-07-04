@@ -4,7 +4,6 @@
     <Script file="ReadyAndPull.lua"/>
     <Script file="RaidRosterFrame.lua"/>
     <Script file="DeathReport.lua"/>
-    <Script file="BuffTracker_Cata.lua"/>
     <Script file="RaidTools.lua"/>
     <Script file="Request_Spell.lua"/>
     <Script file="Request_Dispel.lua"/>

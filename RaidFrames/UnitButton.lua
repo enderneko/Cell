@@ -100,8 +100,7 @@ local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
             indicatorName == "externalCooldowns" or
             indicatorName == "allCooldowns" or
             indicatorName == "dispels" or
-            indicatorName == "crowdControls" or
-            indicatorName == "missingBuffs") then
+            indicatorName == "crowdControls") then
         return
     end
 
@@ -154,12 +153,6 @@ local function ResetIndicators()
         -- update healthThresholds
         elseif t["indicatorName"] == "healthThresholds" then
             I.UpdateHealthThresholds()
-
-        -- update missingBuffs
-        elseif t["indicatorName"] == "missingBuffs" then
-            I.UpdateMissingBuffsNum(t["num"], true)
-            I.UpdateMissingBuffsFilters(t["filters"], true)
-            I.EnableMissingBuffs(t["enabled"])
         end
 
         -- update extra
@@ -614,11 +607,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F.IterateAllUnitButtons(function(b)
                     B.UpdateHealth(b)
                 end, true)
-            elseif indicatorName == "missingBuffs" then
-                I.EnableMissingBuffs(value)
-                F.IterateAllUnitButtons(function(b)
-                    UpdateIndicatorParentVisibility(b, indicatorName, value)
-                end, true)
             else
                 -- refresh
                 F.IterateAllUnitButtons(function(b)
@@ -754,9 +742,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end, true)
         elseif setting == "num" then
             indicatorNums[indicatorName] = value
-            if indicatorName == "missingBuffs" then
-                I.UpdateMissingBuffsNum(value)
-            elseif indicatorName == "targetedSpells" then
+            if indicatorName == "targetedSpells" then
                 I.UpdateTargetedSpellsNum(value)
             else
                 -- refresh
@@ -818,8 +804,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     b.indicators[indicatorName]:Hide()
                 end
             end, true)
-        elseif setting == "missingBuffsFilters" then
-            I.UpdateMissingBuffsFilters()
         elseif setting == "targetCounterFilters" then
             I.UpdateTargetCounterFilters()
         elseif setting == "maxValue" then
@@ -3929,7 +3913,6 @@ function CellUnitButton_OnLoad(button)
     I.CreateCrowdControls(button)
     I.CreateActions(button)
     I.CreateHealthThresholds(button)
-    I.CreateMissingBuffs(button)
     U.CreateSpellRequestIcon(button)
     U.CreateDispelRequestText(button)
 

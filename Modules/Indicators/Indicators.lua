@@ -537,11 +537,6 @@ local function InitIndicator(indicatorName)
         for i = 1, 5 do
             SetOnUpdate(indicator[i], nil, icons[i], 0)
         end
-    elseif indicatorName == "missingBuffs" then
-        local buffs = I.GetDefaultMissingBuffs()
-        for i = 1, 5 do
-            indicator[i]:SetCooldown(0, 0, nil, buffs[i]["icon"], 0)
-        end
     elseif string.find(indicatorName, "indicator") then
         if indicator.indicatorType == "icons" then
             for i = 1, 10 do
@@ -1593,12 +1588,7 @@ if Cell.isRetail or Cell.isMists then
         ["crowdControls"] = {"enabled", "builtInCrowdControls", "customCrowdControls", "durationVisibility", "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["actions"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "actionsPreview", "actionsList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
-        ["missingBuffs"] = {I.GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell.GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
-
-    if Cell.isMists then
-        indicatorSettings["missingBuffs"] = {LOCALE_zhCN and "暂不可用" or "Currently Unavailable"}
-    end
 
 elseif Cell.isCata or Cell.isWrath then
     indicatorSettings = {
@@ -1635,7 +1625,6 @@ elseif Cell.isCata or Cell.isWrath then
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
         ["actions"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "actionsPreview", "actionsList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
-        ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell.GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
 elseif Cell.isVanilla then
     indicatorSettings = {
@@ -1671,7 +1660,6 @@ elseif Cell.isVanilla then
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
         ["actions"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "actionsPreview", "actionsList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
-        ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell.GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
 end
 
@@ -2012,8 +2000,8 @@ local function ShowIndicatorSettings(id)
                 Cell.Fire("UpdateIndicators", notifiedLayout, indicatorName, "frameLevel", value)
             end)
 
-        -- missingBuffsFilters / targetCounterFilters / dispelFilters
-        elseif currentSetting == "missingBuffsFilters" or currentSetting == "targetCounterFilters" or currentSetting == "dispelFilters"
+        -- targetCounterFilters / dispelFilters
+        elseif currentSetting == "targetCounterFilters" or currentSetting == "dispelFilters"
         or currentSetting == "powerTextFilters" then
             w:SetDBValue(indicatorTable["filters"])
             w:SetFunc(function()
