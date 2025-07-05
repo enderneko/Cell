@@ -9,8 +9,8 @@ local LCG = LibStub("LibCustomGlow-1.0")
 
 local placeholders, assignmentButtons = {}, {}
 local menu, target, targettarget, focus, focustarget, unit, unitname, unitpet, unittarget, tank, boss1target, clear
-local tanks, names = {}, {}
-local UpdateTanks, UpdateNames
+local tanks, healers, names = {}, {}, {}
+local UpdateTanks, UpdateHealers, UpdateNames
 local tankUpdateRequired, nameUpdateRequired
 local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 local NONE = strlower(_G.NONE)
@@ -513,9 +513,30 @@ function tank:SetUnit(index)
     menu:Save(index, "tank")
 end
 
+healer = Cell.CreateButton(menu, _G.HEALER, "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+P.Point(healer, "TOPLEFT", tank, "BOTTOMLEFT")
+P.Point(healer, "TOPRIGHT", tank, "BOTTOMRIGHT")
+healer:SetAttribute("_onclick", [[
+    local menu = self:GetParent()
+    local index = menu:GetAttribute("index")
+    local spotlight = menu:GetFrameRef("spotlight"..index)
+    spotlight:SetAttribute("specialUnit", "healer")
+    spotlight:SetAttribute("refreshOnUpdate", nil)
+    spotlight:SetAttribute("updateOnTargetChanged", nil)
+    menu:GetFrameRef("assignment"..index):SetAttribute("text", "healer")
+    self:CallMethod("SetUnit", index)
+    menu:Hide()
+]])
+function healer:SetUnit(index)
+    healers[index] = true
+    healerUpdateRequired = true
+    UpdateHealers()
+    menu:Save(index, "healer")
+end
+
 boss1target = Cell.CreateButton(menu, L["Boss1 Target"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
-P.Point(boss1target, "TOPLEFT", tank, "BOTTOMLEFT")
-P.Point(boss1target, "TOPRIGHT", tank, "BOTTOMRIGHT")
+P.Point(boss1target, "TOPLEFT", healer, "BOTTOMLEFT")
+P.Point(boss1target, "TOPRIGHT", healer, "BOTTOMRIGHT")
 boss1target:SetEnabled(not Cell.isVanilla)
 boss1target:SetAttribute("_onclick", [[
     local menu = self:GetParent()
@@ -583,6 +604,38 @@ UpdateTanks = function()
     tankUpdateRequired = nil
 end
 
+UpdateHealers = function()
+    if not healerUpdateRequired then return end
+
+    -- search for healers
+    local units = {}
+    for unit in F.IterateGroupMembers() do
+        if UnitGroupRolesAssigned(unit) == "HEALER" then
+            tinsert(units, unit)
+        end
+    end
+
+    -- assign
+    local n = 1
+    for index = 1, 15 do
+        if InCombatLockdown() then
+            healerUpdateRequired = true
+            return
+        end
+
+        if healers[index] then
+            if units[n] then
+                Cell.unitButtons.spotlight[index]:SetAttribute("unit", units[n])
+            else
+                Cell.unitButtons.spotlight[index]:SetAttribute("unit", nil)
+            end
+            n = n + 1
+        end
+    end
+
+    healerUpdateRequired = nil
+end
+
 UpdateNames = function()
     if not nameUpdateRequired then return end
 
@@ -619,6 +672,8 @@ local function UpdateAll()
     timer = nil
     tankUpdateRequired = true
     UpdateTanks()
+    healerUpdateRequired = true
+    UpdateHealers()
     nameUpdateRequired = true
     UpdateNames()
 end
@@ -638,13 +693,16 @@ menu:SetScript("OnEvent", function(self, event)
         unittarget:SetEnabled(false)
         unitpet:SetEnabled(false)
         tank:SetEnabled(false)
+        healer:SetEnabled(false)
     elseif event == "PLAYER_REGEN_ENABLED" then
         unit:SetEnabled(true)
         unitname:SetEnabled(true)
         unittarget:SetEnabled(true)
         unitpet:SetEnabled(true)
         tank:SetEnabled(not Cell.isVanilla)
+        healer:SetEnabled(not Cell.isVanilla)
         UpdateTanks()
+        UpdateHealers()
         UpdateNames()
     end
 end)
@@ -655,6 +713,9 @@ function menu:Save(index, unit)
     -- clear
     if unit ~= "tank" then
         tanks[index] = nil
+    end
+    if unit ~= "healer" then
+        healers[index] = nil
     end
     for n, i in pairs(names) do
         if i == index then
@@ -917,6 +978,7 @@ local function UpdateLayout(layout, which)
 
     if not which or which == "spotlight" then
         wipe(tanks)
+        wipe(healers)
         wipe(names)
 
         if layout["spotlight"]["enabled"] then
@@ -931,6 +993,9 @@ local function UpdateLayout(layout, which)
                 if unit == "tank" then -- tank
                     tanks[i] = true
                     Cell.unitButtons.spotlight[i]:SetAttribute("specialUnit", "tank")
+                elseif unit == "healer" then -- healer
+                    healers[i] = true
+                    Cell.unitButtons.spotlight[i]:SetAttribute("specialUnit", "healer")
                 elseif unit and strfind(unit, "^:") then -- name
                     unit = strsub(unit, 2)
                     names[unit] = i
@@ -947,6 +1012,8 @@ local function UpdateLayout(layout, which)
             end
             tankUpdateRequired = true
             UpdateTanks()
+            healerUpdateRequired = true
+            UpdateHealers()
             nameUpdateRequired = true
             UpdateNames()
             spotlightFrame:Show()
