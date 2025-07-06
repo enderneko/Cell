@@ -1831,19 +1831,19 @@ function F.GetSpellTooltipInfo(spellId)
     return name, icon, table.concat(lines, "\n")
 end
 
-if Cell.isRetail then
+if Cell.isRetail or Cell.isMists then
+    local GetSpellInfo = C_Spell.GetSpellInfo
+    local GetSpellTexture = C_Spell.GetSpellTexture
     function F.GetSpellInfo(spellId)
         if not spellId then return end
-        if C_Spell and C_Spell.GetSpellInfo then
-            local info = C_Spell.GetSpellInfo(spellId)
-            if not info then return end
+        local info = GetSpellInfo(spellId)
+        if not info then return end
 
-            if not info.iconID then -- when?
-                info.iconID = C_Spell.GetSpellTexture(spellId)
-            end
-
-            return info.name, info.iconID
+        if not info.iconID then -- when?
+            info.iconID = GetSpellTexture(spellId)
         end
+
+        return info.name, info.iconID
     end
 else
     local GetSpellInfo = GetSpellInfo

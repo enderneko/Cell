@@ -2279,7 +2279,9 @@ function I.CreatePowerWordShield(parent)
         weakendedSoulCooldown:ClearAllPoints()
 
         if value > 0 and powerWordShield.max then
-            shieldAmount:SetCooldown(GetTime()-(powerWordShield.max-value), powerWordShield.max)
+            local progress = (powerWordShield.max - value) / powerWordShield.max
+            local start = GetTime() - (progress * 100)
+            shieldAmount:SetCooldown(start, 100)
             shieldAmount:Pause()
             shieldCooldown:SetPoint("CENTER")
             weakendedSoulCooldown:SetPoint("CENTER")

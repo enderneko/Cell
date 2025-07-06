@@ -75,6 +75,8 @@ local barAnimationType, highlightEnabled, predictionEnabled
 local shieldEnabled, overshieldEnabled, overshieldReverseFillEnabled
 local absorbEnabled, absorbInvertColor
 
+local powerWordShieldCLEU = CreateFrame("Frame")
+
 -------------------------------------------------
 -- unit button func declarations
 -------------------------------------------------
@@ -116,7 +118,11 @@ local function ResetIndicators()
     for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
         -- update enabled
         if t["enabled"] then
-            enabledIndicators[t["indicatorName"]] = true
+            if t["indicatorName"] == "powerWordShield" then
+                enabledIndicators[t["indicatorName"]] = Cell.vars.playerClass == "PRIEST"
+            else
+                enabledIndicators[t["indicatorName"]] = true
+            end
         end
         -- update num
         if t["num"] then
@@ -177,6 +183,12 @@ local function ResetIndicators()
             indicatorBooleans[t["indicatorName"]] = t["onlyShowOvershields"]
         end
     end
+
+    if enabledIndicators["powerWordShield"] then
+        powerWordShieldCLEU:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    else
+        powerWordShieldCLEU:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    end
 end
 
 local function HandleIndicators(b)
@@ -218,7 +230,7 @@ local function HandleIndicators(b)
         -- update size
         if t["size"] then
             -- NOTE: debuffs: ["size"] = {{normalSize}, {bigSize}}
-            if t["indicatorName"] == "debuffs" then
+            if t["indicatorName"] == "debuffs" or t["indicatorName"] == "powerWordShield" then
                 indicator:SetSize(t["size"][1], t["size"][2])
             else
                 P.Size(indicator, t["size"][1], t["size"][2])
@@ -1055,6 +1067,7 @@ end
 local function ResetDebuffVars(self)
     self._debuffs.resurrectionFound = false
     self._debuffs.crowdControlsFound = 0
+    self._debuffs.weakenedSoulFound = false
 
     self.states.BGOrb = nil -- TODO: move to _debuffs
 end
@@ -1120,6 +1133,7 @@ local function HandleDebuffs(self, auraInfo)
             end
         end
 
+        -- dispels
         if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
             -- all dispels / only dispellableByMe
             if not indicatorBooleans ["dispels"]["dispellableByMe"] or I.CanDispel(debuffType) then
@@ -1132,6 +1146,11 @@ local function HandleDebuffs(self, auraInfo)
                     end
                 end
             end
+        end
+
+        if enabledIndicators["powerWordShield"] and spellId == 6788 then
+            self._debuffs.weakenedSoulFound = true
+            self.indicators.powerWordShield:SetWeakenedSoulCooldown(expirationTime - duration, duration, source == "player")
         end
 
         -- crowdControls
@@ -1315,6 +1334,10 @@ local function UnitButton_UpdateDebuffs(self)
     -- user created indicators
     I.ShowCustomIndicators(self, "debuff")
 
+    if enabledIndicators["powerWordShield"] and not self._debuffs.weakenedSoulFound then
+        self.indicators.powerWordShield:SetWeakenedSoulCooldown()
+    end
+
     wipe(self._debuffs_normal)
     wipe(self._debuffs_big)
     wipe(self._debuffs_dispel)
@@ -1330,6 +1353,7 @@ local function ResetBuffVars(self)
     self._buffs.allFound = 0
     self._buffs.tankActiveMitigationFound = false
     self._buffs.drinkingFound = false
+    self._buffs.powerWordShieldFound = false
 
     self.states.BGFlag = nil -- TODO: move to _buffs
 end
@@ -1400,6 +1424,12 @@ local function HandleBuff(self, auraInfo)
             self._buffs.drinkingFound = true
         end
 
+        -- powerWordShield
+        if enabledIndicators["powerWordShield"] and spellId == 17 and (not indicatorBooleans["powerWordShield"] or source == "player") then
+            self._buffs.powerWordShieldFound = true
+            self.indicators.powerWordShield:SetShieldCooldown(expirationTime - duration, duration)
+        end
+
         -- user created indicators
         I.UpdateCustomIndicators(self, auraInfo)
 
@@ -1440,6 +1470,11 @@ local function UnitButton_UpdateBuffs(self)
     if not self._buffs.drinkingFound and self.indicators.statusText:GetStatus() == "DRINKING" then
         -- self.indicators.statusText:Hide()
         self.indicators.statusText:SetStatus()
+    end
+
+    -- hide powerWordShield
+    if enabledIndicators["powerWordShield"] and not self._buffs.powerWordShieldFound then
+        self.indicators.powerWordShield:SetShieldCooldown()
     end
 
     -- user created indicators
@@ -1493,6 +1528,16 @@ UnitButton_UpdateAuras = function(self, updateInfo)
     if not unit then return end
 
     local buffsChanged, debuffsChanged
+
+    -- TODO: fix aura handlers
+    -- if updateInfo and updateInfo.addedAuras then
+    --     for _, aura in next, updateInfo.addedAuras do
+    --         if aura.spellId == 17 then
+    --             self._buffs.powerWordShieldMax = aura.points and aura.points[1]
+    --             break
+    --         end
+    --     end
+    -- end
 
     if not updateInfo or updateInfo.isFullUpdate then
         wipe(self._buffs_cache)
@@ -2309,6 +2354,71 @@ UnitButton_UpdateHealthColor = function(self)
         self.widgets.incomingHeal:SetVertexColor(barR, barG, barB, 0.4)
     end
 end
+
+
+-------------------------------------------------
+-- cleu power word: shield
+-------------------------------------------------
+local pwsInfo = {}
+
+local pwsName = F.GetSpellInfo(17)
+local GetAuraDataBySpellName = C_UnitAuras.GetAuraDataBySpellName
+
+local function _UpdateShield(self, current, max, resetMax)
+    self.indicators.powerWordShield:UpdateShield(current, max, resetMax)
+end
+
+local function PowerWordShield_UpdateShield(guid, max, resetMax)
+    if not enabledIndicators["powerWordShield"] then return end
+    F.HandleUnitButton("guid", guid, _UpdateShield, pwsInfo[guid] or 0, max, resetMax)
+end
+
+powerWordShieldCLEU:SetScript("OnEvent", function()
+    local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22 = CombatLogGetCurrentEventInfo()
+
+    if subEvent == "SPELL_ABSORBED" then
+        if not F.IsFriend(destFlags) then return end
+
+        -- [spellID, spellName, spellSchool], casterGUID, casterName, casterFlags, casterRaidFlags, absorbSpellId, absorbSpellName, absorbSpellSchool, amount, critical
+        local absorbSpellId, absorbAmount
+        if arg21 then -- spell
+            absorbSpellId, absorbAmount = arg19, arg22
+        else -- swing
+            absorbSpellId, absorbAmount = arg16, arg19
+        end
+
+        -- totalAbsorbed = totalAbsorbed + absorbAmount
+        -- print("ABSORBED", "current:", absorbAmount, "total:", totalAbsorbed)
+
+        -- update shields left
+        if absorbSpellId == 17 and pwsInfo[destGUID] then
+            pwsInfo[destGUID] = pwsInfo[destGUID] - absorbAmount
+            PowerWordShield_UpdateShield(destGUID)
+        end
+
+    elseif subEvent == "SPELL_AURA_REMOVED" then
+        if arg12 == 17 then
+            pwsInfo[destGUID] = nil
+            PowerWordShield_UpdateShield(destGUID)
+        end
+
+    elseif subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REFRESH" then
+        if arg12 == 17 then -- Power Word: Shield
+            if not indicatorBooleans["powerWordShield"] or sourceGUID == Cell.vars.playerGUID then
+                local unit = Cell.vars.guids[destGUID]
+                if unit then
+                    local aura = GetAuraDataBySpellName(unit, pwsName, "HELPFUL")
+                    if aura and aura.points then
+                        pwsInfo[destGUID] = aura.points[1]
+                        PowerWordShield_UpdateShield(destGUID, pwsInfo[destGUID])
+                    end
+                end
+            else
+                PowerWordShield_UpdateShield(destGUID, nil, true) -- reset max
+            end
+        end
+    end
+end)
 
 -------------------------------------------------
 -- cleu health updater
@@ -3749,6 +3859,7 @@ function CellUnitButton_OnLoad(button)
     I.CreatePlayerRaidIcon(button)
     I.CreateTargetRaidIcon(button)
     I.CreateShieldBar(button)
+    I.CreatePowerWordShield(button)
     I.CreateAoEHealing(button)
     I.CreateTankActiveMitigation(button)
     -- I.CreateDefensiveCooldowns(button)

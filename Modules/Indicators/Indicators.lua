@@ -1590,6 +1590,10 @@ if Cell.isRetail or Cell.isMists then
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
     }
 
+    if Cell.isMists then
+        indicatorSettings["powerWordShield"] = {L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"], "enabled", "checkbutton:shieldByMe", "shape", "size-square", "position", "frameLevel"}
+    end
+
 elseif Cell.isCata or Cell.isWrath then
     indicatorSettings = {
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "position", "frameLevel", "font-noOffset"},
