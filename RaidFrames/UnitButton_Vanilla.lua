@@ -1027,7 +1027,7 @@ local function UnitButton_UpdateDebuffs(self)
                 refreshing = false
             end
 
-            if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
+            if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] then
                 if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
                     if Cell.vars.bigDebuffs[spellId] then  -- isBigDebuff
                         self._debuffs_big[i] = refreshing
