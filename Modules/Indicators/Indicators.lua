@@ -1591,7 +1591,7 @@ if Cell.isRetail or Cell.isMists then
     }
 
     if Cell.isMists then
-        indicatorSettings["powerWordShield"] = {L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"], "enabled", "checkbutton:shieldByMe", "shape", "size-square", "position", "frameLevel"}
+        indicatorSettings["powerWordShield"] = {"enabled", "checkbutton:shieldByMe", "shape", "size-square", "position", "frameLevel"}
     end
 
 elseif Cell.isCata or Cell.isWrath then

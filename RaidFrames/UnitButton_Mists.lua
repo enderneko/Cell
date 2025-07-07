@@ -363,6 +363,10 @@ local function HandleIndicators(b)
         if type(t["fadeOut"]) == "boolean" then
             indicator:SetFadeOut(t["fadeOut"])
         end
+        -- update shape
+        if t["shape"] then
+            indicator:SetShape(t["shape"])
+        end
         -- update glow
         if t["glowOptions"] then
             indicator:SetupGlow(t["glowOptions"])
@@ -1018,6 +1022,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- only Actions indicator has this option for now
             F.IterateAllUnitButtons(function(b)
                 b.indicators[indicatorName]:SetSpeed(value)
+            end, true)
+        elseif setting == "shape" then
+            F.IterateAllUnitButtons(function(b)
+                b.indicators[indicatorName]:SetShape(value)
             end, true)
         end
     end
