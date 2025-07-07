@@ -169,6 +169,7 @@ local defaultSpells = {
 
     ["WARLOCK"] = {
         ["common"] = {
+            20707, -- 灵魂石
             5697, -- 无尽呼吸
             109773, -- 黑暗意图
             89808, -- 烧灼驱魔
@@ -243,8 +244,9 @@ do
     resurrections_for_dead = temp
 end
 
-function F.IsSoulstone()
-    return false
+local spell_soulstone = F.GetSpellInfo(20707)
+function F.IsSoulstone(spell)
+    return spell == spell_soulstone
 end
 
 function F.IsResurrectionForDead(spellId)
@@ -301,6 +303,7 @@ end
 local combatResurrection = {
     ["DEATHKNIGHT"] = 61999,
     ["DRUID"] = 20484,
+    ["WARLOCK"] = 20707,
 }
 
 do
