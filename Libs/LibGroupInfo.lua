@@ -2,7 +2,7 @@
 -- File: Cell\Libs\LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-07-29 15:04 +08:00
--- Modified: 2025-07-03 11:15 +08:00
+-- Modified: 2025-07-07 08:59 +08:00
 ---------------------------------------------------------------------
 
 local MAJOR, MINOR = "LibGroupInfo", 7
@@ -445,7 +445,7 @@ frame:SetScript("OnUpdate", function(self, elapsed)
 end)
 
 local function AddToQueue(unit, guid)
-    if IS_WRATH then
+    if IS_WRATH or IS_MISTS then
         if not UnitIsConnected(unit) or not CheckInteractDistance(unit, 1) or not CanInspect(unit) then
             UpdateBaseInfo(unit, guid)
             return
