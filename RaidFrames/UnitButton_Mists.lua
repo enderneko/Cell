@@ -112,6 +112,14 @@ local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
     end
 end
 
+local function CheckPWS()
+    if enabledIndicators["powerWordShield"] then
+        powerWordShieldCLEU:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    else
+        powerWordShieldCLEU:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    end
+end
+
 local function ResetIndicators()
     wipe(enabledIndicators)
     wipe(indicatorNums)
@@ -189,11 +197,7 @@ local function ResetIndicators()
         end
     end
 
-    if enabledIndicators["powerWordShield"] then
-        powerWordShieldCLEU:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-    else
-        powerWordShieldCLEU:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-    end
+    CheckPWS()
 end
 
 local function HandleIndicators(b)
@@ -617,6 +621,17 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F.IterateAllUnitButtons(function(b)
                     B.UpdateShield(b)
                 end, true)
+            elseif indicatorName == "powerWordShield" then
+                CheckPWS()
+                if not value then
+                    F.IterateAllUnitButtons(function(b)
+                        b.indicators[indicatorName]:Hide()
+                    end, true)
+                else
+                    F.IterateAllUnitButtons(function(b)
+                        UnitButton_UpdateAuras(b)
+                    end, true)
+                end
             elseif indicatorName == "healthThresholds" then
                 if value then
                     I.UpdateHealthThresholds()
