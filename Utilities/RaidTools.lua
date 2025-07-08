@@ -79,7 +79,6 @@ local function CreateRTPane()
     -- L["Use |cFFFFB5C5/cell buff X|r to set icon size"],
     -- "|cffffffff" .. L["Current"]..": |cFFFFB5C5"..CellDB["tools"]["buffTracker"][3])
     buffCB:SetPoint("TOPLEFT", reportCB, "BOTTOMLEFT", 0, -15)
-    buffCB:SetEnabled(Cell.isRetail or Cell.isMists)
 
     buffDropdown = Cell.CreateDropdown(rtPane, 120)
     buffDropdown:SetPoint("TOPLEFT", buffCB, "BOTTOMRIGHT", 5, -5)
@@ -117,12 +116,10 @@ local function CreateRTPane()
             end,
         },
     })
-    buffDropdown:SetEnabled(Cell.isRetail or Cell.isMists)
 
     sizeEditBox = Cell.CreateEditBox(rtPane, 38, 20, false, false, true)
     sizeEditBox:SetPoint("TOPLEFT", buffDropdown, "TOPRIGHT", 5, 0)
     sizeEditBox:SetMaxLetters(3)
-    sizeEditBox:SetEnabled(Cell.isRetail or Cell.isMists)
 
     sizeEditBox.confirmBtn = Cell.CreateButton(rtPane, "OK", "accent", {27, 20})
     sizeEditBox.confirmBtn:SetPoint("TOPLEFT", sizeEditBox, "TOPRIGHT", P.Scale(-1), 0)

@@ -537,6 +537,11 @@ local function InitIndicator(indicatorName)
         for i = 1, 5 do
             SetOnUpdate(indicator[i], nil, icons[i], 0)
         end
+    elseif indicatorName == "missingBuffs" then
+        local buffs = {135987, 135932, 136078}
+        for i = 1, 3 do
+            indicator[i]:SetCooldown(0, 0, nil, buffs[i], 0)
+        end
     elseif string.find(indicatorName, "indicator") then
         if indicator.indicatorType == "icons" then
             for i = 1, 10 do
@@ -1588,6 +1593,7 @@ if Cell.isRetail or Cell.isMists then
         ["crowdControls"] = {"enabled", "builtInCrowdControls", "customCrowdControls", "durationVisibility", "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["actions"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "actionsPreview", "actionsList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
+        ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell.GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "size-square", "orientation", "position", "frameLevel"},
     }
 
     if Cell.isMists then

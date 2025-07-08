@@ -295,11 +295,12 @@ local buffsProvidedByMe = {}
 
 do
     local myClass = UnitClassBase("player")
+    local myLevel = UnitLevel("player")
 
-    local function Insert(class, buffKey, name)
+    local function Insert(class, buffKey, name, icon)
         tinsert(buffs[buffKey]["names"], name)
-        if myClass == class then
-            buffsProvidedByMe[buffKey] = name
+        if myClass == class and myLevel >= classBuffs[class][buffKey] then
+            buffsProvidedByMe[buffKey] = {name, icon}
         end
     end
 
@@ -313,15 +314,15 @@ do
 
             if type(info.id) == "table" then
                 for _, spellId in ipairs(info.id) do
-                    local name = F.GetSpellInfo(spellId)
+                    local name, icon = F.GetSpellInfo(spellId)
                     if name then
-                        Insert(class, buffKey, name)
+                        Insert(class, buffKey, name, icon)
                     end
                 end
             else
-                local name = F.GetSpellInfo(info.id)
+                local name, icon = F.GetSpellInfo(info.id)
                 if name then
-                    Insert(class, buffKey, name)
+                    Insert(class, buffKey, name, icon)
                 end
             end
         end
@@ -480,7 +481,7 @@ local function CreateBuffButton(parent, buff)
     -- cast
     if buffsProvidedByMe[buff] then
         b:SetAttribute("type1", "macro")
-        b:SetAttribute("macrotext1", "/cast [@player] " .. buffsProvidedByMe[buff])
+        b:SetAttribute("macrotext1", "/cast [@player] " .. buffsProvidedByMe[buff][1])
     end
 
     -- chat
@@ -701,10 +702,86 @@ local GetAuraDataBySpellName = C_UnitAuras.GetAuraDataBySpellName
 
 local function UnitBuffExists(unit, buff)
     local names = buffs[buff]["names"]
+    local aura
     for _, name in next, names do
-        if GetAuraDataBySpellName(unit, name, "HELPFUL") then
-            return true
+        aura = GetAuraDataBySpellName(unit, name, "HELPFUL")
+        if aura then
+            return true, aura.sourceUnit == "player"
         end
+    end
+end
+
+---------------------------------------------------------------------
+-- missing buffs
+---------------------------------------------------------------------
+-- local numBuffsProvidedByMe = F.Getn(buffsProvidedByMe)
+
+-- local function CheckSimple(unit)
+--     for buff, t in buffsProvidedByMe do
+--         local aura = GetAuraDataBySpellName(unit, t[1], "HELPFUL")
+--         if not aura then
+--             I.ShowMissingBuff(unit, t[2])
+--         end
+--     end
+-- end
+
+-- local function CheckComplex(unit)
+--     local allBuffed = true
+--     local myBuff = false
+
+--     for buff, t in buffsProvidedByMe do
+--         local aura = GetAuraDataBySpellName(unit, t[1], "HELPFUL")
+--         if aura then
+--             if aura.sourceUnit == "player" then
+--                 myBuff = true
+--             end
+--         else
+--             allBuffed = false
+--         end
+--     end
+
+--     if not allBuffed and not myBuff then
+--         I.ShowMissingBuff(unit, 254882)
+--     end
+-- end
+
+-- local function UpdateMissingBuffs(unit)
+--     if not numBuffsProvidedByMe == 0 then return end
+--     I.HideMissingBuffs(unit)
+
+--     if numBuffsProvidedByMe == 1 or Cell.vars.playerClass == "PRIEST" then
+--         CheckSimple(unit)
+--     else
+--         CheckComplex(unit)
+--     end
+-- end
+
+local missingBuffsFromMe = {}
+local hasBuffFromMe = {}
+
+local function UpdateMissingBuffs(unit, buff)
+    missingBuffsFromMe[unit] = missingBuffsFromMe[unit] or {}
+    tinsert(missingBuffsFromMe[unit], buff)
+end
+
+local function ShowMissingBuffs(unit)
+    I.HideMissingBuffs(unit)
+
+    if not missingBuffsFromMe[unit] then return end
+
+    local num = #missingBuffsFromMe[unit]
+    if num == 0 then return end
+
+    if Cell.vars.playerClass == "PALADIN" or Cell.vars.playerClass == "WARRIOR" then
+        if hasBuffFromMe[unit] then return end
+    end
+
+    if num == 1 or Cell.vars.playerClass == "PRIEST" then
+        for _, buff in next, missingBuffsFromMe[unit] do
+            I.ShowMissingBuff(unit, buffsProvidedByMe[buff][2])
+        end
+    else
+        I.ShowMissingBuff(unit, 254882)
     end
 end
 
@@ -715,18 +792,28 @@ local function CheckUnit(unit, updateBtn)
     -- print("CheckUnit", unit)
     if not hasBuffProvider then return end
 
+    if missingBuffsFromMe[unit] then wipe(missingBuffsFromMe[unit]) end
+    hasBuffFromMe[unit] = nil
+
     if UnitIsConnected(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) then
         local info = LGI:GetCachedInfo(UnitGUID(unit))
         local spec = info and info.specId
-        local required = requiredBuffs[spec]
+        local required = spec and requiredBuffs[spec]
 
         for buff, hasProvider in next, available do
             if hasProvider then
                 if required == buff or requiredByEveryone[buff] then
-                    if UnitBuffExists(unit, buff) then
+                    local exists, providedByMe = UnitBuffExists(unit, buff)
+                    if exists then
                         unaffected[buff][unit] = nil
+                        if providedByMe then
+                            hasBuffFromMe[unit] = true
+                        end
                     else
                         unaffected[buff][unit] = true
+                        if buffsProvidedByMe[buff] then
+                            UpdateMissingBuffs(unit, buff)
+                        end
                     end
                 end
             else
@@ -738,6 +825,8 @@ local function CheckUnit(unit, updateBtn)
             t[unit] = nil
         end
     end
+
+    ShowMissingBuffs(unit)
 
     if updateBtn then UpdateButtons() end
 end
@@ -879,6 +968,11 @@ local function UpdateTools(which)
 
             enabled = false
             ShowMover(false)
+
+            -- missingBuffs indicator
+            for unit in F.IterateGroupMembers() do
+                I.HideMissingBuffs(unit, true)
+            end
         end
 
         RepointButtons()

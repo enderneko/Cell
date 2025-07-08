@@ -37,7 +37,7 @@ RaidFrames\MainFrame.lua
 
 RaidDebuffs\ExpansionData\LoadExpansionData.xml
 Modules\LoadModules_Classic.xml
-Utilities\LoadUtilities_Vanilla.xml
+Utilities\LoadUtilities_Classic.xml
 RaidDebuffs\LoadRaidDebuffs_Vanilla.xml
 
 RaidFrames\UnitButton_Vanilla.lua

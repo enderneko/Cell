@@ -1,7 +1,7 @@
 local addonName, Cell = ...
 
 -- number of built-in indicators
-Cell.defaults.builtIns = 28
+Cell.defaults.builtIns = 29
 
 Cell.defaults.indicatorIndices = {
     ["nameText"] = 1,
@@ -32,6 +32,7 @@ Cell.defaults.indicatorIndices = {
     ["targetedSpells"] = 26,
     ["targetCounter"] = 27,
     ["actions"] = 28,
+    ["missingBuffs"] = 29,
 }
 
 Cell.defaults.layout = {
@@ -504,6 +505,16 @@ Cell.defaults.layout = {
             ["enabled"] = true,
             ["speed"] = 1,
         }, -- 28
+        {
+            ["name"] = "Missing Buffs",
+            ["indicatorName"] = "missingBuffs",
+            ["type"] = "built-in",
+            ["enabled"] = false,
+            ["position"] = {"BOTTOMRIGHT", "button", "BOTTOMRIGHT", 0, 4},
+            ["frameLevel"] = 10,
+            ["size"] = {13, 13},
+            ["orientation"] = "right-to-left",
+        }, -- 29
     },
 }
 

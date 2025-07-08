@@ -35,7 +35,7 @@ Indicators\Supporter.lua
 RaidFrames\MainFrame.lua
 
 Modules\LoadModules.xml
-Utilities\LoadUtilities_Mists.xml
+Utilities\LoadUtilities_Classic.xml
 RaidDebuffs\LoadRaidDebuffs.xml
 
 RaidFrames\UnitButton_Mists.lua

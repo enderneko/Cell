@@ -100,7 +100,8 @@ local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
             indicatorName == "externalCooldowns" or
             indicatorName == "allCooldowns" or
             indicatorName == "dispels" or
-            indicatorName == "crowdControls") then
+            indicatorName == "crowdControls" or
+            indicatorName == "missingBuffs") then
         return
     end
 
@@ -151,6 +152,10 @@ local function ResetIndicators()
         -- update actions
         elseif t["indicatorName"] == "actions" then
             I.EnableActions(t["enabled"])
+
+        -- update missingBuffs
+        elseif t["indicatorName"] == "missingBuffs" then
+            I.EnableMissingBuffs(t["enabled"])
 
         -- update healthThresholds
         elseif t["indicatorName"] == "healthThresholds" then
@@ -618,6 +623,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 F.IterateAllUnitButtons(function(b)
                     B.UpdateHealth(b)
+                end, true)
+            elseif indicatorName == "missingBuffs" then
+                I.EnableMissingBuffs(value)
+                F.IterateAllUnitButtons(function(b)
+                    UpdateIndicatorParentVisibility(b, indicatorName, value)
                 end, true)
             else
                 -- refresh
@@ -3881,6 +3891,7 @@ function CellUnitButton_OnLoad(button)
     I.CreateTargetCounter(button)
     I.CreateCrowdControls(button)
     I.CreateActions(button)
+    I.CreateMissingBuffs(button)
     I.CreateHealthThresholds(button)
     U.CreateSpellRequestIcon(button)
     U.CreateDispelRequestText(button)
