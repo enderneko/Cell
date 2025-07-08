@@ -4,7 +4,6 @@ local F = Cell.funcs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
-local LGI = LibStub:GetLibrary("LibGroupInfo")
 local A = Cell.animations
 
 local UnitIsConnected = UnitIsConnected
@@ -25,322 +24,274 @@ local sort, tinsert, tconcat = table.sort, table.insert, table.concat
 ---------------------------------------------------------------------
 local buffs = {}
 local requiredBuffs = {}
-local requiredByEveryone = {}
 local available = {}
 local unaffected = {}
 
-if Cell.isRetail then
+if Cell.isVanilla then
     buffs = {
-        stamina = {
-            tag = ITEM_MOD_STAMINA_SHORT, -- Stamina
-            icon = 135987,
-            order = 1,
-            provider = {
-                PRIEST = {id = 21562, level = 6}, -- Power Word: Fortitude - 真言术：韧
-            }
-        },
-        versatility = {
-            tag = STAT_VERSATILITY, -- Versatility
-            icon = 136078,
-            order = 2,
-            provider = {
-                DRUID = {id = 1126, level = 9}, -- Mark of the Wild - 野性印记
-            }
-        },
-        mastery = {
-            tag = STAT_MASTERY, -- Mastery
-            icon = 4630367,
-            order = 3,
-            provider = {
-                SHAMAN = {id = 462854, level = 16}, -- Skyfury - 天怒
-            }
-        },
-        intellect = {
-            tag = ITEM_MOD_INTELLECT_SHORT, -- Intellect
-            icon = 135932,
-            order = 4,
-            provider = {
-                MAGE = {id = 1459, level = 8}, -- Arcane Brilliance - 奥术智慧
-            }
-        },
-        attackPower = {
-            tag = RAID_BUFF_3, -- Attack Power
-            icon = 132333,
-            order = 5,
-            provider = {
-                WARRIOR = {id = 6673, level = 10}, -- Battle Shout - 战斗怒吼
-            }
-        },
-        movement = {
-            tag = TUTORIAL_TITLE2, -- Movement
-            icon = 4622448,
-            order = 6,
-            provider = {
-                EVOKER = {id = 364342, level = 30}, -- Blessing of the Bronze - 青铜龙的祝福
-            }
-        }
+        -- 1243: Power Word: Fortitude
+        -- 21562: Prayer of Fortitude
+        ["PWF"] = {buff1 = 1243, buff2 = 21562, provider = "PRIEST", order = 1},
+
+        -- 14752: Divine Spirit
+        -- 27681: Prayer of Spirit
+        ["DS"] = {buff1 = 14752, buff2 = 27681, provider = "PRIEST", order = 8},
+
+        -- 976: Shadow Protection
+        -- 27683: Prayer of Shadow Protection
+        ["SP"] = {buff1 = 976, buff2 = 27683, provider = "PRIEST", order = 9},
+
+        -- 1459: Arcane Intellect
+        -- 23028: Arcane Brilliance
+        ["AB"] = {buff1 = 1459, buff2 = 23028, provider = "MAGE", order = 2},
+
+        -- 6673: Battle Shout
+        -- ["BS"] = {buff1 = 6673, provider = "WARRIOR", order = 3},
+
+        -- 1126: Mark of the Wild
+        -- 21849: Gift of the Wild
+        ["MotW"] = {buff1 = 1126, buff2 = 21849, provider = "DRUID", order = 3},
+
+        -- 20217: Blessing of Kings
+        -- 25898: Greater Blessing of Kings
+        ["BoK"] = {buff1 = 20217, buff2 = 25898, provider = "PALADIN", order = 4},
+
+        -- 19740: Blessing of Might
+        -- 25782: Greater Blessing of Might
+        ["BoM"] = {buff1 = 19740, buff2 = 25782, provider = "PALADIN", order = 5},
+
+        -- 19742: Blessing of Wisdom
+        -- 25894: Greater Blessing of Wisdom
+        ["BoW"] = {buff1 = 19742, buff2 = 25894, provider = "PALADIN", order = 6},
+
+        -- 20911: Blessing of Sanctuary
+        -- 25899: Greater Blessing of Sanctuary
+        ["BoS"] = {buff1 = 20911, buff2 = 25899, provider = "PALADIN", order = 7},
     }
 
     requiredBuffs = {
-        [250] = "attackPower", -- Blood
-        [251] = "attackPower", -- Frost
-        [252] = "attackPower", -- Unholy
-
-        [577] = "attackPower", -- Havoc
-        [581] = "attackPower", -- Vengeance
-
-        [102] = "intellect", -- Balance
-        [103] = "attackPower", -- Feral
-        [104] = "attackPower", -- Guardian
-        [105] = "intellect", -- Restoration
-
-        [1467] = "intellect", -- Devastation
-        [1468] = "intellect", -- Preservation
-
-        [253] = "attackPower", -- Beast Mastery
-        [254] = "attackPower", -- Marksmanship
-        [255] = "attackPower", -- Survival
-
-        [62] = "intellect", -- Arcane
-        [63] = "intellect", -- Fire
-        [64] = "intellect", -- Frost
-
-        [268] = "attackPower", -- Brewmaster
-        [269] = "attackPower", -- Windwalker
-        [270] = "intellect", -- Mistweaver
-
-        [65] = "intellect", -- Holy
-        [66] = "attackPower", -- Protection
-        [70] = "attackPower", -- Retribution
-
-        [256] = "intellect", -- Discipline
-        [257] = "intellect", -- Holy
-        [258] = "intellect", -- Shadow
-
-        [259] = "attackPower", -- Assassination
-        [260] = "attackPower", -- Outlaw
-        [261] = "attackPower", -- Subtlety
-
-        [262] = "intellect", -- Elemental
-        [263] = "attackPower", -- Enhancement
-        [264] = "intellect", -- Restoration
-
-        [265] = "intellect", -- Affliction
-        [266] = "intellect", -- Demonology
-        [267] = "intellect", -- Destruction
-
-        [71] = "attackPower", -- Arms
-        [72] = "attackPower", -- Fury
-        [73] = "attackPower", -- Protection
-    }
-
-    requiredByEveryone = {
-        stamina = true,
-        versatility = true,
-        mastery = true,
-        movement = true,
+        ["WARRIOR"] = {["PWF"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoS"] = true, ["SP"] = true},
+        ["PALADIN"] = {["PWF"] = true, ["AB"] = true, ["DS"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
+        ["HUNTER"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoS"] = true, ["SP"] = true},
+        ["ROGUE"] = {["PWF"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoS"] = true, ["SP"] = true},
+        ["PRIEST"] = {["PWF"] = true, ["AB"] = true, ["DS"] = true, ["MotW"] = true, ["BoK"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
+        ["DEATHKNIGHT"] = {["PWF"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoS"] = true, ["SP"] = true},
+        ["SHAMAN"] = {["PWF"] = true, ["AB"] = true, ["DS"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
+        ["MAGE"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
+        ["WARLOCK"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
+        ["DRUID"] = {["PWF"] = true, ["AB"] = true, ["DS"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
     }
 
     available = {
-        stamina = false,
-        versatility = false,
-        mastery = false,
-        intellect = false,
-        attackPower = false,
-        movement = false,
+        ["PWF"] = false,
+        ["AB"] = false,
+        ["DS"] = false,
+        ["MotW"] = false,
+        ["BoK"] = false,
+        ["BoM"] = false,
+        ["BoW"] = false,
+        ["BoS"] = false,
+        ["SP"] = false,
     }
 
     unaffected = {
-        stamina = {},
-        versatility = {},
-        mastery = {},
-        intellect = {},
-        attackPower = {},
-        movement = {},
+        ["PWF"] = {},
+        ["AB"] = {},
+        ["DS"] = {},
+        ["MotW"] = {},
+        ["BoK"] = {},
+        ["BoM"] = {},
+        ["BoW"] = {},
+        ["BoS"] = {},
+        ["SP"] = {},
     }
 
-elseif Cell.isMists then
+elseif Cell.isWrath then
     buffs = {
-        stamina = {
-            tag = RAID_BUFF_2, -- Stamina
-            icon = 135987,
-            order = 1,
-            provider = {
-                PRIEST = {id = 21562, level = 22}, -- Power Word: Fortitude
-                WARLOCK = {id = 109773, level = 82}, -- Dark Intent
-                WARRIOR = {id = 469, level = 68}, -- Commanding Shout
-            },
-        },
-        stats = {
-            tag = RAID_BUFF_1, -- Stats
-            icon = 136078,
-            order = 2,
-            provider = {
-                DRUID = {id = 1126, level = 62}, -- Mark of the Wild
-                MONK = {id = 115921, level = 22}, -- Legacy of the Emperor
-                PALADIN = {id = 20217, level = 30}, -- Blessing of Kings
-            }
-        },
-        spellPower = {
-            tag = RAID_BUFF_5, -- Spell Power
-            icon = 135932,
-            order = 3,
-            provider = {
-                MAGE = {id = {1459, 61316}, level = 58}, -- Arcane Brilliance / Dalaran Brilliance
-                SHAMAN = {id = 77747, level = 40}, -- Burning Wrath
-                WARLOCK = {id = 109773, level = 82}, -- Dark Intent
-            }
-        },
-        attackPower = {
-            tag = RAID_BUFF_3, -- Attack Power
-            icon = 132333,
-            order = 4,
-            provider = {
-                DEATHKNIGHT = {id = 57330, level = 65}, -- Horn of Winter
-                HUNTER = {id = 19506, level = 39}, -- Trueshot Aura
-                WARRIOR = {id = 6673, level = 42}, -- Battle Shout
-            }
-        },
-        mastery = {
-            tag = RAID_BUFF_7, -- Mastery
-            icon = 135908,
-            order = 5,
-            provider = {
-                PALADIN = {id = 19740, level = 81}, -- Blessing of Might
-                SHAMAN = {id = 116956, level = 80}, -- Grace of Air
-            }
-        }
+        -- 1243: Power Word: Fortitude
+        -- 21562: Prayer of Fortitude
+        ["PWF"] = {buff1 = 1243, buff2 = 21562, provider = "PRIEST", order = 1},
+
+        -- 14752: Divine Spirit
+        -- 27681: Prayer of Spirit
+        ["DS"] = {buff1 = 14752, buff2 = 27681, provider = "PRIEST", order = 8},
+
+        -- 976: Shadow Protection
+        -- 27683: Prayer of Shadow Protection
+        ["SP"] = {buff1 = 976, buff2 = 27683, provider = "PRIEST", order = 9},
+
+        -- 1459: Arcane Intellect
+        -- 23028: Arcane Brilliance
+        ["AB"] = {buff1 = 1459, buff2 = 23028, provider = "MAGE", order = 2},
+
+        -- 6673: Battle Shout
+        -- ["BS"] = {buff1 = 6673, provider="WARRIOR"},
+
+        -- 469: Commanding Shout
+        -- ["CS"] = {buff1 = 469, provider="WARRIOR"},
+
+        -- 1126: Mark of the Wild
+        -- 21849: Gift of the Wild
+        ["MotW"] = {buff1 = 1126, buff2 = 21849, provider = "DRUID", order = 3},
+
+        -- 20217: Blessing of Kings
+        -- 25898: Greater Blessing of Kings
+        ["BoK"] = {buff1 = 20217, buff2 = 25898, provider = "PALADIN", order = 4},
+
+        -- 19740: Blessing of Might
+        -- 25782: Greater Blessing of Might
+        ["BoM"] = {buff1 = 19740, buff2 = 25782, provider = "PALADIN", order = 5},
+
+        -- 19742: Blessing of Wisdom
+        -- 25894: Greater Blessing of Wisdom
+        ["BoW"] = {buff1 = 19742, buff2 = 25894, provider = "PALADIN", order = 6},
+
+        -- 20911: Blessing of Sanctuary
+        -- 25899: Greater Blessing of Sanctuary
+        ["BoS"] = {buff1 = 20911, buff2 = 25899, provider = "PALADIN", order = 7},
     }
 
     requiredBuffs = {
-        [250] = "attackPower", -- Blood
-        [251] = "attackPower", -- Frost
-        [252] = "attackPower", -- Unholy
-
-        [102] = "spellPower", -- Balance
-        [103] = "attackPower", -- Feral
-        [104] = "attackPower", -- Guardian
-        [105] = "spellPower", -- Restoration
-
-        [253] = "attackPower", -- Beast Mastery
-        [254] = "attackPower", -- Marksmanship
-        [255] = "attackPower", -- Survival
-
-        [62] = "spellPower", -- Arcane
-        [63] = "spellPower", -- Fire
-        [64] = "spellPower", -- Frost
-
-        [268] = "attackPower", -- Brewmaster
-        [269] = "attackPower", -- Windwalker
-        [270] = "spellPower", -- Mistweaver
-
-        [65] = "spellPower", -- Holy
-        [66] = "attackPower", -- Protection
-        [70] = "attackPower", -- Retribution
-
-        [256] = "spellPower", -- Discipline
-        [257] = "spellPower", -- Holy
-        [258] = "spellPower", -- Shadow
-
-        [259] = "attackPower", -- Assassination
-        [260] = "attackPower", -- Outlaw
-        [261] = "attackPower", -- Subtlety
-
-        [262] = "spellPower", -- Elemental
-        [263] = "attackPower", -- Enhancement
-        [264] = "spellPower", -- Restoration
-
-        [265] = "spellPower", -- Affliction
-        [266] = "spellPower", -- Demonology
-        [267] = "spellPower", -- Destruction
-
-        [71] = "attackPower", -- Arms
-        [72] = "attackPower", -- Fury
-        [73] = "attackPower", -- Protection
-    }
-
-    requiredByEveryone = {
-        stamina = true,
-        stats = true,
-        mastery = true,
+        ["WARRIOR"] = {["PWF"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoS"] = true, ["SP"] = true},
+        ["PALADIN"] = {["PWF"] = true, ["AB"] = true, ["DS"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
+        ["HUNTER"] = {["PWF"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoS"] = true, ["SP"] = true},
+        ["ROGUE"] = {["PWF"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoS"] = true, ["SP"] = true},
+        ["PRIEST"] = {["PWF"] = true, ["AB"] = true, ["DS"] = true, ["MotW"] = true, ["BoK"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
+        ["DEATHKNIGHT"] = {["PWF"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoS"] = true, ["SP"] = true},
+        ["SHAMAN"] = {["PWF"] = true, ["AB"] = true, ["DS"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
+        ["MAGE"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
+        ["WARLOCK"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
+        ["DRUID"] = {["PWF"] = true, ["AB"] = true, ["DS"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
     }
 
     available = {
-        stamina = false,
-        stats = false,
-        spellPower = false,
-        attackPower = false,
-        mastery = false,
+        ["PWF"] = false,
+        ["AB"] = false,
+        ["DS"] = false,
+        ["MotW"] = false,
+        ["BoK"] = false,
+        ["BoM"] = false,
+        ["BoW"] = false,
+        ["BoS"] = false,
+        ["SP"] = false,
     }
 
     unaffected = {
-        stamina = {},
-        stats = {},
-        spellPower = {},
-        attackPower = {},
-        mastery = {},
+        ["PWF"] = {},
+        ["AB"] = {},
+        ["DS"] = {},
+        ["MotW"] = {},
+        ["BoK"] = {},
+        ["BoM"] = {},
+        ["BoW"] = {},
+        ["BoS"] = {},
+        ["SP"] = {},
+    }
+
+elseif Cell.isCata then
+    buffs = {
+        -- 21562: Power Word: Fortitude
+        ["PWF"] = {buff1 = 21562, provider = "PRIEST", level = 14, order = 1},
+
+        -- 27683: Shadow Protection
+        ["SP"] = {buff1 = 27683, provider = "PRIEST", level = 52, order = 6},
+
+        -- 1459: Arcane Brilliance
+        ["AB"] = {buff1 = 1459, buff2 = 79058, provider = "MAGE", level = 58, order = 2},
+
+        -- 6673: Battle Shout
+        -- ["BS"] = {buff1 = 6673, provider = "WARRIOR", level = 20},
+
+        -- 469: Commanding Shout
+        -- ["CS"] = {buff1 = 469, provider = "WARRIOR", level = 68},
+
+        -- 1126: Mark of the Wild
+        ["MotW"] = {buff1 = 1126, provider = "DRUID", level = 30, order = 3},
+
+        -- 20217: Blessing of Kings
+        ["BoK"] = {buff1 = 20217, provider = "PALADIN", level = 22, order = 4},
+
+        -- 19740: Blessing of Might
+        ["BoM"] = {buff1 = 19740, provider = "PALADIN", level = 56, order = 5},
+    }
+
+    requiredBuffs = {
+        ["WARRIOR"] = {["PWF"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["SP"] = true},
+        ["PALADIN"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["SP"] = true},
+        ["HUNTER"] = {["PWF"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["SP"] = true},
+        ["ROGUE"] = {["PWF"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["SP"] = true},
+        ["PRIEST"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["SP"] = true},
+        ["DEATHKNIGHT"] = {["PWF"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["SP"] = true},
+        ["SHAMAN"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["SP"] = true},
+        ["MAGE"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["SP"] = true},
+        ["WARLOCK"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["SP"] = true},
+        ["DRUID"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["SP"] = true},
+    }
+
+    available = {
+        ["PWF"] = false,
+        ["AB"] = false,
+        ["MotW"] = false,
+        ["BoK"] = false,
+        ["BoM"] = false,
+        ["SP"] = false,
+    }
+
+    unaffected = {
+        ["PWF"] = {},
+        ["AB"] = {},
+        ["MotW"] = {},
+        ["BoK"] = {},
+        ["BoM"] = {},
+        ["SP"] = {},
     }
 end
 
 ---------------------------------------------------------------------
 -- prepare
 ---------------------------------------------------------------------
-local classBuffs = {
-    -- class = {
-    --     buff = level,
-    -- }
-}
+local classBuffs = {}
 local buffOrder = {}
 local buffsProvidedByMe = {}
 local myClass = UnitClassBase("player")
 
 do
-    local myLevel = UnitLevel("player")
+    local function Handle(buff, t, k)
+        local name, icon = F.GetSpellInfo(t[k])
+        t[k] = {
+            ["id"] = t[k],
+            ["name"] = name,
+            ["icon"] = icon,
+        }
 
-    local function Insert(class, buffKey, name, icon)
-        tinsert(buffs[buffKey]["names"], name)
-        if myClass == class and myLevel >= classBuffs[class][buffKey] then
-            buffsProvidedByMe[buffKey] = {name, icon}
+        classBuffs[t["provider"]] = classBuffs[t["provider"]] or {}
+        classBuffs[t["provider"]][buff] = t.level or true
+
+        if myClass == t["provider"] and not buffsProvidedByMe[buff] then
+            buffsProvidedByMe[buff] = {name, icon}
         end
     end
 
-    for buffKey, buffData in pairs(buffs) do
-        tinsert(buffOrder, buffKey)
-        buffData.names = {}
+    for k, t in pairs(buffs) do
+        if t.buff1 then Handle(k, t, "buff1") end
+        if t.buff2 then Handle(k, t, "buff2") end
 
-        for class, info in pairs(buffData.provider) do
-            classBuffs[class] = classBuffs[class] or {}
-            classBuffs[class][buffKey] = info.level
-
-            if type(info.id) == "table" then
-                for _, spellId in ipairs(info.id) do
-                    local name, icon = F.GetSpellInfo(spellId)
-                    if name then
-                        Insert(class, buffKey, name, icon)
-                    end
-                end
-            else
-                local name, icon = F.GetSpellInfo(info.id)
-                if name then
-                    Insert(class, buffKey, name, icon)
-                end
-            end
-        end
+        tinsert(buffOrder, k)
     end
 
     sort(buffOrder, function(a, b)
-        return buffs[a]["order"] < buffs[b]["order"]
+        return buffs[a].order < buffs[b].order
     end)
 end
 
--------------------------------------------------
+---------------------------------------------------------------------
 -- vars
--------------------------------------------------
+---------------------------------------------------------------------
 local enabled
 local myUnit = ""
 local hasBuffProvider
 
-local fl function Reset(which)
+local function Reset(which)
     if not which or which == "available" then
         for k, v in pairs(available) do
             available[k] = false
@@ -355,9 +306,9 @@ local fl function Reset(which)
     end
 end
 
-local function GetUnaffectedString(buff)
-    local list = unaffected[buff]
-    local name = buffs[buff]["tag"]
+function F.GetUnaffectedString(spell)
+    local list = unaffected[spell]
+    local buff = buffs[spell]["buff1"]["name"]
 
     local players = {}
     for unit in pairs(list) do
@@ -368,21 +319,20 @@ local function GetUnaffectedString(buff)
     if #players == 0 then
         return
     elseif #players <= 10 then
-        return L["Missing Buff"] .. " (" .. name .. "): " .. tconcat(players, ", ")
+        return L["Missing Buff"] .. " (" .. buff .. "): " .. tconcat(players, ", ")
     else
-        return L["Missing Buff"] .. " (" .. name .. "): " .. L["many"]
+        return L["Missing Buff"] .. " (" .. buff .. "): " .. L["many"]
     end
 end
 
--------------------------------------------------
+---------------------------------------------------------------------
 -- frame
--------------------------------------------------
+---------------------------------------------------------------------
 local buffTrackerFrame = CreateFrame("Frame", "CellBuffTrackerFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.buffTrackerFrame = buffTrackerFrame
 P.Size(buffTrackerFrame, 102, 50)
 PixelUtil.SetPoint(buffTrackerFrame, "BOTTOMLEFT", CellParent, "CENTER", 1, 1)
 buffTrackerFrame:SetClampedToScreen(true)
--- buffTrackerFrame:SetClampRectInsets(0, 0, -20, 0)
 buffTrackerFrame:SetMovable(true)
 buffTrackerFrame:RegisterForDrag("LeftButton")
 buffTrackerFrame:SetScript("OnDragStart", function()
@@ -394,9 +344,9 @@ buffTrackerFrame:SetScript("OnDragStop", function()
     P.SavePosition(buffTrackerFrame, CellDB["tools"]["buffTracker"][4])
 end)
 
--------------------------------------------------
+---------------------------------------------------------------------
 -- mover
--------------------------------------------------
+---------------------------------------------------------------------
 buffTrackerFrame.moverText = buffTrackerFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 buffTrackerFrame.moverText:SetPoint("TOP", 0, -3)
 buffTrackerFrame.moverText:SetText(L["Mover"])
@@ -432,7 +382,7 @@ end
 
 do
     for _, k in ipairs(buffOrder) do
-        tinsert(fakeIcons, CreateFakeIcon(buffs[k]["icon"]))
+        tinsert(fakeIcons, CreateFakeIcon(buffs[k]["buff1"]["icon"]))
     end
 end
 
@@ -454,9 +404,9 @@ local function ShowMover(show)
 end
 Cell.RegisterCallback("ShowMover", "BuffTracker_ShowMover", ShowMover)
 
--------------------------------------------------
+---------------------------------------------------------------------
 -- buttons
--------------------------------------------------
+---------------------------------------------------------------------
 local sendChannel
 local function UpdateSendChannel()
     if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
@@ -468,26 +418,22 @@ local function UpdateSendChannel()
     end
 end
 
-local function CreateBuffButton(parent, buff)
+local function CreateBuffButton(parent, size, spell1, spell2, icon, index)
     local b = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate,BackdropTemplate")
     if parent then b:SetFrameLevel(parent:GetFrameLevel() + 1) end
-    P.Size(b, 32, 32)
+    P.Size(b, size[1], size[2])
 
     b:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P.Scale(1)})
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
-
-    -- cast
-    if buffsProvidedByMe[buff] then
-        b:SetAttribute("type1", "macro")
-        b:SetAttribute("macrotext1", "/cast [@player] " .. buffsProvidedByMe[buff][1])
-    end
-
-    -- chat
+    b:SetAttribute("type1", "spell")
+    b:SetAttribute("spell", spell1)
+    b:SetAttribute("shift-type1", "spell")
+    b:SetAttribute("shift-spell1", spell2)
     b:HookScript("OnClick", function(self, button, down)
         if button == "RightButton" and (down == GetCVarBool("ActionButtonUseKeyDown")) then
-            local msg = GetUnaffectedString(buff)
+            local msg = F.GetUnaffectedString(index)
             if msg then
                 UpdateSendChannel()
                 SendChatMessage(msg, sendChannel)
@@ -498,7 +444,7 @@ local function CreateBuffButton(parent, buff)
     b.texture = b:CreateTexture(nil, "OVERLAY")
     P.Point(b.texture, "TOPLEFT", b, "TOPLEFT", 1, -1)
     P.Point(b.texture, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
-    b.texture:SetTexture(buffs[buff]["icon"])
+    b.texture:SetTexture(icon)
     b.texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
     b.count = b:CreateFontString(nil, "OVERLAY")
@@ -516,7 +462,7 @@ local function CreateBuffButton(parent, buff)
         b:SetScript("OnEnter", function()
             if F.Getn(list) ~= 0 then
                 CellTooltip:SetOwner(b, "ANCHOR_TOPLEFT", 0, 3)
-                CellTooltip:AddLine(L["Unaffected"] .. " |cffb7b7b7" .. buffs[buff]["tag"])
+                CellTooltip:AddLine(L["Unaffected"])
                 for unit in pairs(list) do
                     local class = UnitClassBase(unit)
                     local name = UnitName(unit)
@@ -564,15 +510,15 @@ end
 local buttons = {}
 
 do
-    for _, buff in ipairs(buffOrder) do
-        buttons[buff] = CreateBuffButton(buffTrackerFrame, buff)
-        buttons[buff]:Hide()
-        buttons[buff]:SetTooltips(unaffected[buff])
+    for _, k in ipairs(buffOrder) do
+        buttons[k] = CreateBuffButton(buffTrackerFrame, {32, 32}, buffs[k]["buff1"]["name"], buffs[k]["buff2"] and buffs[k]["buff2"]["name"], buffs[k]["buff1"]["icon"], k)
+        buttons[k]:Hide()
+        buttons[k]:SetTooltips(unaffected[k])
     end
 end
 
 local function UpdateButtons()
-    for _, buff in pairs(buffOrder) do
+    for _, buff in ipairs(buffOrder) do
         if available[buff] then
             local n = F.Getn(unaffected[buff])
             if n == 0 then
@@ -667,9 +613,9 @@ local function ResizeButtons()
     end
 end
 
--------------------------------------------------
+---------------------------------------------------------------------
 -- fade out
--------------------------------------------------
+---------------------------------------------------------------------
 local fadeOuts = {}
 for _, b in pairs(buttons) do
     tinsert(fadeOuts, b)
@@ -684,9 +630,16 @@ end, unpack(fadeOuts))
 local GetAuraDataBySpellName = C_UnitAuras.GetAuraDataBySpellName
 
 local function UnitBuffExists(unit, buff)
-    local names = buffs[buff]["names"]
+    local name = buffs[buff]["buff1"]["name"]
     local aura
-    for _, name in next, names do
+
+    aura = GetAuraDataBySpellName(unit, name, "HELPFUL")
+    if aura then
+        return true, aura.sourceUnit == "player"
+    end
+
+    if buffs[buff]["buff2"] then
+        name = buffs[buff]["buff2"]["name"]
         aura = GetAuraDataBySpellName(unit, name, "HELPFUL")
         if aura then
             return true, aura.sourceUnit == "player"
@@ -713,7 +666,7 @@ local function ShowMissingBuffs(unit)
     local num = #missingBuffsFromMe[unit]
     if num == 0 then return end
 
-    if myClass == "PALADIN" or myClass == "WARRIOR" then
+    if myClass == "PALADIN" then
         if hasBuffFromMe[unit] then return end
     end
 
@@ -726,9 +679,9 @@ local function ShowMissingBuffs(unit)
     end
 end
 
--------------------------------------------------
+---------------------------------------------------------------------
 -- check
--------------------------------------------------
+---------------------------------------------------------------------
 local function CheckUnit(unit, updateBtn)
     -- print("CheckUnit", unit)
     if not hasBuffProvider then return end
@@ -737,32 +690,25 @@ local function CheckUnit(unit, updateBtn)
     hasBuffFromMe[unit] = nil
 
     if UnitIsConnected(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) then
-        local info = LGI:GetCachedInfo(UnitGUID(unit))
-        local spec = info and info.specId
-        local required = spec and requiredBuffs[spec]
-
-        for buff, hasProvider in next, available do
-            if hasProvider then
-                if required == buff or requiredByEveryone[buff] then
-                    local exists, providedByMe = UnitBuffExists(unit, buff)
-                    if exists then
-                        unaffected[buff][unit] = nil
-                        if providedByMe then
-                            hasBuffFromMe[unit] = true
-                        end
-                    else
-                        unaffected[buff][unit] = true
-                        if buffsProvidedByMe[buff] then
-                            UpdateMissingBuffs(unit, buff)
-                        end
+        local required = requiredBuffs[UnitClassBase(unit)]
+        for buff, hasProvider in pairs(available) do
+            if hasProvider and required[buff] then
+                local exists, providedByMe = UnitBuffExists(unit, buff)
+                if exists then
+                    unaffected[buff][unit] = nil
+                    if providedByMe then
+                        hasBuffFromMe[unit] = true
+                    end
+                else
+                    unaffected[buff][unit] = true
+                    if buffsProvidedByMe[buff] then
+                        UpdateMissingBuffs(unit, buff)
                     end
                 end
-            else
-                unaffected[buff][unit] = nil
             end
         end
     else
-        for k, t in next, unaffected do
+        for k, t in pairs(unaffected) do
             t[unit] = nil
         end
     end
@@ -783,7 +729,7 @@ local function IterateAllUnits()
             level = UnitLevel(unit)
             if classBuffs[class] then
                 for buff, lvl in pairs(classBuffs[class]) do
-                    if not available[buff] and level >= lvl then
+                    if not available[buff] and (type(lvl) ~= "number" or level >= lvl) then
                         available[buff] = true
                         hasBuffProvider = true
                     end
@@ -797,6 +743,7 @@ local function IterateAllUnits()
     end
 
     RepointButtons()
+
     Reset("unaffected")
 
     for unit in F.IterateGroupMembers() do
@@ -806,18 +753,9 @@ local function IterateAllUnits()
     UpdateButtons()
 end
 
--------------------------------------------------
+---------------------------------------------------------------------
 -- events
--------------------------------------------------
-function buffTrackerFrame:UnitUpdated(event, guid, unit, info)
-    -- print(event, guid, unit, info.specId)
-    if unit == "player" then
-        if UnitIsUnit("player", myUnit) then CheckUnit(myUnit, true) end
-    elseif UnitIsPlayer(unit) then -- ignore pets
-        CheckUnit(unit, true)
-    end
-end
-
+---------------------------------------------------------------------
 function buffTrackerFrame:PLAYER_ENTERING_WORLD()
     buffTrackerFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     buffTrackerFrame:GROUP_ROSTER_UPDATE()
@@ -831,11 +769,15 @@ function buffTrackerFrame:GROUP_ROSTER_UPDATE(immediate)
         buffTrackerFrame:RegisterEvent("UNIT_FLAGS")
         buffTrackerFrame:RegisterEvent("PLAYER_UNGHOST")
         buffTrackerFrame:RegisterEvent("UNIT_AURA")
+        -- buffTrackerFrame:RegisterEvent("PARTY_MEMBER_ENABLE")
+        -- buffTrackerFrame:RegisterEvent("PARTY_MEMBER_DISABLE")
     else
         buffTrackerFrame:UnregisterEvent("READY_CHECK")
         buffTrackerFrame:UnregisterEvent("UNIT_FLAGS")
         buffTrackerFrame:UnregisterEvent("PLAYER_UNGHOST")
         buffTrackerFrame:UnregisterEvent("UNIT_AURA")
+        -- buffTrackerFrame:UnregisterEvent("PARTY_MEMBER_ENABLE")
+        -- buffTrackerFrame:UnregisterEvent("PARTY_MEMBER_DISABLE")
 
         Reset()
         RepointButtons()
@@ -845,7 +787,7 @@ function buffTrackerFrame:GROUP_ROSTER_UPDATE(immediate)
     if immediate then
         IterateAllUnits()
     else
-        timer = C_Timer.NewTimer(3, IterateAllUnits)
+        timer = C_Timer.NewTimer(2, IterateAllUnits)
     end
 end
 
@@ -860,6 +802,14 @@ end
 function buffTrackerFrame:PLAYER_UNGHOST()
     buffTrackerFrame:GROUP_ROSTER_UPDATE()
 end
+
+-- function buffTrackerFrame:PARTY_MEMBER_ENABLE()
+--     buffTrackerFrame:GROUP_ROSTER_UPDATE()
+-- end
+
+-- function buffTrackerFrame:PARTY_MEMBER_DISABLE()
+--     buffTrackerFrame:GROUP_ROSTER_UPDATE()
+-- end
 
 function buffTrackerFrame:UNIT_AURA(unit)
     if IsInRaid() then
@@ -883,15 +833,14 @@ buffTrackerFrame:SetScript("OnEvent", function(self, event, ...)
     self[event](self, ...)
 end)
 
--------------------------------------------------
+---------------------------------------------------------------------
 -- functions
--------------------------------------------------
+---------------------------------------------------------------------
 local function UpdateTools(which)
     if not which or which == "buffTracker" then
         if CellDB["tools"]["buffTracker"][1] then
             buffTrackerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
             buffTrackerFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-            LGI.RegisterCallback(buffTrackerFrame, "GroupInfo_Update", "UnitUpdated")
 
             if not enabled and which == "buffTracker" then -- already in world, manually enabled
                 buffTrackerFrame:GROUP_ROSTER_UPDATE(true)
@@ -902,7 +851,6 @@ local function UpdateTools(which)
             end
         else
             buffTrackerFrame:UnregisterAllEvents()
-            LGI.UnregisterCallback(buffTrackerFrame, "GroupInfo_Update")
 
             Reset()
             myUnit = ""
