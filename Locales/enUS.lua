@@ -91,6 +91,14 @@ select(2, ...).L = setmetatable({
         <h2>The scaling "issue" isn't a bug; it's due to changes in the scaling method. Please readjust Cell's scale and dimensions.</h2>
         <br/>
 
+        <h1>r255-release (Jul 8, 2025, 16:00 GMT+8)</h1>
+        <p>+ Added Healer frame to spotlight (#393 by hreich).</p>
+        <p>+ (MoP) Added back PW:S indicator.</p>
+        <p>* (MoP) Fixed click-cast for Soulstone.</p>
+        <p>* Reworked BuffTracker &amp; MissingBuffs for all flavors.</p>
+        <p>- (Vanilla) Removed debuff duration limit from display logic.</p>
+        <br/>
+
         <h1>r254-release (Jul 4, 2025, 21:20 GMT+8)</h1>
         <p>* Updated for MoP. Updated for MoP. Layout Auto Switch and Power Filters have been reset due to the game version update.</p>
         <p>* Disabled dragging while in combat.</p>

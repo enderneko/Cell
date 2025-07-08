@@ -1,7 +1,12 @@
-# [Full Changelog](https://github.com/enderneko/Cell/compare/r253-release...4dae51eb5fb2b0e1eae78608160cb56378841554)
+# [Full Changelog](https://github.com/enderneko/Cell/compare/r254-release...194f2aec2581277cb202819c292a5e28e684c013)
 
-- Update for mop
-- Update BuffTracker (now only available for Retail and MoP)
-- Remove MissingBuffs indicator
-- Add fallback handling for group types
-- Disable dragging while in combat
+hreich:
+
+- Added Healer frame to spotlight (#393)
+
+enderneko:
+
+- Add back PW:S
+- Rework BuffTracker & MissingBuffs for all flavors
+- Fix MoP click-cast for Soulstone
+- Remove debuff duration limit from display logic
