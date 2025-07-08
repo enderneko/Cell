@@ -88,7 +88,10 @@ select(2, ...).L = setmetatable({
     ["CHANGELOGS"] = [[
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
-        <h2>The scaling "issue" isn't a bug; it's due to changes in the scaling method. Please readjust Cell's scale and dimensions.</h2>
+        <br/>
+
+        <h1>r256-release (Jul 8, 2025, 18:00 GMT+8)</h1>
+        <p>* (MoP) Fixed PW:S indicator.</p>
         <br/>
 
         <h1>r255-release (Jul 8, 2025, 16:00 GMT+8)</h1>

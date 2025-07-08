@@ -1,6 +1,6 @@
 ## Interface: 110107
 ## Title: Cell
-## Version: r255-release
+## Version: r256-release
 ## Author: enderneko
 ## X-Flavor: Mainline
 ## SavedVariables: CellDB, CellDBBackup
