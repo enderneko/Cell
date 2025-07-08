@@ -98,7 +98,7 @@ local supporters1 = { -- wowIDs
         "|cffff8000Reatvoker-Silvermoon (EU)|r",
     }, -- Reat
     {"Daydream-Dalaran (EU)"}, -- luana11
-    {"Aschgewitter-Eredar (EU)"}, -- Aschgewitter - Eredar
+    {"|cffff8000Aschgewitter-Eredar (EU)|r"}, -- Aschgewitter - Eredar
     {"三号-熊猫酒仙 (CN)"}, -- 爱发电用户_sUE4
     {"远古列王守卫-回音山 (CN)"}, -- PPQ
     {"Huf-ArgentDawn (EU)"}, -- Huf
@@ -214,7 +214,7 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Shichiki-EU-Antonidas", "Ko-fi"}, -- 2024-10-03
     {"|cffff8000露露缇娅|r", "爱发电"}, -- 2024-12-20
     {"luana11", "Ko-fi"}, -- 2025-01-25
-    {"Aschgewitter - Eredar", "Ko-fi"}, -- 2025-02-27
+    {"|cffff8000Aschgewitter - Eredar|r", "Ko-fi"}, -- 2025-02-27
     {"爱发电用户_sUE4", "爱发电"}, -- 2025-03-02
     {"无多路", "爱发电"}, -- 2025-03-04
     {"Huf", "Ko-fi"}, -- 2025-03-04
@@ -223,9 +223,15 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"PPQ", "爱发电"}, -- 2025-03-08
     {"Daanior-Draenor", "Ko-fi"}, -- 2025-03-23
     {"爱发电用户_1e94c", "爱发电"}, -- 2025-03-31
-    {"Venarius", "Ko-fi"}, -- 2025-04-30
-    {"Kaymi", "Ko-fi"}, -- 2025-04-30
+    {"Kaymi", "Ko-fi"}, -- 2025-04-19
+    {"Venarius", "Ko-fi"}, -- 2025-04-24
     {"墨染雲湮-白银之手", "爱发电"}, -- 2025-05-01
+    {"Shyn", "Ko-fi"}, -- 2025-05-22
+    {"|cffff8000Taudry|r", "Ko-fi"}, -- 2025-07-02
+    {"Ko-fi Supporter", "Ko-fi"}, -- 2025-07-03
+    {"Sproutz", "Ko-fi"}, -- 2025-07-03
+    {"|cffff8000Chrystal|r", "Ko-fi"}, -- 2025-07-04
+    {"Natalz", "Ko-fi"}, -- 2025-07-06
 }
 
 -------------------------------------------------
