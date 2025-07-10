@@ -242,9 +242,10 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
 local tests = {
     ["Rutha-Lycanthoth"] = true,
     ["Programming-BurningLegion"] = true,
-    ["Programming-影之哀伤"] = true,
-    ["篠崎-影之哀伤"] = true,
-    ["蜜柑-影之哀伤"] = true,
+    ["Programming-影之哀伤"] = "mvp",
+    ["篠崎-影之哀伤"] = "mvp",
+    ["蜜柑-影之哀伤"] = "mvp",
+    ["萝露-影之哀伤"] = "mvp",
 }
 
 local wowSupporters = {}
@@ -255,10 +256,11 @@ do
             local fullName
             if strfind(name, "^|") then
                 fullName = strmatch(name, "^|cff......(.+%-.+) %(%u%u%)|r$")
+                wowSupporters[fullName] = "mvp"
             else
                 fullName = strmatch(name, "^(.+%-.+) %(%u%u%)$")
+                wowSupporters[fullName] = true
             end
-            wowSupporters[fullName] = true
         end
     end
 end

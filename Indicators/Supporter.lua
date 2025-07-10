@@ -7,35 +7,6 @@ local A = Cell.animations
 -------------------------------------------------
 local pool
 
--- local function creationFunc()
---     local f = CreateFrame("Frame")
---     f:Hide()
-
---     local tex = f:CreateTexture(nil, "ARTWORK")
---     tex:SetTexture("Interface/AddOns/Cell/Media/FlipBooks/heart.png")
---     tex:SetAllPoints(f)
---     tex:SetParentKey("Flipbook")
-
---     local ag = f:CreateAnimationGroup()
---     ag:SetLooping("REPEAT")
-
---     local flip = ag:CreateAnimation("FlipBook")
---     flip:SetDuration(1.6)
---     flip:SetFlipBookColumns(2)
---     flip:SetFlipBookRows(8)
---     flip:SetFlipBookFrames(16)
---     flip:SetChildKey("Flipbook")
-
---     f:SetScript("OnShow", function()
---         ag:Play()
---     end)
-
---     A.CreateFadeIn(f, 0, 1, 0.2)
---     A.CreateFadeOut(f, 1, 0, 0.2)
-
--- 	return f
--- end
-
 local function creationFunc()
     local f = CreateFrame("Frame")
     f:Hide()
@@ -153,9 +124,6 @@ end
 
 pool = CreateObjectPool(creationFunc, resetterFunc)
 
--------------------------------------------------
--- show
--------------------------------------------------
 local function Display(b)
     local f = pool:Acquire()
     f:SetParent(b.widgets.indicatorFrame)
@@ -169,40 +137,63 @@ local function Display(b)
     -- f:FadeIn()
     -- C_Timer.After(3, f.FadeOut)
 end
--- CellSupporterDisplay = Display
 
--- local function StopRainbow(unit)
---     local b = F.GetUnitButtonByUnit(unit)
---     if b then
---         local fs = b.indicators.nameText.name
---         -- stop rainbow
---         fs.rainbow = nil
---         if fs.updater then
---             fs.updater:SetScript("OnUpdate", nil)
---             fs:GetParent():UpdateName()
---         end
---         -- stop timer
---         if fs.timer then
---             fs.timer:Cancel()
---             fs.timer = nil
---         end
---     end
--- end
+-------------------------------------------------
+-- mvp pool
+-------------------------------------------------
+local mvpPool = CreateObjectPool(function(pool)
+    local f = CreateFrame("Frame")
+    f:Hide()
+    f:SetSize(128, 128)
 
--- local function StartRainbow(unit)
---     local b = F.GetUnitButtonByUnit(unit)
---     if b then
---         local fs = b.indicators.nameText.name
---         Cell.StartRainbowText(fs)
---         -- reset timer
---         if fs.timer then
---             fs.timer:Cancel()
---         end
---         fs.timer = C_Timer.NewTimer(3, function()
---             StopRainbow(unit)
---         end)
---     end
--- end
+    local tex = f:CreateTexture(nil, "ARTWORK")
+    tex:SetTexture("Interface/AddOns/Cell/Media/FlipBooks/mvp.png", nil, nil, "TRILINEAR")
+    tex:SetAllPoints(f)
+    tex:SetParentKey("Flipbook")
+
+    local mask = f:CreateMaskTexture()
+    f.mask = mask
+    mask:SetTexture(Cell.vars.whiteTexture, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    tex:AddMaskTexture(mask)
+
+    local ag = f:CreateAnimationGroup()
+    ag:SetLooping("REPEAT")
+
+    local flip = ag:CreateAnimation("FlipBook")
+    flip:SetDuration(2)
+    flip:SetFlipBookColumns(4)
+    flip:SetFlipBookRows(8)
+    flip:SetFlipBookFrames(32)
+    flip:SetChildKey("Flipbook")
+
+    f:SetScript("OnShow", function()
+        ag:Play()
+        f.timer = C_Timer.NewTimer(3, f.FadeOut)
+    end)
+
+    A.CreateFadeIn(f, 0, 1, 0.2)
+    A.CreateFadeOut(f, 1, 0, 0.2, nil, function()
+        f.timer = nil
+        pool:Release(f)
+    end)
+
+    return f
+end, function(_, f)
+    if f.timer then
+        f.timer:Cancel()
+        f.timer = nil
+    end
+    f:Hide()
+end)
+
+local function DisplayMVP(b)
+    local f = mvpPool:Acquire()
+    f:SetParent(b.widgets.indicatorFrame)
+    f:SetPoint("CENTER")
+    f.mask:SetAllPoints(b.widgets.indicatorFrame)
+
+    f:FadeIn()
+end
 
 -------------------------------------------------
 -- events
@@ -212,6 +203,7 @@ eventFrame:RegisterEvent("FIRST_FRAME_RENDERED")
 
 local function Check()
     pool:ReleaseAll()
+    mvpPool:ReleaseAll()
 
     -- Cell.wowSupporters[Cell.vars.playerNameFull] = true
 
@@ -219,12 +211,12 @@ local function Check()
         for unit in F.IterateGroupMembers() do
             local fullName = F.UnitFullName(unit)
             if Cell.wowSupporters[fullName] then
-                F.HandleUnitButton("unit", unit, Display)
+                F.HandleUnitButton("unit", unit, Cell.wowSupporters[fullName] == "mvp" and DisplayMVP or Display)
             end
         end
     else
         if Cell.wowSupporters[Cell.vars.playerNameFull] then
-            F.HandleUnitButton("unit", "player", Display)
+            F.HandleUnitButton("unit", "player", Cell.wowSupporters[Cell.vars.playerNameFull] == "mvp" and DisplayMVP or Display)
         end
     end
 end
