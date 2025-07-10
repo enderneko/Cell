@@ -110,6 +110,8 @@ local supporters1 = { -- wowIDs
     {"Daanior-Draenor (EU)"}, -- Daanior-Draenor (Ko-fi)
     {"血蹄凯恩嗯-加丁 (CN)"}, -- 爱发电用户_1e94c
     {"墨染雲湮-白银之手 (CN)"}, -- 墨染雲湮-白银之手
+    {"Taudri-Mankrik (US)"}, -- Taudry (Ko-fi)
+    {"Sproutz-Illidan (US)"}, -- Sproutz (Ko-fi)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
