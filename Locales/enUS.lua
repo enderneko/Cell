@@ -90,6 +90,10 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r257-release (Jul 11, 2025, 17:00 GMT+8)</h1>
+        <p>* Bump up toc for Wrath (CN).</p>
+        <br/>
+
         <h1>r256-release (Jul 8, 2025, 18:00 GMT+8)</h1>
         <p>* (MoP) Fixed PW:S indicator.</p>
         <br/>

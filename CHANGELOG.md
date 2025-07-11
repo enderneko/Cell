@@ -1,3 +1,5 @@
-# [Full Changelog](https://github.com/enderneko/Cell/compare/r255-release...64a32bcd85ea9fa07ee127546cc7e716573f5da9)
+# [Full Changelog](https://github.com/enderneko/Cell/compare/r256-release...9c87d787f4c37a0760787483e75c5eae6f297194)
 
-- Fix PWS for mop
+- Bump up toc version for Wrath (CN)
+- Fix ShieldBar width
+- Apply combat protection to recScaleBtn
