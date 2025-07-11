@@ -42,7 +42,7 @@ local supporters1 = { -- wowIDs
     {
         "|cffff8000Tithaya-Kel'Thuzad (US)|r",
         "|cffff8000Yesiram-Kel'Thuzad (US)|r",
-    }, -- tithaya (Ko-fi)
+    }, -- Chris (Ko-fi)
     {
         "|cffff8000Everessian-Ravencrest (EU)|r",
         "|cffff8000Grizzlekaz-Ravencrest (EU)|r",
@@ -52,7 +52,13 @@ local supporters1 = { -- wowIDs
         "|cffff8000Moorlaen-Ravencrest (EU)|r",
     }, -- Martin van Vuuren (Ko-fi)
     {"Shendreakah-Zul'jin (US)"}, -- Shendreakah - Zul-jin (Ko-fi)
-    {"Palymoo-Twistingnether (EU)"}, -- Palymoo-Twistingnether (EU) (Ko-fi)
+    {
+        "|cffff8000Palymoo-TwistingNether (EU)|r",
+        "|cffff8000Dreadsham-TwistingNether (EU)|r",
+        "|cffff8000Dreadninja-TwistingNether (EU)|r",
+        "|cffff8000Dreadfu-TwistingNether (EU)|r",
+        "|cffff8000Dreads-TwistingNether (EU)|r",
+    }, -- Palymoo (Ko-fi)
     {"|cffff8000Skywarden-Sylvanas (EU)|r"}, -- Serghei Iakovlev (Ko-fi)
     {"Fourdigitiq-Blackrock (EU)"}, -- Rou (Ko-fi)
     {"Leako-Draenor (EU)"}, -- Leako (Ko-fi)
@@ -61,7 +67,6 @@ local supporters1 = { -- wowIDs
     {"Tenspiritak-Drakthul (EU)"}, -- Tenspiritak (Ko-fi)
     {"Darrágh-Blackrock (EU)"}, -- Jim (Ko-fi)
     {"Cerrmor-Stormrage (US)"}, -- (Ko-fi)
-    {"Drumonji-Blackhand (EU)"}, -- (Ko-fi)
     {"Gordonfreems-Illidan (US)"}, -- Gordon Freeman (Ko-fi)
     {"Saphiren-Azralon (US)"}, -- Saphiren (Ko-fi)
     {"Evangeleena-Outland (EU)"}, -- Milda (Ko-fi)
@@ -170,12 +175,12 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Synthatt", "Ko-fi"}, -- 2024-03-26
     {"devo", "Ko-fi"}, -- 2024-04-07
     {"QBbY", "爱发电"}, -- 2024-04-09 爱发电用户_QBbY
-    {"|cffff8000tithaya|r", "Ko-fi"}, -- 2024-04-18
+    {"|cffff8000Chris|r", "Ko-fi"}, -- Chris 2024-04-18
     {"Pandora", "Ko-fi"}, -- 2024-04-22
     {"|cffff8000Martin van Vuuren|r", "Ko-fi"}, -- 2024-05-06
     {"Shendreakah", "Ko-fi"}, -- 2024-05-12
     {"8xs3", "爱发电"}, -- 2024-05-12 爱发电用户_8xs3
-    {"Palymoo", "Ko-fi"}, -- 2024-05-12
+    {"|cffff8000Palymoo|r", "Ko-fi"}, -- 2024-05-12
     {"Winkupo", "Ko-fi"}, -- 2024-05-14
     {"|cffff8000Serghei Iakovlev|r", "Ko-fi"}, -- 2024-05-15
     {"Rou", "Ko-fi"}, -- 2024-05-23
