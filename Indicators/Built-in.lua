@@ -2034,7 +2034,7 @@ local function ShieldBar_SetHorizontalValue(bar, percent)
     else
         barWidth = maxWidth * percent
     end
-    bar:SetWidth(barWidth)
+    bar:SetWidth(max(barWidth, 3))
 end
 
 local function ShieldBar_SetVerticalValue(bar, percent)
@@ -2045,7 +2045,7 @@ local function ShieldBar_SetVerticalValue(bar, percent)
     else
         barHeight = maxHeight * percent
     end
-    bar:SetHeight(barHeight)
+    bar:SetHeight(max(barHeight, 3))
 end
 
 local function ShieldBar_SetPoint(bar, point, anchorTo, anchorPoint, x, y)
