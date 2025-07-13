@@ -87,7 +87,10 @@ select(2, ...).L = setmetatable({
 
     ["CHANGELOGS"] = [[
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
-        <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
+        <br/>
+
+        <h1>r258-release (Jul 13, 2025, 11:30 GMT+8)</h1>
+        <p>* Attempt to fix aura update.</p>
         <br/>
 
         <h1>r257-release (Jul 11, 2025, 17:00 GMT+8)</h1>

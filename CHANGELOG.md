@@ -1,5 +1,3 @@
-# [Full Changelog](https://github.com/enderneko/Cell/compare/r256-release...9c87d787f4c37a0760787483e75c5eae6f297194)
+# [Full Changelog](https://github.com/enderneko/Cell/compare/r257-release...998adb17d4d65541e048284fb263659b76dc707f)
 
-- Bump up toc version for Wrath (CN)
-- Fix ShieldBar width
-- Apply combat protection to recScaleBtn
+- Attempt to fix aura update

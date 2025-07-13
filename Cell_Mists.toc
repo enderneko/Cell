@@ -1,6 +1,6 @@
 ## Interface: 50500
 ## Title: Cell
-## Version: r257-release
+## Version: r258-release
 ## Author: enderneko
 ## X-Flavor: Mists
 ## SavedVariables: CellDB, CellDBBackup
