@@ -222,7 +222,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["locked"] = false,
                 ["fadeOut"] = false,
                 ["menuPosition"] = "top_bottom",
-                ["alwaysUpdateAuras"] = true,
+                ["alwaysUpdateAuras"] = false,
                 ["framePriority"] = {
                     {"Main", true},
                     {"Spotlight", false},
@@ -232,6 +232,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["translit"] = false,
             }
         end
+        Cell.vars.alwaysUpdateAuras = CellDB["general"]["alwaysUpdateAuras"]
 
         -- nicknames ------------------------------------------------------------------------------
         if type(CellDB["nicknames"]) ~= "table" then

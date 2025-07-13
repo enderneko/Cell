@@ -3452,6 +3452,11 @@ function F.Revise()
         end
     end
 
+    -- r258-release
+    if CellDB["revise"] and dbRevision < 258 then
+        CellDB["general"]["alwaysUpdateAuras"] = false
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

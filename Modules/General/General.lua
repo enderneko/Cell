@@ -301,9 +301,10 @@ local function CreateMiscPane()
 
     alwaysUpdateAurasCB = Cell.CreateCheckButton(miscPane, L["Always Update Auras"], function(checked, self)
         CellDB["general"]["alwaysUpdateAuras"] = checked
+        Cell.vars.alwaysUpdateAuras = checked
     end, L["Ignore UNIT_AURA payloads"], L["This may help solve issues of indicators not updating correctly"])
     alwaysUpdateAurasCB:SetPoint("TOPLEFT", 5, -27)
-    alwaysUpdateAurasCB:SetEnabled(Cell.isRetail)
+    alwaysUpdateAurasCB:SetEnabled(Cell.isRetail or Cell.isMists)
 
     useCleuCB = Cell.CreateCheckButton(miscPane, L["Faster Health Updates"], function(checked, self)
         CellDB["general"]["useCleuHealthUpdater"] = checked
