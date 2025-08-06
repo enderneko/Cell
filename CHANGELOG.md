@@ -1,3 +1,4 @@
-# [Full Changelog](https://github.com/enderneko/Cell/compare/r257-release...998adb17d4d65541e048284fb263659b76dc707f)
+# [Full Changelog](https://github.com/enderneko/Cell/compare/r258-release...1e4430e11f75cad3ba6e2325d9720945efbda1aa)
 
-- Attempt to fix aura update
+- Update tww debuffs
+- Update mop debuffs

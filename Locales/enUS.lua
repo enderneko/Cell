@@ -89,6 +89,11 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r259-release (Aug 6, 2025, 16:27 GMT+8)</h1>
+        <p>* Updated TWW debuffs (thanks 钛锬 and 枫岚).</p>
+        <p>* Updated MoP debuffs.</p>
+        <br/>
+
         <h1>r258-release (Jul 13, 2025, 11:30 GMT+8)</h1>
         <p>* Attempt to fix aura update.</p>
         <br/>
