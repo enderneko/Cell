@@ -37,7 +37,7 @@ local supporters1 = { -- wowIDs
     {"大领主王大发-莫格莱尼 (CN)"}, -- Shawn (爱发电)
     {"Sjerry-死亡之翼 (CN)"}, -- 爱发电用户_7957f
     {"貼饼子-匕首岭 (CN)"},
-    {"心耀-冰风岗 (CN)"}, -- warbaby (爱不易)
+    {"|cfffb6f92心耀-冰风岗 (CN)|r"}, -- warbaby (爱不易)
     {"秋末旷夜-凤凰之神 (CN)", "秋末旷叶-凤凰之神 (CN)"}, -- 爱发电用户_760ee (爱发电)
     {"曾經活過-憤怒使者 (TW)"}, -- ZzZ (爱发电)
     {"音速豆奶-白银之手 (CN)"}, -- 爱发电用户_83f12
@@ -57,11 +57,11 @@ local supporters1 = { -- wowIDs
     {"Holystora-Antonidas (EU)"}, -- devo (Ko-fi)
     {
         "|cffff8000Everessian-Ravencrest (EU)|r",
-        "|cffff8000Grizzlekaz-Ravencrest (EU)|r",
+        "|cffff8000Thundaem-Ravencrest (EU)|r",
         "|cffff8000Shylanelle-Ravencrest (EU)|r",
         "|cffff8000Alenlin-Ravencrest (EU)|r",
         "|cffff8000Kulresh-Ravencrest (EU)|r",
-        "|cffff8000Moorlaen-Ravencrest (EU)|r",
+        "|cffff8000Thurådin-Ravencrest (EU)|r",
     }, -- Martin van Vuuren (Ko-fi)
     {"Shendreakah-Zul'jin (US)"}, -- Shendreakah - Zul-jin (Ko-fi)
     {"|cffff8000Skywarden-Sylvanas (EU)|r"}, -- Serghei Iakovlev (Ko-fi)
@@ -99,13 +99,13 @@ local supporters1 = { -- wowIDs
     {"絵野-金色平原 (CN)"}, -- Neet_F (爱发电)
     {"Shichiki-Antonidas (EU)"}, -- Shichiki-EU-Antonidas (Ko-fi)
     {
-        "|cffff8000露露缇娅-迅捷微风 (CN)|r",
-        "|cffff8000露露缇娅丶-霜语 (CN)|r",
+        "|cfffb6f92露露缇娅-迅捷微风 (CN)|r",
+        "|cfffb6f92露露缇娅丶-霜语 (CN)|r",
     }, -- 露露缇娅 (爱发电)
     {
-        "|cffff8000Rëat-Silvermoon (EU)|r",
-        "|cffff8000Reatsham-Silvermoon (EU)|r",
-        "|cffff8000Reatvoker-Silvermoon (EU)|r",
+        "|cfffb6f92Rëat-Silvermoon (EU)|r",
+        "|cfffb6f92Reatsham-Silvermoon (EU)|r",
+        "|cfffb6f92Reatvoker-Silvermoon (EU)|r",
     }, -- Reat
     {"Daydream-Dalaran (EU)"}, -- luana11
     {"|cffff8000Aschgewitter-Eredar (EU)|r"}, -- Aschgewitter - Eredar
@@ -122,10 +122,16 @@ local supporters1 = { -- wowIDs
     {"墨染雲湮-白银之手 (CN)"}, -- 墨染雲湮-白银之手
     {"Taudri-Mankrik (US)"}, -- Taudry (Ko-fi)
     {"Sproutz-Illidan (US)"}, -- Sproutz (Ko-fi)
+    {
+        "|cfffb6f92Floofe-Nightslayer (US)|r",
+        "|cfffb6f92Mommie-Nightslayer (US)|r",
+        "|cfffb6f92Flewf-Nightslayer (US)|r",
+    }, -- Floofe (Ko-fi)
+    {"无语了捏-回音山 (CN)"}, -- 我有脂肪肝 (爱发电)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
-    {"|cffff8000钛锬|r", "爱发电"}, -- 2021-11-15
+    {"|cfffb6f92钛锬|r", "爱发电"}, -- 2021-11-15
     {"|cffff8000呆小七|r", "爱发电"}, -- 2021-11-15
     {"黑色之城", "爱发电"}, -- 2022-03-16
     {"flappysmurf", "爱发电"}, -- 2022-04-16
@@ -142,7 +148,7 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"年复一年路西法", "爱发电"}, -- 2022-10-20
     {"阿哲", "爱发电"}, -- 2022-10-23
     {"Sjerry", "爱发电"}, -- 2022-11-04 爱发电用户_7957f
-    {"warbaby", "爱不易"}, -- 2022-11-25
+    {"|cfffb6f92warbaby|r", "爱不易"}, -- 2022-11-25
     {"6ND8", "爱发电"}, -- 2022-11-16
     {"伊莉丝翠的眷顾", "爱发电"}, -- 2022-11-18
     {"批歪", "爱发电"},
@@ -224,7 +230,7 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Neet_F", "爱发电"}, -- 2024-09-28
     {"冷冽谷尬舞队队长", "爱发电"}, -- 2024-10-01
     {"Shichiki-EU-Antonidas", "Ko-fi"}, -- 2024-10-03
-    {"|cffff8000露露缇娅|r", "爱发电"}, -- 2024-12-20
+    {"|cfffb6f92露露缇娅|r", "爱发电"}, -- 2024-12-20
     {"luana11", "Ko-fi"}, -- 2025-01-25
     {"|cffff8000Aschgewitter - Eredar|r", "Ko-fi"}, -- 2025-02-27
     {"爱发电用户_sUE4", "爱发电"}, -- 2025-03-02
@@ -244,6 +250,8 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Sproutz", "Ko-fi"}, -- 2025-07-03
     {"|cffff8000Chrystal|r", "Ko-fi"}, -- 2025-07-04
     {"Natalz", "Ko-fi"}, -- 2025-07-06
+    {"|cfffb6f92Floofe|r", "Ko-fi"}, -- 2025-08-07
+    {"我有脂肪肝", "爱发电"}, -- 2025-08-07
 }
 
 -------------------------------------------------

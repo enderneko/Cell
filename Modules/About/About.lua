@@ -183,7 +183,7 @@ local function CreateSpecialThanksPane()
     specialThanksText:SetSpacing(5)
     specialThanksText:SetJustifyH("LEFT")
     specialThanksText:SetText(
-        "|cff00ffff露露缇娅, Reat TV(YouTube), 钛锬, warbaby(爱不易)|r\n"..
+        "|cfffb6f92露露缇娅, Reat TV, 钛锬, Floofe, warbaby|r\n"..
         "|cffff0000Wago:|r Ora\n"..
         "|cffff3333YouTube:|r AutomaticJak, JFunkGaming, yumytv\n"..
         "|cff5662f6Discord:|r |cff7fff00clankz.|r, |cff7fff00DreadMesh|r, |cff7fff00Missgunst|r, |cff00ffffVollmerino|r, aba, BinarySunshine, Bruds, Gharr, honeyhoney, leaKsi, Serghei, swirl, Xepheris"
