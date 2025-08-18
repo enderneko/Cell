@@ -2,7 +2,7 @@
 -- File: RaidDebuffs_TWW.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2024-07-20 14:35 +08:00
--- Modified: 2025-08-16 12:10 -05:00
+-- Modified: 2025-08-18 16:38 +08:00
 ---------------------------------------------------------------------
 
 ---@class Cell
@@ -321,179 +321,181 @@ local debuffs = {
 
     [1302] = { -- 法力熔炉：欧米伽 - Manaforge Omega
         ["general"] = {
-            346109, -- Face Hug
-            346115, -- Upset Stomach
-            1215904, -- Volatile Mana
-            1216172, -- Poisoned Blood
-            1223222, -- Arcane Gash
-            1223235, -- Arcane Sludge
-            1223615, -- Cursed Gaze
-            1223667, -- Void Glare
-            1223723, -- Glare Splatter
-            1223944, -- Phase Feast
-            1224114, -- Toxic Eruption
-            1224343, -- Shattered Shards
-            1224977, -- Arcing Mana
-            1225219, -- Mana Exhaust
-            1226277, -- Entropic Howl
-            1226440, -- Bound
-            1226788, -- Entropic Terror
-            1226903, -- Harvesting Slice
-            1226915, -- Sticky Silk
-            1226951, -- Arcane Infusion
-            1227710, -- Abyssal Surge
-            1229325, -- Oblivion
-            1231059, -- Essence Implosion
-            1237725, -- Energy Surge
-            1238844, -- Echo Barrage
-            1238960, -- Bonemelt
-            1239269, -- Fel Inferno
-            1241137, -- Refracted Entropy
-            1241795, -- Mana Pipe
-            1241901, -- Mass Binding
-            1242212, -- Burning Aftermath
-            1246022, -- Attuned Spillage
-            1246053, -- Omega Fueled
-            1248319, -- Inhibiting Touch
-            1248435, -- Arcane Touch
+            1215904, -- 不稳定的法力
+            1216172, -- 毒血
+            1223222, -- 奥术裂伤
+            1223235, -- 奥术污泥
+            1223615, -- 诅咒凝视
+            1223667, -- 虚空眩光
+            1223723, -- 眩光喷溅
+            1223944, -- 相位饕餮
+            1224114, -- 剧毒喷发
+            1224343, -- 崩解碎片
+            1224977, -- 弧光法力
+            1225219, -- 法力排放物
+            1226277, -- 熵能嚎叫
+            1226440, -- 束缚
+            1226788, -- 熵能恐惧
+            1226903, -- 收获斩击
+            1226915, -- 粘性丝网
+            1226951, -- 奥术注能
+            1227710, -- 深渊之涌
+            1231059, -- 精华内爆
+            1238844, -- 回音弹幕
+            1238960, -- 骨熔
+            1241901, -- 群体束缚
+            1242212, -- 燃烧余波
+            1246022, -- 调谐溢出
+            1246053, -- 欧米伽助燃
+            1248319, -- 抑制之触
+            1248435, -- 奥术之触
+            1237725, -- 能量涌动
         },
         [2684] = { -- 集能哨兵 - Plexus Sentinel
-            1218625, -- Displacement Matrix
-            1218669, -- Energy Cutter
-            1219248, -- Arcane Radiation
-            1219354, -- Potent Mana Residue
-            1219439, -- Obliteration Arcanocannon
-            1219459, -- Manifest Matrices
-            1219531, -- Eradicating Salvo
-            1219607, -- Eradicating Salvo
-            1220610, -- Protocol: Purge
-            1233110, -- Purging Lightning
-            1233449, -- Holding a Mouse
-            1233999, -- Obliteration Arcanocannon
-            1235545, -- Energy Overload
-            1237725, -- Energy Surge
-            1250671, -- Arcanomatrix Sieve
+            "1219531", -- 根除齐射 - Eradicating Salvo
+            "1219607", -- 根除齐射 - Eradicating Salvo
+            1218625, -- 错位矩阵 - Displacement Matrix
+            1219459, -- 具现矩阵 - Manifest Matrices
+            "1219439", -- 湮灭奥能重炮(T) - Obliteration Arcanocannon
+            "1233999", -- 湮灭奥能重炮(易伤) - Obliteration Arcanocannon
+            1218669, -- 能量切割者 - Energy Cutter
+            1219354, -- 潜能法力残渣 - Potent Mana Residue
+            1233449, -- 拿捏耗子 - Holding a Mouse
+            1219248, -- 奥术辐射 - Arcane Radiation
+            1233110, -- 净化闪电 - Purging Lightning
+            1250671, -- 奥能矩阵筛网 - Arcanomatrix Sieve
+            -1235545, -- 能量过载 - Energy Overload
+            -1220610, -- 协议：净化 - Protocol: Purge
         },
         [2686] = { -- 卢米萨尔 - Loom'ithar
-            1226311, -- Infusion Tether
-            1226366, -- Living Silk
-            1226395, -- Overinfusion Burst
-            1226721, -- Silken Snare
-            1227163, -- Writhing Wave
-            1227784, -- Arcane Outrage
-            1237212, -- Piercing Strand
-            1237307, -- Lair Weaving
-            1243771, -- Arcane Ichor
-            1247045, -- Hyper Infusion
+            1237307, -- 巢穴编织 - Lair Weaving
+            1226311, -- 注能束缚 - Infusion Tether
+            1226721, -- 缠丝陷阱 - Silken Snare
+            1227163, -- 蠕行波(分摊) - Writhing Wave
+            1227784, -- 奥术暴怒 - Arcane Outrage
+            1237212, -- 贯体束丝(T) - Piercing Strand
+            1247045, -- 超能灌注 - Hyper Infusion
+            1226395, -- 过量输能爆发 - Overinfusion Burst
+            1243771, -- 奥能黏液 - Arcane Ichor
+            1226366, -- 活体流丝 - Living Silk
         },
         [2685] = { -- 缚魂者娜欣达利 - Soulbinder Naazindhri
-            1223859, -- Arcane Expulsion
-            1225626, -- Soulfire Convergence
-            1226827, -- Soulrend Orb
-            1227049, -- Voidblade Ambush
-            1227051, -- Voidblade Ambush
-            1227052, -- Void Burst
-            1227276, -- Soulfray Annihilation
-            1227277, -- Soulfray Annihilation
-            1237607, -- Mystic Lash
-            1237725, -- Energy Surge
-            1241357, -- Soulfray Annihilation
-            1242071, -- Arcane Expulsion
-            1242086, -- Arcane Energy
-            1242088, -- Arcane Expulsion
-            1246531, -- Arcane Sigils
-            1248464, -- Mystic Lash
-            1248979, -- Voidblade Ambush
-            1249065, -- Soulfire Convergence
-            1250008, -- Shatterpulse
+            1227276, -- 笞魂歼灭 - Soulfray Annihilation
+            -- 1227277, -- 笞魂歼灭 - Soulfray Annihilation
+            -- 1241357, -- 笞魂歼灭 - Soulfray Annihilation
+            1249065, -- 魂火汇聚 - Soulfire Convergence
+            -- 1225626, -- 魂火汇聚 - Soulfire Convergence
+            1226827, -- 碎魂法球 - Soulrend Orb
+            1227052, -- 虚空爆炸 - Void Burst
+            1227049, -- 虚空剑士奇袭 - Voidblade Ambush
+            -- 1227051, -- 虚空剑士奇袭 - Voidblade Ambush
+            -- 1248979, -- 虚空剑士奇袭 - Voidblade Ambush
+            1237607, -- 秘法鞭笞 - Mystic Lash
+            -- 1248464, -- 秘法鞭笞 - Mystic Lash
+            -- 1223859, -- 奥术驱除 - Arcane Expulsion
+            -- 1242071, -- 奥术驱除 - Arcane Expulsion
+            1242088, -- 奥术驱除 - Arcane Expulsion
+            1242086, -- 奥术能量 - Arcane Energy
+            1250008, -- 碎裂脉冲 - Shatterpulse
+            -- 1246531, -- 奥术符印 - Arcane Sigils
         },
         [2687] = { -- 熔炉编织者阿拉兹 - Forgeweaver Araz
-            1228168, -- Silencing Tempest
-            1228188, -- Silencing Tempest
-            1228214, -- Astral Harvest
-            1228506, -- Overwhelming Power
-            1232412, -- Focusing Iris
-            1233076, -- Dark Singularity
-            1233979, -- Astral Harvest
-            1234324, -- Photon Blast
-            1240705, -- Astral Burn
+            1240705, -- 星界灼烧 - Astral Burn
+            1228214, -- 星界收割 - Astral Harvest
+            -- 1233979, -- 星界收割 - Astral Harvest
+            1243901, -- 虚空收割
+            -- 1243873, -- 虚空收割
+            1232775, -- 奥术抹消
+            -- 1238874, -- 回音风暴
+            1238878, -- 回音风暴
+            1228188, -- 沉默风暴 - Silencing Tempest
+            -- 1228168, -- 沉默风暴 - Silencing Tempest
+            1228506, -- 非凡力量(T) - Overwhelming Power
+            1234324, -- 光子轰击 - Photon Blast
+            1232412, -- 聚焦之虹 - Focusing Iris
+            1228219, -- 星界印记(易伤)
+            -1233076, -- 黑暗奇点 - Dark Singularity
         },
         [2688] = { -- 狩魂猎手 - The Soul Hunters
-            1218103, -- Eye Beam
-            1218122, -- Eye Beam
-            1221490, -- Fel-Singed
-            1222232, -- Devourer's Ire
-            1222307, -- Consume
-            1222310, -- Unending Hunger
-            1223042, -- Fel Rush
-            1223725, -- Fel Inferno
-            1225130, -- Felblade
-            1226493, -- Shattered Soul
-            1227811, -- The Hunt
-            1227847, -- The Hunt
-            1233105, -- Dark Residue
-            1233381, -- Withering Flames
-            1233968, -- Event Horizon
-            1235045, -- Encroaching Oblivion
-            1241908, -- Fracture
-            1241917, -- Frailty
-            1241946, -- Frailty
-            1242284, -- Soulcrush
-            1245384, -- Fel Inferno
+            1227847, -- 恶魔追击 - The Hunt
+            -- 1227811, -- 恶魔追击 - The Hunt
+            1223042, -- 邪能冲撞 - Fel Rush
+            1222232, -- 吞噬者之怒 - Devourer's Ire
+            1225130, -- 邪能之刃 - Felblade
+            1226493, -- 破碎之魂(T) - Shattered Soul
+            1241908, -- 破裂(T) - Fracture
+            1221490, -- 邪能灼痕(T) - Fel-Singed
+            1218103, -- 眼棱(T) - Eye Beam
+            -- 1218122, -- 眼棱(T) - Eye Beam
+            -- 1241917, -- 脆弱 - Frailty
+            1241946, -- 脆弱 - Frailty
+            1233968, -- 黑洞视界 - Event Horizon
+            1235045, -- 湮灭逼近 - Encroaching Oblivion
+            1242284, -- 灵魂重碾 - Soulcrush
+            1222310, -- 无餍之饥 - Unending Hunger
+            1233105, -- 黑暗残渣 - Dark Residue
+            1233381, -- 凋零烈焰 - Withering Flames
+            -- 1223725, -- 邪能地狱 - Fel Inferno
+            1245384, -- 邪能地狱 - Fel Inferno
+            1222307, -- 吞噬 - Consume
         },
         [2747] = { -- 弗兰克提鲁斯 - Fractillus
-            1224414, -- Crystalline Shockwave
-            1227373, -- Shattershell
-            1227378, -- Crystal Encasement
-            1231871, -- Shockwave Slam
-            1233411, -- Crystalline Shockwave
-            1241137, -- Refracted Entropy
-            1247424, -- Null Consumption
-            1250600, -- Void Lightning
+            1227373, -- 碎壳 - Shattershell
+            1227378, -- 水晶覆体 - Crystal Encasement
+            1247424, -- 虚无吞噬 - Null Consumption
+            1231871, -- 震波猛击(T) - Shockwave Slam
+            1224414, -- 结晶震荡波 - Crystalline Shockwave
+            -- 1233411, -- 结晶震荡波 - Crystalline Shockwave
+            1250600, -- 虚空闪电 - Void Lightning
+            1241137, -- 折射熵变 - Refracted Entropy
         },
         [2690] = { -- 节点之王萨哈达尔 - Nexus-King Salhadaar
-            1224795, -- Conquer
-            1224816, -- Vanquish
-            1225444, -- Atomized
-            1226042, -- Starkiller Nova
-            1226362, -- Twilight Scar
-            1226413, -- Starshattered
-            1227470, -- Besiege
-            1227549, -- Banishment
-            1228056, -- Reap
-            1228081, -- Nexus Beams
-            1228196, -- Dimension Breath
-            1231097, -- Cosmic Rip
-            1234529, -- Cosmic Maw
-            1234539, -- Dimension Glare
-            1237725, -- Energy Surge
-            1252803, -- Self-Destruct
+            1227549, -- 放逐 - Banishment
+            1224795, -- 征服 - Conquer
+            1224816, -- 主宰 - Vanquish
+            1224737, -- 誓言约束 - Oath-Bound
+            1234539, -- 维度眩光(T) - Dimension Glare
+            1226413, -- 身星俱碎(T) - Starshattered
+            1234529, -- 宇宙之喉(T) - Cosmic Maw
+            1228196, -- 次元吐息 - Dimension Breath
+            1226362, -- 暮光创痕 - Twilight Scar
+            1231097, -- 寰宇裂伤 - Cosmic Rip
+            1226042, -- 歼星新星 - Starkiller Nova
+            1225444, -- 灰飞烟灭 - Atomized
+            1227470, -- 围攻 - Besiege
+            1228081, -- 节点光束 - Nexus Beams
+            1228056, -- 收割 - Reap
+            1252803, -- 自毁 - Self-Destruct
         },
         [2691] = { -- 诸界吞噬者迪门修斯 - Dimensius, the All-Devouring
-            1228206, -- Excess Mass
-            1228207, -- Collective Gravity
-            1229325, -- Oblivion
-            1230168, -- Mortal Fragility
-            1230674, -- Spaghettification
-            1231002, -- Dark Energy
-            1232394, -- Gravity Well
-            1234054, -- Shadowquake
-            1234266, -- Cosmic Fragility
-            1235114, -- Soaring Reshii
-            1235303, -- Harbinger's Embrace
-            1237097, -- Astrophysical Jet
-            1237325, -- Gamma Burst
-            1237696, -- Debris Field
-            1238773, -- Extinction
-            1239270, -- Voidwarding
-            1243577, -- Reverse Gravity
-            1243609, -- Airborne
-            1243699, -- Spatial Fragment
-            1245292, -- Destabilized
-            1246145, -- Touch of Oblivion
-            1246542, -- Null Binding
-            1246930, -- Stellar Core
-            1250055, -- Voidgrasp
+            -- P1
+            1243609, -- 浮空 - Airborne
+            1243577, -- 引力倒逆 - Reverse Gravity
+            1228206, -- 过量物质(球) - Excess Mass
+            1228207, -- 集体引力 - Collective Gravity
+            1243699, -- 空间碎片 - Spatial Fragment
+            1231002, -- 黑暗能量 - Dark Energy
+            1230168, -- 凡躯的脆弱(T) - Mortal Fragility
+            -- P1.5
+            1230674, -- 面条效应 - Spaghettification
+            1237097, -- 天体物理射流 - Astrophysical Jet
+            -- P2
+            1238773, -- 灭绝 - Extinction
+            1239270, -- 虚空守护 - Voidwarding
+            1237325, -- 伽马爆发 - Gamma Burst
+            1246145, -- 湮灭之触(T) - Touch of Oblivion
+            1246542, -- 虚无缠缚 - Null Binding
+            1237696, -- 碎片地带 - Debris Field
+            -- P3
+            1234054, -- 暗影震荡(环) - Shadowquake
+            1232394, -- 重力井 - Gravity Well
+            1250055, -- 虚空之握 - Voidgrasp
+            1234266, -- 寰宇脆弱(T) - Cosmic Fragility
+            -- misc
+            1229325, -- 湮灭 - Oblivion
+            -1246930, -- 星辰之核 - Stellar Core
+            -1235114, -- 翔空雷什 - Soaring Reshii
+            -1235303, -- 先驱的拥抱 - Harbinger's Embrace
         },
     },
 
