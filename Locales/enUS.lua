@@ -89,6 +89,10 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r260-release (Aug 18, 2025, 17:20 GMT+8)</h1>
+        <p>* Updated TWW raid debuffs (thanks swirl).</p>
+        <br/>
+
         <h1>r259-release (Aug 6, 2025, 16:27 GMT+8)</h1>
         <p>* Updated TWW debuffs (thanks 钛锬 and 枫岚).</p>
         <p>* Updated MoP debuffs.</p>
