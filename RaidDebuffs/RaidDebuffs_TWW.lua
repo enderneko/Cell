@@ -370,29 +370,42 @@ local debuffs = {
             1233110, -- Purging Lightning
             1233449, -- Holding a Mouse
             1233999, -- Obliteration Arcanocannon
+            1235545, -- Energy Overload
+            1237725, -- Energy Surge
+            1250671, -- Arcanomatrix Sieve
         },
         [2686] = { -- 卢米萨尔 - Loom'ithar
             1226311, -- Infusion Tether
             1226366, -- Living Silk
             1226395, -- Overinfusion Burst
+            1226721, -- Silken Snare
             1227163, -- Writhing Wave
             1227784, -- Arcane Outrage
             1237212, -- Piercing Strand
             1237307, -- Lair Weaving
             1243771, -- Arcane Ichor
+            1247045, -- Hyper Infusion
         },
         [2685] = { -- 缚魂者娜欣达利 - Soulbinder Naazindhri
             1223859, -- Arcane Expulsion
             1225626, -- Soulfire Convergence
             1226827, -- Soulrend Orb
+            1227049, -- Voidblade Ambush
             1227051, -- Voidblade Ambush
             1227052, -- Void Burst
             1227276, -- Soulfray Annihilation
             1227277, -- Soulfray Annihilation
+            1237607, -- Mystic Lash
+            1237725, -- Energy Surge
             1241357, -- Soulfray Annihilation
+            1242071, -- Arcane Expulsion
+            1242086, -- Arcane Energy
+            1242088, -- Arcane Expulsion
+            1246531, -- Arcane Sigils
             1248464, -- Mystic Lash
             1248979, -- Voidblade Ambush
             1249065, -- Soulfire Convergence
+            1250008, -- Shatterpulse
         },
         [2687] = { -- 熔炉编织者阿拉兹 - Forgeweaver Araz
             1228168, -- Silencing Tempest
