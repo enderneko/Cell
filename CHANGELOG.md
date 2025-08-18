@@ -1,4 +1,3 @@
-# [Full Changelog](https://github.com/enderneko/Cell/compare/r258-release...1e4430e11f75cad3ba6e2325d9720945efbda1aa)
+# [Full Changelog](https://github.com/enderneko/Cell/compare/r259-release...8ac8751144e97a8dc919ad0971900d5114a92df5)
 
-- Update tww debuffs
-- Update mop debuffs
+- Update raid debuffs (thanks @lolswirl)
