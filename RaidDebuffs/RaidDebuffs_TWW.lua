@@ -2,7 +2,7 @@
 -- File: RaidDebuffs_TWW.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2024-07-20 14:35 +08:00
--- Modified: 2025-08-22 13:17 +08:00
+-- Modified: 2025-08-22 20:36 +08:00
 ---------------------------------------------------------------------
 
 ---@class Cell
@@ -440,12 +440,12 @@ local debuffs = {
             -1245384, -- 邪能地狱 - Fel Inferno
         },
         [2747] = { -- 弗兰克提鲁斯 - Fractillus
+            "1233411", -- 结晶震荡波(点名) - Crystalline Shockwave
             1227373, -- 碎壳 - Shattershell
             1227378, -- 水晶覆体 - Crystal Encasement
             1247424, -- 虚无吞噬 - Null Consumption
             1231871, -- 震波猛击(T) - Shockwave Slam
-            1224414, -- 结晶震荡波 - Crystalline Shockwave
-            -- 1233411, -- 结晶震荡波 - Crystalline Shockwave
+            "1224414", -- 结晶震荡波 - Crystalline Shockwave
             1250600, -- 虚空闪电 - Void Lightning
             1241137, -- 折射熵变 - Refracted Entropy
         },
