@@ -103,7 +103,11 @@ local supporters1 = { -- wowIDs
     {"Shichiki-Antonidas (EU)"}, -- Shichiki-EU-Antonidas (Ko-fi)
     {
         "|cfffb6f92露露缇娅-迅捷微风 (CN)|r",
+        "|cfffb6f92露露緹婭灬-迅捷微风 (CN)|r",
+        "|cfffb6f92露露缇娅丶-迅捷微风 (CN)|r",
+        "|cfffb6f92露露緹婭丶-迅捷微风 (CN)|r",
         "|cfffb6f92露露缇娅丶-霜语 (CN)|r",
+        "|cfffb6f92露露缇娅灬-霜语 (CN)|r",
     }, -- 露露缇娅 (爱发电)
     {
         "|cfffb6f92Rëat-Silvermoon (EU)|r",
@@ -131,6 +135,7 @@ local supporters1 = { -- wowIDs
         "|cfffb6f92Flewf-Nightslayer (US)|r",
     }, -- Floofe (Ko-fi)
     {"无语了捏-回音山 (CN)"}, -- 我有脂肪肝 (爱发电)
+    {"月弥-神圣之歌 (CN)"}, -- 爱发电用户_bb967 (爱发电)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -256,6 +261,7 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"|cfffb6f92Floofe|r", "Ko-fi"}, -- 2025-08-07
     {"我有脂肪肝", "爱发电"}, -- 2025-08-07
     {"奶德史塔克-A'lar CN", "Ko-fi"}, -- 2025-08-15
+    {"爱发电用户_bb967", "爱发电"}, -- 2025-08-22
 }
 
 -------------------------------------------------

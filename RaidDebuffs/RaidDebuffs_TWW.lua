@@ -2,7 +2,7 @@
 -- File: RaidDebuffs_TWW.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2024-07-20 14:35 +08:00
--- Modified: 2025-08-22 13:17 +08:00
+-- Modified: 2025-08-23 13:48 +08:00
 ---------------------------------------------------------------------
 
 ---@class Cell
@@ -440,12 +440,12 @@ local debuffs = {
             -1245384, -- 邪能地狱 - Fel Inferno
         },
         [2747] = { -- 弗兰克提鲁斯 - Fractillus
+            "1233411", -- 结晶震荡波(点名) - Crystalline Shockwave
             1227373, -- 碎壳 - Shattershell
             1227378, -- 水晶覆体 - Crystal Encasement
             1247424, -- 虚无吞噬 - Null Consumption
             1231871, -- 震波猛击(T) - Shockwave Slam
-            1224414, -- 结晶震荡波 - Crystalline Shockwave
-            -- 1233411, -- 结晶震荡波 - Crystalline Shockwave
+            "1224414", -- 结晶震荡波 - Crystalline Shockwave
             1250600, -- 虚空闪电 - Void Lightning
             1241137, -- 折射熵变 - Refracted Entropy
         },
@@ -453,7 +453,7 @@ local debuffs = {
             1227549, -- 放逐 - Banishment
             1224795, -- 征服 - Conquer
             1224816, -- 主宰 - Vanquish
-            1224737, -- 誓言约束 - Oath-Bound
+            "1224737", -- 誓言约束 - Oath-Bound
             1234539, -- 维度眩光(T) - Dimension Glare
             1226413, -- 身星俱碎(T) - Starshattered
             1234529, -- 宇宙之喉(T) - Cosmic Maw
