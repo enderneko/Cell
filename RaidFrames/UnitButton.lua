@@ -1666,6 +1666,8 @@ UnitButton_UpdateAuras = function(self, updateInfo)
         wipe(self._debuffs_cache)
         buffsChanged = true
         debuffsChanged = true
+        buffsChangedFullUpdate = true
+        debuffsChangedFullUpdate = true
     elseif Cell.vars.alwaysUpdateAuras then
         buffsChanged = true
         debuffsChanged = true
