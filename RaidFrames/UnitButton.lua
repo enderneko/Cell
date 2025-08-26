@@ -1060,9 +1060,13 @@ local function ForEachAura(button, filter, func, fullUpdate)
             else
                 tmpDebuffs[auraInstanceID] = aura
             end
+        end
+        
+        -- update cache and handle updates
+        button._debuffs_cache = tmpDebuffs
+        for auraInstanceID, aura in pairs (button._debuffs_cache) do
             func(button, aura)
         end
-        button._debuffs_cache = tmpDebuffs
     elseif filter == "HELPFUL" then
         local tmpBuffs = {}
         for auraInstanceID, aura in pairs (button._buffs_cache) do
@@ -1072,9 +1076,13 @@ local function ForEachAura(button, filter, func, fullUpdate)
             else
                 tmpBuffs[auraInstanceID] = aura
             end
+        end
+        
+        -- update cache and handle updates
+        button._buffs_cache = tmpBuffs
+        for auraInstanceID, aura in pairs (button._buffs_cache) do
             func(button, aura)
         end
-        button._buffs_cache = tmpBuffs
     end
 end
 
