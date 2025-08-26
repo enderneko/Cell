@@ -1054,7 +1054,7 @@ local function ForEachAura(button, filter, func, fullUpdate)
     elseif filter == "HARMFUL" then
         local tmpDebuffs = {}
         for auraInstanceID, aura in pairs (button._debuffs_cache) do
-            if aura.requriresUpdate then
+            if aura.requiresUpdate then
                 tmpDebuffs[auraInstanceID] = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                 tmpDebuffs[auraInstanceID].index = aura.index
             else
@@ -1066,7 +1066,7 @@ local function ForEachAura(button, filter, func, fullUpdate)
     elseif filter == "HELPFUL" then
         local tmpBuffs = {}
         for auraInstanceID, aura in pairs (button._buffs_cache) do
-            if aura.requriresUpdate then
+            if aura.requiresUpdate then
                 tmpBuffs[auraInstanceID] = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                 tmpBuffs[auraInstanceID].index = aura.index
             else
@@ -1677,12 +1677,10 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                 if aura.isHelpful then
                     buffsChanged = true
                     self._buffs_cache[aura.auraInstanceID] = aura
-                    self._buffs_cache[aura.auraInstanceID].requriresUpdate = true
                 end
                 if aura.isHarmful then
                     debuffsChanged = true
                     self._debuffs_cache[aura.auraInstanceID] = aura
-                    self._debuffs_cache[aura.auraInstanceID].requriresUpdate = true
                 end
             end
         end
@@ -1691,11 +1689,11 @@ UnitButton_UpdateAuras = function(self, updateInfo)
             for _, auraInstanceID in next, updateInfo.updatedAuraInstanceIDs do
                 if self._buffs_cache[auraInstanceID] then
                     buffsChanged = true
-                    self._buffs_cache[auraInstanceID].requriresUpdate = true
+                    self._buffs_cache[auraInstanceID].requiresUpdate = true
                 end
                 if self._debuffs_cache[auraInstanceID] then
                     debuffsChanged = true
-                    self._debuffs_cache[auraInstanceID].requriresUpdate = true
+                    self._debuffs_cache[auraInstanceID].requiresUpdate = true
                 end
             end
         end
