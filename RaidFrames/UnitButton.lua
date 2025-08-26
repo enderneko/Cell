@@ -1575,7 +1575,7 @@ local function UpdateMirrorImage(b, event)
         b._mirror_image = nil
     end
     if b._indicatorsReady then
-        UnitButton_UpdateBuffs(b, true) -- UNIT_AURA is staggered, maybe force full update here, not sure if needed
+        UnitButton_UpdateBuffs(b, false) -- should be no full update needed, indicator update is done
     end
 end
 
@@ -1605,7 +1605,7 @@ local function UpdateMassBarrier(b, event)
         b._mass_barrier_icon = nil
     end
     if b._indicatorsReady then
-        UnitButton_UpdateBuffs(b, true) -- UNIT_AURA is staggered, maybe force full update here, not sure if needed
+        UnitButton_UpdateBuffs(b, false) -- should be no full update needed, indicator update is done
     end
 end
 
