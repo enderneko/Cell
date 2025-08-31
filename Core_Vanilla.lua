@@ -628,11 +628,21 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     end
 end
 
+local function UpdateSpecVars(skipTalentUpdate)
+    -- if not skipTalentUpdate then
+        Cell.vars.activeTalentGroup = GetActiveTalentGroup()
+        Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+    -- end
+end
+
 function eventFrame:PLAYER_LOGIN()
     F.Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("UI_SCALE_CHANGED")
+    if GetNumTalentGroups() == 2 then -- check if dualspec is active, if yes register talent swap event
+        eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    end
 
     Cell.vars.playerNameShort = GetUnitName("player")
     Cell.vars.playerNameFull = F.UnitFullName("player")
@@ -640,8 +650,12 @@ function eventFrame:PLAYER_LOGIN()
     Cell.vars.playerGUID = UnitGUID("player")
 
     -- update spec vars
-    Cell.vars.activeTalentGroup = 1
-    Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+    if GetNumTalentGroups() == 2 then -- check if dualspec is active, if yes update talent group vars
+        UpdateSpecVars()
+    else
+        Cell.vars.activeTalentGroup = 1
+        Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+    end
 
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable
     eventFrame:GROUP_ROSTER_UPDATE()
@@ -693,6 +707,20 @@ hooksecurefunc(UIParent, "SetScale", function()
         Cell.Fire("UpdateAppearance", "scale")
     end
 end)
+
+function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
+    F.Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")
+    -- not in combat & spec CHANGED
+    if not InCombatLockdown() and (Cell.vars.activeTalentGroup ~= GetActiveTalentGroup()) then
+        UpdateSpecVars()
+
+        Cell.Fire("UpdateClickCastings")
+        F.Debug("|cffffbb77ActiveTalentGroupChanged:|r", Cell.vars.activeTalentGroup)
+        Cell.Fire("ActiveTalentGroupChanged", Cell.vars.activeTalentGroup)
+    end
+end
+
+
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     self[event](self, ...)

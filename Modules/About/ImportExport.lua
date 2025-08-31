@@ -83,7 +83,7 @@ local function DoImport(noReload)
     elseif imported["characterDB"] and imported["characterDB"]["clickCastings"] then
         if (Cell.isVanilla or Cell.isWrath or Cell.isCata) and imported["characterDB"]["clickCastings"]["class"] == Cell.vars.playerClass then -- WRATH -> WRATH, same class
             clickCastings = imported["characterDB"]["clickCastings"]
-            if Cell.isVanilla then -- no dual spec system
+            if Cell.isVanilla and GetNumTalentGroups() == 1 then -- no dual spec system 
                 clickCastings["useCommon"] = true
             end
         else -- WRATH -> RETAIL
