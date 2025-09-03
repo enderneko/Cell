@@ -2,7 +2,7 @@
 -- File: RaidDebuffs_TWW.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2024-07-20 14:35 +08:00
--- Modified: 2025-08-22 20:36 +08:00
+-- Modified: 2025-08-23 13:48 +08:00
 ---------------------------------------------------------------------
 
 ---@class Cell
@@ -453,7 +453,7 @@ local debuffs = {
             1227549, -- 放逐 - Banishment
             1224795, -- 征服 - Conquer
             1224816, -- 主宰 - Vanquish
-            1224737, -- 誓言约束 - Oath-Bound
+            "1224737", -- 誓言约束 - Oath-Bound
             1234539, -- 维度眩光(T) - Dimension Glare
             1226413, -- 身星俱碎(T) - Starshattered
             1234529, -- 宇宙之喉(T) - Cosmic Maw

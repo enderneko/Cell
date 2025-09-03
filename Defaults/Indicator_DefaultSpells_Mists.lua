@@ -185,6 +185,7 @@ local externals = { -- true: track by name, false: track by id
         [147833] = true, -- 援护
         [46947] = true, -- 捍卫
         [114028] = true, -- 群体反射
+        [114030] = true, -- 警戒
     },
 }
 
