@@ -67,7 +67,12 @@ local supporters1 = { -- wowIDs
         "|cffff8000Thurådin-Ravencrest (EU)|r",
     }, -- Martin van Vuuren (Ko-fi)
     {"Shendreakah-Zul'jin (US)"}, -- Shendreakah - Zul-jin (Ko-fi)
-    {"|cffff8000Skywarden-Sylvanas (EU)|r"}, -- Serghei Iakovlev (Ko-fi)
+    {
+        "|cffff8000Lucen-Terokkar (EU)|r",
+        "|cffff8000Apexion-Terokkar (EU)|r",
+        "|cffff8000Moonwhisper-Terokkar (EU)|r",
+        "|cffff8000Wildrunner-Terokkar (EU)|r",
+    }, -- Serghei Iakovlev (Ko-fi)
     {"Fourdigitiq-Blackrock (EU)"}, -- Rou (Ko-fi)
     {"Leako-Draenor (EU)"}, -- Leako (Ko-fi)
     {"|cffff8000Asuranpala-Draenor (EU)|r"}, -- AsuranDex (Ko-fi)
