@@ -79,7 +79,9 @@ function F.HideBlizzardRaid()
             end
         end)
     end
+end
 
+function F.HideBlizzardRaidManager()
     if CompactRaidFrameManager_SetSetting then
         CompactRaidFrameManager_SetSetting("IsShown", "0")
     end

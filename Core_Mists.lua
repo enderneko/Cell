@@ -782,6 +782,7 @@ function eventFrame:PLAYER_LOGIN()
     -- hide blizzard
     if CellDB["general"]["hideBlizzardParty"] then F.HideBlizzardParty() end
     if CellDB["general"]["hideBlizzardRaid"] then F.HideBlizzardRaid() end
+    if CellDB["general"]["hideBlizzardRaidManager"] then F.HideBlizzardRaidManager() end
     -- lock & menu
     Cell.Fire("UpdateMenu")
     -- update CLEU health
