@@ -3457,6 +3457,25 @@ function F.Revise()
         CellDB["general"]["alwaysUpdateAuras"] = false
     end
 
+    -- r262-release
+    if CellDB["revise"] and dbRevision < 262 then
+        if Cell.isRetail then
+            F.TInsertIfNotExists(CellDB["targetedSpellsList"], unpack(I.GetDefaultTargetedSpellsList()))
+        end
+
+        if type(CellDB["general"]["hideBlizzardRaidManager"]) ~= "boolean" then
+            CellDB["general"]["hideBlizzardRaidManager"] = true
+        end
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.auraType == "debuff" and not i.castBy then
+                    i.castBy = "anyone"
+                end
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

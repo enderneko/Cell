@@ -1728,8 +1728,9 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "checkbutton3:fadeOut", "auras", "thickness", "frameLevel:50"}
         end
 
+        tinsert(settingsTable, 2, "castBy")
+
         if indicatorTable["auraType"] == "buff" then
-            tinsert(settingsTable, 2, "castBy")
             tinsert(settingsTable, 3, "checkbutton2:trackByName")
             -- tinsert(settingsTable, 4, "showOn")
         end

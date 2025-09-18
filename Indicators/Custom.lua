@@ -56,9 +56,9 @@ function I.UpdateIndicatorTable(indicatorTable)
 
     customIndicators[auraType][indicatorName]["name"] = indicatorTable["name"]
     customIndicators[auraType][indicatorName]["type"] = indicatorTable["type"]
+    customIndicators[auraType][indicatorName]["castBy"] = indicatorTable["castBy"]
 
     if auraType == "buff" then
-        customIndicators[auraType][indicatorName]["castBy"] = indicatorTable["castBy"]
         customIndicators[auraType][indicatorName]["_auras"] = F.Copy(indicatorTable["auras"]) --* save ids
         customIndicators[auraType][indicatorName]["trackByName"] = indicatorTable["trackByName"]
     end
@@ -269,13 +269,13 @@ function I.UpdateCustomIndicators(unitButton, auraInfo)
             end
 
             if indicatorTable["auras"][spell] or (indicatorTable["auras"][0] and duration ~= 0) then -- is in indicator spell list
-                if auraType == "buff" then
-                    -- check caster
-                    if (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "others" and not castByMe) or (indicatorTable["castBy"] == "anyone") then
+                -- check caster
+                if (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "others" and not castByMe) or (indicatorTable["castBy"] == "anyone") then
+                    if auraType == "buff" then
+                        Update(unitButton.indicators[indicatorName], indicatorTable, unit, spell, start, duration, debuffType, icon, count, auraInfo.refreshing)
+                    else -- debuff
                         Update(unitButton.indicators[indicatorName], indicatorTable, unit, spell, start, duration, debuffType, icon, count, auraInfo.refreshing)
                     end
-                else -- debuff
-                    Update(unitButton.indicators[indicatorName], indicatorTable, unit, spell, start, duration, debuffType, icon, count, auraInfo.refreshing)
                 end
             end
         end
