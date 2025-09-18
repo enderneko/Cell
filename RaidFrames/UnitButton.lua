@@ -2165,11 +2165,14 @@ local function UnitButton_UpdateHealthMax(self)
     end
 end
 
-local function UnitButton_UpdateHealth(self, diff)
+local function UnitButton_UpdateHealth(self, diff, skipStateUpdates)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    UnitButton_UpdateHealthStates(self, diff)
+    if not skipStateUpdates then
+        UnitButton_UpdateHealthStates(self, diff)
+    end
+
     local healthPercent = self.states.healthPercent
 
     if barAnimationType == "Flash" then
@@ -2205,7 +2208,7 @@ local function UnitButton_UpdateHealth(self, diff)
     end
 end
 
-local function UnitButton_UpdateHealPrediction(self)
+local function UnitButton_UpdateHealPrediction(self, skipStateUpdates)
     if not predictionEnabled then
         self.widgets.incomingHeal:Hide()
         return
@@ -2220,16 +2223,20 @@ local function UnitButton_UpdateHealPrediction(self)
         return
     end
 
-    UnitButton_UpdateHealthStates(self)
+    if not skipStateUpdates then
+        UnitButton_UpdateHealthStates(self)
+    end
 
     self.widgets.incomingHeal:SetValue(value / self.states.healthMax, self.states.healthPercent)
 end
 
-UnitButton_UpdateShieldAbsorbs = function(self)
+UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    UnitButton_UpdateHealthStates(self)
+    if not skipStateUpdates then
+        UnitButton_UpdateHealthStates(self)
+    end
 
     if self.states.totalAbsorbs > 0 then
         local shieldPercent = self.states.totalAbsorbs / self.states.healthMax
@@ -2262,7 +2269,7 @@ UnitButton_UpdateShieldAbsorbs = function(self)
     end
 end
 
-local function UnitButton_UpdateHealAbsorbs(self)
+local function UnitButton_UpdateHealAbsorbs(self, skipStateUpdates)
     if not absorbEnabled then
         self.widgets.absorbsBar:Hide()
         self.widgets.overAbsorbGlow:Hide()
@@ -2272,7 +2279,9 @@ local function UnitButton_UpdateHealAbsorbs(self)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    UnitButton_UpdateHealthStates(self)
+    if not skipStateUpdates then
+        UnitButton_UpdateHealthStates(self)
+    end
 
     if self.states.healAbsorbs > 0 then
         local absorbsPercent = self.states.healAbsorbs / self.states.healthMax
@@ -2586,15 +2595,15 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateNameTextColor(self)
     UnitButton_UpdateHealthTextColor(self)
     UnitButton_UpdateHealthMax(self)
-    UnitButton_UpdateHealth(self)
-    UnitButton_UpdateHealPrediction(self)
+    UnitButton_UpdateHealth(self, nil, true)
+    UnitButton_UpdateHealPrediction(self, true)
     UnitButton_UpdateStatusText(self)
     UnitButton_UpdateHealthColor(self)
     UnitButton_UpdateTarget(self)
     UnitButton_UpdatePlayerRaidIcon(self)
     UnitButton_UpdateTargetRaidIcon(self)
-    UnitButton_UpdateShieldAbsorbs(self)
-    UnitButton_UpdateHealAbsorbs(self)
+    UnitButton_UpdateShieldAbsorbs(self, true)
+    UnitButton_UpdateHealAbsorbs(self, true)
     UnitButton_UpdateInRange(self)
     UnitButton_UpdateRole(self)
     UnitButton_UpdateLeader(self)
@@ -2735,16 +2744,16 @@ local function UnitButton_OnEvent(self, event, unit, arg)
 
         elseif event == "UNIT_MAXHEALTH" then
             UnitButton_UpdateHealthMax(self)
-            UnitButton_UpdateHealth(self)
-            UnitButton_UpdateHealPrediction(self)
-            UnitButton_UpdateShieldAbsorbs(self)
-            UnitButton_UpdateHealAbsorbs(self)
+            UnitButton_UpdateHealth(self, nil, true)
+            UnitButton_UpdateHealPrediction(self, true)
+            UnitButton_UpdateShieldAbsorbs(self, true)
+            UnitButton_UpdateHealAbsorbs(self, true)
 
         elseif event == "UNIT_HEALTH" then
             UnitButton_UpdateHealth(self)
-            UnitButton_UpdateHealPrediction(self)
-            UnitButton_UpdateShieldAbsorbs(self)
-            UnitButton_UpdateHealAbsorbs(self)
+            UnitButton_UpdateHealPrediction(self, true)
+            UnitButton_UpdateShieldAbsorbs(self, true)
+            UnitButton_UpdateHealAbsorbs(self, true)
             -- UnitButton_UpdateStatusText(self)
 
         elseif event == "UNIT_HEAL_PREDICTION" then
