@@ -1036,7 +1036,7 @@ local function ForEachAuraHelper(button, func, continuationToken, ...)
         local slot = select(i, ...)
         local auraInfo = GetAuraDataBySlot(button.states.displayedUnit, slot)
         if auraInfo then
-            auraInfo.index = i
+            -- auraInfo.index = i
             func(button, auraInfo)
         end
         -- local done = func(button, auraInfo)
@@ -1047,43 +1047,41 @@ local function ForEachAuraHelper(button, func, continuationToken, ...)
     end
 end
 
-local function ForEachAura(button, filter, func, fullUpdate)
-    local unit = button.states.displayedUnit
-    if fullUpdate then
-        ForEachAuraHelper(button, func, GetAuraSlots(unit, filter))
-    elseif filter == "HARMFUL" then
-        local tmpDebuffs = {}
-        for auraInstanceID, aura in pairs (button._debuffs_cache) do
-            if aura.requiresUpdate then
-                tmpDebuffs[auraInstanceID] = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
-                tmpDebuffs[auraInstanceID].index = aura.index
-            else
-                tmpDebuffs[auraInstanceID] = aura
-            end
-        end
-        
-        -- update cache and handle updates
-        button._debuffs_cache = tmpDebuffs
-        for auraInstanceID, aura in pairs (button._debuffs_cache) do
+local function ForEachAura(button, filter, func)
+    ForEachAuraHelper(button, func, GetAuraSlots(button.states.displayedUnit, filter))
+end
+
+-------------------------------------------------
+-- ForEachAuraCache
+-------------------------------------------------
+local function ForEachAuraCache(button, filter, func)
+    if filter == "HARMFUL" then
+        for auraInstanceID, aura in next, button._debuffs_cache do
             func(button, aura)
         end
     elseif filter == "HELPFUL" then
-        local tmpBuffs = {}
-        for auraInstanceID, aura in pairs (button._buffs_cache) do
-            if aura.requiresUpdate then
-                tmpBuffs[auraInstanceID] = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
-                tmpBuffs[auraInstanceID].index = aura.index
-            else
-                tmpBuffs[auraInstanceID] = aura
-            end
-        end
-        
-        -- update cache and handle updates
-        button._buffs_cache = tmpBuffs
-        for auraInstanceID, aura in pairs (button._buffs_cache) do
+        for auraInstanceID, aura in next, button._buffs_cache do
             func(button, aura)
         end
     end
+end
+
+-------------------------------------------------
+-- UpdateAuraRefreshState
+-------------------------------------------------
+local function UpdateAuraRefreshState(auraInfo)
+    if Cell.vars.iconAnimation == "duration" then
+        local timeIncreased = auraInfo.oldExpirationTime and ((auraInfo.expirationTime or 0) - auraInfo.oldExpirationTime >= 0.5) or false
+        local countIncreased = auraInfo.oldApplications and (auraInfo.applications > auraInfo.oldApplications) or false
+        auraInfo.refreshing = timeIncreased or countIncreased
+    elseif Cell.vars.iconAnimation == "stack" then
+        auraInfo.refreshing = auraInfo.oldApplications and (auraInfo.applications > auraInfo.oldApplications) or false
+    else
+        auraInfo.refreshing = false
+    end
+
+    auraInfo.oldExpirationTime = nil
+    auraInfo.oldApplications = nil
 end
 
 -------------------------------------------------
@@ -1108,7 +1106,7 @@ local function ResetDebuffVars(self)
     self.states.BGOrb = nil -- TODO: move to _debuffs
 end
 
-local function HandleDebuffs(self, auraInfo)
+local function HandleDebuff(self, auraInfo)
     local auraInstanceID = auraInfo.auraInstanceID
     local name = auraInfo.name
     local icon = auraInfo.icon
@@ -1127,16 +1125,7 @@ local function HandleDebuffs(self, auraInfo)
     debuffType = I.CheckDebuffType(debuffType, spellId)
 
     if duration then
-        if Cell.vars.iconAnimation == "duration" then
-            local timeIncreased = self._debuffs_cache[auraInstanceID] and (expirationTime - self._debuffs_cache[auraInstanceID]["expirationTime"] >= 0.5) or false
-            local countIncreased = self._debuffs_cache[auraInstanceID] and (count > self._debuffs_cache[auraInstanceID]["applications"]) or false
-            auraInfo.refreshing = timeIncreased or countIncreased
-        elseif Cell.vars.iconAnimation == "stack" then
-            auraInfo.refreshing = self._debuffs_cache[auraInstanceID] and (count > self._debuffs_cache[auraInstanceID]["applications"]) or false
-        else
-            auraInfo.refreshing = false
-        end
-
+        UpdateAuraRefreshState(auraInfo)
         self._debuffs_cache[auraInstanceID] = auraInfo
 
         if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] then
@@ -1214,15 +1203,18 @@ end
 
 local RAID_DEBUFFS_GLOW_TYPES = {"Normal", "Pixel", "Shine", "Proc"}
 
-local function UnitButton_UpdateDebuffs(self, fullUpdate)
+local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     local unit = self.states.displayedUnit
 
     ResetDebuffVars(self)
-
-    -- user created indicators
     I.ResetCustomIndicators(self, "debuff")
 
-    ForEachAura(self, "HARMFUL", HandleDebuffs, fullUpdate)
+    if isFullUpdate then
+        wipe(self._debuffs_cache)
+        ForEachAura(self, "HARMFUL", HandleDebuff)
+    else
+        ForEachAuraCache(self, "HARMFUL", HandleDebuff)
+    end
 
     if not self._debuffs.resurrectionFound then
         self.states.hasRezDebuff = nil
@@ -1401,16 +1393,7 @@ local function HandleBuff(self, auraInfo)
     auraInfo.refreshing = false
 
     if duration then
-        if Cell.vars.iconAnimation == "duration" then
-            local timeIncreased = self._buffs_cache[auraInstanceID] and (expirationTime - self._buffs_cache[auraInstanceID]["expirationTime"] >= 0.5) or false
-            local countIncreased = self._buffs_cache[auraInstanceID] and (count > self._buffs_cache[auraInstanceID]["applications"]) or false
-            auraInfo.refreshing = timeIncreased or countIncreased
-        elseif Cell.vars.iconAnimation == "stack" then
-            auraInfo.refreshing = self._buffs_cache[auraInstanceID] and (count > self._buffs_cache[auraInstanceID]["applications"]) or false
-        else
-            auraInfo.refreshing = false
-        end
-
+        UpdateAuraRefreshState(auraInfo)
         self._buffs_cache[auraInstanceID] = auraInfo
 
         -- defensiveCooldowns
@@ -1461,15 +1444,18 @@ local function HandleBuff(self, auraInfo)
     end
 end
 
-local function UnitButton_UpdateBuffs(self, fullUpdate)
+local function UnitButton_UpdateBuffs(self, isFullUpdate)
     local unit = self.states.displayedUnit
 
-    -- user created indicators
+    ResetBuffVars(self)
     I.ResetCustomIndicators(self, "buff")
 
-    ResetBuffVars(self)
-
-    ForEachAura(self, "HELPFUL", HandleBuff, fullUpdate)
+    if isFullUpdate then
+        wipe(self._buffs_cache)
+        ForEachAura(self, "HELPFUL", HandleBuff)
+    else
+        ForEachAuraCache(self, "HELPFUL", HandleBuff)
+    end
 
     -- check Mirror Image
     if self._mirror_image and I.IsDefensiveCooldown(55342) then -- exists and enabled
@@ -1530,6 +1516,7 @@ local function InitAuraTables(self)
     -- for icon animation only
     self._buffs_cache = {}
     self._debuffs_cache = {}
+    self._missing_auras = {}
 
     -- debuffs
     self._debuffs_normal = {} -- [auraInstanceID] = refreshing
@@ -1542,6 +1529,7 @@ end
 local function ResetAuraTables(self)
     wipe(self._buffs_cache)
     wipe(self._debuffs_cache)
+    wipe(self._missing_auras)
 
     -- debuffs
     wipe(self._debuffs_normal)
@@ -1667,23 +1655,17 @@ UnitButton_UpdateAuras = function(self, updateInfo)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    local buffsChanged, debuffsChanged, buffsChangedFullUpdate, debuffsChangedFullUpdate
+    local isFullUpdate = not updateInfo or updateInfo.isFullUpdate
 
-    if not updateInfo or updateInfo.isFullUpdate then
-        wipe(self._buffs_cache)
-        wipe(self._debuffs_cache)
-        buffsChanged = true
-        debuffsChanged = true
-        buffsChangedFullUpdate = true
-        debuffsChangedFullUpdate = true
-    elseif Cell.vars.alwaysUpdateAuras then
-        buffsChanged = true
-        debuffsChanged = true
-        buffsChangedFullUpdate = true
-        debuffsChangedFullUpdate = true
+    if isFullUpdate or Cell.vars.alwaysUpdateAuras then
+        -- full update
+        UnitButton_UpdateBuffs(self, true)
+        UnitButton_UpdateDebuffs(self, true)
     else
-        local tbdAuras, tbdAurasNeedsHandling = {}, false
-        
+        -- partial update
+        local buffsChanged, debuffsChanged
+        wipe(self._missing_auras)
+
         if updateInfo.addedAuras then
             for _, aura in next, updateInfo.addedAuras do
                 if aura.isHelpful then
@@ -1698,16 +1680,26 @@ UnitButton_UpdateAuras = function(self, updateInfo)
         end
 
         if updateInfo.updatedAuraInstanceIDs then
+            local aura
             for _, auraInstanceID in next, updateInfo.updatedAuraInstanceIDs do
                 if self._buffs_cache[auraInstanceID] then
                     buffsChanged = true
-                    self._buffs_cache[auraInstanceID].requiresUpdate = true
+                    aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
+                    if aura then
+                        aura.oldExpirationTime = self._buffs_cache[auraInstanceID].expirationTime
+                        aura.oldApplications = self._buffs_cache[auraInstanceID].applications
+                        self._buffs_cache[auraInstanceID] = aura
+                    end
                 elseif self._debuffs_cache[auraInstanceID] then
                     debuffsChanged = true
-                    self._debuffs_cache[auraInstanceID].requiresUpdate = true
+                    aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
+                    if aura then
+                        aura.oldExpirationTime = self._debuffs_cache[auraInstanceID].expirationTime
+                        aura.oldApplications = self._debuffs_cache[auraInstanceID].applications
+                        self._debuffs_cache[auraInstanceID] = aura
+                    end
                 else
-                    tbdAuras[auraInstanceID] = true
-                    tbdAurasNeedsHandling = true
+                    self._missing_auras[auraInstanceID] = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                 end
             end
         end
@@ -1721,30 +1713,27 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                     self._debuffs_cache[auraInstanceID] = nil
                     debuffsChanged = true
                 else
-                    tbdAuras[auraInstanceID] = true
-                    tbdAurasNeedsHandling = true
+                    self._missing_auras[auraInstanceID] = nil
                 end
             end
         end
-        
-        if tbdAurasNeedsHandling then
-            for index, _ in pairs(tbdAuras) do
-                local aura = GetAuraDataByAuraInstanceID(unit, index)
-                if aura then
-                    if aura.isHarmful then
-                        self._debuffs_cache[aura.auraInstanceID] = aura
-                        debuffsChanged = true
-                    elseif aura.isHelpful then
-                        self._buffs_cache[aura.auraInstanceID] = aura
-                        buffsChanged = true
-                    end
+
+        if next(self._missing_auras) then
+            for _, aura in next, self._missing_auras do
+                if aura.isHelpful then
+                    buffsChanged = true
+                    self._buffs_cache[aura.auraInstanceID] = aura
+                elseif aura.isHarmful then
+                    debuffsChanged = true
+                    self._debuffs_cache[aura.auraInstanceID] = aura
                 end
             end
         end
+
+        if buffsChanged then UnitButton_UpdateBuffs(self) end
+        if debuffsChanged then UnitButton_UpdateDebuffs(self) end
     end
 
-    if buffsChanged or buffsChangedFullUpdate then UnitButton_UpdateBuffs(self, buffsChangedFullUpdate) end
-    if debuffsChanged or debuffsChangedFullUpdate then UnitButton_UpdateDebuffs(self, debuffsChangedFullUpdate) end
     I.UpdateStatusIcon(self)
 end
 
