@@ -3452,13 +3452,10 @@ function F.Revise()
         end
     end
 
-    -- r258-release
-    if CellDB["revise"] and dbRevision < 258 then
-        CellDB["general"]["alwaysUpdateAuras"] = false
-    end
-
     -- r262-release
     if CellDB["revise"] and dbRevision < 262 then
+        CellDB["general"]["alwaysUpdateAuras"] = false
+
         if Cell.isRetail then
             F.TInsertIfNotExists(CellDB["targetedSpellsList"], unpack(I.GetDefaultTargetedSpellsList()))
         end
