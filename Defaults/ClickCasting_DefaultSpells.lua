@@ -168,7 +168,7 @@ local defaultSpells = {
             391054, -- Intercession - 代祷
             19750, -- Flash of Light - 圣光闪现
             85673, -- Word of Glory - 荣耀圣令
-            304971, -- Divine Toll - ???
+            304971, -- Divine Toll - 圣洁鸣钟
             "633C", -- Lay on Hands - 圣疗术
             "1044C", -- Blessing of Freedom - 自由祝福
             "6940C", -- Blessing of Sacrifice - 牺牲祝福
