@@ -90,7 +90,7 @@ select(2, ...).L = setmetatable({
         <br/>
 
         <h1>r262-release (Sep 18, 2025, 18:50 GMT+8)</h1>
-        <p>* Updated MoP debuffs (thanks Ekkles).</p>
+        <p>* Updated MoP debuffs (#417, thanks Ekkles).</p>
         <p>* Added missing paladin click-casting spell (#389, thanks gpejski).</p>
         <p>* Partial aura updates (#413, thanks cont1nuity).</p>
         <p>* (Retail) Refactored aura update logic and cache handling, slightly improved performance.</p>
