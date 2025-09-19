@@ -1657,7 +1657,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
 
     local isFullUpdate = not updateInfo or updateInfo.isFullUpdate
 
-    if isFullUpdate or Cell.vars.alwaysUpdateAuras then
+    if isFullUpdate then
         -- full update
         UnitButton_UpdateBuffs(self, true)
         UnitButton_UpdateDebuffs(self, true)
@@ -1686,7 +1686,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                     buffsChanged = true
                     aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                     if aura then
-                        aura.oldExpirationTime = self._buffs_cache[auraInstanceID].expirationTime
+                        aura.oldExpirationTime = self._buffs_cache[auraInstanceID].expirationTime or 0
                         aura.oldApplications = self._buffs_cache[auraInstanceID].applications
                         self._buffs_cache[auraInstanceID] = aura
                     end
@@ -1694,7 +1694,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                     debuffsChanged = true
                     aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                     if aura then
-                        aura.oldExpirationTime = self._debuffs_cache[auraInstanceID].expirationTime
+                        aura.oldExpirationTime = self._debuffs_cache[auraInstanceID].expirationTime or 0
                         aura.oldApplications = self._debuffs_cache[auraInstanceID].applications
                         self._debuffs_cache[auraInstanceID] = aura
                     end
