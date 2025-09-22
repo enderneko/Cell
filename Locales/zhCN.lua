@@ -91,6 +91,7 @@ L["General"] = "常规"
 L["Blizzard Frames"] = "暴雪框体"
 L["Hide Blizzard Party"] = "隐藏暴雪小队"
 L["Hide Blizzard Raid"] = "隐藏暴雪团队"
+L["Hide Raid Manager"] = "隐藏团队管理器"
 L["Hide Blizzard Frames"] = "隐藏暴雪框体"
 L["Require reload of the UI"] = "需要重载界面"
 L["Tooltips"] = "鼠标提示"
@@ -878,6 +879,16 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
     <h2>更新后如果有各种问题，先排查代码片段。</h2>
     <p>（正式服）如果指示器不能正常刷新，尝试启用常规页面下的“总是更新增益/减益”选项。</p>
+    <br/>
+
+    <h1>r262-release (Sep 18, 2025, 18:50 GMT+8)</h1>
+    <p>* 更新熊猫人之谜副本减益（#417, 感谢 Ekkles）。</p>
+    <p>* 添加缺失的圣骑士点击施法法术（#389，感谢 gpejski）。</p>
+    <p>* 添加对非全量光环更新的支持（#413，感谢 cont1nuity）。</p>
+    <p>* （正式服）重构增益/减益刷新逻辑与缓存处理，略微提升性能。</p>
+    <p>* 新增隐藏暴雪团队管理器的选项。</p>
+    <p>* 自定义减益指示器新增“来源”选项。</p>
+    <p>* 更新地心之战副本减益与被法术选中列表。</p>
     <br/>
 
     <h1>r261-release (Aug 22, 2025, 20:40 GMT+8)</h1>

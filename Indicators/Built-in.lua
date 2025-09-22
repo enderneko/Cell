@@ -908,7 +908,8 @@ function I.CreateRaidDebuffs(parent)
     raidDebuffs:Hide()
     raidDebuffs.parent = parent
 
-    raidDebuffs:SetScript("OnHide", RaidDebuffs_HideGlow)
+    hooksecurefunc(raidDebuffs, "Hide", RaidDebuffs_HideGlow)
+    -- raidDebuffs:SetScript("OnHide", RaidDebuffs_HideGlow)
 
     raidDebuffs._SetSize = raidDebuffs.SetSize
     raidDebuffs.SetSize = I.Cooldowns_SetSize

@@ -61,7 +61,7 @@ local UnitPhaseReason = UnitPhaseReason
 local IsInRaid = IsInRaid
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
--- local GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
+local GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
 local GetAuraSlots = C_UnitAuras.GetAuraSlots
 local GetAuraDataBySlot = C_UnitAuras.GetAuraDataBySlot
 local IsDelveInProgress = C_PartyInfo.IsDelveInProgress
@@ -1036,7 +1036,7 @@ local function ForEachAuraHelper(button, func, continuationToken, ...)
         local slot = select(i, ...)
         local auraInfo = GetAuraDataBySlot(button.states.displayedUnit, slot)
         if auraInfo then
-            auraInfo.index = i
+            -- auraInfo.index = i
             func(button, auraInfo)
         end
         -- local done = func(button, auraInfo)
@@ -1049,6 +1049,39 @@ end
 
 local function ForEachAura(button, filter, func)
     ForEachAuraHelper(button, func, GetAuraSlots(button.states.displayedUnit, filter))
+end
+
+-------------------------------------------------
+-- ForEachAuraCache
+-------------------------------------------------
+local function ForEachAuraCache(button, filter, func)
+    if filter == "HARMFUL" then
+        for auraInstanceID, aura in next, button._debuffs_cache do
+            func(button, aura)
+        end
+    elseif filter == "HELPFUL" then
+        for auraInstanceID, aura in next, button._buffs_cache do
+            func(button, aura)
+        end
+    end
+end
+
+-------------------------------------------------
+-- UpdateAuraRefreshState
+-------------------------------------------------
+local function UpdateAuraRefreshState(auraInfo)
+    if Cell.vars.iconAnimation == "duration" then
+        local timeIncreased = auraInfo.oldExpirationTime and ((auraInfo.expirationTime or 0) - auraInfo.oldExpirationTime >= 0.5) or false
+        local countIncreased = auraInfo.oldApplications and (auraInfo.applications > auraInfo.oldApplications) or false
+        auraInfo.refreshing = timeIncreased or countIncreased
+    elseif Cell.vars.iconAnimation == "stack" then
+        auraInfo.refreshing = auraInfo.oldApplications and (auraInfo.applications > auraInfo.oldApplications) or false
+    else
+        auraInfo.refreshing = false
+    end
+
+    auraInfo.oldExpirationTime = nil
+    auraInfo.oldApplications = nil
 end
 
 -------------------------------------------------
@@ -1073,7 +1106,7 @@ local function ResetDebuffVars(self)
     self.states.BGOrb = nil -- TODO: move to _debuffs
 end
 
-local function HandleDebuffs(self, auraInfo)
+local function HandleDebuff(self, auraInfo)
     local auraInstanceID = auraInfo.auraInstanceID
     local name = auraInfo.name
     local icon = auraInfo.icon
@@ -1092,16 +1125,7 @@ local function HandleDebuffs(self, auraInfo)
     debuffType = I.CheckDebuffType(debuffType, spellId)
 
     if duration then
-        if Cell.vars.iconAnimation == "duration" then
-            local timeIncreased = self._debuffs_cache[auraInstanceID] and (expirationTime - self._debuffs_cache[auraInstanceID]["expirationTime"] >= 0.5) or false
-            local countIncreased = self._debuffs_cache[auraInstanceID] and (count > self._debuffs_cache[auraInstanceID]["applications"]) or false
-            auraInfo.refreshing = timeIncreased or countIncreased
-        elseif Cell.vars.iconAnimation == "stack" then
-            auraInfo.refreshing = self._debuffs_cache[auraInstanceID] and (count > self._debuffs_cache[auraInstanceID]["applications"]) or false
-        else
-            auraInfo.refreshing = false
-        end
-
+        UpdateAuraRefreshState(auraInfo)
         self._debuffs_cache[auraInstanceID] = auraInfo
 
         if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] then
@@ -1179,15 +1203,18 @@ end
 
 local RAID_DEBUFFS_GLOW_TYPES = {"Normal", "Pixel", "Shine", "Proc"}
 
-local function UnitButton_UpdateDebuffs(self)
+local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     local unit = self.states.displayedUnit
 
     ResetDebuffVars(self)
-
-    -- user created indicators
     I.ResetCustomIndicators(self, "debuff")
 
-    ForEachAura(self, "HARMFUL", HandleDebuffs)
+    if isFullUpdate then
+        wipe(self._debuffs_cache)
+        ForEachAura(self, "HARMFUL", HandleDebuff)
+    else
+        ForEachAuraCache(self, "HARMFUL", HandleDebuff)
+    end
 
     if not self._debuffs.resurrectionFound then
         self.states.hasRezDebuff = nil
@@ -1366,16 +1393,7 @@ local function HandleBuff(self, auraInfo)
     auraInfo.refreshing = false
 
     if duration then
-        if Cell.vars.iconAnimation == "duration" then
-            local timeIncreased = self._buffs_cache[auraInstanceID] and (expirationTime - self._buffs_cache[auraInstanceID]["expirationTime"] >= 0.5) or false
-            local countIncreased = self._buffs_cache[auraInstanceID] and (count > self._buffs_cache[auraInstanceID]["applications"]) or false
-            auraInfo.refreshing = timeIncreased or countIncreased
-        elseif Cell.vars.iconAnimation == "stack" then
-            auraInfo.refreshing = self._buffs_cache[auraInstanceID] and (count > self._buffs_cache[auraInstanceID]["applications"]) or false
-        else
-            auraInfo.refreshing = false
-        end
-
+        UpdateAuraRefreshState(auraInfo)
         self._buffs_cache[auraInstanceID] = auraInfo
 
         -- defensiveCooldowns
@@ -1426,15 +1444,18 @@ local function HandleBuff(self, auraInfo)
     end
 end
 
-local function UnitButton_UpdateBuffs(self)
+local function UnitButton_UpdateBuffs(self, isFullUpdate)
     local unit = self.states.displayedUnit
 
-    -- user created indicators
+    ResetBuffVars(self)
     I.ResetCustomIndicators(self, "buff")
 
-    ResetBuffVars(self)
-
-    ForEachAura(self, "HELPFUL", HandleBuff)
+    if isFullUpdate then
+        wipe(self._buffs_cache)
+        ForEachAura(self, "HELPFUL", HandleBuff)
+    else
+        ForEachAuraCache(self, "HELPFUL", HandleBuff)
+    end
 
     -- check Mirror Image
     if self._mirror_image and I.IsDefensiveCooldown(55342) then -- exists and enabled
@@ -1495,6 +1516,7 @@ local function InitAuraTables(self)
     -- for icon animation only
     self._buffs_cache = {}
     self._debuffs_cache = {}
+    self._missing_auras = {}
 
     -- debuffs
     self._debuffs_normal = {} -- [auraInstanceID] = refreshing
@@ -1507,6 +1529,7 @@ end
 local function ResetAuraTables(self)
     wipe(self._buffs_cache)
     wipe(self._debuffs_cache)
+    wipe(self._missing_auras)
 
     -- debuffs
     wipe(self._debuffs_normal)
@@ -1548,7 +1571,7 @@ local function UpdateMirrorImage(b, event)
         b._mirror_image = nil
     end
     if b._indicatorsReady then
-        UnitButton_UpdateBuffs(b)
+        UnitButton_UpdateBuffs(b, false) -- should be no full update needed, indicator update is done
     end
 end
 
@@ -1578,7 +1601,7 @@ local function UpdateMassBarrier(b, event)
         b._mass_barrier_icon = nil
     end
     if b._indicatorsReady then
-        UnitButton_UpdateBuffs(b)
+        UnitButton_UpdateBuffs(b, false) -- should be no full update needed, indicator update is done
     end
 end
 
@@ -1632,28 +1655,52 @@ UnitButton_UpdateAuras = function(self, updateInfo)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    local buffsChanged, debuffsChanged
+    local isFullUpdate = not updateInfo or updateInfo.isFullUpdate
 
-    if not updateInfo or updateInfo.isFullUpdate then
-        wipe(self._buffs_cache)
-        wipe(self._debuffs_cache)
-        buffsChanged = true
-        debuffsChanged = true
-    elseif Cell.vars.alwaysUpdateAuras then
-        buffsChanged = true
-        debuffsChanged = true
+    if isFullUpdate then
+        -- full update
+        UnitButton_UpdateBuffs(self, true)
+        UnitButton_UpdateDebuffs(self, true)
     else
+        -- partial update
+        local buffsChanged, debuffsChanged
+        wipe(self._missing_auras)
+
         if updateInfo.addedAuras then
             for _, aura in next, updateInfo.addedAuras do
-                if aura.isHelpful then buffsChanged = true end
-                if aura.isHarmful then debuffsChanged = true end
+                if aura.isHelpful then
+                    buffsChanged = true
+                    self._buffs_cache[aura.auraInstanceID] = aura
+                end
+                if aura.isHarmful then
+                    debuffsChanged = true
+                    self._debuffs_cache[aura.auraInstanceID] = aura
+                end
             end
         end
 
         if updateInfo.updatedAuraInstanceIDs then
+            local aura
             for _, auraInstanceID in next, updateInfo.updatedAuraInstanceIDs do
-                if self._buffs_cache[auraInstanceID] then buffsChanged = true end
-                if self._debuffs_cache[auraInstanceID] then debuffsChanged = true end
+                if self._buffs_cache[auraInstanceID] then
+                    buffsChanged = true
+                    aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
+                    if aura then
+                        aura.oldExpirationTime = self._buffs_cache[auraInstanceID].expirationTime or 0
+                        aura.oldApplications = self._buffs_cache[auraInstanceID].applications
+                        self._buffs_cache[auraInstanceID] = aura
+                    end
+                elseif self._debuffs_cache[auraInstanceID] then
+                    debuffsChanged = true
+                    aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
+                    if aura then
+                        aura.oldExpirationTime = self._debuffs_cache[auraInstanceID].expirationTime or 0
+                        aura.oldApplications = self._debuffs_cache[auraInstanceID].applications
+                        self._debuffs_cache[auraInstanceID] = aura
+                    end
+                else
+                    self._missing_auras[auraInstanceID] = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
+                end
             end
         end
 
@@ -1662,17 +1709,31 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                 if self._buffs_cache[auraInstanceID] then
                     self._buffs_cache[auraInstanceID] = nil
                     buffsChanged = true
-                end
-                if self._debuffs_cache[auraInstanceID] then
+                elseif self._debuffs_cache[auraInstanceID] then
                     self._debuffs_cache[auraInstanceID] = nil
                     debuffsChanged = true
+                else
+                    self._missing_auras[auraInstanceID] = nil
                 end
             end
         end
+
+        if next(self._missing_auras) then
+            for _, aura in next, self._missing_auras do
+                if aura.isHelpful then
+                    buffsChanged = true
+                    self._buffs_cache[aura.auraInstanceID] = aura
+                elseif aura.isHarmful then
+                    debuffsChanged = true
+                    self._debuffs_cache[aura.auraInstanceID] = aura
+                end
+            end
+        end
+
+        if buffsChanged then UnitButton_UpdateBuffs(self) end
+        if debuffsChanged then UnitButton_UpdateDebuffs(self) end
     end
 
-    if buffsChanged then UnitButton_UpdateBuffs(self) end
-    if debuffsChanged then UnitButton_UpdateDebuffs(self) end
     I.UpdateStatusIcon(self)
 end
 
@@ -2104,11 +2165,14 @@ local function UnitButton_UpdateHealthMax(self)
     end
 end
 
-local function UnitButton_UpdateHealth(self, diff)
+local function UnitButton_UpdateHealth(self, diff, skipStateUpdates)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    UnitButton_UpdateHealthStates(self, diff)
+    if not skipStateUpdates then
+        UnitButton_UpdateHealthStates(self, diff)
+    end
+
     local healthPercent = self.states.healthPercent
 
     if barAnimationType == "Flash" then
@@ -2144,7 +2208,7 @@ local function UnitButton_UpdateHealth(self, diff)
     end
 end
 
-local function UnitButton_UpdateHealPrediction(self)
+local function UnitButton_UpdateHealPrediction(self, skipStateUpdates)
     if not predictionEnabled then
         self.widgets.incomingHeal:Hide()
         return
@@ -2159,16 +2223,20 @@ local function UnitButton_UpdateHealPrediction(self)
         return
     end
 
-    UnitButton_UpdateHealthStates(self)
+    if not skipStateUpdates then
+        UnitButton_UpdateHealthStates(self)
+    end
 
     self.widgets.incomingHeal:SetValue(value / self.states.healthMax, self.states.healthPercent)
 end
 
-UnitButton_UpdateShieldAbsorbs = function(self)
+UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    UnitButton_UpdateHealthStates(self)
+    if not skipStateUpdates then
+        UnitButton_UpdateHealthStates(self)
+    end
 
     if self.states.totalAbsorbs > 0 then
         local shieldPercent = self.states.totalAbsorbs / self.states.healthMax
@@ -2201,7 +2269,7 @@ UnitButton_UpdateShieldAbsorbs = function(self)
     end
 end
 
-local function UnitButton_UpdateHealAbsorbs(self)
+local function UnitButton_UpdateHealAbsorbs(self, skipStateUpdates)
     if not absorbEnabled then
         self.widgets.absorbsBar:Hide()
         self.widgets.overAbsorbGlow:Hide()
@@ -2211,7 +2279,9 @@ local function UnitButton_UpdateHealAbsorbs(self)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    UnitButton_UpdateHealthStates(self)
+    if not skipStateUpdates then
+        UnitButton_UpdateHealthStates(self)
+    end
 
     if self.states.healAbsorbs > 0 then
         local absorbsPercent = self.states.healAbsorbs / self.states.healthMax
@@ -2525,15 +2595,15 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateNameTextColor(self)
     UnitButton_UpdateHealthTextColor(self)
     UnitButton_UpdateHealthMax(self)
-    UnitButton_UpdateHealth(self)
-    UnitButton_UpdateHealPrediction(self)
+    UnitButton_UpdateHealth(self, nil, true)
+    UnitButton_UpdateHealPrediction(self, true)
     UnitButton_UpdateStatusText(self)
     UnitButton_UpdateHealthColor(self)
     UnitButton_UpdateTarget(self)
     UnitButton_UpdatePlayerRaidIcon(self)
     UnitButton_UpdateTargetRaidIcon(self)
-    UnitButton_UpdateShieldAbsorbs(self)
-    UnitButton_UpdateHealAbsorbs(self)
+    UnitButton_UpdateShieldAbsorbs(self, true)
+    UnitButton_UpdateHealAbsorbs(self, true)
     UnitButton_UpdateInRange(self)
     UnitButton_UpdateRole(self)
     UnitButton_UpdateLeader(self)
@@ -2674,16 +2744,16 @@ local function UnitButton_OnEvent(self, event, unit, arg)
 
         elseif event == "UNIT_MAXHEALTH" then
             UnitButton_UpdateHealthMax(self)
-            UnitButton_UpdateHealth(self)
-            UnitButton_UpdateHealPrediction(self)
-            UnitButton_UpdateShieldAbsorbs(self)
-            UnitButton_UpdateHealAbsorbs(self)
+            UnitButton_UpdateHealth(self, nil, true)
+            UnitButton_UpdateHealPrediction(self, true)
+            UnitButton_UpdateShieldAbsorbs(self, true)
+            UnitButton_UpdateHealAbsorbs(self, true)
 
         elseif event == "UNIT_HEALTH" then
             UnitButton_UpdateHealth(self)
-            UnitButton_UpdateHealPrediction(self)
-            UnitButton_UpdateShieldAbsorbs(self)
-            UnitButton_UpdateHealAbsorbs(self)
+            UnitButton_UpdateHealPrediction(self, true)
+            UnitButton_UpdateShieldAbsorbs(self, true)
+            UnitButton_UpdateHealAbsorbs(self, true)
             -- UnitButton_UpdateStatusText(self)
 
         elseif event == "UNIT_HEAL_PREDICTION" then

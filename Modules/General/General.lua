@@ -12,7 +12,7 @@ generalTab:Hide()
 -------------------------------------------------
 -- visibility
 -------------------------------------------------
-local hideBlizzardPartyCB, hideBlizzardRaidCB
+local hideBlizzardPartyCB, hideBlizzardRaidCB, hideRaidManagerCB
 
 local function CreateVisibilityPane()
     local visibilityPane = Cell.CreateTitledPane(generalTab, L["Visibility"], 205, 80)
@@ -55,6 +55,16 @@ local function CreateVisibilityPane()
         popup:SetPoint("TOPLEFT", generalTab, 117, -77)
     end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
     hideBlizzardRaidCB:SetPoint("TOPLEFT", hideBlizzardPartyCB, "BOTTOMLEFT", 0, -7)
+
+    hideRaidManagerCB = Cell.CreateCheckButton(visibilityPane, L["Hide Raid Manager"], function(checked, self)
+        CellDB["general"]["hideBlizzardRaidManager"] = checked
+
+        local popup = Cell.CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
+            ReloadUI()
+        end, nil, true)
+        popup:SetPoint("TOPLEFT", generalTab, 117, -77)
+    end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
+    hideRaidManagerCB:SetPoint("TOPLEFT", hideBlizzardRaidCB, "BOTTOMLEFT", 0, -7)
 end
 
 -------------------------------------------------
@@ -304,7 +314,7 @@ local function CreateMiscPane()
         Cell.vars.alwaysUpdateAuras = checked
     end, L["Ignore UNIT_AURA payloads"], L["This may help solve issues of indicators not updating correctly"])
     alwaysUpdateAurasCB:SetPoint("TOPLEFT", 5, -27)
-    alwaysUpdateAurasCB:SetEnabled(Cell.isRetail or Cell.isMists)
+    alwaysUpdateAurasCB:SetEnabled(Cell.isMists)
 
     useCleuCB = Cell.CreateCheckButton(miscPane, L["Faster Health Updates"], function(checked, self)
         CellDB["general"]["useCleuHealthUpdater"] = checked
@@ -498,6 +508,7 @@ local function ShowTab(tab)
         -- visibility
         hideBlizzardPartyCB:SetChecked(CellDB["general"]["hideBlizzardParty"])
         hideBlizzardRaidCB:SetChecked(CellDB["general"]["hideBlizzardRaid"])
+        hideRaidManagerCB:SetChecked(CellDB["general"]["hideBlizzardRaidManager"])
 
         -- position
         lockCB:SetChecked(CellDB["general"]["locked"])

@@ -715,9 +715,11 @@ function eventFrame:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
         F.Debug("|cffff1111*** Entered Instance:|r", iType)
         Cell.Fire("EnterInstance", iType)
 
-        if isInitialLogin or isReloadingUi then
-            Cell.vars.groupType = CellDB.fallbackGroupType or "solo"
-            Cell.vars.inMythic = CellDB.fallbackInMythic or false
+        --! NOTE: for PLAYER_LOGIN/PLAYER_ENTERING_WORLD(initial) event, IsInRaid/IsInGroup always return false
+        if (isInitialLogin or isReloadingUi) and CellDB.fallbackGroupType then
+            F.Debug("|cffff1111*** Fallback:|r", Cell.vars.groupType, "->", CellDB.fallbackGroupType, CellDB.fallbackInMythic)
+            Cell.vars.groupType = CellDB.fallbackGroupType
+            Cell.vars.inMythic = CellDB.fallbackInMythic
         end
         PreUpdateLayout()
         inInstance = true
@@ -729,8 +731,8 @@ function eventFrame:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
                 Cell.vars.inMythic = difficultyID == 16
                 CellDB.fallbackInMythic = Cell.vars.inMythic
 
-                if Cell.vars.inMythic then
-                    F.Debug("|cffff1111*** Entered Instance:|r", "raid-mythic")
+                if Cell.vars.inMythic and Cell.vars.layoutGroupType ~= "raid_mythic" then
+                    F.Debug("|cffff1111*** Switch to Mythic Raid layout|r")
                     Cell.Fire("EnterInstance", iType)
                     PreUpdateLayout()
                 end
@@ -831,6 +833,7 @@ function eventFrame:PLAYER_LOGIN()
     -- hide blizzard
     if CellDB["general"]["hideBlizzardParty"] then F.HideBlizzardParty() end
     if CellDB["general"]["hideBlizzardRaid"] then F.HideBlizzardRaid() end
+    if CellDB["general"]["hideBlizzardRaidManager"] then F.HideBlizzardRaidManager() end
     -- lock & menu
     Cell.Fire("UpdateMenu")
     -- update CLEU health

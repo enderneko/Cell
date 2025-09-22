@@ -1,4 +1,13 @@
-# [Full Changelog](https://github.com/enderneko/Cell/compare/r260-release...928a2a91fbc6dd8dc9bfe9c8d5a833dc7cb62847)
+# [Full Changelog](https://github.com/enderneko/Cell/compare/r261-release...1af517366c44e88037a4c4e15fa2f3c91fcd498e)
 
-- Update RaidDebuffs_MoP (#407, thanks @EkklesN)
-- Update RaidDebuffs_TWW
+- Update MoP debuffs (#417, thanks @EkklesN)
+- Add Missing Paladin Spell (#389, thanks @gpejski)
+- Switch to partial aura updates (#413, thanks @cont1nuity)
+- Add "castBy" for custom debuff indicators
+- Add F.RunSnippet
+- Add option to hide Blizzard Raid Manager
+- Add skipStateUpdates parameter to health update functions
+- Refactor aura update logic and cache handling
+- Refactor mark button click to use RemoveRaidTargets
+- Update targeted spells
+- Update raid debuffs
