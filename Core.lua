@@ -219,6 +219,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["tooltipsPosition"] = {"BOTTOMLEFT", "Default", "TOPLEFT", 0, 15},
                 ["hideBlizzardParty"] = true,
                 ["hideBlizzardRaid"] = true,
+                ["hideBlizzardRaidManager"] = true,
                 ["locked"] = false,
                 ["fadeOut"] = false,
                 ["menuPosition"] = "top_bottom",
