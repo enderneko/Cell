@@ -426,7 +426,11 @@ local function Debuffs_ShowTooltip(debuffs, show)
     for i = 1, 10 do
         if show then
             debuffs[i]:SetScript("OnEnter", function(self)
-                F.ShowTooltips(debuffs.parent, "spell", debuffs.parent.states.displayedUnit, self.index, "HARMFUL")
+                if self.index then
+                    F.ShowTooltips(debuffs.parent, "spell", debuffs.parent.states.displayedUnit, self.index, "HARMFUL")
+                elseif self.auraInstanceID then
+                    F.ShowTooltips(debuffs.parent, "aura", debuffs.parent.states.displayedUnit, self.auraInstanceID, "HARMFUL")
+                end
             end)
 
             debuffs[i]:SetScript("OnLeave", function()
@@ -888,8 +892,12 @@ end
 local function RaidDebuffs_ShowTooltip(raidDebuffs, show)
     for i = 1, 3 do
         if show then
-            raidDebuffs[i]:SetScript("OnEnter", function()
-                F.ShowTooltips(raidDebuffs.parent, "spell", raidDebuffs.parent.states.displayedUnit, raidDebuffs[i].index, "HARMFUL")
+            raidDebuffs[i]:SetScript("OnEnter", function(self)
+                if self.index then
+                    F.ShowTooltips(raidDebuffs.parent, "spell", raidDebuffs.parent.states.displayedUnit, self.index, "HARMFUL")
+                elseif self.auraInstanceID then
+                    F.ShowTooltips(raidDebuffs.parent, "aura", raidDebuffs.parent.states.displayedUnit, self.auraInstanceID, "HARMFUL")
+                end
             end)
             raidDebuffs[i]:SetScript("OnLeave", function()
                 GameTooltip:Hide()

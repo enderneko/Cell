@@ -1255,7 +1255,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     auraInfo.refreshing,
                     I.IsDebuffUseElapsedTime(auraInfo.name, auraInfo.spellId)
                 )
-                self.indicators.raidDebuffs[i]["index"] = self._debuffs_cache[auraInstanceID]["index"] -- NOTE: for tooltip
+                self.indicators.raidDebuffs[i].auraInstanceID = auraInstanceID -- NOTE: for tooltip
                 startIndex = startIndex + 1
                 -- remove from debuffs
                 self._debuffs_big[auraInstanceID] = nil
@@ -1275,7 +1275,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
         -- update raidDebuffs
         self.indicators.raidDebuffs:UpdateSize(startIndex - 1)
         for i = startIndex, 3 do
-            self.indicators.raidDebuffs[i].index = nil
+            self.indicators.raidDebuffs[i].auraInstanceID = nil
         end
 
         -- update glow
@@ -1316,8 +1316,8 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             if startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing, true)
-                self.indicators.debuffs[startIndex]["index"] = self._debuffs_cache[auraInstanceID]["index"] -- NOTE: for tooltip
-                self.indicators.debuffs[startIndex]["spellId"] = auraInfo.spellId -- NOTE: for blacklist
+                self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
+                self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
             else
                 break
@@ -1329,8 +1329,8 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             if startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing)
-                self.indicators.debuffs[startIndex]["index"] = self._debuffs_cache[auraInstanceID]["index"] -- NOTE: for tooltip
-                self.indicators.debuffs[startIndex]["spellId"] = auraInfo.spellId -- NOTE: for blacklist
+                self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
+                self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
             else
                 break
@@ -1341,7 +1341,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     -- update debuffs
     self.indicators.debuffs:UpdateSize(startIndex - 1)
     for i = startIndex, 10 do
-        self.indicators.debuffs[i].index = nil
+        self.indicators.debuffs[i].auraInstanceID = nil
         self.indicators.debuffs[i].spellId = nil
     end
 
