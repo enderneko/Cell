@@ -680,7 +680,7 @@ function eventFrame:PLAYER_LOGIN()
     F.UpdateFramePriority()
 end
 
-function eventFrame:UI_SCALE_CHANGED()
+local function UpdatePixels()
     if not InCombatLockdown() then
         F.Debug("UI_SCALE_CHANGED: ", UIParent:GetScale(), CellParent:GetEffectiveScale())
         Cell.Fire("UpdatePixelPerfect")
@@ -688,13 +688,19 @@ function eventFrame:UI_SCALE_CHANGED()
     end
 end
 
-hooksecurefunc(UIParent, "SetScale", function()
-    if not InCombatLockdown() then
-        F.Debug("UIParent:SetScale: ", UIParent:GetScale(), CellParent:GetEffectiveScale())
-        Cell.Fire("UpdatePixelPerfect")
-        Cell.Fire("UpdateAppearance", "scale")
+local updatePixelsTimer
+local function DelayedUpdatePixels()
+    if updatePixelsTimer then
+        updatePixelsTimer:Cancel()
     end
-end)
+    updatePixelsTimer = C_Timer.NewTimer(1, UpdatePixels)
+end
+
+function eventFrame:UI_SCALE_CHANGED()
+    DelayedUpdatePixels()
+end
+
+hooksecurefunc(UIParent, "SetScale", DelayedUpdatePixels)
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     self[event](self, ...)
