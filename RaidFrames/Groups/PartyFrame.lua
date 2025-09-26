@@ -90,25 +90,21 @@ for i, playerButton in ipairs(header) do
     _G["CellPartyFrameMember"..i] = playerButton
 end
 
-local init, previousLayout
+local init
 local function PartyFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "party" and init then return end
+    init = true
 
     -- visibility
     if layout == "hide" then
         UnregisterAttributeDriver(partyFrame, "state-visibility")
         partyFrame:Hide()
-        if init then
-            return
-        else
-            layout = "default"
-        end
+        return
     else
         RegisterAttributeDriver(partyFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] show;[group:party] show;hide")
     end
 
     -- update
-    init = true
     layout = CellDB["layouts"][layout]
 
     -- anchor

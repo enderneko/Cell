@@ -206,9 +206,10 @@ local function UpdateMenu(which)
 end
 Cell.RegisterCallback("UpdateMenu", "PetFrame_UpdateMenu", UpdateMenu)
 
-local init, previousLayout
+local init
 local function PetFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType == "solo" and init then return end
+    init = true
 
     -- visibility
     if layout == "hide" then
@@ -219,7 +220,6 @@ local function PetFrame_UpdateLayout(layout, which)
     RegisterAttributeDriver(petFrame, "state-visibility", "[@raid1,exists] show;[@party1,exists] show;hide")
 
     -- update
-    init = true
     layout = CellDB["layouts"][layout]
 
     if not which or strfind(which, "size$") or strfind(which, "power$") or which == "barOrientation" then

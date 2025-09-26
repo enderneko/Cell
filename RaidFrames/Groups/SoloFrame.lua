@@ -19,25 +19,21 @@ local petButton = CreateFrame("Button", soloFrame:GetName().."Pet", soloFrame, "
 petButton:SetAttribute("unit", "pet")
 Cell.unitButtons.solo["pet"] = petButton
 
-local init, previousLayout
+local init
 local function SoloFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "solo" and init then return end
+    init = true
 
     -- visibility
     if layout == "hide" then
         UnregisterAttributeDriver(soloFrame, "state-visibility")
         soloFrame:Hide()
-        if init then
-            return
-        else
-            layout = "default"
-        end
+        return
     else
         RegisterAttributeDriver(soloFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] hide;[group] hide;show")
     end
 
     -- update
-    init = true
     layout = CellDB["layouts"][layout]
 
     if not which or strfind(which, "size$") then

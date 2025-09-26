@@ -431,11 +431,7 @@ local function UpdateMenu(which)
 end
 Cell.RegisterCallback("UpdateMenu", "NPCFrame_UpdateMenu", UpdateMenu)
 
-local previousLayout
 local function NPCFrame_UpdateLayout(layout, which)
-    -- if previousLayout == layout and not which then return end
-    -- previousLayout = layout
-
     -- visibility
     if layout == "hide" then
         UnregisterAttributeDriver(npcFrame, "state-visibility")

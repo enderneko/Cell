@@ -125,31 +125,31 @@ local function PreUpdateLayout()
         if bgMaxPlayers[id] then
             if bgMaxPlayers[id] <= 15 then
                 Cell.vars.inBattleground = 15
-                F.UpdateLayout("battleground15", true)
+                F.UpdateLayout("battleground15")
             else
                 Cell.vars.inBattleground = 40
-                F.UpdateLayout("battleground40", true)
+                F.UpdateLayout("battleground40")
             end
         else
             Cell.vars.inBattleground = 15
-            F.UpdateLayout("battleground15", true)
+            F.UpdateLayout("battleground15")
         end
     elseif instanceType == "arena" then
         Cell.vars.inBattleground = 5 -- treat as bg 5
-        F.UpdateLayout("arena", true)
+        F.UpdateLayout("arena")
     else
         Cell.vars.inBattleground = false
         if Cell.vars.groupType == "solo" then
-            F.UpdateLayout("solo", true)
+            F.UpdateLayout("solo")
         elseif Cell.vars.groupType == "party" then
-            F.UpdateLayout("party", true)
+            F.UpdateLayout("party")
         else -- raid
             if Cell.vars.inMythic then
-                F.UpdateLayout("raid_mythic", true)
+                F.UpdateLayout("raid_mythic")
             elseif Cell.vars.inInstance then
-                F.UpdateLayout("raid_instance", true)
+                F.UpdateLayout("raid_instance")
             else
-                F.UpdateLayout("raid_outdoor", true)
+                F.UpdateLayout("raid_outdoor")
             end
         end
     end
