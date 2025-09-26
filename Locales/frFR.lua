@@ -28,8 +28,8 @@ L["AFK"] = "ABS"
 L["Aggro (bar)"] = "Menace (barre)"
 L["Aggro (blink)"] = "Menace (Clignotement)"
 L["Aggro (border)"] = "Menace (Bordure)"
-L["all"] = "Tous"
 L["ALL"] = "TOUS"
+L["all"] = "Tous"
 L["All Bosses"] = "Tous les boss"
 L["All indicators of %s will be replaced with those in %s"] = "Tous les indicateurs de %s seront remplacés par ceux de %s"
 L["All snippets have been disabled, due to the version update"] = "Tous les extraits de code ont été désactivés en raison de la mise à jour de la version."
@@ -384,6 +384,8 @@ L["Hide in Combat"] = "Cacher en combat"
 --[[Translation missing --]]
 --[[ L["Hide Placeholder Frames"] = ""--]]
 --[[Translation missing --]]
+--[[ L["Hide Raid Manager"] = ""--]]
+--[[Translation missing --]]
 --[[ L["Hide Self"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Hide tooltips for units"] = ""--]]
@@ -504,8 +506,8 @@ L["marksTips"] = "\n|rMarqueur de cible\nClic gauche : |cffffffffdéfinir le ma
 L["Max Displayed"] = "Maximum affiché"
 L["Max Rows"] = "Nombre maximal de lignes"
 L["Me"] = "Moi"
-L["Menu"] = "Menu"
 L["menu"] = "menu"
+L["Menu"] = "Menu"
 L["Menu Position"] = "Position du menu"
 L["Middle"] = "Milieu"
 L["mine"] = "le mien"
@@ -688,8 +690,8 @@ L["Request"] = "Requête"
 --[[Translation missing --]]
 --[[ L["Require font support"] = "Require font support"--]]
 L["Require reload of the UI"] = "Nécessite un rechargement de l'interface utilisateur"
-L["RESET"] = "Cell nécessite une réinitialisation complète après la mise à jour d'une très ancienne version"
 L["Reset"] = "Réinitialiser"
+L["RESET"] = "Cell nécessite une réinitialisation complète après la mise à jour d'une très ancienne version"
 L["Reset All"] = "Réinitialiser tout"
 L["reset all Cell settings"] = "réinitialiser tous les paramètres de Cell"
 L["reset all Click-Castings"] = "Réinitialiser tous les sorts à la souris"
@@ -767,9 +769,9 @@ L["Shield Bar"] = "Barre de bouclier"
 L["Shield Texture"] = "Texture de bouclier"
 --[[Translation missing --]]
 --[[ L["shieldByMe"] = "Only show PW:S cast by me"--]]
-L["shields"] = "Boucliers"
 --[[Translation missing --]]
 --[[ L["Shields"] = "Shields"--]]
+L["shields"] = "Boucliers"
 L["Shift+Enter: add a new line"] = "Maj+Entrée : ajouter une nouvelle ligne"
 L["Shine"] = "Briller"
 L["Show All"] = "Tout afficher"
@@ -829,9 +831,9 @@ L["Size (Big)"] = "Taille (Grande)"
 --[[Translation missing --]]
 --[[ L["Smart Resurrection"] = "Smart Resurrection"--]]
 --[[Translation missing --]]
---[[ L["Smooth"] = ""--]]
---[[Translation missing --]]
 --[[ L["smooth"] = "Smooth"--]]
+--[[Translation missing --]]
+--[[ L["Smooth"] = ""--]]
 L["SNIPPETS_TIPS"] = "[Double-clic] pour renommer. [Maj-clic] pour supprimer. Tous les extraits cochés seront automatiquement invoqués à la fin du processus d'initialisation de la cellule (dans l'événement ADDON_LOADED)."
 --[[Translation missing --]]
 --[[ L["Solid"] = "Solid"--]]
@@ -844,8 +846,8 @@ L["Spacing"] = "Espacement"
 --[[ L["Spec Filter"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Special Thanks"] = "Special Thanks"--]]
-L["SPELL"] = "SORT"
 L["Spell"] = "Sort"
+L["SPELL"] = "SORT"
 --[[Translation missing --]]
 --[[ L["Spell already exists."] = "Spell already exists."--]]
 L["Spell List"] = "Liste des sorts"

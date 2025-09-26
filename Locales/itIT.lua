@@ -33,8 +33,8 @@ L["AFK"] = "AFK"
 L["Aggro (bar)"] = "Aggro (barra)"
 L["Aggro (blink)"] = "Aggro (lampeggiante)"
 L["Aggro (border)"] = "Aggro (bordo)"
-L["all"] = "tutti"
 L["ALL"] = "TUTTI"
+L["all"] = "tutti"
 L["All Bosses"] = "Tutti i Boss"
 --[[Translation missing --]]
 --[[ L["All indicators of %s will be replaced with those in %s"] = "All indicators of %s will be replaced with those in %s"--]]
@@ -452,6 +452,8 @@ L["Focus"] = "Focus"
 --[[Translation missing --]]
 --[[ L["Hide Placeholder Frames"] = ""--]]
 --[[Translation missing --]]
+--[[ L["Hide Raid Manager"] = ""--]]
+--[[Translation missing --]]
 --[[ L["Hide Self"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Hide tooltips for units"] = ""--]]
@@ -825,9 +827,9 @@ L["Request"] = "Richiesta"
 --[[Translation missing --]]
 --[[ L["Require font support"] = "Require font support"--]]
 L["Require reload of the UI"] = "Richiede il reload dell'UI"
+L["Reset"] = "Reset"
 --[[Translation missing --]]
 --[[ L["RESET"] = "Cell requires a full reset after updating from a very old version"--]]
-L["Reset"] = "Reset"
 --[[Translation missing --]]
 --[[ L["Reset All"] = "Reset All"--]]
 --[[Translation missing --]]
@@ -929,9 +931,9 @@ L["Shield Bar"] = "Barra dello Scudo"
 L["Shield Texture"] = "Texture dello Scudo"
 --[[Translation missing --]]
 --[[ L["shieldByMe"] = "Only show PW:S cast by me"--]]
-L["shields"] = "scudi"
 --[[Translation missing --]]
 --[[ L["Shields"] = "Shields"--]]
+L["shields"] = "scudi"
 --[[Translation missing --]]
 --[[ L["Shift+Enter: add a new line"] = "Shift+Enter: add a new line"--]]
 L["Shine"] = "Brilla"
@@ -980,8 +982,8 @@ L["Size (Big)"] = "Dimensione (Grande)"
 --[[ L["Slash Commands"] = "Slash Commands"--]]
 --[[Translation missing --]]
 --[[ L["Smart Resurrection"] = "Smart Resurrection"--]]
-L["Smooth"] = "Graduale"
 L["smooth"] = "graduale"
+L["Smooth"] = "Graduale"
 --[[Translation missing --]]
 --[[ L["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event)."--]]
 --[[Translation missing --]]
