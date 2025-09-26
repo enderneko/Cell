@@ -679,7 +679,6 @@ local function CreateProfilePane()
 
     profileDropdown = Cell.CreateDropdown(profilePane, 412)
     profileDropdown:SetPoint("TOPLEFT", profilePane, "TOPLEFT", 5, -27)
-    profileDropdown:SetEnabled(not Cell.isVanilla)
 
     profileDropdown:SetItems({
         {
@@ -1397,7 +1396,7 @@ local function UpdateCurrentText(isCommon)
     else
         if Cell.isRetail or Cell.isMists then
             listPane:SetTitle(L["Current Profile"]..": ".."|T"..Cell.vars.playerSpecIcon..":12:12:0:1:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
-        elseif Cell.isCata or Cell.isWrath then
+        elseif Cell.isCata or Cell.isWrath or Cell.isVanilla then
             local name, icon = F.GetActiveTalentInfo()
             listPane:SetTitle(L["Current Profile"]..": ".."|T"..icon..":12:12:0:1:12:12:1:11:1:11|t "..name)
         end
