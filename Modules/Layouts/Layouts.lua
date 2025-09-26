@@ -2848,7 +2848,7 @@ LoadLayoutAutoSwitchDB = function()
     elseif Cell.isVanilla then
         P.Height(autoSwitchFrame, 378)
         if Cell.vars.activeTalentGroup == 1 then
-        currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Icons\\1:13|t "..L["Primary Talents"])
+            currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Icons\\1:13|t "..L["Primary Talents"])
         else
             currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Icons\\2:13|t "..L["Secondary Talents"])
         end
