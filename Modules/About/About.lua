@@ -97,7 +97,7 @@ local function CreateTranslatorsPane()
     translatorsTextKR:SetPoint("TOPLEFT", translatorsTextCN, 215, 0)
     translatorsTextKR:SetSpacing(5)
     translatorsTextKR:SetJustifyH("LEFT")
-    translatorsTextKR:SetText("|cff999999koKR:|r naragok79, netaras, 부패질")
+    translatorsTextKR:SetText("|cff999999koKR:|r 007bb, netaras")
 
     -- ptBR
     translatorsTextPT = translatorsPane:CreateFontString(nil, "OVERLAY")
@@ -152,7 +152,7 @@ local function CreateTranslatorsPane()
     translatorsTextES:SetPoint("TOPLEFT", translatorsTextFR, 215, 0)
     translatorsTextES:SetSpacing(5)
     translatorsTextES:SetJustifyH("LEFT")
-    translatorsTextES:SetText("|cff999999esES:|r Zurent")
+    translatorsTextES:SetText("|cff999999esES:|r Zurent, F3R_Lv72")
 
      -- itIT
      translatorsTextIT = translatorsPane:CreateFontString(nil, "OVERLAY")
