@@ -1,4 +1,4 @@
-# [Full Changelog](https://github.com/enderneko/Cell/compare/r262-release...18c0b60b882b82a9393bbe935d1df9a1fab85e90)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r262-release...708ca64db91f17783a2d45608f23fbd2bad86c70)
 
 - Added baseline support for Dual Spec for Anniversary Servers (#416, thanks @muffinhydra)
 - Refactor layout visibility and indicator updates
