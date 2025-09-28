@@ -89,6 +89,16 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r263-beta (Sep 28, 2025, 14:10 GMT+8)</h1>
+        <p>+ Added baseline support for Dual Spec for Anniversary Servers (#416, thanks muffinhydra).</p>
+        <p>* Refactored layout visibility and indicator updates.</p>
+        <p>* Fixed aura tooltips for retail.</p>
+        <p>* Changed to delayed pixel updates when UI_SCALE_CHANGED.</p>
+        <p>* Fixed layout fallbacks.</p>
+        <p>- Removed alwaysUpdateAuras from retail.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
         <h1>r262-release (Sep 18, 2025, 18:50 GMT+8)</h1>
         <p>* Updated MoP debuffs (#417, thanks Ekkles).</p>
         <p>* Added missing paladin click-casting spell (#389, thanks gpejski).</p>
