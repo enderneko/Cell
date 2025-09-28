@@ -819,7 +819,7 @@ Cell.RegisterCallback("UpdateMenu", "SpotlightFrame_UpdateMenu", UpdateMenu)
 
 local function UpdateLayout(layout, which)
     -- visibility
-    if layout == "hide" then
+    if Cell.vars.isHidden then
         spotlightFrame:Hide()
         menu:Hide()
         return

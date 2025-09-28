@@ -84,12 +84,15 @@ function F.UpdateLayout(layoutGroupType)
         Cell.vars.layoutAutoSwitch = CellCharacterDB["layoutAutoSwitch"][Cell.vars.activeTalentGroup]
 
         local layout = Cell.vars.layoutAutoSwitch[layoutGroupType]
-        Cell.vars.currentLayout = layout
         Cell.vars.layoutGroupType = layoutGroupType
 
         if layout == "hide" then
+            Cell.vars.isHidden = true
+            Cell.vars.currentLayout = "default"
             Cell.vars.currentLayoutTable = CellDB["layouts"]["default"]
         else
+            Cell.vars.isHidden = false
+            Cell.vars.currentLayout = layout
             Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         end
 

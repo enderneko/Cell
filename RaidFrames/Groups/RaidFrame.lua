@@ -339,13 +339,9 @@ end
 --     ]])
 -- end
 
-local init
 local function RaidFrame_UpdateLayout(layout, which)
-    if Cell.vars.groupType ~= "raid" and init then return end
-    init = true
-
     -- visibility
-    if layout == "hide" then
+    if Cell.vars.groupType ~= "raid" or Cell.vars.isHidden then
         UnregisterAttributeDriver(raidFrame, "state-visibility")
         raidFrame:Hide()
         return

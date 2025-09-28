@@ -1299,7 +1299,7 @@ end
 local function StatusText_SetStatus(self, status)
     -- print("status: " .. (status or "nil"))
     self.status = status
-    if status then
+    if status and self.colors then
         self.text:SetText(L[status])
         self.text:SetTextColor(unpack(self.colors[status]))
         self.timer:SetTextColor(unpack(self.colors[status]))

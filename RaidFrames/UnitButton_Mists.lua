@@ -490,34 +490,45 @@ end
 -------------------------------------------------
 -- UpdateIndicators
 -------------------------------------------------
-local indicatorsInitialized
-local previousLayout = {}
+local activeLayouts = {
+    -- solo = nil,
+    -- party = nil,
+    -- raid = nil,
+    -- raid_mythic = nil,
+    -- raid_instance = nil,
+    -- raid_outdoor = nil,
+    -- battleground15 = nil,
+    -- battleground40 = nil,
+    -- arena = nil,
+}
 
 local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     F.Debug("|cffff7777UpdateIndicators:|r ", layout, indicatorName, setting, value, value2)
 
     FlushQueue()
-    local INDEX = Cell.vars.groupType == "solo" and "solo" or Cell.vars.layoutGroupType
+
+    local currentLayout = Cell.vars.currentLayout
+    local INDEX = Cell.vars.groupType
 
     if layout then
         -- Cell.Fire("UpdateIndicators", layout): indicators copy/import
         -- Cell.Fire("UpdateIndicators", xxx, ...): indicator updated
-        for k, v in next, previousLayout do
-            if v == layout then
-                previousLayout[k] = nil -- update required
-                F.Debug("UPDATE REQUIRED:", k)
+        for groupType, layoutName in next, activeLayouts do
+            if layoutName == layout then
+                activeLayouts[groupType] = nil -- update required
+                F.Debug("UPDATE REQUIRED:", groupType)
             end
         end
 
         --! indicator changed, but not current layout
-        if layout ~= Cell.vars.currentLayout then
+        if layout ~= currentLayout then
             F.Debug("NO UPDATE: not active layout")
             return
         end
 
-    elseif not indicatorName then -- Cell.Fire("UpdateIndicators")
+    else -- Cell.Fire("UpdateIndicators")
         --! layout/groupType switched, check if update is required
-        if previousLayout[INDEX] == Cell.vars.currentLayout then
+        if activeLayouts[INDEX] == currentLayout then
             F.Debug("NO UPDATE: only reset custom indicator tables")
             I.ResetCustomIndicatorTables()
             ResetIndicators()
@@ -530,22 +541,20 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         end
     end
 
-    previousLayout[INDEX] = Cell.vars.currentLayout
+    if Cell.vars.isHidden then
+        F.Debug("NO UPDATE: Cell is hidden")
+        I.ResetCustomIndicatorTables()
+        ResetIndicators()
+        return
+    end
+
+    activeLayouts[INDEX] = currentLayout
 
     if not indicatorName then -- init
         I.ResetCustomIndicatorTables()
         ResetIndicators()
-
-        if not indicatorsInitialized then
-            -- update indicators
-            F.IterateAllUnitButtons(HandleIndicators) -- -- NOTE: indicatorsInitialized = false, update ALL GROUP TYPE; indicatorsInitialized = true, just update CURRENT GROUP TYPE
-            -- update all when indicators update finished
-            F.IterateAllUnitButtons(UnitButton_UpdateAll, true)
-        else
-            F.IterateAllUnitButtons(AddToInitQueue, true)
-            updater:Show()
-        end
-        indicatorsInitialized = true
+        F.IterateAllUnitButtons(AddToInitQueue, true)
+        updater:Show()
 
     else
         -- changed in IndicatorsTab

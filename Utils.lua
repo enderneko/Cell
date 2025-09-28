@@ -930,8 +930,10 @@ function F.IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist
         for _, b in pairs(Cell.unitButtons.arena) do
             func(b)
         end
+    end
 
-        -- group pet
+    -- group pet
+    if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "raid") or (updateCurrentGroupOnly and Cell.vars.groupType == "party") then
         for index, b in pairs(Cell.unitButtons.pet) do
             if index ~= "units" then
                 func(b)

@@ -433,7 +433,7 @@ Cell.RegisterCallback("UpdateMenu", "NPCFrame_UpdateMenu", UpdateMenu)
 
 local function NPCFrame_UpdateLayout(layout, which)
     -- visibility
-    if layout == "hide" then
+    if Cell.vars.isHidden then
         UnregisterAttributeDriver(npcFrame, "state-visibility")
         npcFrame:Hide()
         return

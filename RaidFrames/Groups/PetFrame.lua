@@ -206,13 +206,9 @@ local function UpdateMenu(which)
 end
 Cell.RegisterCallback("UpdateMenu", "PetFrame_UpdateMenu", UpdateMenu)
 
-local init
 local function PetFrame_UpdateLayout(layout, which)
-    if Cell.vars.groupType == "solo" and init then return end
-    init = true
-
     -- visibility
-    if layout == "hide" then
+    if Cell.vars.groupType == "solo" or Cell.vars.isHidden then
         UnregisterAttributeDriver(petFrame, "state-visibility")
         petFrame:Hide()
         return

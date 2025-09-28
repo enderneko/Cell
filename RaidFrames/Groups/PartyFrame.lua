@@ -90,13 +90,9 @@ for i, playerButton in ipairs(header) do
     _G["CellPartyFrameMember"..i] = playerButton
 end
 
-local init
 local function PartyFrame_UpdateLayout(layout, which)
-    if Cell.vars.groupType ~= "party" and init then return end
-    init = true
-
     -- visibility
-    if layout == "hide" then
+    if Cell.vars.groupType ~= "party" or Cell.vars.isHidden then
         UnregisterAttributeDriver(partyFrame, "state-visibility")
         partyFrame:Hide()
         return

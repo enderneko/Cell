@@ -519,7 +519,7 @@ local function MainFrame_UpdateLayout(layout, which)
     F.Debug("|cffff0066UpdateLayout:|r layout:", layout, " which:", which)
 
     -- visibility
-    if layout == "hide" then
+    if Cell.vars.isHidden then
         anchorFrame:Hide()
         menuFrame:Hide()
         hoverFrame:Hide()
