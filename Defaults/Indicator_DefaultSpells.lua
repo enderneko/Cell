@@ -1089,6 +1089,8 @@ local targetedSpells = {
     1229510, -- 弧光震击
     1222815, -- 奥术箭
     1221483, -- 电弧能量
+    1219482, -- 裂隙利爪
+    1226111, -- 不稳定的喷发
 }
 
 function I.GetDefaultTargetedSpellsList()
