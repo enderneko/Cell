@@ -736,7 +736,6 @@ end
 
 
 function eventFrame:PLAYER_TALENT_UPDATE()
-
     F.UpdateClickCastingProfileLabel()
 end
 
