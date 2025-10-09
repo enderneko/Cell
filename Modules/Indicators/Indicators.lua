@@ -47,31 +47,19 @@ local function CreatePreviewButton()
     previewButton.widgets.powerBar:SetValue(1)
 
     previewButtonBG = Cell.CreateFrame("CellIndicatorsPreviewButtonBG", indicatorsTab)
-    -- previewButtonBG:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 5, -1)
-    -- previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, 5, -5)
-    previewButtonBG:SetPoint("BOTTOM", previewButton, 0, -5)
+    previewButtonBG:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 5, -1)
     previewButtonBG:SetFrameStrata("BACKGROUND")
     Cell.StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
 
-    function previewButton:UpdatePoint()
-        previewButton:ClearAllPoints()
-        previewButtonBG:ClearAllPoints()
-        previewButtonBG:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 5, -1)
 
-        local x = 10
-        local y = Round(-70 / CellDB["indicatorPreview"]["scale"])
+    function previewButtonBG:UpdateSize()
+        local scale = CellDB["indicatorPreview"]["scale"]
+        previewButton:SetPoint("TOP", previewButtonBG, 0, -70 / scale)
 
-        if (previewButton.width * CellDB["indicatorPreview"]["scale"]) <= 105 then
-            x = Round((115-previewButton.width)/2)+5
-            previewButtonBG:SetPoint("BOTTOM", previewButton, 0, -5)
-            P.Width(previewButtonBG, 115)
-        else
-            previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, 5, -5)
-        end
-
-        x = Round(x / CellDB["indicatorPreview"]["scale"])
-        previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", x, y)
+        local width = max(previewButton.width * scale + 20, 150)
+        local height = previewButton.height * scale + 80
+        P.Size(self, width, height)
     end
 
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
@@ -92,7 +80,7 @@ local function CreatePreviewButton()
     previewScaleSlider = Cell.CreateSlider(L["Scale"], previewButtonBG, 1, 5, 50, 1, nil, function(value)
         CellDB["indicatorPreview"]["scale"] = value
         previewButton:SetScale(value)
-        previewButton:UpdatePoint()
+        previewButtonBG:UpdateSize()
     end)
     previewScaleSlider:SetPoint("TOPLEFT", 5, -35)
     previewScaleSlider.currentEditBox:Hide()
@@ -115,7 +103,7 @@ local function UpdatePreviewButton()
     B.SetOrientation(previewButton, currentLayoutTable["barOrientation"][1], currentLayoutTable["barOrientation"][2])
     B.SetPowerSize(previewButton, currentLayoutTable["main"]["powerSize"])
 
-    previewButton:UpdatePoint()
+    previewButtonBG:UpdateSize()
 
     previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widgets.healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
