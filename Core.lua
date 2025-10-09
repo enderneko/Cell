@@ -591,7 +591,7 @@ Cell.vars.raidSetup = {
     ["DAMAGER"]={["ALL"]=0},
 }
 
-function eventFrame:GROUP_ROSTER_UPDATE()
+function eventFrame:GROUP_ROSTER_UPDATE(skipFallbackUpdate)
     if IsInRaid() then
         if Cell.vars.groupType ~= "raid" then
             Cell.vars.groupType = "raid"
@@ -689,6 +689,10 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         Cell.Fire("PermissionChanged")
         F.Debug("|cffbb00bbPermissionChanged")
     end
+
+    if not skipFallbackUpdate then
+        CellDB.fallbackGroupType = Cell.vars.groupType
+    end
 end
 
 local inInstance
@@ -724,6 +728,8 @@ function eventFrame:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
             F.Debug("|cffff1111*** Fallback:|r", Cell.vars.groupType, "->", CellDB.fallbackGroupType, CellDB.fallbackInMythic)
             Cell.vars.groupType = CellDB.fallbackGroupType
             Cell.vars.inMythic = CellDB.fallbackInMythic
+            CellDB.fallbackGroupType = nil
+            CellDB.fallbackInMythic = nil
         end
         PreUpdateLayout()
         inInstance = true
@@ -813,7 +819,7 @@ function eventFrame:PLAYER_LOGIN()
     UpdateSpecVars()
 
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable
-    eventFrame:GROUP_ROSTER_UPDATE()
+    eventFrame:GROUP_ROSTER_UPDATE(true)
     -- REVIEW: register unitframes for click casting
     -- RegisterGlobalClickCastings()
     -- update click-castings
