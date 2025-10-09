@@ -2,6 +2,7 @@ local addonName, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
+local U = Cell.uFuncs
 
 function F.Revise()
     local dbRevision = CellDB["revise"] and tonumber(string.match(CellDB["revise"], "%d+")) or 0
@@ -3379,11 +3380,13 @@ function F.Revise()
         end
     end
 
-    -- r263-beta
-    if CellDB["revise"] and dbRevision < 263 then
+    -- r264-release
+    if CellDB["revise"] and dbRevision < 264 then
         if Cell.isRetail then
             F.TInsertIfNotExists(CellDB["targetedSpellsList"], unpack(I.GetDefaultTargetedSpellsList()))
         end
+
+        CellDB["tools"]["buffTracker"][5] = U.GetBuffTrackerDefaults()
     end
 
     -- ----------------------------------------------------------------------- --

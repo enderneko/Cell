@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
+local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 local A = Cell.animations
@@ -82,18 +83,6 @@ if Cell.isVanilla then
         ["DRUID"] = {["PWF"] = true, ["AB"] = true, ["DS"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
     }
 
-    available = {
-        ["PWF"] = false,
-        ["AB"] = false,
-        ["DS"] = false,
-        ["MotW"] = false,
-        ["BoK"] = false,
-        ["BoM"] = false,
-        ["BoW"] = false,
-        ["BoS"] = false,
-        ["SP"] = false,
-    }
-
     unaffected = {
         ["PWF"] = {},
         ["AB"] = {},
@@ -164,18 +153,6 @@ elseif Cell.isWrath then
         ["DRUID"] = {["PWF"] = true, ["AB"] = true, ["DS"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["BoW"] = true, ["BoS"] = true, ["SP"] = true},
     }
 
-    available = {
-        ["PWF"] = false,
-        ["AB"] = false,
-        ["DS"] = false,
-        ["MotW"] = false,
-        ["BoK"] = false,
-        ["BoM"] = false,
-        ["BoW"] = false,
-        ["BoS"] = false,
-        ["SP"] = false,
-    }
-
     unaffected = {
         ["PWF"] = {},
         ["AB"] = {},
@@ -228,15 +205,6 @@ elseif Cell.isCata then
         ["DRUID"] = {["PWF"] = true, ["AB"] = true, ["MotW"] = true, ["BoK"] = true, ["BoM"] = true, ["SP"] = true},
     }
 
-    available = {
-        ["PWF"] = false,
-        ["AB"] = false,
-        ["MotW"] = false,
-        ["BoK"] = false,
-        ["BoM"] = false,
-        ["SP"] = false,
-    }
-
     unaffected = {
         ["PWF"] = {},
         ["AB"] = {},
@@ -284,18 +252,27 @@ do
     end)
 end
 
+function U.GetBuffTrackerDefaults()
+    local t = {}
+    for k in pairs(buffs) do
+        t[k] = true
+    end
+    return t
+end
+
+function U.GetBuffTrackerInfo()
+    return buffOrder, buffs
+end
+
 ---------------------------------------------------------------------
 -- vars
 ---------------------------------------------------------------------
-local enabled
 local myUnit = ""
 local hasBuffProvider
 
 local function Reset(which)
     if not which or which == "available" then
-        for k, v in pairs(available) do
-            available[k] = false
-        end
+        wipe(available)
         hasBuffProvider = false
     end
 
@@ -691,8 +668,8 @@ local function CheckUnit(unit, updateBtn)
 
     if UnitIsConnected(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) then
         local required = requiredBuffs[UnitClassBase(unit)]
-        for buff, hasProvider in pairs(available) do
-            if hasProvider and required[buff] then
+        for buff in pairs(available) do
+            if required[buff] then
                 local exists, providedByMe = UnitBuffExists(unit, buff)
                 if exists then
                     unaffected[buff][unit] = nil
@@ -731,7 +708,6 @@ local function IterateAllUnits()
                 for buff, lvl in pairs(classBuffs[class]) do
                     if not available[buff] and (type(lvl) ~= "number" or level >= lvl) then
                         available[buff] = true
-                        hasBuffProvider = true
                     end
                 end
             end
@@ -740,6 +716,20 @@ local function IterateAllUnits()
                 myUnit = unit
             end
         end
+    end
+
+    for buff, enabled in pairs(CellDB["tools"]["buffTracker"][5]) do
+        if enabled then
+            available[buff] = available[buff] and true
+        else
+            available[buff] = nil
+        end
+    end
+
+    if next(available) then
+        hasBuffProvider = true
+    else
+        hasBuffProvider = false
     end
 
     RepointButtons()
@@ -842,10 +832,9 @@ local function UpdateTools(which)
             buffTrackerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
             buffTrackerFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 
-            if not enabled and which == "buffTracker" then -- already in world, manually enabled
+            if which == "buffTracker" then -- already in world, manually enabled
                 buffTrackerFrame:GROUP_ROSTER_UPDATE(true)
             end
-            enabled = true
             if Cell.vars.showMover then
                 ShowMover(true)
             end
@@ -855,7 +844,6 @@ local function UpdateTools(which)
             Reset()
             myUnit = ""
 
-            enabled = false
             ShowMover(false)
 
             -- missingBuffs indicator

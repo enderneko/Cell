@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
+local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 local LGI = LibStub:GetLibrary("LibGroupInfo")
@@ -331,6 +332,14 @@ do
     sort(buffOrder, function(a, b)
         return buffs[a]["order"] < buffs[b]["order"]
     end)
+end
+
+function U.GetBuffTrackerDefaults()
+    return {}
+end
+
+function U.GetBuffTrackerInfo()
+    return buffOrder, buffs
 end
 
 -------------------------------------------------
