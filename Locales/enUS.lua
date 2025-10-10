@@ -89,6 +89,11 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r265-release (Oct 10, 2025, 14:00 GMT+8)</h1>
+        <p>* Fixed Health Text indicator.</p>
+        <p>* (Retail) Added delayed groupType check for more reliable layout switching.</p>
+        <br/>
+
         <h1>r264-release (Oct 10, 2025, 11:50 GMT+8)</h1>
         <p>* Fixed dual spec for anniversary servers (#427, thanks muffinhydra).</p>
         <p>* Fixed indicator loading issues.</p>

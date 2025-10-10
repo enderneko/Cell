@@ -1,7 +1,4 @@
-[View Full Changelog](https://github.com/enderneko/Cell/compare/r263-beta...20c420c30de81ba7cea727c5b619854e8a79efa9)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r264-release...2a7d2b4b71e0a44341cac2c8e1e7db8b4e15391d)
 
-- Fix Anniversary Dual Spec (#427, thanks @muffinhydra)
-- Fix indicator loading issues
-- Improve fallback group type handling for Retail
-- Update BuffTracker options for Vanilla/Wrath/Cata
-- Update size of indicator preview button background
+- Fix HealthText indicator
+- Add delayed groupType check

@@ -1,6 +1,6 @@
 ## Interface: 11507
 ## Title: Cell
-## Version: r264-release
+## Version: r265-release
 ## Author: enderneko
 ## X-Flavor: Vanilla
 ## SavedVariables: CellDB, CellDBBackup
