@@ -130,6 +130,7 @@ local function PreUpdateLayout()
     end
 end
 Cell.RegisterCallback("GroupTypeChanged", "Core_GroupTypeChanged", PreUpdateLayout)
+Cell.RegisterCallback("ActiveTalentGroupChanged", "Core_ActiveTalentGroupChanged", PreUpdateLayout)
 
 -------------------------------------------------
 -- events
@@ -643,10 +644,12 @@ function eventFrame:PLAYER_LOGIN()
     F.Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    eventFrame:RegisterEvent("UI_SCALE_CHANGED")
     if GetNumTalentGroups() == 2 then -- check if dualspec is active, if yes register talent swap event
         eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+        eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
     end
+    eventFrame:RegisterEvent("UI_SCALE_CHANGED")
+
 
     Cell.vars.playerNameShort = GetUnitName("player")
     Cell.vars.playerNameFull = F.UnitFullName("player")
@@ -732,6 +735,9 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
 end
 
 
+function eventFrame:PLAYER_TALENT_UPDATE()
+    F.UpdateClickCastingProfileLabel()
+end
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     self[event](self, ...)
