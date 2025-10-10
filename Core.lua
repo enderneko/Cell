@@ -705,6 +705,12 @@ local function UpdateFallbackGroupType()
     else
         CellDB.fallbackGroupType = "solo"
     end
+
+    if Cell.vars.groupType ~= CellDB.fallbackGroupType then
+        Cell.vars.groupType = CellDB.fallbackGroupType
+        F.Debug("|cffffbb77GroupTypeChanged:|r", Cell.vars.groupType, "(fallback validation)")
+        Cell.Fire("GroupTypeChanged", Cell.vars.groupType)
+    end
 end
 
 function eventFrame:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
