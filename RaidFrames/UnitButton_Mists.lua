@@ -203,18 +203,10 @@ end
 local function HandleIndicators(b)
     b._indicatorsReady = nil
 
-    if not b._indicatorsCreated then
-        b._indicatorsCreated = true
-        I.CreateDefensiveCooldowns(b)
-        I.CreateExternalCooldowns(b)
-        I.CreateAllCooldowns(b)
-        I.CreateDebuffs(b)
-    end
-
     -- NOTE: Remove old
     I.RemoveAllCustomIndicators(b)
 
-    for _, t in next, Cell.vars.currentLayoutTable["indicators"] do
+    for _, t in next, b._config do
         local indicator = b.indicators[t["indicatorName"]] or I.CreateIndicator(b, t)
         indicator.configs = t
 
@@ -432,15 +424,18 @@ local updater = CreateFrame("Frame")
 updater:Hide()
 local queue = {}
 
-updater:SetScript("OnUpdate", function()
-    local b = queue[1]
+local WAITING_FOR_INIT = "WAITING_FOR_INIT"
+local WAITING_FOR_UPDATE = "WAITING_FOR_UPDATE"
+
+local function Process(b)
     if b then
-        if b._status == "waiting_for_init" then
+        -- print("Process", GetTime(), b:GetName(), b._status)
+        if b._status == WAITING_FOR_INIT then
             -- print("processing_init", GetTime(), b:GetName())
             b._status = "processing"
             HandleIndicators(b)
             UnitButton_UpdateAuras(b)
-        elseif b._status == "waiting_for_update" then
+        elseif b._status == WAITING_FOR_UPDATE then
             -- print("processing_update", GetTime(), b:GetName())
             b._indicatorsReady = true
             b._status = "processing"
@@ -449,20 +444,26 @@ updater:SetScript("OnUpdate", function()
 
         CellLoadingBar.current = (CellLoadingBar.current or 0) + 1
         CellLoadingBar:SetValue(CellLoadingBar.current)
-        tremove(queue, 1)
         b._status = nil
+        b._config = nil
+        queue[b] = nil
     else
         CellLoadingBar:Hide()
         CellLoadingBar.current = 0
         updater:Hide()
     end
+end
+
+updater:SetScript("OnUpdate", function()
+    Process(next(queue))
+    Process(next(queue))
 end)
 
 hooksecurefunc(updater, "Show", function()
-    CellLoadingBar.total = #queue
+    CellLoadingBar.total = F.Getn(queue)
     CellLoadingBar.current = 0
     CellLoadingBar:SetMinMaxValues(0, CellLoadingBar.total)
-    CellLoadingBar:SetValue(CellLoadingBar.current)
+    CellLoadingBar:SetValue(0)
     CellLoadingBar:Show()
 end)
 
@@ -473,29 +474,31 @@ end
 
 local function AddToInitQueue(b)
     b._indicatorsReady = nil
-    b._status = "waiting_for_init"
-    tinsert(queue, b)
+    b._status = WAITING_FOR_INIT
+    b._config = Cell.vars.currentLayoutTable["indicators"]
+    queue[b] = true
 end
 
 local function AddToUpdateQueue(b)
+    if queue[b] then return end
     b._indicatorsReady = nil
-    b._status = "waiting_for_update"
-    tinsert(queue, b)
+    b._status = WAITING_FOR_UPDATE
+    queue[b] = true
 end
 
 -------------------------------------------------
 -- UpdateIndicators
 -------------------------------------------------
 local activeLayouts = {
-    solo = {layout = nil, init = false},
-    party = {layout = nil, init = false},
-    raid = {layout = nil, init = false},
+    solo = nil,
+    party = nil,
+    raid = nil,
 }
 
 local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     F.Debug("|cffff7777UpdateIndicators:|r ", layout, indicatorName, setting, value, value2)
 
-    FlushQueue()
+    -- FlushQueue()
 
     local currentLayout = Cell.vars.currentLayout
     local INDEX = Cell.vars.groupType
@@ -503,9 +506,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     if layout then
         -- Cell.Fire("UpdateIndicators", layout): indicators copy/import
         -- Cell.Fire("UpdateIndicators", xxx, ...): indicator updated
-        for groupType, t in next, activeLayouts do
-            if t.layout == layout then
-                t.layout = nil -- update required
+        for groupType, groupLayout in next, activeLayouts do
+            if groupLayout == layout then
+                activeLayouts[groupType] = nil -- update required
                 F.Debug("  -> UPDATE REQUIRED:", groupType)
             end
         end
@@ -518,18 +521,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 
     else -- Cell.Fire("UpdateIndicators")
         --! layout/groupType switched, check if update is required
-        if activeLayouts[INDEX].layout == currentLayout then
+        if activeLayouts[INDEX] == currentLayout then
             I.ResetCustomIndicatorTables()
             ResetIndicators()
-            if not activeLayouts[INDEX].init then
-                F.Debug("  -> FULL UPDATE: first time init")
-                activeLayouts[INDEX].init = true
-                F.IterateAllUnitButtons(AddToInitQueue, true)
-            else
-                F.Debug("  -> NO FULL UPDATE: only reset custom indicator tables")
-                F.IterateAllUnitButtons(AddToUpdateQueue, true, nil, true)
-                F.IterateSharedUnitButtons(AddToInitQueue)
-            end
+            F.Debug("  -> NO FULL UPDATE: only reset custom indicator tables")
+            F.IterateAllUnitButtons(AddToUpdateQueue, true, nil, true)
+            F.IterateSharedUnitButtons(AddToInitQueue)
             updater:Show()
             return
         end
@@ -542,7 +539,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         return
     end
 
-    activeLayouts[INDEX].layout = currentLayout
+    activeLayouts[INDEX] = currentLayout
 
     if not indicatorName then -- init
         F.Debug("  -> FULL UPDATE", INDEX, currentLayout)
@@ -3897,10 +3894,10 @@ function CellUnitButton_OnLoad(button)
     I.CreatePowerWordShield(button)
     I.CreateAoEHealing(button)
     I.CreateTankActiveMitigation(button)
-    -- I.CreateDefensiveCooldowns(button)
-    -- I.CreateExternalCooldowns(button)
-    -- I.CreateAllCooldowns(button)
-    -- I.CreateDebuffs(button)
+    I.CreateDefensiveCooldowns(button)
+    I.CreateExternalCooldowns(button)
+    I.CreateAllCooldowns(button)
+    I.CreateDebuffs(button)
     I.CreateDispels(button)
     I.CreateRaidDebuffs(button)
     I.CreatePrivateAuras(button)

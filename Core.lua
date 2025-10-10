@@ -730,12 +730,14 @@ function eventFrame:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
             Cell.vars.inMythic = CellDB.fallbackInMythic
             CellDB.fallbackGroupType = nil
             CellDB.fallbackInMythic = nil
+            Cell.Fire("GroupTypeChanged", Cell.vars.groupType)
+        else
+            PreUpdateLayout()
         end
-        PreUpdateLayout()
         inInstance = true
 
         -- NOTE: delayed check mythic raid
-        if iType == "raid" then
+        if iType == "raid" and Cell.vars.groupType == "raid" then
             C_Timer.After(0.5, function()
                 local difficultyID, difficultyName = select(3, GetInstanceInfo()) --! can't get difficultyID, difficultyName immediately after entering an instance
                 Cell.vars.inMythic = difficultyID == 16

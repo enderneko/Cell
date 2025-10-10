@@ -525,7 +525,7 @@ end
 -------------------------------------------------
 function F.Getn(t)
     local count = 0
-    for k, v in pairs(t) do
+    for _ in next, t do
         count = count + 1
     end
     return count
