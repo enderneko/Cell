@@ -1,11 +1,12 @@
+# ignored
 .vscode/
-.release/
+.release/*
 .resources/
 .utils/*.csv
-
-#external libraries
 Libs/*
 
+# excluded
+!.release/*.sh
 !Libs/CallbackHandler.lua
 !Libs/PixelPerfect.lua
 !Libs/FAIAP.lua
