@@ -12,6 +12,8 @@ local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
 
+local function noop() end
+
 -------------------------------------------------
 -- shared functions
 -------------------------------------------------
@@ -1525,7 +1527,7 @@ end
 local function HealthText_SetFormat(self, format)
     self.GetHealth1 = formatter[format.health1.format:gsub("_no_sign$", "")]
     self.GetHealth2 = formatter[format.health2.format:gsub("_no_sign$", "")]
-    self.GetAbsorbs = formatter[format.shields.format:gsub("_no_sign$", "")]
+    self.GetShields = formatter[format.shields.format:gsub("_no_sign$", "")]
     self.GetHealAbsorbs = formatter[format.healAbsorbs.format:gsub("_no_sign$", "")]
 
     self.health1 = BuildPattern(format.health1)
@@ -1542,7 +1544,7 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
     self.text:SetFormattedText("%s%s%s%s",
         self.GetHealth1(self.health1, self.health1_hideIfEmptyOrFull, health, maxHealth, shields, healAbsorbs),
         self.GetHealth2(self.health2, self.health2_hideIfEmptyOrFull, health, maxHealth, shields, healAbsorbs),
-        self.GetAbsorbs(self.shields, health, maxHealth, shields, healAbsorbs),
+        self.GetShields(self.shields, health, maxHealth, shields, healAbsorbs),
         self.GetHealAbsorbs(self.healAbsorbs, health, maxHealth, shields, healAbsorbs))
     self:SetWidth(self.text:GetStringWidth())
 end
@@ -1605,7 +1607,8 @@ function I.CreateHealthText(parent)
     local text = healthText:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     healthText.text = text
 
-    healthText.GetHealth = formatter.none
+    healthText.GetHealth1 = formatter.none
+    healthText.GetHealth2 = formatter.none
     healthText.GetShields = formatter.none
     healthText.GetHealAbsorbs = formatter.none
 
@@ -1733,8 +1736,7 @@ function I.CreatePowerText(parent)
     powerText.SetColor = PowerText_SetColor
     powerText.SetHideIfEmptyOrFull = PowerText_SetHideIfEmptyOrFull
     powerText.UpdatePreviewColor = PowerText_UpdatePreviewColor
-
-    function powerText:SetValue() end
+    powerText.SetValue = noop
 end
 
 -------------------------------------------------
