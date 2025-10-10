@@ -89,8 +89,15 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r264-release (Oct 10, 2025, 11:50 GMT+8)</h1>
+        <p>* Fixed dual spec for anniversary servers (#427, thanks muffinhydra).</p>
+        <p>* Fixed indicator loading issues.</p>
+        <p>* Improved layout fallback handling for Retail.</p>
+        <p>* Updated BuffTracker options for Vanilla/Wrath/Cata.</p>
+        <br/>
+
         <h1>r263-beta (Sep 28, 2025, 14:10 GMT+8)</h1>
-        <p>+ Added baseline support for Dual Spec for Anniversary Servers (#416, thanks muffinhydra).</p>
+        <p>+ Added baseline support for dual spec for anniversary servers (#416, thanks muffinhydra).</p>
         <p>* Refactored layout visibility and indicator updates.</p>
         <p>* Fixed aura tooltips for retail.</p>
         <p>* Changed to delayed pixel updates when UI_SCALE_CHANGED.</p>

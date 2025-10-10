@@ -1,9 +1,7 @@
-[View Full Changelog](https://github.com/enderneko/Cell/compare/r262-release...708ca64db91f17783a2d45608f23fbd2bad86c70)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r263-beta...20c420c30de81ba7cea727c5b619854e8a79efa9)
 
-- Added baseline support for Dual Spec for Anniversary Servers (#416, thanks @muffinhydra)
-- Refactor layout visibility and indicator updates
-- Fix aura tooltips for retail
-- Change to delayed pixel updates when UI_SCALE_CHANGED
-- Fix layout fallbacks
-- Remove alwaysUpdateAuras from retail
-- Update locales
+- Fix Anniversary Dual Spec (#427, thanks @muffinhydra)
+- Fix indicator loading issues
+- Improve fallback group type handling for Retail
+- Update BuffTracker options for Vanilla/Wrath/Cata
+- Update size of indicator preview button background
