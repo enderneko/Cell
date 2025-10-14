@@ -89,6 +89,10 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r266-release (Oct 14, 2025, 14:25 GMT+8)</h1>
+        <p>* Delayed creation of some indicators to avoid potential issues.</p>
+        <br/>
+
         <h1>r265-release (Oct 10, 2025, 14:00 GMT+8)</h1>
         <p>* Fixed Health Text indicator.</p>
         <p>* (Retail) Added delayed groupType check for more reliable layout switching.</p>
