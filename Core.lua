@@ -755,6 +755,8 @@ function eventFrame:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
                     PreUpdateLayout()
                 end
             end)
+        else
+            Cell.vars.inMythic = nil
         end
 
     elseif inInstance then -- left insntance

@@ -169,6 +169,14 @@ end
 local function HandleIndicators(b)
     b._indicatorsReady = nil
 
+    if b._waitingForIndicatorCreation then
+        b._waitingForIndicatorCreation = nil
+        I.CreateDefensiveCooldowns(b)
+        I.CreateExternalCooldowns(b)
+        I.CreateAllCooldowns(b)
+        I.CreateDebuffs(b)
+    end
+
     -- NOTE: Remove old
     I.RemoveAllCustomIndicators(b)
 
@@ -3237,10 +3245,10 @@ function CellUnitButton_OnLoad(button)
     I.CreatePlayerRaidIcon(button)
     I.CreateTargetRaidIcon(button)
     I.CreateAoEHealing(button)
-    I.CreateDefensiveCooldowns(button)
-    I.CreateExternalCooldowns(button)
-    I.CreateAllCooldowns(button)
-    I.CreateDebuffs(button)
+    -- I.CreateDefensiveCooldowns(button)
+    -- I.CreateExternalCooldowns(button)
+    -- I.CreateAllCooldowns(button)
+    -- I.CreateDebuffs(button)
     I.CreateDispels(button)
     I.CreateRaidDebuffs(button)
     I.CreateTargetCounter(button)
@@ -3250,6 +3258,8 @@ function CellUnitButton_OnLoad(button)
     I.CreateHealthThresholds(button)
     U.CreateSpellRequestIcon(button)
     U.CreateDispelRequestText(button)
+
+    button._waitingForIndicatorCreation = true
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init
