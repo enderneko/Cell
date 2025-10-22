@@ -920,7 +920,7 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
         -- update spec vars
         UpdateSpecVars()
 
-        if not Cell.vars.playerSpecID then
+        if not Cell.vars.playerSpecID or Cell.vars.playerSpecID == 0 then
             -- NOTE: when join in battleground, spec auto switched, during loading, can't get info from GetSpecializationInfo, until PLAYER_ENTERING_WORLD
             prevSpec = nil
             checkSpecFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
