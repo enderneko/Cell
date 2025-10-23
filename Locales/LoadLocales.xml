@@ -10,4 +10,5 @@
     <Script file="frFR.lua"/>
     <Script file="esES.lua"/>
     <Script file="itIT.lua"/>
+    <Script file="esMX.lua"/>
 </Ui>

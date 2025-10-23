@@ -130,7 +130,7 @@ local function CreateTranslatorsPane()
     translatorsTextRU:SetPoint("TOPLEFT", translatorsTextPT, "BOTTOMLEFT", 0, -6)
     translatorsTextRU:SetSpacing(5)
     translatorsTextRU:SetJustifyH("LEFT")
-    translatorsTextRU:SetText("|cff999999ruRU:|r KnewOne, SkywardenSylvanas, MORROSION")
+    translatorsTextRU:SetText("|cff999999ruRU:|r KnewOne, Lucenn, MORROSION")
 
     -- frFR
     translatorsTextFR = translatorsPane:CreateFontString(nil, "OVERLAY")
@@ -143,27 +143,27 @@ local function CreateTranslatorsPane()
     translatorsTextFR:SetJustifyH("LEFT")
     translatorsTextFR:SetText("|cff999999frFR:|r epino46, elated_kalam86")
 
+    -- itIT
+    translatorsTextIT = translatorsPane:CreateFontString(nil, "OVERLAY")
+    translatorsTextIT.font = UNIT_NAME_FONT_ROMAN
+    translatorsTextIT.size = 12
+    UpdateFont(translatorsTextIT)
+
+    translatorsTextIT:SetPoint("TOPLEFT", translatorsTextFR, 215, 0)
+    translatorsTextIT:SetSpacing(5)
+    translatorsTextIT:SetJustifyH("LEFT")
+    translatorsTextIT:SetText("|cff999999itIT:|r CeleDev")
+
     -- esES
     translatorsTextES = translatorsPane:CreateFontString(nil, "OVERLAY")
     translatorsTextES.font = UNIT_NAME_FONT_ROMAN
     translatorsTextES.size = 12
     UpdateFont(translatorsTextES)
 
-    translatorsTextES:SetPoint("TOPLEFT", translatorsTextFR, 215, 0)
+    translatorsTextES:SetPoint("TOPLEFT", translatorsTextFR, "BOTTOMLEFT", 0, -6)
     translatorsTextES:SetSpacing(5)
     translatorsTextES:SetJustifyH("LEFT")
-    translatorsTextES:SetText("|cff999999esES:|r Zurent, F3R_Lv72")
-
-     -- itIT
-     translatorsTextIT = translatorsPane:CreateFontString(nil, "OVERLAY")
-     translatorsTextIT.font = UNIT_NAME_FONT_ROMAN
-     translatorsTextIT.size = 12
-     UpdateFont(translatorsTextIT)
-
-     translatorsTextIT:SetPoint("TOPLEFT", translatorsTextFR, "BOTTOMLEFT", 0, -6)
-     translatorsTextIT:SetSpacing(5)
-     translatorsTextIT:SetJustifyH("LEFT")
-     translatorsTextIT:SetText("|cff999999itIT:|r CeleDev")
+    translatorsTextES:SetText("|cff999999esES:|r Zurent, maylisdalan, F3R_Lv72")
 end
 
 -------------------------------------------------
