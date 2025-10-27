@@ -1,3 +1,6 @@
-[View Full Changelog](https://github.com/enderneko/Cell/compare/r265-release...2a322cdfda4704076f29afdb800614630dcfdaf4)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r266-release...09359db6c67b7e5dcf30c415fc4f56635e3ab32f)
 
-- Delay creation of some indicators to avoid potential issues
+- Fix specID check on auto sepc change
+- Fix spell ranks for click-castings
+- Add esMX (thanks maylisdalan)
+- Update locales, fix missing phrases

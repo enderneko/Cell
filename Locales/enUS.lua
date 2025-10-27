@@ -89,6 +89,13 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r267-release (Oct 27, 2025, 17:50 GMT+8)</h1>
+        <p>* Fixed specID check (layout switch) on auto spec change.</p>
+        <p>* Fixed spell ranks for click-castings.</p>
+        <p>+ Added esMX (thanks maylisdalan).</p>
+        <p>* Updated locales, fixed missing phrases.</p>
+        <br/>
+
         <h1>r266-release (Oct 14, 2025, 14:25 GMT+8)</h1>
         <p>* Delayed creation of some indicators to avoid potential issues.</p>
         <br/>
