@@ -155,6 +155,7 @@ L["A UI reload is required.\nDo it now?"] = "需要重载界面。\n现在重载
 L["Pixel Perfect"] = "像素精确"
 L["Options UI Accent Color"] = "选项界面强调色"
 L["Options UI Font Size"] = "选项界面字体尺寸"
+L["Use Game Font"] = "使用游戏字体"
 L["Unit Button Style"] = "单位按钮样式"
 L["Texture"] = "材质"
 L["Power Color"] = "能量颜色"

@@ -151,7 +151,7 @@ local function CreateCellPane()
     Cell.RegisterForCloseDropdown(accentColorPicker)
 
     -- use game font
-    useGameFontCB = Cell.CreateCheckButton(cellPane, "Use Game Font", function(checked)
+    useGameFontCB = Cell.CreateCheckButton(cellPane, L["Use Game Font"], function(checked)
         CellDB["appearance"]["useGameFont"] = checked
         Cell.UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], checked)
     end)

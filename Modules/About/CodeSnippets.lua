@@ -15,7 +15,7 @@ local function CreateCodeSnippetsFrame()
     codeSnippetsFrame:SetToplevel(true)
     codeSnippetsFrame:SetPoint("CENTER")
 
-    local reloadBtn = Cell.CreateButton(codeSnippetsFrame.header, "Reload", "blue", {70, 20})
+    local reloadBtn = Cell.CreateButton(codeSnippetsFrame.header, _G.RELOADUI, "blue", {100, 20})
     reloadBtn:SetPoint("TOPRIGHT", codeSnippetsFrame.header.closeBtn, "TOPLEFT", P.Scale(1), 0)
     reloadBtn:SetScript("OnClick", ReloadUI)
 
