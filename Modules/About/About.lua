@@ -154,7 +154,7 @@ local function CreateTranslatorsPane()
     translatorsTextIT:SetJustifyH("LEFT")
     translatorsTextIT:SetText("|cff999999itIT:|r CeleDev")
 
-    -- esES
+    -- esES / esMX
     translatorsTextES = translatorsPane:CreateFontString(nil, "OVERLAY")
     translatorsTextES.font = UNIT_NAME_FONT_ROMAN
     translatorsTextES.size = 12
@@ -163,7 +163,7 @@ local function CreateTranslatorsPane()
     translatorsTextES:SetPoint("TOPLEFT", translatorsTextFR, "BOTTOMLEFT", 0, -6)
     translatorsTextES:SetSpacing(5)
     translatorsTextES:SetJustifyH("LEFT")
-    translatorsTextES:SetText("|cff999999esES:|r Zurent, maylisdalan, F3R_Lv72")
+    translatorsTextES:SetText("|cff999999esES:|r Zurent, maylisdalan, F3R_Lv72    |cff999999esMX:|r maylisdalan")
 end
 
 -------------------------------------------------
