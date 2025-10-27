@@ -26,6 +26,8 @@ L["About"] = "Informazioni"
 L["ABOUT"] = "INFORMAZIONI"
 L["ACCEPTED"] = "ACCETTATO"
 L["Action"] = "Azione"
+--[[Translation missing --]]
+--[[ L["Actions"] = ""--]]
 L["Add"] = "Aggiungi"
 L["Add new spell"] = "Aggiungi nuova spell"
 L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."] = "Aggiunto |T%d:0|t|cFFFF3030%s(%d)|r nella blacklist dei debuff."
@@ -342,6 +344,8 @@ L["Extra Action Button"] = "Pulsante Azioni Extra"
 --[[ L["fadeOut"] = "Fade out over time"--]]
 --[[Translation missing --]]
 --[[ L["Faster Health Updates"] = "Faster Health Updates"--]]
+--[[Translation missing --]]
+--[[ L["FEIGN"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Filter Auto Switch"] = ""--]]
 --[[Translation missing --]]
@@ -1162,6 +1166,8 @@ L["Use CLEU events to increase health update rate"] = "Utilizza gli eventi CLEU 
 L["Use common profile"] = "Usa profilo in comune"
 --[[Translation missing --]]
 --[[ L["Use Elapsed Time"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Use Game Font"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Use Same Arrangement As Main"] = "Use Same Arrangement As Main"--]]
 --[[Translation missing --]]

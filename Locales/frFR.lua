@@ -21,6 +21,8 @@ L["About"] = "À propos"
 L["ABOUT"] = "Cell est un bon addon de cadre de raid inspiré de plusieurs excellents addons, tels que CompactRaid, Grid2, Aptechka et VuhDo.\nAvec une interface plus conviviale, Cell peut offrir une meilleure expérience utilisateur plus que jamais.\n Espère que vous apprécierez."
 L["ACCEPTED"] = "ACCEPTÉ"
 L["Action"] = "Action"
+--[[Translation missing --]]
+--[[ L["Actions"] = ""--]]
 L["Add"] = "Ajouter"
 L["Add new spell"] = "Ajouter un nouveau sort"
 L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."] = "Ajout de |T%d:0|t|cFFFF3030%s(%d)|r dans la liste noire des affaiblissements."
@@ -297,6 +299,7 @@ L["External Cooldowns"] = "Temps de recharge externes"
 --[[ L["fadeOut"] = "Fade out over time"--]]
 --[[Translation missing --]]
 --[[ L["Faster Health Updates"] = "Faster Health Updates"--]]
+L["FEIGN"] = "FEINDRE"
 --[[Translation missing --]]
 --[[ L["Filter Auto Switch"] = ""--]]
 L["first %d"] = "%d premier"
@@ -506,8 +509,8 @@ L["marksTips"] = "\n|rMarqueur de cible\nClic gauche : |cffffffffdéfinir le ma
 L["Max Displayed"] = "Maximum affiché"
 L["Max Rows"] = "Nombre maximal de lignes"
 L["Me"] = "Moi"
-L["menu"] = "menu"
 L["Menu"] = "Menu"
+L["menu"] = "menu"
 L["Menu Position"] = "Position du menu"
 L["Middle"] = "Milieu"
 L["mine"] = "le mien"
@@ -846,8 +849,8 @@ L["Spacing"] = "Espacement"
 --[[ L["Spec Filter"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Special Thanks"] = "Special Thanks"--]]
-L["Spell"] = "Sort"
 L["SPELL"] = "SORT"
+L["Spell"] = "Sort"
 --[[Translation missing --]]
 --[[ L["Spell already exists."] = "Spell already exists."--]]
 L["Spell List"] = "Liste des sorts"
@@ -974,6 +977,8 @@ L["Use CLEU events to increase health update rate"] = "Utilisez les événements
 L["Use common profile"] = "Utiliser un profil commun"
 --[[Translation missing --]]
 --[[ L["Use Elapsed Time"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Use Game Font"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Use Same Arrangement As Main"] = "Use Same Arrangement As Main"--]]
 --[[Translation missing --]]

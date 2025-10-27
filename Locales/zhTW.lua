@@ -23,6 +23,8 @@ L["ABOUT"] = [=[Cell 團隊框架的靈感來主要來自 CompactRaid 與 Grid2�
 Cell 不輕量，也並非全能，其目標是提供良好的用戶體驗。]=]
 L["ACCEPTED"] = "已接受"
 L["Action"] = "動作"
+--[[Translation missing --]]
+--[[ L["Actions"] = ""--]]
 L["Add"] = "新增"
 L["Add new spell"] = "加入新法術"
 L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."] = "已將 |T%d:0|t|cFFFF3030%s(%d)|r 加入減益黑名單。"
@@ -232,6 +234,8 @@ L["Fade out menu buttons on mouseout"] = "滑鼠移開時淡出選單按鈕"
 L["Fade Out These Buttons"] = "淡出這些按鈕"
 L["fadeOut"] = "隨時間淡出"
 L["Faster Health Updates"] = "更快的血量更新頻率"
+--[[Translation missing --]]
+--[[ L["FEIGN"] = ""--]]
 L["Filter Auto Switch"] = "過濾自動切換"
 L["first %d"] = "前 %d 個"
 L["Flash"] = "閃光"
@@ -603,8 +607,8 @@ L["Spacing"] = "間距"
 L["Spec"] = "專精"
 L["Spec Filter"] = "依專精"
 L["Special Thanks"] = "特別感謝"
-L["Spell"] = "法術"
 L["SPELL"] = "法術"
+L["Spell"] = "法術"
 L["Spell already exists."] = "法術已存在。"
 L["Spell List"] = "法術清單"
 L["Spell Request"] = "法術請求"
@@ -697,6 +701,8 @@ L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid enc
 L["Use CLEU events to increase health update rate"] = "使用戰鬥記錄事件來增加血條的更新頻率"
 L["Use common profile"] = "使用共用設定檔"
 L["Use Elapsed Time"] = "存在時間"
+--[[Translation missing --]]
+--[[ L["Use Game Font"] = ""--]]
 L["Use Same Arrangement As Main"] = "使用與主框架相同的排列"
 L["Use Same Size As Main"] = "使用與主框架相同的大小"
 L["use separate profile for current spec"] = "當前專精使用獨立的設定檔"
