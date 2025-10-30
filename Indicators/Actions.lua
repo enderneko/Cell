@@ -30,7 +30,7 @@ eventFrame:SetScript("OnEvent", function(self, event, unit, castGUID, spellID)
 
     if Cell.vars.actionsDebugModeEnabled then
         local name = F.GetSpellInfo(spellID)
-        print("|cFFFF3030[Cell]|r |cFFB2B2B2"..event..":|r", unit, "|cFF00FF00"..(spellID or "nil").."|r", name)
+        print("|cFFFF3030[Cell]|r |cFFB2B2B2" .. event .. ":|r", unit, "|cFF00FF00" .. (spellID or "nil") .. "|r", name)
     end
 
     if Cell.vars.actions[spellID] then
@@ -129,9 +129,9 @@ local function CreateAnimationGroup_TypeA()
             tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
         end
 
-        a1:SetDuration(a1.duration/parent.speed)
-        t1:SetDuration(t1.duration/parent.speed)
-        a2:SetDuration(a2.duration/parent.speed)
+        a1:SetDuration(a1.duration / parent.speed)
+        t1:SetDuration(t1.duration / parent.speed)
+        a2:SetDuration(a2.duration / parent.speed)
 
         if ag:IsPlaying() then
             ag:Restart()
@@ -207,11 +207,11 @@ local function CreateAnimationGroup_TypeB()
         canvas:SetParent(parent)
         canvas:SetAllPoints(parent)
 
-        a1:SetDuration(a1.duration/parent.speed)
-        t1:SetDuration(t1.duration/parent.speed)
+        a1:SetDuration(a1.duration / parent.speed)
+        t1:SetDuration(t1.duration / parent.speed)
 
-        t1:SetOffset(canvas:GetWidth() + math.tan(math.pi/4)*canvas:GetHeight() + WIDTH/math.cos(math.pi/4), 0)
-        tex:SetHeight(canvas:GetHeight()/math.sin(math.pi/4) + WIDTH)
+        t1:SetOffset(canvas:GetWidth() + math.tan(math.pi / 4) * canvas:GetHeight() + WIDTH / math.cos(math.pi / 4), 0)
+        tex:SetHeight(canvas:GetHeight() / math.sin(math.pi / 4) + WIDTH)
         tex:SetColorTexture(r, g, b)
 
         if ag:IsPlaying() then
@@ -290,12 +290,12 @@ local function CreateAnimationGroup_TypeC()
             f:SetPoint("TOPRIGHT", canvas, "RIGHT")
         end
 
-        a1:SetDuration(a1.duration/parent.speed)
-        t1:SetDuration(t1.duration/parent.speed)
-        a2:SetDuration(a2.duration/parent.speed)
+        a1:SetDuration(a1.duration / parent.speed)
+        t1:SetDuration(t1.duration / parent.speed)
+        a2:SetDuration(a2.duration / parent.speed)
 
-        f:SetWidth(canvas:GetHeight()/2)
-        t1:SetOffset(0, canvas:GetHeight()/2)
+        f:SetWidth(canvas:GetHeight() / 2)
+        t1:SetOffset(0, canvas:GetHeight() / 2)
         tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
 
         if ag:IsPlaying() then
@@ -350,8 +350,8 @@ local function CreateAnimationGroup_TypeD()
 
     local s1 = ag:CreateAnimation("Scale")
     s1.duration = 0.5
-    s1:SetScaleFrom(0,0)
-    s1:SetScaleTo(1,1)
+    s1:SetScaleFrom(0, 0)
+    s1:SetScaleTo(1, 1)
     s1:SetOrder(1)
     s1:SetDuration(s1.duration)
 
@@ -375,11 +375,11 @@ local function CreateAnimationGroup_TypeD()
         canvas:SetParent(parent)
         canvas:SetAllPoints(parent)
 
-        a1:SetDuration(a1.duration/parent.speed)
-        s1:SetDuration(s1.duration/parent.speed)
-        a2:SetDuration(a2.duration/parent.speed)
+        a1:SetDuration(a1.duration / parent.speed)
+        s1:SetDuration(s1.duration / parent.speed)
+        a2:SetDuration(a2.duration / parent.speed)
 
-        local l = math.sqrt((parent:GetParent():GetHeight()/2)^2 + (parent:GetParent():GetWidth()/2)^2) * 2
+        local l = math.sqrt((parent:GetParent():GetHeight() / 2) ^ 2 + (parent:GetParent():GetWidth() / 2) ^ 2) * 2
         tex:SetSize(l, l)
         tex:SetColorTexture(r, g, b, 0.6)
 
@@ -453,9 +453,9 @@ local function CreateAnimationGroup_TypeE()
         canvas:SetParent(parent)
         canvas:SetAllPoints(parent)
 
-        t1:SetDuration(t1.duration/parent.speed)
+        t1:SetDuration(t1.duration / parent.speed)
 
-        local l = canvas:GetHeight()*2
+        local l = canvas:GetHeight() * 2
         f:SetWidth(l)
         t1:SetOffset(l + canvas:GetWidth(), 0)
 
@@ -513,8 +513,8 @@ local function CreateAnimationGroup_TypeF()
 
     local s1 = ag:CreateAnimation("Scale")
     s1.duration = 0.5
-    s1:SetScaleFrom(0,0)
-    s1:SetScaleTo(1,1)
+    s1:SetScaleFrom(0, 0)
+    s1:SetScaleTo(1, 1)
     s1:SetOrder(1)
     s1:SetDuration(s1.duration)
 
@@ -538,9 +538,9 @@ local function CreateAnimationGroup_TypeF()
         canvas:SetParent(parent)
         canvas:SetAllPoints(parent)
 
-        a1:SetDuration(a1.duration/parent.speed)
-        s1:SetDuration(s1.duration/parent.speed)
-        a2:SetDuration(a2.duration/parent.speed)
+        a1:SetDuration(a1.duration / parent.speed)
+        s1:SetDuration(s1.duration / parent.speed)
+        a2:SetDuration(a2.duration / parent.speed)
 
         local l = max(parent:GetParent():GetWidth(), parent:GetParent():GetHeight()) * 2
         tex:SetSize(l, l)
@@ -610,8 +610,8 @@ local function CreateAnimationGroup_TypeG()
 
         tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
 
-        a1:SetDuration(a1.duration/parent.speed)
-        a2:SetDuration(a2.duration/parent.speed)
+        a1:SetDuration(a1.duration / parent.speed)
+        a2:SetDuration(a2.duration / parent.speed)
 
         if ag:IsPlaying() then
             ag:Restart()
@@ -648,7 +648,7 @@ local function Actions_Display(self, animationType, color)
 end
 
 function I.CreateActions(parent, isPreview)
-    local actions = CreateFrame("Frame", parent:GetName().."ActionsParent", isPreview and parent or parent.widgets.indicatorFrame)
+    local actions = CreateFrame("Frame", parent:GetName() .. "ActionsParent", isPreview and parent or parent.widgets.indicatorFrame)
 
     if isPreview then
         parent.actions = actions
@@ -661,9 +661,10 @@ function I.CreateActions(parent, isPreview)
         actions:SetAllPoints(parent.widgets.healthBar)
     end
 
+    actions.speed = 1
     actions.SetSpeed = Actions_SetSpeed
     actions.Display = Actions_Display
-    end
+end
 
 function I.UpdateActionsOrientation(button, barOrientation)
     button.indicators.actions.orientation = barOrientation
