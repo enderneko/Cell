@@ -1864,11 +1864,8 @@ if Cell.isWrath or Cell.isVanilla then
     local GetSpellTabInfo = GetSpellTabInfo
     local GetSpellBookItemName = GetSpellBookItemName
 
-    local MATCH_PATTERN, FORMAT_PATTERN = "", ""
-    if LOCALE_enUS then
-        MATCH_PATTERN = "Rank (%d+)"
-        FORMAT_PATTERN = "Rank %d"
-    elseif LOCALE_deDE or LOCALE_frFR then
+    local MATCH_PATTERN, FORMAT_PATTERN = "Rank (%d+)", "Rank %d"
+    if LOCALE_deDE or LOCALE_frFR then
         MATCH_PATTERN = "Rang (%d+)"
         FORMAT_PATTERN = "Rang %d"
     elseif LOCALE_esES or LOCALE_esMX then
@@ -1913,15 +1910,26 @@ if Cell.isWrath or Cell.isVanilla then
             totalSpells = totalSpells + numSpells
         end
 
+        -- local spellSubText
         for i = 1, totalSpells do
             local name, subText = GetSpellBookItemName(i, bookType)
             if name == spellName and subText then
                 local rank = tonumber(subText:match(MATCH_PATTERN))
+                -- spellSubText = subText
                 if rank and rank > maxRank then
                     maxRank = rank
                 end
             end
         end
+
+        -- if spellSubText then
+        --     print("----------------------------------------------")
+        --     print(spellSubText, MATCH_PATTERN, tonumber(spellSubText:match(MATCH_PATTERN)))
+        --     print("Max Rank of " .. spellName .. ": " .. maxRank)
+        --     print("----------------------------------------------")
+        -- else
+        --     print("Rank info not found: " .. spellName)
+        -- end
 
         return maxRank
     end
