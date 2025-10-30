@@ -89,6 +89,12 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r268-release (2025-10-30 11:15 GMT+8)</h1>
+        <p>* Fixed spell rank issue for the English client.</p>
+        <p>* Fixed potential nil error in Actions indicator.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
         <h1>r267-release (Oct 27, 2025, 17:50 GMT+8)</h1>
         <p>* Fixed specID check (layout switch) on auto spec change.</p>
         <p>* Fixed spell ranks for click-castings.</p>

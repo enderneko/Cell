@@ -1,6 +1,5 @@
-[View Full Changelog](https://github.com/enderneko/Cell/compare/r266-release...09359db6c67b7e5dcf30c415fc4f56635e3ab32f)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r267-release...4c63b031948d7f191d245fd889f00c570d456698)
 
-- Fix specID check on auto sepc change
-- Fix spell ranks for click-castings
-- Add esMX (thanks maylisdalan)
-- Update locales, fix missing phrases
+- Fix spell rank issue for the English client
+- Fix potential nil error in Actions indicator
+- Update locales
