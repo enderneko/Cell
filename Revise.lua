@@ -3343,19 +3343,19 @@ function F.Revise()
             CellDB["appearance"]["healAbsorb"][1] = true
 
             -- reset layoutAutoSwitch
-            if not CellDB["layoutAutoSwitch"] then
-                CellDB["layoutAutoSwitch"] = {}
-            end
-            if not CellDB["layoutAutoSwitch"]["role"] then
-                CellDB["layoutAutoSwitch"]["role"] = {
-                    ["TANK"] = F.Copy(Cell.defaults.layoutAutoSwitch),
-                    ["HEALER"] = F.Copy(Cell.defaults.layoutAutoSwitch),
-                    ["DAMAGER"] = F.Copy(Cell.defaults.layoutAutoSwitch),
-                }
-            end
-            if not CellDB["layoutAutoSwitch"][Cell.vars.playerClass] then
-                CellDB["layoutAutoSwitch"][Cell.vars.playerClass] = {}
-            end
+            -- if not CellDB["layoutAutoSwitch"] then
+            --     CellDB["layoutAutoSwitch"] = {}
+            -- end
+            -- if not CellDB["layoutAutoSwitch"]["role"] then
+            --     CellDB["layoutAutoSwitch"]["role"] = {
+            --         ["TANK"] = F.Copy(Cell.defaults.layoutAutoSwitch),
+            --         ["HEALER"] = F.Copy(Cell.defaults.layoutAutoSwitch),
+            --         ["DAMAGER"] = F.Copy(Cell.defaults.layoutAutoSwitch),
+            --     }
+            -- end
+            -- if not CellDB["layoutAutoSwitch"][Cell.vars.playerClass] then
+            --     CellDB["layoutAutoSwitch"][Cell.vars.playerClass] = {}
+            -- end
 
             if not next(CellDB["actions"]) then
                 CellDB["actions"] = I.GetDefaultActions()
@@ -3387,6 +3387,30 @@ function F.Revise()
         end
 
         CellDB["tools"]["buffTracker"][5] = U.GetBuffTrackerDefaults()
+    end
+
+    -- 269-release
+    if CellDB["revise"] and dbRevision < 269 then
+        if Cell.isMists and GetCVar("portal") == "CN" then
+            for _, layout in pairs(CellDB["layouts"]) do
+                for _, i in pairs(layout["indicators"]) do
+                    if i.indicatorName == "powerText" then
+                        -- reset powerText filter
+                        i.filters = F.Copy(Cell.defaults.layout.indicators[Cell.defaults.indicatorIndices.powerText].filters)
+                    end
+                end
+
+                -- reset power filters
+                layout["powerFilters"] = F.Copy(Cell.defaults.layout.powerFilters)
+            end
+
+            -- enable healAbsorb
+            CellDB["appearance"]["healAbsorb"][1] = true
+
+            if not next(CellDB["actions"]) then
+                CellDB["actions"] = I.GetDefaultActions()
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --
