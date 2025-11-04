@@ -1,6 +1,6 @@
 ## Interface: 30405
 ## Title: Cell
-## Version: r268-release
+## Version: r269-release
 ## Author: enderneko
 ## X-Flavor: Wrath
 ## SavedVariables: CellDB, CellDBBackup

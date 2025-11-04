@@ -1,5 +1,3 @@
-[View Full Changelog](https://github.com/enderneko/Cell/compare/r267-release...4c63b031948d7f191d245fd889f00c570d456698)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r268-release...c287e980b23695859b9b067efd2b8639c345a0be)
 
-- Fix spell rank issue for the English client
-- Fix potential nil error in Actions indicator
-- Update locales
+- Fix Monk-related issues
