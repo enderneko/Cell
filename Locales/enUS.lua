@@ -89,6 +89,11 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r270-release (2025-12-04 10:00 GMT+8)</h1>
+        <p>* Updated toc version.</p>
+        <p>* Fixed display of the separate pet frame in arenas.</p>
+        <br/>
+
         <h1>r269-release (2025-11-04 10:29 GMT+8)</h1>
         <p>* (CN MoP) Fixed Monk-related issues.</p>
         <br/>

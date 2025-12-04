@@ -1,3 +1,4 @@
-[View Full Changelog](https://github.com/enderneko/Cell/compare/r268-release...c287e980b23695859b9b067efd2b8639c345a0be)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r269-release...f27efa556a63231dd5b9d7bfa3bebbf375dd941d)
 
-- Fix Monk-related issues
+- Bump up toc
+- Fix separate pet frame
