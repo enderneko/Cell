@@ -383,7 +383,7 @@ local function Icon_OnUpdate_ElapsedTime(frame, elapsed)
     frame._remain = frame._duration - (GetTime() - frame._start)
     if frame._remain < 0 then frame._remain = 0 end
 
-    if frame._remain > frame._threshold then
+   if not frame._threshold or frame._remain > frame._threshold then
         frame.duration:SetText("")
         return
     end
