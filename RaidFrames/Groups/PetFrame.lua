@@ -331,7 +331,7 @@ local function PetFrame_UpdateLayout(layout, which)
     end
 
     if not which or which == "pet" then
-        if Cell.vars.groupType == "party" and layout["pet"]["partyEnabled"] and layout["pet"]["partyDetached"] then
+        if (Cell.vars.groupType == "party" or Cell.vars.inBattleground == 5) and layout["pet"]["partyEnabled"] and layout["pet"]["partyDetached"] then
             if Cell.vars.inBattleground == 5 then -- arena
                 header:SetAttribute("showParty", false)
                 header:SetAttribute("showRaid", true)
