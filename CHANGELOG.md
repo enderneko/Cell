@@ -1,4 +1,4 @@
-[View Full Changelog](https://github.com/enderneko/Cell/compare/r269-release...f27efa556a63231dd5b9d7bfa3bebbf375dd941d)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r270-release...332729c44d7352f1b0f9324101fba883a53270dd)
 
-- Bump up toc
-- Fix separate pet frame
+- Enable WeakenedSoul filter for "Debuffs" indicator
+- Fix a OmniCD related issue
