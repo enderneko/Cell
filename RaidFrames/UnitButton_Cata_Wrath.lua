@@ -1032,6 +1032,11 @@ Cell.RegisterCallback("UpdateIndicators", "UnitButton_UpdateIndicators", UpdateI
 -------------------------------------------------
 -- debuffs
 -------------------------------------------------
+-- won't show if not a priest, otherwise show mine only
+local function FilterWeakenedSoul(spellId)
+    return spellId ~= 6788 or Cell.vars.playerClassID == 5
+end
+
 local function UnitButton_UpdateDebuffs(self)
     local unit = self.states.displayedUnit
 
@@ -1067,7 +1072,7 @@ local function UnitButton_UpdateDebuffs(self)
                 refreshing = false
             end
 
-            if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] then
+            if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] and FilterWeakenedSoul(spellId) then
                 if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
                     if Cell.vars.bigDebuffs[spellId] then  -- isBigDebuff
                         self._debuffs_big[i] = refreshing

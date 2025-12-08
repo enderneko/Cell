@@ -1097,14 +1097,10 @@ end
 -- cleuAuras
 -- local cleuUnits = {}
 
--- NOTE: Weakened Soul has been removed in Dragonflight
 -- won't show if not a priest, otherwise show mine only
--- local function FilterWeakenedSoul(spellId, caster)
---     if spellId ~= 6788 then return true end
-
---     if not Cell.vars.playerClassID == 5 then return end
---     return caster == "player"
--- end
+local function FilterWeakenedSoul(spellId)
+    return spellId ~= 6788 or Cell.vars.playerClassID == 5
+end
 
 local function ResetDebuffVars(self)
     self._debuffs.resurrectionFound = false
@@ -1145,7 +1141,7 @@ local function HandleDebuffs(self, auraInfo)
 
         self._debuffs_cache[auraInstanceID] = auraInfo
 
-        if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] then
+        if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] and FilterWeakenedSoul(spellId) then
             -- all debuffs / only dispellableByMe
             if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
                 if Cell.vars.bigDebuffs[spellId] then
