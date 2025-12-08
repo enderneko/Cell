@@ -2065,7 +2065,7 @@ end
 -- OmniCD
 -------------------------------------------------
 function F.UpdateOmniCDPosition(frame)
-    if OmniCD and OmniCD[1].db.position.uf == frame then
+    if OmniCD and OmniCD[1].db and OmniCD[1].db.position.uf == frame then
         C_Timer.After(0.5, function()
             OmniCD[1].Party:UpdatePosition()
         end)
