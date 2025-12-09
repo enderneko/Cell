@@ -1,4 +1,4 @@
-# [Full Changelog](https://github.com/enderneko/Cell/compare/r260-release...928a2a91fbc6dd8dc9bfe9c8d5a833dc7cb62847)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r270-release...332729c44d7352f1b0f9324101fba883a53270dd)
 
-- Update RaidDebuffs_MoP (#407, thanks @EkklesN)
-- Update RaidDebuffs_TWW
+- Enable WeakenedSoul filter for "Debuffs" indicator
+- Fix a OmniCD related issue

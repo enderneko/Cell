@@ -607,7 +607,7 @@ end
 Cell.RegisterCallback("GroupTypeChanged", "RaidRosterFrame_GroupTypeChanged", GroupTypeChanged)
 
 local function UpdateLayout(layout, which)
-    if layout == "hide" then
+    if Cell.vars.isHidden then
         raidRosterFrame:Hide()
         return
     end

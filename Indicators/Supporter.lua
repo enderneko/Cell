@@ -17,7 +17,9 @@ local function creationFunc()
 
     local ag = f:CreateAnimationGroup()
     ag:SetScript("OnFinished", function()
-        pool:Release(f)
+        if pool:IsActive(f) then
+            pool:Release(f)
+        end
     end)
 
     -- in -------------------------------------------------------------------- --
@@ -174,7 +176,9 @@ local mvpPool = CreateObjectPool(function(pool)
     A.CreateFadeIn(f, 0, 1, 0.2)
     A.CreateFadeOut(f, 1, 0, 0.2, nil, function()
         f.timer = nil
-        pool:Release(f)
+        if pool:IsActive(f) then
+            pool:Release(f)
+        end
     end)
 
     return f
@@ -231,7 +235,9 @@ local goatPool = CreateObjectPool(function(pool)
     A.CreateFadeIn(f, 0, 1, 0.2)
     A.CreateFadeOut(f, 1, 0, 0.2, nil, function()
         f.timer = nil
-        pool:Release(f)
+        if pool:IsActive(f) then
+            pool:Release(f)
+        end
     end)
 
     return f

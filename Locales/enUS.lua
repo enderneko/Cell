@@ -89,6 +89,69 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r271-release (2025-12-08 12:00 GMT+8)</h1>
+        <p>* Fixed a OmniCD related issue.</p>
+        <p>* (Classic) The "Debuffs" indicator no longer shows WeakenedSoul for non-priests.</p>
+        <br/>
+
+        <h1>r270-release (2025-12-04 10:00 GMT+8)</h1>
+        <p>* Updated toc version.</p>
+        <p>* Fixed display of the separate pet frame in arenas.</p>
+        <br/>
+
+        <h1>r269-release (2025-11-04 10:29 GMT+8)</h1>
+        <p>* (CN MoP) Fixed Monk-related issues.</p>
+        <br/>
+
+        <h1>r268-release (2025-10-30 11:15 GMT+8)</h1>
+        <p>* Fixed spell rank issue for the English client.</p>
+        <p>* Fixed potential nil error in Actions indicator.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
+        <h1>r267-release (Oct 27, 2025, 17:50 GMT+8)</h1>
+        <p>* Fixed specID check (layout switch) on auto spec change.</p>
+        <p>* Fixed spell ranks for click-castings.</p>
+        <p>+ Added esMX (thanks maylisdalan).</p>
+        <p>* Updated locales, fixed missing phrases.</p>
+        <br/>
+
+        <h1>r266-release (Oct 14, 2025, 14:25 GMT+8)</h1>
+        <p>* Delayed creation of some indicators to avoid potential issues.</p>
+        <br/>
+
+        <h1>r265-release (Oct 10, 2025, 14:00 GMT+8)</h1>
+        <p>* Fixed Health Text indicator.</p>
+        <p>* (Retail) Added delayed groupType check for more reliable layout switching.</p>
+        <br/>
+
+        <h1>r264-release (Oct 10, 2025, 11:50 GMT+8)</h1>
+        <p>* Fixed dual spec for anniversary servers (#427, thanks muffinhydra).</p>
+        <p>* Fixed indicator loading issues.</p>
+        <p>* Improved layout fallback handling for Retail.</p>
+        <p>* Updated BuffTracker options for Vanilla/Wrath/Cata.</p>
+        <br/>
+
+        <h1>r263-beta (Sep 28, 2025, 14:10 GMT+8)</h1>
+        <p>+ Added baseline support for dual spec for anniversary servers (#416, thanks muffinhydra).</p>
+        <p>* Refactored layout visibility and indicator updates.</p>
+        <p>* Fixed aura tooltips for retail.</p>
+        <p>* Changed to delayed pixel updates when UI_SCALE_CHANGED.</p>
+        <p>* Fixed layout fallbacks.</p>
+        <p>- Removed alwaysUpdateAuras from retail.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
+        <h1>r262-release (Sep 18, 2025, 18:50 GMT+8)</h1>
+        <p>* Updated MoP debuffs (#417, thanks Ekkles).</p>
+        <p>* Added missing paladin click-casting spell (#389, thanks gpejski).</p>
+        <p>* Partial aura updates (#413, thanks cont1nuity).</p>
+        <p>* (Retail) Refactored aura update logic and cache handling, slightly improved performance.</p>
+        <p>* Added option to hide Blizzard Raid Manager.</p>
+        <p>* Added "Cast By" for custom debuff indicators.</p>
+        <p>* Updated TWW debuffs and targeted spells.</p>
+        <br/>
+
         <h1>r261-release (Aug 22, 2025, 20:40 GMT+8)</h1>
         <p>* Updated MoP debuffs (thanks Ekkles).</p>
         <p>* Updated TWW debuffs.</p>

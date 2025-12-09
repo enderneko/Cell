@@ -96,16 +96,17 @@ for i = 1, 9 do
         -- clear all marks
         markButtons[i].texture:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
         markButtons[i]:SetScript("OnClick", function()
-            markButtons[i]:SetEnabled(false)
-            markButtons[i].texture:SetDesaturated(true)
-            for j = 1, 8 do
-                SetRaidTarget("player", j)
-            end
-            C_Timer.After(0.5, function()
-                SetRaidTarget("player", 0)
-                markButtons[i]:SetEnabled(true)
-                markButtons[i].texture:SetDesaturated(false)
-            end)
+            RemoveRaidTargets()
+            -- markButtons[i]:SetEnabled(false)
+            -- markButtons[i].texture:SetDesaturated(true)
+            -- for j = 1, 8 do
+            --     SetRaidTarget("player", j)
+            -- end
+            -- C_Timer.After(0.5, function()
+            --     SetRaidTarget("player", 0)
+            --     markButtons[i]:SetEnabled(true)
+            --     markButtons[i].texture:SetDesaturated(false)
+            -- end)
         end)
     else
         markButtons[i].texture:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")

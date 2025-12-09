@@ -21,6 +21,8 @@ L["About"] = "À propos"
 L["ABOUT"] = "Cell est un bon addon de cadre de raid inspiré de plusieurs excellents addons, tels que CompactRaid, Grid2, Aptechka et VuhDo.\nAvec une interface plus conviviale, Cell peut offrir une meilleure expérience utilisateur plus que jamais.\n Espère que vous apprécierez."
 L["ACCEPTED"] = "ACCEPTÉ"
 L["Action"] = "Action"
+--[[Translation missing --]]
+--[[ L["Actions"] = ""--]]
 L["Add"] = "Ajouter"
 L["Add new spell"] = "Ajouter un nouveau sort"
 L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."] = "Ajout de |T%d:0|t|cFFFF3030%s(%d)|r dans la liste noire des affaiblissements."
@@ -28,8 +30,8 @@ L["AFK"] = "ABS"
 L["Aggro (bar)"] = "Menace (barre)"
 L["Aggro (blink)"] = "Menace (Clignotement)"
 L["Aggro (border)"] = "Menace (Bordure)"
-L["all"] = "Tous"
 L["ALL"] = "TOUS"
+L["all"] = "Tous"
 L["All Bosses"] = "Tous les boss"
 L["All indicators of %s will be replaced with those in %s"] = "Tous les indicateurs de %s seront remplacés par ceux de %s"
 L["All snippets have been disabled, due to the version update"] = "Tous les extraits de code ont été désactivés en raison de la mise à jour de la version."
@@ -297,6 +299,7 @@ L["External Cooldowns"] = "Temps de recharge externes"
 --[[ L["fadeOut"] = "Fade out over time"--]]
 --[[Translation missing --]]
 --[[ L["Faster Health Updates"] = "Faster Health Updates"--]]
+L["FEIGN"] = "FEINDRE"
 --[[Translation missing --]]
 --[[ L["Filter Auto Switch"] = ""--]]
 L["first %d"] = "%d premier"
@@ -383,6 +386,8 @@ L["hide icon animation"] = "masquer l'animation de l'icône"
 L["Hide in Combat"] = "Cacher en combat"
 --[[Translation missing --]]
 --[[ L["Hide Placeholder Frames"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Hide Raid Manager"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Hide Self"] = ""--]]
 --[[Translation missing --]]
@@ -688,8 +693,8 @@ L["Request"] = "Requête"
 --[[Translation missing --]]
 --[[ L["Require font support"] = "Require font support"--]]
 L["Require reload of the UI"] = "Nécessite un rechargement de l'interface utilisateur"
-L["RESET"] = "Cell nécessite une réinitialisation complète après la mise à jour d'une très ancienne version"
 L["Reset"] = "Réinitialiser"
+L["RESET"] = "Cell nécessite une réinitialisation complète après la mise à jour d'une très ancienne version"
 L["Reset All"] = "Réinitialiser tout"
 L["reset all Cell settings"] = "réinitialiser tous les paramètres de Cell"
 L["reset all Click-Castings"] = "Réinitialiser tous les sorts à la souris"
@@ -767,9 +772,9 @@ L["Shield Bar"] = "Barre de bouclier"
 L["Shield Texture"] = "Texture de bouclier"
 --[[Translation missing --]]
 --[[ L["shieldByMe"] = "Only show PW:S cast by me"--]]
-L["shields"] = "Boucliers"
 --[[Translation missing --]]
 --[[ L["Shields"] = "Shields"--]]
+L["shields"] = "Boucliers"
 L["Shift+Enter: add a new line"] = "Maj+Entrée : ajouter une nouvelle ligne"
 L["Shine"] = "Briller"
 L["Show All"] = "Tout afficher"
@@ -829,9 +834,9 @@ L["Size (Big)"] = "Taille (Grande)"
 --[[Translation missing --]]
 --[[ L["Smart Resurrection"] = "Smart Resurrection"--]]
 --[[Translation missing --]]
---[[ L["Smooth"] = ""--]]
---[[Translation missing --]]
 --[[ L["smooth"] = "Smooth"--]]
+--[[Translation missing --]]
+--[[ L["Smooth"] = ""--]]
 L["SNIPPETS_TIPS"] = "[Double-clic] pour renommer. [Maj-clic] pour supprimer. Tous les extraits cochés seront automatiquement invoqués à la fin du processus d'initialisation de la cellule (dans l'événement ADDON_LOADED)."
 --[[Translation missing --]]
 --[[ L["Solid"] = "Solid"--]]
@@ -972,6 +977,8 @@ L["Use CLEU events to increase health update rate"] = "Utilisez les événements
 L["Use common profile"] = "Utiliser un profil commun"
 --[[Translation missing --]]
 --[[ L["Use Elapsed Time"] = ""--]]
+--[[Translation missing --]]
+--[[ L["Use Game Font"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Use Same Arrangement As Main"] = "Use Same Arrangement As Main"--]]
 --[[Translation missing --]]

@@ -12,6 +12,8 @@ local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
 
+local function noop() end
+
 -------------------------------------------------
 -- shared functions
 -------------------------------------------------
@@ -426,7 +428,11 @@ local function Debuffs_ShowTooltip(debuffs, show)
     for i = 1, 10 do
         if show then
             debuffs[i]:SetScript("OnEnter", function(self)
-                F.ShowTooltips(debuffs.parent, "spell", debuffs.parent.states.displayedUnit, self.index, "HARMFUL")
+                if self.index then
+                    F.ShowTooltips(debuffs.parent, "spell", debuffs.parent.states.displayedUnit, self.index, "HARMFUL")
+                elseif self.auraInstanceID then
+                    F.ShowTooltips(debuffs.parent, "aura", debuffs.parent.states.displayedUnit, self.auraInstanceID, "HARMFUL")
+                end
             end)
 
             debuffs[i]:SetScript("OnLeave", function()
@@ -888,8 +894,12 @@ end
 local function RaidDebuffs_ShowTooltip(raidDebuffs, show)
     for i = 1, 3 do
         if show then
-            raidDebuffs[i]:SetScript("OnEnter", function()
-                F.ShowTooltips(raidDebuffs.parent, "spell", raidDebuffs.parent.states.displayedUnit, raidDebuffs[i].index, "HARMFUL")
+            raidDebuffs[i]:SetScript("OnEnter", function(self)
+                if self.index then
+                    F.ShowTooltips(raidDebuffs.parent, "spell", raidDebuffs.parent.states.displayedUnit, self.index, "HARMFUL")
+                elseif self.auraInstanceID then
+                    F.ShowTooltips(raidDebuffs.parent, "aura", raidDebuffs.parent.states.displayedUnit, self.auraInstanceID, "HARMFUL")
+                end
             end)
             raidDebuffs[i]:SetScript("OnLeave", function()
                 GameTooltip:Hide()
@@ -908,7 +918,8 @@ function I.CreateRaidDebuffs(parent)
     raidDebuffs:Hide()
     raidDebuffs.parent = parent
 
-    raidDebuffs:SetScript("OnHide", RaidDebuffs_HideGlow)
+    hooksecurefunc(raidDebuffs, "Hide", RaidDebuffs_HideGlow)
+    -- raidDebuffs:SetScript("OnHide", RaidDebuffs_HideGlow)
 
     raidDebuffs._SetSize = raidDebuffs.SetSize
     raidDebuffs.SetSize = I.Cooldowns_SetSize
@@ -1290,7 +1301,7 @@ end
 local function StatusText_SetStatus(self, status)
     -- print("status: " .. (status or "nil"))
     self.status = status
-    if status then
+    if status and self.colors then
         self.text:SetText(L[status])
         self.text:SetTextColor(unpack(self.colors[status]))
         self.timer:SetTextColor(unpack(self.colors[status]))
@@ -1516,7 +1527,7 @@ end
 local function HealthText_SetFormat(self, format)
     self.GetHealth1 = formatter[format.health1.format:gsub("_no_sign$", "")]
     self.GetHealth2 = formatter[format.health2.format:gsub("_no_sign$", "")]
-    self.GetAbsorbs = formatter[format.shields.format:gsub("_no_sign$", "")]
+    self.GetShields = formatter[format.shields.format:gsub("_no_sign$", "")]
     self.GetHealAbsorbs = formatter[format.healAbsorbs.format:gsub("_no_sign$", "")]
 
     self.health1 = BuildPattern(format.health1)
@@ -1533,7 +1544,7 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
     self.text:SetFormattedText("%s%s%s%s",
         self.GetHealth1(self.health1, self.health1_hideIfEmptyOrFull, health, maxHealth, shields, healAbsorbs),
         self.GetHealth2(self.health2, self.health2_hideIfEmptyOrFull, health, maxHealth, shields, healAbsorbs),
-        self.GetAbsorbs(self.shields, health, maxHealth, shields, healAbsorbs),
+        self.GetShields(self.shields, health, maxHealth, shields, healAbsorbs),
         self.GetHealAbsorbs(self.healAbsorbs, health, maxHealth, shields, healAbsorbs))
     self:SetWidth(self.text:GetStringWidth())
 end
@@ -1596,7 +1607,8 @@ function I.CreateHealthText(parent)
     local text = healthText:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     healthText.text = text
 
-    healthText.GetHealth = formatter.none
+    healthText.GetHealth1 = formatter.none
+    healthText.GetHealth2 = formatter.none
     healthText.GetShields = formatter.none
     healthText.GetHealAbsorbs = formatter.none
 
@@ -1724,8 +1736,7 @@ function I.CreatePowerText(parent)
     powerText.SetColor = PowerText_SetColor
     powerText.SetHideIfEmptyOrFull = PowerText_SetHideIfEmptyOrFull
     powerText.UpdatePreviewColor = PowerText_UpdatePreviewColor
-
-    function powerText:SetValue() end
+    powerText.SetValue = noop
 end
 
 -------------------------------------------------

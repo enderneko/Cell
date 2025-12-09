@@ -72,14 +72,11 @@ function F.HideBlizzardRaid()
 
     if _G.CompactRaidFrameContainer then
         _G.CompactRaidFrameContainer:UnregisterAllEvents()
-        hooksecurefunc(_G.CompactRaidFrameContainer, "Show", _G.CompactRaidFrameContainer.Hide)
-        hooksecurefunc(_G.CompactRaidFrameContainer, "SetShown", function(frame, shown)
-            if shown then
-                frame:Hide()
-            end
-        end)
+        _G.CompactRaidFrameContainer:SetParent(hiddenParent)
     end
+end
 
+function F.HideBlizzardRaidManager()
     if CompactRaidFrameManager_SetSetting then
         CompactRaidFrameManager_SetSetting("IsShown", "0")
     end

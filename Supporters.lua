@@ -67,7 +67,12 @@ local supporters1 = { -- wowIDs
         "|cffff8000Thurådin-Ravencrest (EU)|r",
     }, -- Martin van Vuuren (Ko-fi)
     {"Shendreakah-Zul'jin (US)"}, -- Shendreakah - Zul-jin (Ko-fi)
-    {"|cffff8000Skywarden-Sylvanas (EU)|r"}, -- Serghei Iakovlev (Ko-fi)
+    {
+        "|cffff8000Lucen-Terokkar (EU)|r",
+        "|cffff8000Apexion-Terokkar (EU)|r",
+        "|cffff8000Moonwhisper-Terokkar (EU)|r",
+        "|cffff8000Wildrunner-Terokkar (EU)|r",
+    }, -- Serghei Iakovlev (Ko-fi)
     {"Fourdigitiq-Blackrock (EU)"}, -- Rou (Ko-fi)
     {"Leako-Draenor (EU)"}, -- Leako (Ko-fi)
     {"|cffff8000Asuranpala-Draenor (EU)|r"}, -- AsuranDex (Ko-fi)
@@ -136,6 +141,12 @@ local supporters1 = { -- wowIDs
     }, -- Floofe (Ko-fi)
     {"无语了捏-回音山 (CN)"}, -- 我有脂肪肝 (爱发电)
     {"月弥-神圣之歌 (CN)"}, -- 爱发电用户_bb967 (爱发电)
+    {"|cfffb6f92Darkquinn-Proudmoore (US)|r"}, -- Quinn (Ko-fi)
+    {
+        "Ekkles-伊弗斯 (TW)",
+        "Ekkles-比斯巨兽 (CN)",
+        "Ekkles-国王之谷 (CN)",
+    }, -- 爱发电用户_ygpT
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -262,6 +273,9 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"我有脂肪肝", "爱发电"}, -- 2025-08-07
     {"奶德史塔克-A'lar CN", "Ko-fi"}, -- 2025-08-15
     {"爱发电用户_bb967", "爱发电"}, -- 2025-08-22
+    {"施然", "爱发电"}, -- 2025-10-06
+    {"|cfffb6f92Quinn|r", "Ko-fi"}, -- 2025-10-28
+    {"爱发电用户_ygpT", "爱发电"}, -- 2025-11-06
 }
 
 -------------------------------------------------

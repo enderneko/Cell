@@ -84,12 +84,15 @@ function F.UpdateLayout(layoutGroupType)
         Cell.vars.layoutAutoSwitch = CellCharacterDB["layoutAutoSwitch"][Cell.vars.activeTalentGroup]
 
         local layout = Cell.vars.layoutAutoSwitch[layoutGroupType]
-        Cell.vars.currentLayout = layout
         Cell.vars.layoutGroupType = layoutGroupType
 
         if layout == "hide" then
+            Cell.vars.isHidden = true
+            Cell.vars.currentLayout = "default"
             Cell.vars.currentLayoutTable = CellDB["layouts"]["default"]
         else
+            Cell.vars.isHidden = false
+            Cell.vars.currentLayout = layout
             Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         end
 
@@ -127,6 +130,7 @@ local function PreUpdateLayout()
     end
 end
 Cell.RegisterCallback("GroupTypeChanged", "Core_GroupTypeChanged", PreUpdateLayout)
+Cell.RegisterCallback("ActiveTalentGroupChanged", "Core_ActiveTalentGroupChanged", PreUpdateLayout)
 
 -------------------------------------------------
 -- events
@@ -180,6 +184,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["tooltipsPosition"] = {"BOTTOMLEFT", "Default", "TOPLEFT", 0, 15},
                 ["hideBlizzardParty"] = true,
                 ["hideBlizzardRaid"] = true,
+                ["hideBlizzardRaidManager"] = true,
                 ["locked"] = false,
                 ["fadeOut"] = false,
                 ["menuPosition"] = "top_bottom",
@@ -209,7 +214,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["tools"]) ~= "table" then
             CellDB["tools"] = {
                 ["battleResTimer"] = {true, false, {}},
-                ["buffTracker"] = {false, "left-to-right", 27, {}},
+                ["buffTracker"] = {false, "left-to-right", 27, {}, {}},
                 ["deathReport"] = {false, 10},
                 ["readyAndPull"] = {false, "text_button", {"default", 7}, {}},
                 ["marks"] = {false, false, "target_h", {}},
@@ -628,11 +633,23 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     end
 end
 
+local function UpdateSpecVars(skipTalentUpdate)
+    -- if not skipTalentUpdate then
+        Cell.vars.activeTalentGroup = GetActiveTalentGroup()
+        Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+    -- end
+end
+
 function eventFrame:PLAYER_LOGIN()
     F.Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    if GetNumTalentGroups() == 2 then -- check if dualspec is active, if yes register talent swap event
+        eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+        eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
+    end
     eventFrame:RegisterEvent("UI_SCALE_CHANGED")
+
 
     Cell.vars.playerNameShort = GetUnitName("player")
     Cell.vars.playerNameFull = F.UnitFullName("player")
@@ -640,8 +657,12 @@ function eventFrame:PLAYER_LOGIN()
     Cell.vars.playerGUID = UnitGUID("player")
 
     -- update spec vars
-    Cell.vars.activeTalentGroup = 1
-    Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+    if GetNumTalentGroups() == 2 then -- check if dualspec is active, if yes update talent group vars
+        UpdateSpecVars()
+    else
+        Cell.vars.activeTalentGroup = 1
+        Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+    end
 
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable
     eventFrame:GROUP_ROSTER_UPDATE()
@@ -662,6 +683,7 @@ function eventFrame:PLAYER_LOGIN()
     -- hide blizzard
     if CellDB["general"]["hideBlizzardParty"] then F.HideBlizzardParty() end
     if CellDB["general"]["hideBlizzardRaid"] then F.HideBlizzardRaid() end
+    if CellDB["general"]["hideBlizzardRaidManager"] then F.HideBlizzardRaidManager() end
     -- lock & menu
     Cell.Fire("UpdateMenu")
     -- update CLEU
@@ -678,7 +700,7 @@ function eventFrame:PLAYER_LOGIN()
     F.UpdateFramePriority()
 end
 
-function eventFrame:UI_SCALE_CHANGED()
+local function UpdatePixels()
     if not InCombatLockdown() then
         F.Debug("UI_SCALE_CHANGED: ", UIParent:GetScale(), CellParent:GetEffectiveScale())
         Cell.Fire("UpdatePixelPerfect")
@@ -686,13 +708,36 @@ function eventFrame:UI_SCALE_CHANGED()
     end
 end
 
-hooksecurefunc(UIParent, "SetScale", function()
-    if not InCombatLockdown() then
-        F.Debug("UIParent:SetScale: ", UIParent:GetScale(), CellParent:GetEffectiveScale())
-        Cell.Fire("UpdatePixelPerfect")
-        Cell.Fire("UpdateAppearance", "scale")
+local updatePixelsTimer
+local function DelayedUpdatePixels()
+    if updatePixelsTimer then
+        updatePixelsTimer:Cancel()
     end
-end)
+    updatePixelsTimer = C_Timer.NewTimer(1, UpdatePixels)
+end
+
+function eventFrame:UI_SCALE_CHANGED()
+    DelayedUpdatePixels()
+end
+
+hooksecurefunc(UIParent, "SetScale", DelayedUpdatePixels)
+
+function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
+    F.Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")
+    -- not in combat & spec CHANGED
+    if not InCombatLockdown() and (Cell.vars.activeTalentGroup ~= GetActiveTalentGroup()) then
+        UpdateSpecVars()
+
+        Cell.Fire("UpdateClickCastings")
+        F.Debug("|cffffbb77ActiveTalentGroupChanged:|r", Cell.vars.activeTalentGroup)
+        Cell.Fire("ActiveTalentGroupChanged", Cell.vars.activeTalentGroup)
+    end
+end
+
+
+function eventFrame:PLAYER_TALENT_UPDATE()
+    F.UpdateClickCastingProfileLabel()
+end
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     self[event](self, ...)

@@ -183,8 +183,8 @@ end
 local function HandleIndicators(b)
     b._indicatorsReady = nil
 
-    if not b._indicatorsCreated then
-        b._indicatorsCreated = true
+    if b._waitingForIndicatorCreation then
+        b._waitingForIndicatorCreation = nil
         I.CreateDefensiveCooldowns(b)
         I.CreateExternalCooldowns(b)
         I.CreateAllCooldowns(b)
@@ -194,7 +194,7 @@ local function HandleIndicators(b)
     -- NOTE: Remove old
     I.RemoveAllCustomIndicators(b)
 
-    for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
+    for _, t in next, b._config do
         local indicator = b.indicators[t["indicatorName"]] or I.CreateIndicator(b, t)
         indicator.configs = t
 
@@ -408,41 +408,46 @@ local updater = CreateFrame("Frame")
 updater:Hide()
 local queue = {}
 
-updater:SetScript("OnUpdate", function()
-    local b = queue[1]
+local WAITING_FOR_INIT = "WAITING_FOR_INIT"
+local WAITING_FOR_UPDATE = "WAITING_FOR_UPDATE"
+
+local function Process(b)
     if b then
-        if b._status == "waiting_for_init" then
+        -- print("Process", GetTime(), b:GetName(), b._status)
+        if b._status == WAITING_FOR_INIT then
             -- print("processing_init", GetTime(), b:GetName())
             b._status = "processing"
             HandleIndicators(b)
             UnitButton_UpdateAuras(b)
-            b._status = "done"
-        elseif b._status == "waiting_for_update" then
+        elseif b._status == WAITING_FOR_UPDATE then
             -- print("processing_update", GetTime(), b:GetName())
             b._indicatorsReady = true
             b._status = "processing"
             UnitButton_UpdateAuras(b)
-            b._status = "done"
-        elseif b._status == "done" then
-            CellLoadingBar.current = (CellLoadingBar.current or 0) + 1
-            CellLoadingBar:SetValue(CellLoadingBar.current)
-            tremove(queue, 1)
-            b._status = nil
-        elseif b._status ~= "processing" then -- re-queue
-            b._status = "waiting_for_init"
         end
+
+        CellLoadingBar.current = (CellLoadingBar.current or 0) + 1
+        CellLoadingBar:SetValue(CellLoadingBar.current)
+        b._status = nil
+        b._config = nil
+        queue[b] = nil
     else
         CellLoadingBar:Hide()
         CellLoadingBar.current = 0
         updater:Hide()
     end
+end
+
+updater:SetScript("OnUpdate", function()
+    Process(next(queue))
+    Process(next(queue))
 end)
 
 hooksecurefunc(updater, "Show", function()
-    CellLoadingBar.total = #queue
+    CellLoadingBar.total = F.Getn(queue)
     CellLoadingBar.current = 0
     CellLoadingBar:SetMinMaxValues(0, CellLoadingBar.total)
-    CellLoadingBar:SetValue(CellLoadingBar.current)
+    CellLoadingBar:SetValue(0)
     CellLoadingBar:Show()
 end)
 
@@ -453,75 +458,79 @@ end
 
 local function AddToInitQueue(b)
     b._indicatorsReady = nil
-    b._status = "waiting_for_init"
-    tinsert(queue, b)
+    b._status = WAITING_FOR_INIT
+    b._config = Cell.vars.currentLayoutTable["indicators"]
+    queue[b] = true
 end
 
 local function AddToUpdateQueue(b)
+    if queue[b] then return end
     b._indicatorsReady = nil
-    b._status = "waiting_for_update"
-    tinsert(queue, b)
+    b._status = WAITING_FOR_UPDATE
+    queue[b] = true
 end
 
 -------------------------------------------------
 -- UpdateIndicators
 -------------------------------------------------
-local indicatorsInitialized
-local previousLayout = {}
+local activeLayouts = {
+    solo = nil,
+    party = nil,
+    raid = nil,
+}
 
 local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     F.Debug("|cffff7777UpdateIndicators:|r ", layout, indicatorName, setting, value, value2)
 
-    FlushQueue()
-    local INDEX = Cell.vars.groupType == "solo" and "solo" or Cell.vars.layoutGroupType
+    -- FlushQueue()
+
+    local currentLayout = Cell.vars.currentLayout
+    local INDEX = Cell.vars.groupType
 
     if layout then
         -- Cell.Fire("UpdateIndicators", layout): indicators copy/import
         -- Cell.Fire("UpdateIndicators", xxx, ...): indicator updated
-        for k, v in pairs(previousLayout) do
-            if v == layout then
-                previousLayout[k] = nil -- update required
-                F.Debug("UPDATE REQUIRED:", k)
+        for groupType, groupLayout in next, activeLayouts do
+            if groupLayout == layout then
+                activeLayouts[groupType] = nil -- update required
+                F.Debug("  -> UPDATE REQUIRED:", groupType)
             end
         end
 
         --! indicator changed, but not current layout
-        if layout ~= Cell.vars.currentLayout then
-            F.Debug("NO UPDATE: not active layout")
+        if layout ~= currentLayout then
+            F.Debug("  -> NO UPDATE: not active layout")
             return
         end
 
-    elseif not indicatorName then -- Cell.Fire("UpdateIndicators")
+    else -- Cell.Fire("UpdateIndicators")
         --! layout/groupType switched, check if update is required
-        if previousLayout[INDEX] == Cell.vars.currentLayout then
-            F.Debug("NO UPDATE: only reset custom indicator tables")
+        if activeLayouts[INDEX] == currentLayout then
             I.ResetCustomIndicatorTables()
             ResetIndicators()
-            --! update main _indicatorsReady
-            F.IterateAllUnitButtons(AddToUpdateQueue, true, nil, true)
-            --! update shared buttons: npcs, spotlights
-            F.IterateSharedUnitButtons(AddToInitQueue)
+                F.Debug("  -> NO FULL UPDATE: only reset custom indicator tables")
+                F.IterateAllUnitButtons(AddToUpdateQueue, true, nil, true)
+                F.IterateSharedUnitButtons(AddToInitQueue)
             updater:Show()
             return
         end
     end
 
-    previousLayout[INDEX] = Cell.vars.currentLayout
-
-    if not indicatorName then -- init
+    if Cell.vars.isHidden then
+        F.Debug("  -> NO UPDATE: Cell is hidden")
         I.ResetCustomIndicatorTables()
         ResetIndicators()
+        return
+    end
 
-        if not indicatorsInitialized then
-            -- update indicators
-            F.IterateAllUnitButtons(HandleIndicators) -- -- NOTE: indicatorsInitialized = false, update ALL GROUP TYPE; indicatorsInitialized = true, just update CURRENT GROUP TYPE
-            -- update all when indicators update finished
-            F.IterateAllUnitButtons(UnitButton_UpdateAll, true)
-        else
-            F.IterateAllUnitButtons(AddToInitQueue, true)
-            updater:Show()
-        end
-        indicatorsInitialized = true
+    activeLayouts[INDEX] = currentLayout
+
+    if not indicatorName then -- init
+        F.Debug("  -> FULL UPDATE", INDEX, currentLayout)
+        I.ResetCustomIndicatorTables()
+        ResetIndicators()
+        F.IterateAllUnitButtons(AddToInitQueue, true)
+        updater:Show()
 
     else
         -- changed in IndicatorsTab
@@ -1023,6 +1032,11 @@ Cell.RegisterCallback("UpdateIndicators", "UnitButton_UpdateIndicators", UpdateI
 -------------------------------------------------
 -- debuffs
 -------------------------------------------------
+-- won't show if not a priest, otherwise show mine only
+local function FilterWeakenedSoul(spellId)
+    return spellId ~= 6788 or Cell.vars.playerClassID == 5
+end
+
 local function UnitButton_UpdateDebuffs(self)
     local unit = self.states.displayedUnit
 
@@ -1058,7 +1072,7 @@ local function UnitButton_UpdateDebuffs(self)
                 refreshing = false
             end
 
-            if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] then
+            if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] and FilterWeakenedSoul(spellId) then
                 if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
                     if Cell.vars.bigDebuffs[spellId] then  -- isBigDebuff
                         self._debuffs_big[i] = refreshing
@@ -3717,6 +3731,8 @@ function CellUnitButton_OnLoad(button)
     I.CreatePowerWordShield(button)
     U.CreateSpellRequestIcon(button)
     U.CreateDispelRequestText(button)
+
+    button._waitingForIndicatorCreation = true
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

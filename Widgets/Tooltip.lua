@@ -109,5 +109,11 @@ function F.ShowTooltips(anchor, tooltipType, unit, aura, filter)
     elseif tooltipType == "spell" and unit and aura then
         -- GameTooltip:SetSpellByID(aura)
         GameTooltip:SetUnitAura(unit, aura, filter)
+    elseif tooltipType == "aura" and unit and aura then
+        if filter == "HARMFUL" then
+            GameTooltip:SetUnitDebuffByAuraInstanceID(unit, aura)
+        elseif filter == "HELPFUL" then
+            GameTooltip:SetUnitBuffByAuraInstanceID(unit, aura)
+        end
     end
 end

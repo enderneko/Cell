@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
 
 local Serializer = LibStub:GetLibrary("LibSerialize")
@@ -83,7 +84,7 @@ local function DoImport(noReload)
     elseif imported["characterDB"] and imported["characterDB"]["clickCastings"] then
         if (Cell.isVanilla or Cell.isWrath or Cell.isCata) and imported["characterDB"]["clickCastings"]["class"] == Cell.vars.playerClass then -- WRATH -> WRATH, same class
             clickCastings = imported["characterDB"]["clickCastings"]
-            if Cell.isVanilla then -- no dual spec system
+            if Cell.isVanilla and GetNumTalentGroups() == 1 then -- no dual spec system
                 clickCastings["useCommon"] = true
             end
         else -- WRATH -> RETAIL
@@ -128,6 +129,11 @@ local function DoImport(noReload)
     -- for i = 1, #imported["snippets"] do
     --     imported["snippets"][i]["autorun"] = false
     -- end
+
+    -- buffTracker
+    if Cell.flavor ~= imported.flavor then
+        imported["tools"]["buffTracker"][5] = U.GetBuffTrackerDefaults()
+    end
 
     --! filter out ignored
     for index, ignored in pairs(ignoredIndices) do

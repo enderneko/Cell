@@ -10,16 +10,16 @@ local selected, forceLoadSelected = 0, true
 local LoadList, LoadSnippet, RunSnippet
 
 local function CreateCodeSnippetsFrame()
-    codeSnippetsFrame = Cell.CreateMovableFrame("Cell "..L["Code Snippets"], "CellCodeSnippetsFrame", 641, 550, "DIALOG")
+    codeSnippetsFrame = Cell.CreateMovableFrame("Cell " .. L["Code Snippets"], "CellCodeSnippetsFrame", 641, 550, "DIALOG")
     Cell.frames.codeSnippetsFrame = codeSnippetsFrame
     codeSnippetsFrame:SetToplevel(true)
     codeSnippetsFrame:SetPoint("CENTER")
 
-    local reloadBtn = Cell.CreateButton(codeSnippetsFrame.header, "Reload", "blue", {70, 20})
+    local reloadBtn = Cell.CreateButton(codeSnippetsFrame.header, _G.RELOADUI, "blue", {100, 20})
     reloadBtn:SetPoint("TOPRIGHT", codeSnippetsFrame.header.closeBtn, "TOPLEFT", P.Scale(1), 0)
     reloadBtn:SetScript("OnClick", ReloadUI)
 
-    local tips = Cell.CreateScrollTextFrame(codeSnippetsFrame, "|cffb7b7b7"..L["SNIPPETS_TIPS"])
+    local tips = Cell.CreateScrollTextFrame(codeSnippetsFrame, "|cffb7b7b7" .. L["SNIPPETS_TIPS"])
     tips:SetPoint("TOPLEFT", 10, -10)
     tips:SetPoint("TOPRIGHT", -10, -10)
 
@@ -121,7 +121,7 @@ local function CreateCodeSnippetsFrame()
     -- codePane.eb:SetSpacing(3)
 
     codePane.eb:HookScript("OnTextChanged", function(self, userChanged)
-        local changed =  CellDB["snippets"][selected]["code"] ~= codePane:GetText()
+        local changed = CellDB["snippets"][selected]["code"] ~= codePane:GetText()
         saveBtn:SetEnabled(changed)
         cancelBtn:SetEnabled(changed)
     end)
@@ -215,14 +215,14 @@ LoadList = function()
             buttons[i]:SetScript("OnDoubleClick", function()
                 renameEB:ClearAllPoints()
                 renameEB:SetAllPoints(buttons[i])
-                renameEB:SetFrameLevel(buttons[i]:GetFrameLevel()+7)
+                renameEB:SetFrameLevel(buttons[i]:GetFrameLevel() + 7)
                 renameEB:SetText(CellDB["snippets"][i]["name"])
                 renameEB:Show()
                 renameEB:SetFocus(true)
                 renameEB:SetScript("OnEnterPressed", function()
                     renameEB:Hide()
                     CellDB["snippets"][i]["name"] = strtrim(renameEB:GetText())
-                    buttons[i].label:SetText(i.."."..CellDB["snippets"][i]["name"])
+                    buttons[i].label:SetText(i .. "." .. CellDB["snippets"][i]["name"])
                 end)
             end)
 
@@ -290,13 +290,13 @@ LoadList = function()
         end
 
         buttons[i].cb:SetChecked(t["autorun"])
-        buttons[i].label:SetText(i.."."..t["name"])
+        buttons[i].label:SetText(i .. "." .. t["name"])
 
         buttons[i]:ClearAllPoints()
         if i % 4 == 0 then
-            buttons[i]:SetPoint("TOPLEFT", buttons[i-4], "BOTTOMLEFT", 0, 1)
+            buttons[i]:SetPoint("TOPLEFT", buttons[i - 4], "BOTTOMLEFT", 0, 1)
         else
-            buttons[i]:SetPoint("TOPLEFT", buttons[i-1], "TOPRIGHT", -1, 0)
+            buttons[i]:SetPoint("TOPLEFT", buttons[i - 1], "TOPRIGHT", -1, 0)
         end
 
         buttons[i]:Show()
@@ -313,7 +313,7 @@ LoadList = function()
         newBtn:Hide()
     elseif (total + 1) % 4 == 0 then
         newBtn:ClearAllPoints()
-        newBtn:SetPoint("TOPLEFT", buttons[total-3], "BOTTOMLEFT", 0, 1)
+        newBtn:SetPoint("TOPLEFT", buttons[total - 3], "BOTTOMLEFT", 0, 1)
         newBtn:Show()
     else
         newBtn:ClearAllPoints()
@@ -334,15 +334,15 @@ LoadList = function()
     if total == 19 then
         rows = 5
     else
-        rows = math.ceil((total+2) / 4)
+        rows = math.ceil((total + 2) / 4)
     end
-    topPane:SetHeight(rows*20 - (rows-1))
+    topPane:SetHeight(rows * 20 - (rows - 1))
 
     -- update scroll
     codePane.scrollFrame:UpdateSize()
 
     -- hide spare buttons
-    for i = total+1, #buttons do
+    for i = total + 1, #buttons do
         buttons[i]:ClearAllPoints()
         buttons[i]:Hide()
     end
@@ -394,36 +394,59 @@ function F.RunSnippets()
         if t["autorun"] then
             local errorMsg = RunSnippet(t["code"])
             if errorMsg then
-                F.Print("|cFFFF3030Snippet Error ("..i.."."..(t["name"] or "Cell").."):|r "..errorMsg)
+                F.Print("|cFFFF3030Snippet Error (" .. i .. "." .. (t["name"] or "Cell") .. "):|r " .. errorMsg)
             end
         end
+    end
+end
+
+function F.RunSnippet(indexOrName)
+    local t
+    if type(indexOrName) == "number" then
+        t = CellDB["snippets"][indexOrName]
+    elseif type(indexOrName) == "string" then
+        for i = 1, #CellDB["snippets"] do
+            if CellDB["snippets"][i]["name"] == indexOrName then
+                t = CellDB["snippets"][i]
+                break
+            end
+        end
+    end
+
+    if t then
+        local errorMsg = RunSnippet(t["code"])
+        if errorMsg then
+            F.Print("|cFFFF3030Snippet Error (" .. (t["name"] or "Cell") .. "):|r " .. errorMsg)
+        end
+    else
+        F.Print("|cFFFF3030Snippet not found|r")
     end
 end
 
 function F.GetDefaultSnippet()
     return {
         ["autorun"] = true,
-        ["code"] = "-- snippets can be found at https://github.com/enderneko/Cell/tree/master/.snippets\n"..
-            "-- use \"/run CellDB['snippets'][0]=nil ReloadUI()\" to reset this snippet\n\n"..
-            "-- cooldown style for icon/block indicators (\"VERTICAL\", \"CLOCK\")\n"..
-            "CELL_COOLDOWN_STYLE = \"VERTICAL\"\n\n"..
-            "-- fade out unit button if hp percent > (number: 0-1)\n"..
-            "CELL_FADE_OUT_HEALTH_PERCENT = nil\n\n"..
-            "-- add summon icons to Status Icon indicator (boolean, retail only)\n"..
-            "CELL_SUMMON_ICONS_ENABLED = false\n\n"..
-            "-- use separate width and height for custom indicator icons (boolean)\n"..
-            "CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS = false\n\n"..
-            "-- Use nicknames from Details! Damage Meter (boolean, NickTag-1.0 library)\n"..
-            "CELL_NICKTAG_ENABLED = false\n\n"..
-            "-- remove raid setup details from the tooltip of the Raid button (boolean)\n"..
-            "CELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS = false\n\n"..
-            "-- border thickness: unit button and icon (number)\n"..
-            "CELL_BORDER_SIZE = 1\n\n"..
-            "-- unit button border color ({r, g, b, a}, number: 0-1)\n"..
-            "CELL_BORDER_COLOR = {0, 0, 0, 1}\n\n"..
-            "-- show raid pet owner name (\"VEHICLE\", \"NAME\", nil)\n"..
-            "CELL_SHOW_GROUP_PET_OWNER_NAME = nil\n\n"..
-            "-- use LibHealComm (boolean, non-retail)\n"..
+        ["code"] = "-- snippets can be found at https://github.com/enderneko/Cell/tree/master/.snippets\n" ..
+            "-- use \"/run CellDB['snippets'][0]=nil ReloadUI()\" to reset this snippet\n\n" ..
+            "-- cooldown style for icon/block indicators (\"VERTICAL\", \"CLOCK\")\n" ..
+            "CELL_COOLDOWN_STYLE = \"VERTICAL\"\n\n" ..
+            "-- fade out unit button if hp percent > (number: 0-1)\n" ..
+            "CELL_FADE_OUT_HEALTH_PERCENT = nil\n\n" ..
+            "-- add summon icons to Status Icon indicator (boolean, retail only)\n" ..
+            "CELL_SUMMON_ICONS_ENABLED = false\n\n" ..
+            "-- use separate width and height for custom indicator icons (boolean)\n" ..
+            "CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS = false\n\n" ..
+            "-- Use nicknames from Details! Damage Meter (boolean, NickTag-1.0 library)\n" ..
+            "CELL_NICKTAG_ENABLED = false\n\n" ..
+            "-- remove raid setup details from the tooltip of the Raid button (boolean)\n" ..
+            "CELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS = false\n\n" ..
+            "-- border thickness: unit button and icon (number)\n" ..
+            "CELL_BORDER_SIZE = 1\n\n" ..
+            "-- unit button border color ({r, g, b, a}, number: 0-1)\n" ..
+            "CELL_BORDER_COLOR = {0, 0, 0, 1}\n\n" ..
+            "-- show raid pet owner name (\"VEHICLE\", \"NAME\", nil)\n" ..
+            "CELL_SHOW_GROUP_PET_OWNER_NAME = nil\n\n" ..
+            "-- use LibHealComm (boolean, non-retail)\n" ..
             "CELL_USE_LIBHEALCOMM = false"
     }
 end

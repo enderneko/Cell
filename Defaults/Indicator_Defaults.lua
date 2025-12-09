@@ -256,6 +256,8 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
         else
             t["trackByName"] = true
         end
+    else
+        t["castBy"] = "anyone"
     end
 
     return t

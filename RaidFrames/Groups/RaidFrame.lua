@@ -339,25 +339,17 @@ end
 --     ]])
 -- end
 
-local init, previousLayout
 local function RaidFrame_UpdateLayout(layout, which)
-    if Cell.vars.groupType ~= "raid" and init then return end
-
     -- visibility
-    if layout == "hide" then
+    if Cell.vars.groupType ~= "raid" or Cell.vars.isHidden then
         UnregisterAttributeDriver(raidFrame, "state-visibility")
         raidFrame:Hide()
-        if init then
-            return
-        else
-            layout = "default"
-        end
+        return
     else
         RegisterAttributeDriver(raidFrame, "state-visibility", "show")
     end
 
     -- update
-    init = true
     layout = CellDB["layouts"][layout]
 
     -- arena pets

@@ -3,8 +3,6 @@ local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
-local RANK = _G.TRADESKILL_RANK_HEADER:gsub(" ", ""):gsub("%%d", "")
-
 local clickCastingsTab = Cell.CreateFrame("CellOptionsFrame_ClickCastingsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.clickCastingsTab = clickCastingsTab
 clickCastingsTab:SetAllPoints(Cell.frames.optionsFrame)
@@ -525,7 +523,7 @@ local function ApplyClickCastings(b)
             spellName = spellName or ""
 
             if rank then
-                spellName = spellName.."(".. RANK .. " " .. rank ..")"
+                spellName = spellName .. F.GetRankSuffix(rank)
             end
 
             --! NOTE: fix Primordial Wave
@@ -679,7 +677,6 @@ local function CreateProfilePane()
 
     profileDropdown = Cell.CreateDropdown(profilePane, 412)
     profileDropdown:SetPoint("TOPLEFT", profilePane, "TOPLEFT", 5, -27)
-    profileDropdown:SetEnabled(not Cell.isVanilla)
 
     profileDropdown:SetItems({
         {
@@ -1350,11 +1347,11 @@ local function ShowActionsMenu(index, b)
                 end
             }
 
-            if t[5] and t[5] > 1 then
+            if t[5] and t[5] >= 1 then
                 spellItem.children = {}
                 for i = 1, t[5] do
                     tinsert(spellItem.children, {
-                        ["text"] = RANK .. " " .. i,
+                        ["text"] = i,
                         ["onClick"] = function()
                             changed[index] = changed[index] or {b}
                             if b.bindAction ~= t[4]..":"..i then
@@ -1378,7 +1375,7 @@ local function ShowActionsMenu(index, b)
     end
 
     menu:SetItems(items, 15)
-    menu:SetWidths(b.actionGrid:GetWidth(), 70)
+    menu:SetWidths(b.actionGrid:GetWidth(), 35)
     P.ClearPoints(menu)
     P.Point(menu, "TOPLEFT", b.actionGrid, "BOTTOMLEFT", 0, -1)
     menu:ShowMenu()
@@ -1397,7 +1394,7 @@ local function UpdateCurrentText(isCommon)
     else
         if Cell.isRetail or Cell.isMists then
             listPane:SetTitle(L["Current Profile"]..": ".."|T"..Cell.vars.playerSpecIcon..":12:12:0:1:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
-        elseif Cell.isCata or Cell.isWrath then
+        elseif Cell.isCata or Cell.isWrath or Cell.isVanilla then
             local name, icon = F.GetActiveTalentInfo()
             listPane:SetTitle(L["Current Profile"]..": ".."|T"..icon..":12:12:0:1:12:12:1:11:1:11|t "..name)
         end

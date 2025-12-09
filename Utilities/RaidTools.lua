@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
@@ -8,7 +9,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 -- raid tools
 -------------------------------------------------
 local rtPane
-local resCB, resDetachCB, reportCB, buffCB, buffDropdown, sizeEditBox, readyPullCB, styleDropdown, pullDropdown, secEditBox, marksBarCB, marksDropdown, marksShowSoloCB, fadeOutToolsCB
+local resCB, resDetachCB, reportCB, buffCB, buffDropdown, sizeEditBox, buffButtons, readyPullCB, styleDropdown, pullDropdown, secEditBox, marksBarCB, marksDropdown, marksShowSoloCB, fadeOutToolsCB
 
 local function CreateRTPane()
     rtPane = Cell.CreateTitledPane(Cell.frames.utilitiesTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 167)
@@ -72,6 +73,11 @@ local function CreateRTPane()
         CellDB["tools"]["buffTracker"][1] = checked
         buffDropdown:SetEnabled(checked)
         sizeEditBox:SetEnabled(checked)
+        if buffButtons then
+            for buff, b in pairs(buffButtons) do
+                b:SetEnabled(checked)
+            end
+        end
         Cell.Fire("UpdateTools", "buffTracker")
     end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"],
     Cell.isRetail and L["|cffffb5c5Left-Click:|r cast the spell"] or "|cffffb5c5(Shift)|r "..L["|cffffb5c5Left-Click:|r cast the spell"],
@@ -144,6 +150,49 @@ local function CreateRTPane()
             end
         end
     end)
+
+    if Cell.isVanilla or Cell.isWrath or Cell.isCata then
+        buffButtons = {}
+
+        local buffOrder, buffs = U.GetBuffTrackerInfo()
+
+        local last
+        for i, buff in ipairs(buffOrder) do
+            local b = Cell.CreateButton(rtPane, "", "accent-hover", {20, 20})
+            buffButtons[buff] = b
+
+            local tex = b:CreateTexture(nil, "ARTWORK")
+            P.Point(tex, "TOPLEFT", b, "TOPLEFT", 1, -1)
+            P.Point(tex, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
+            tex:SetTexture(buffs[buff]["buff1"]["icon"])
+            tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
+            b:SetScript("OnEnable", function()
+                tex:SetDesaturated(false)
+            end)
+            b:SetScript("OnDisable", function()
+                tex:SetDesaturated(true)
+            end)
+
+            b:SetScript("OnClick", function()
+                CellDB["tools"]["buffTracker"][5][buff] = not CellDB["tools"]["buffTracker"][5][buff]
+                Cell.Fire("UpdateTools", "buffTracker")
+                if CellDB["tools"]["buffTracker"][5][buff] then
+                    b:SetAlpha(1)
+                else
+                    b:SetAlpha(0.25)
+                end
+            end)
+
+            if last then
+                b:SetPoint("TOPLEFT", last, "TOPRIGHT", 2, 0)
+            else
+                b:SetPoint("TOPLEFT", sizeEditBox, "TOPRIGHT", 5, 0)
+            end
+
+            last = b
+        end
+    end
 
     -- ready & pull
     readyPullCB = Cell.CreateCheckButton(rtPane, L["ReadyCheck and PullTimer buttons"], function(checked, self)
@@ -368,6 +417,12 @@ local function ShowUtilitySettings(which)
         buffDropdown:SetSelectedValue(CellDB["tools"]["buffTracker"][2])
         sizeEditBox:SetText(CellDB["tools"]["buffTracker"][3])
         Cell.SetEnabled(CellDB["tools"]["buffTracker"][1], buffDropdown, sizeEditBox)
+        if buffButtons then
+            for buff, b in pairs(buffButtons) do
+                b:SetEnabled(CellDB["tools"]["buffTracker"][1])
+                b:SetAlpha(CellDB["tools"]["buffTracker"][5][buff] and 1 or 0.25)
+            end
+        end
 
         readyPullCB:SetChecked(CellDB["tools"]["readyAndPull"][1])
         styleDropdown:SetSelectedValue(CellDB["tools"]["readyAndPull"][2])
