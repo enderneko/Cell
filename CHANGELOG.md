@@ -1,4 +1,5 @@
-[View Full Changelog](https://github.com/enderneko/Cell/compare/r270-release...332729c44d7352f1b0f9324101fba883a53270dd)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r271-release...04e54adc8f74b1e46ff6f5a5c78eaeec88f30972)
 
-- Enable WeakenedSoul filter for "Debuffs" indicator
-- Fix a OmniCD related issue
+- Update debuffs for Throne of Thunder (#436, thanks @EkklesN)
+- Add Eternal Flame for "Healers"
+- Fix boss list for Throne of Thunder
