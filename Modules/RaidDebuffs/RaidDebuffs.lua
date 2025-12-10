@@ -60,10 +60,22 @@ local bossIdToName = {
     [0] = L["General"]
 }
 
+local instanceBossOverrides = {
+    [362] = {  -- 雷电王座
+        [13] = 831,  -- 莱登
+    },
+}
+
 local function LoadBossList(instanceId, list)
     EJ_SelectInstance(instanceId)
     for index = 1, 77 do
-        local name, _, id = EJ_GetEncounterInfoByIndex(index)
+        local name, id, _
+        if instanceBossOverrides[instanceId] and instanceBossOverrides[instanceId][index] then
+            name, _, id = EJ_GetEncounterInfo(instanceBossOverrides[instanceId][index])
+        else
+            name, _, id = EJ_GetEncounterInfoByIndex(index)
+        end
+
         if not name or not id then
             break
         end
