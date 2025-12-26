@@ -537,7 +537,7 @@ end
 boss1target = Cell.CreateButton(menu, L["Boss1 Target"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
 P.Point(boss1target, "TOPLEFT", healer, "BOTTOMLEFT")
 P.Point(boss1target, "TOPRIGHT", healer, "BOTTOMRIGHT")
-boss1target:SetEnabled(not Cell.isVanilla)
+boss1target:SetEnabled(not (Cell.isTBC or Cell.isVanilla))
 boss1target:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")

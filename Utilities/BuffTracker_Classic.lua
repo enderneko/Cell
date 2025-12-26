@@ -28,7 +28,7 @@ local requiredBuffs = {}
 local available = {}
 local unaffected = {}
 
-if Cell.isVanilla then
+if Cell.isTBC or Cell.isVanilla then
     buffs = {
         -- 1243: Power Word: Fortitude
         -- 21562: Prayer of Fortitude

@@ -2312,7 +2312,7 @@ local function ShowTab(tab)
             CreateBossesFrame()
             CreateDebuffsFrame()
             CreateDetailsFrame()
-            if Cell.isVanilla then CreateNoticeFrame() end
+            if Cell.isTBC or Cell.isVanilla then CreateNoticeFrame() end
         end
 
         debuffsTab:Show()

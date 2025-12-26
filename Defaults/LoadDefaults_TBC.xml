@@ -2,8 +2,8 @@
     xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/FrameXML/UI_shared.xsd">
     <Script file="Indicator_Defaults.lua"/>
     <Script file="Indicator_Bleeds.lua"/>
-    <Script file="Indicator_DefaultSpells_Vanilla.lua"/>
+    <Script file="Indicator_DefaultSpells_TBC.lua"/>
     <Script file="Appearance_Defaults.lua"/>
     <Script file="Layout_Defaults_TBC_Vanilla.lua"/>
-    <Script file="ClickCasting_DefaultSpells_Vanilla.lua"/>
+    <Script file="ClickCasting_DefaultSpells_TBC.lua"/>
 </Ui>

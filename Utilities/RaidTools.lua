@@ -151,7 +151,7 @@ local function CreateRTPane()
         end
     end)
 
-    if Cell.isVanilla or Cell.isWrath or Cell.isCata then
+    if Cell.isVanilla or Cell.isTBC or Cell.isWrath or Cell.isCata then
         buffButtons = {}
 
         local buffOrder, buffs = U.GetBuffTrackerInfo()
@@ -330,7 +330,7 @@ local function CreateRTPane()
         {
             ["text"] = L["World Marks"].." ("..L["Horizontal"]..")",
             ["value"] = "world_h",
-            ["disabled"] = Cell.isVanilla or Cell.isWrath,
+            ["disabled"] = Cell.isVanilla or Cell.isTBC or Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][3] = "world_h"
                 Cell.Fire("UpdateTools", "marks")
@@ -339,7 +339,7 @@ local function CreateRTPane()
         {
             ["text"] = L["World Marks"].." ("..L["Vertical"]..")",
             ["value"] = "world_v",
-            ["disabled"] = Cell.isVanilla or Cell.isWrath,
+            ["disabled"] = Cell.isVanilla or Cell.isTBC or Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][3] = "world_v"
                 Cell.Fire("UpdateTools", "marks")
@@ -348,7 +348,7 @@ local function CreateRTPane()
         {
             ["text"] = L["Both"].." ("..L["Horizontal"]..")",
             ["value"] = "both_h",
-            ["disabled"] = Cell.isVanilla or Cell.isWrath,
+            ["disabled"] = Cell.isVanilla or Cell.isTBC or Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][3] = "both_h"
                 Cell.Fire("UpdateTools", "marks")
@@ -357,7 +357,7 @@ local function CreateRTPane()
         {
             ["text"] = L["Both"].." ("..L["Vertical"]..")",
             ["value"] = "both_v",
-            ["disabled"] = Cell.isVanilla or Cell.isWrath,
+            ["disabled"] = Cell.isVanilla or Cell.isTBC or Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][3] = "both_v"
                 Cell.Fire("UpdateTools", "marks")
