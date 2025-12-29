@@ -15,8 +15,7 @@ Cell.isAsian = LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR
 
 Cell.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 Cell.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
--- Cell.isBCC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
--- Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+Cell.isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 Cell.isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
@@ -30,6 +29,8 @@ elseif Cell.isCata then
     Cell.flavor = "cata"
 elseif Cell.isWrath then
     Cell.flavor = "wrath"
+elseif Cell.isTBC then
+    Cell.flavor = "tbc"
 elseif Cell.isVanilla then
     Cell.flavor = "vanilla"
 end
@@ -113,7 +114,7 @@ if Cell.isCata then
         return which, Cell.vars.playerSpecIcon, Cell.vars.playerSpecName
     end
 
-elseif Cell.isWrath or Cell.isVanilla then
+elseif Cell.isWrath or Cell.isTBC or Cell.isVanilla then
     function F.GetActiveTalentInfo()
         local which = GetActiveTalentGroup() == 1 and L["Primary Talents"] or L["Secondary Talents"]
 
@@ -1858,7 +1859,7 @@ else
     end
 end
 
-if Cell.isWrath or Cell.isVanilla then
+if Cell.isWrath or Cell.isTBC or Cell.isVanilla then
     local GetSpellInfo = GetSpellInfo
     local GetNumSpellTabs = GetNumSpellTabs
     local GetSpellTabInfo = GetSpellTabInfo
@@ -2181,7 +2182,7 @@ local playerClass = UnitClassBase("player")
 local friendSpells = {
     -- ["DEATHKNIGHT"] = 47541,
     -- ["DEMONHUNTER"] = ,
-    ["DRUID"] = (Cell.isWrath or Cell.isVanilla) and 5185 or 8936, -- 治疗之触 / 愈合
+    ["DRUID"] = (Cell.isWrath or Cell.isTBC or Cell.isVanilla) and 5185 or 8936, -- 治疗之触 / 愈合
     -- FIXME: [361469 活化烈焰] 会被英雄天赋 [431443 时序烈焰] 替代，但它而且有问题
     -- IsSpellInRange 始终返回 nil
     ["EVOKER"] = 355913, -- 翡翠之花
@@ -2189,11 +2190,11 @@ local friendSpells = {
     ["MAGE"] = 1459, -- 奥术智慧 / 奥术光辉
     ["MONK"] = 116670, -- 活血术
     ["PALADIN"] = Cell.isRetail and 19750 or 635, -- 圣光闪现 / 圣光术
-    ["PRIEST"] = (Cell.isWrath or Cell.isVanilla) and 2050 or 2061, -- 次级治疗术 / 快速治疗
+    ["PRIEST"] = (Cell.isWrath or Cell.isTBC or Cell.isVanilla) and 2050 or 2061, -- 次级治疗术 / 快速治疗
     -- ["ROGUE"] = Cell.isWrath and 57934,
     ["SHAMAN"] = Cell.isRetail and 8004 or 331, -- 治疗之涌 / 治疗波
     ["WARLOCK"] = 5697, -- 无尽呼吸
-    -- ["WARRIOR"] = 3411,
+    -- ["WARRIOR"] = 3411, -- 援护
 }
 
 local deadSpells = {

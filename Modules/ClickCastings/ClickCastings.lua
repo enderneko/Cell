@@ -1153,11 +1153,21 @@ local function ShowActionsMenu(index, b)
         })
 
         if (Cell.isVanilla or Cell.isTBC or Cell.isWrath or Cell.isCata) and Cell.vars.playerClass == "WARLOCK" then
+            local soulstoneID
+            if Cell.isVanilla then
+                soulstoneID = 16896
+            elseif Cell.isTBC then
+                soulstoneID = 22116
+            else -- wrath & cata
+                soulstoneID = 36895
+            end
+
             tinsert(items, {
                 ["text"] = F.GetSpellInfo(20707),
                 ["onClick"] = function()
                     changed[index] = changed[index] or {b}
-                    local macrotext = "/stopcasting\n/target mouseover\n/use item:36895\n/targetlasttarget"
+
+                    local macrotext = "/stopcasting\n/target mouseover\n/use item:"..soulstoneID.."\n/targetlasttarget"
                     if b.bindAction ~= macrotext then
                         changed[index]["bindAction"] = macrotext
                         b.actionGrid:SetText(macrotext)
