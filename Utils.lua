@@ -2158,8 +2158,8 @@ local UnitInRange = UnitInRange
 local UnitCanAssist = UnitCanAssist
 local UnitCanAttack = UnitCanAttack
 local UnitCanCooperate = UnitCanCooperate
-local IsSpellInRange = (C_Spell and C_Spell.IsSpellInRange) and C_Spell.IsSpellInRange or IsSpellInRange
-local IsItemInRange = (C_Spell and C_Item.IsItemInRange) and C_Item.IsItemInRange or IsItemInRange
+local IsSpellInRange = C_Spell.IsSpellInRange
+local IsItemInRange = C_Item.IsItemInRange
 local CheckInteractDistance = CheckInteractDistance
 local UnitIsDead = UnitIsDead
 local IsSpellKnownOrOverridesKnown = IsSpellKnownOrOverridesKnown
@@ -2167,6 +2167,11 @@ local IsSpellKnownOrOverridesKnown = IsSpellKnownOrOverridesKnown
 -- local GetNumSpellTabs = GetNumSpellTabs
 -- local GetSpellBookItemName = GetSpellBookItemName
 -- local BOOKTYPE_SPELL = BOOKTYPE_SPELL
+local IsSpellBookKnown = C_SpellBook.IsSpellKnown
+
+local function IsSpellKnown(spellId)
+    return IsSpellKnownOrOverridesKnown(spellId) or IsSpellBookKnown(spellId)
+end
 
 local UnitInSamePhase
 if Cell.isRetail then
@@ -2298,32 +2303,28 @@ CELL_RANGE_CHECK_HOSTILE = {}
 CELL_RANGE_CHECK_DEAD = {}
 CELL_RANGE_CHECK_PET = {}
 
-local function SPELLS_CHANGED()
-    spell_friend = CELL_RANGE_CHECK_FRIENDLY[playerClass] or friendSpells[playerClass]
-    spell_harm = CELL_RANGE_CHECK_HOSTILE[playerClass] or harmSpells[playerClass]
-    spell_dead = CELL_RANGE_CHECK_DEAD[playerClass] or deadSpells[playerClass]
-    spell_pet = CELL_RANGE_CHECK_PET[playerClass] or petSpells[playerClass]
+local function LoadSpellName(spellID, callback)
+    if spellID and IsSpellKnown(spellID) then
+        local spell = Spell:CreateFromSpellID(spellID)
+        spell:ContinueOnSpellLoad(function()
+            callback(spell:GetSpellName())
+            -- print("Loaded spell for range check:", spellID, spell:GetSpellName())
+        end)
+    else
+        callback(nil)
+    end
+end
 
-    if spell_friend and IsSpellKnownOrOverridesKnown(spell_friend) then
-        spell_friend = F.GetSpellInfo(spell_friend)
-    else
-        spell_friend = nil
-    end
-    if spell_harm and IsSpellKnownOrOverridesKnown(spell_harm) then
-        spell_harm = F.GetSpellInfo(spell_harm)
-    else
-        spell_harm = nil
-    end
-    if spell_dead and IsSpellKnownOrOverridesKnown(spell_dead) then
-        spell_dead = F.GetSpellInfo(spell_dead)
-    else
-        spell_dead = nil
-    end
-    if spell_pet and IsSpellKnownOrOverridesKnown(spell_pet) then
-        spell_pet = F.GetSpellInfo(spell_pet)
-    else
-        spell_pet = nil
-    end
+local function SPELLS_CHANGED()
+    local friend_id = CELL_RANGE_CHECK_FRIENDLY[playerClass] or friendSpells[playerClass]
+    local harm_id = CELL_RANGE_CHECK_HOSTILE[playerClass] or harmSpells[playerClass]
+    local dead_id = CELL_RANGE_CHECK_DEAD[playerClass] or deadSpells[playerClass]
+    local pet_id = CELL_RANGE_CHECK_PET[playerClass] or petSpells[playerClass]
+
+    LoadSpellName(friend_id, function(name) spell_friend = name end)
+    LoadSpellName(harm_id, function(name) spell_harm = name end)
+    LoadSpellName(dead_id, function(name) spell_dead = name end)
+    LoadSpellName(pet_id, function(name) spell_pet = name end)
 
     -- F.Debug(
     --     "[RANGE CHECK]",
