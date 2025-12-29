@@ -1,5 +1,5 @@
-[View Full Changelog](https://github.com/enderneko/Cell/compare/r271-release...04e54adc8f74b1e46ff6f5a5c78eaeec88f30972)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r272-release...88207cb30a4c56463185d44fdf0472fbecc4cd23)
 
-- Update debuffs for Throne of Thunder (#436, thanks @EkklesN)
-- Add Eternal Flame for "Healers"
-- Fix boss list for Throne of Thunder
+- Improve range check
+- Add TBC support
+- Update locales
