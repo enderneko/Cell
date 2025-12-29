@@ -250,8 +250,7 @@ L["Display One Decimal Place When"] = "Afficher une décimale lorsque"
 L["Displayed Per Line"] = "Affiché par ligne"
 --[[Translation missing --]]
 --[[ L["Do nothing if requested spell/buff already exists on requester"] = "Do nothing if requested spell/buff already exists on requester"--]]
---[[Translation missing --]]
---[[ L["DRINKING"] = "DRINKING"--]]
+L["DRINKING"] = "BOIT"
 --[[Translation missing --]]
 --[[ L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."] = "Due to restrictions of the private aura system, this indicator can only use Blizzard style."--]]
 --[[Translation missing --]]
