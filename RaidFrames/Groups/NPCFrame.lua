@@ -123,8 +123,15 @@ npcFrame:SetAttribute("pointUpdater", pointUpdater)
 for i = 1, 8 do
     local button = CreateFrame("Button", npcFrame:GetName().."Button"..i, npcFrame, "CellUnitButtonTemplate")
     tinsert(Cell.unitButtons.npc, button)
-    Cell.unitButtons.npc.units["boss"..i] = button
+    -- Cell.unitButtons.npc.units["boss"..i] = button
     -- button.type = "npc" -- layout setup
+
+    button:HookScript("OnShow", function()
+        Cell.unitButtons.npc.units["boss"..i] = button
+    end)
+    button:HookScript("OnHide", function()
+        Cell.unitButtons.npc.units["boss"..i] = nil
+    end)
 
     button:SetAttribute("unit", "boss"..i)
     -- button:SetAttribute("unit", "player")
