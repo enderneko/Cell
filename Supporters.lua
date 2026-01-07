@@ -113,6 +113,7 @@ local supporters1 = { -- wowIDs
         "|cfffb6f92露露緹婭丶-迅捷微风 (CN)|r",
         "|cfffb6f92露露缇娅丶-霜语 (CN)|r",
         "|cfffb6f92露露缇娅灬-霜语 (CN)|r",
+        "|cfffb6f92露露缇娅-时光III (CN)|r",
     }, -- 露露缇娅 (爱发电)
     {
         "|cfffb6f92Rëat-Silvermoon (EU)|r",
