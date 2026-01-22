@@ -86,6 +86,7 @@ local UnitButton_UpdateHealthColor, UnitButton_UpdateNameTextColor, UnitButton_U
 local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerType, UnitButton_UpdatePowerText, UnitButton_UpdatePowerTextColor
 local UnitButton_UpdateShieldAbsorbs
 local CheckPowerEventRegistration, ShouldShowPowerText, ShouldShowPowerBar
+local UnitButton_UnregisterEvents, UnitButton_RegisterEvents
 
 -------------------------------------------------
 -- unit button init indicators
@@ -2383,7 +2384,9 @@ local function UnitButton_UpdateInRange(self, ir)
 end
 
 local function UnitButton_UpdateVehicleStatus(self)
+    if self.isUpdatingVehicle then return end
     local unit = self.states.unit
+    local oldDisplayUnit = self.states.displayedUnit
     if not unit then return end
 
     if UnitHasVehicleUI(unit) then -- or UnitInVehicle(unit) or UnitUsingVehicle(unit) then
@@ -2400,6 +2403,12 @@ local function UnitButton_UpdateVehicleStatus(self)
         self.states.inVehicle = nil
         self.states.displayedUnit = self.states.unit
         self.indicators.nameText.vehicle:SetText("")
+    end
+    if oldDisplayUnit ~= self.states.displayedUnit then
+        self.isUpdatingVehicle = true
+        UnitButton_UnregisterEvents(self)
+        UnitButton_RegisterEvents(self)
+        self.isUpdatingVehicle = nil
     end
 end
 
@@ -2653,35 +2662,64 @@ end
 -------------------------------------------------
 -- unit button events
 -------------------------------------------------
-local function UnitButton_RegisterEvents(self)
+function UnitButton_RegisterEvents(self)
+    local unit = self.states.displayedUnit
     -- self:RegisterEvent("PLAYER_ENTERING_WORLD")
     self:RegisterEvent("GROUP_ROSTER_UPDATE")
 
-    self:RegisterEvent("UNIT_HEALTH")
-    self:RegisterEvent("UNIT_MAXHEALTH")
+    if unit then
+        self:RegisterUnitEvent("UNIT_HEALTH", unit)
+        self:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
 
-    self:RegisterEvent("UNIT_POWER_FREQUENT")
-    self:RegisterEvent("UNIT_MAXPOWER")
-    self:RegisterEvent("UNIT_DISPLAYPOWER")
+        self:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
+        self:RegisterUnitEvent("UNIT_MAXPOWER", unit)
+        self:RegisterUnitEvent("UNIT_DISPLAYPOWER", unit)
 
-    self:RegisterEvent("UNIT_AURA")
+        self:RegisterUnitEvent("UNIT_AURA", unit)
 
-    self:RegisterEvent("UNIT_HEAL_PREDICTION")
-    self:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
-    self:RegisterEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED")
+        self:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
+        self:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", unit)
+        self:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", unit)
 
-    self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
-    self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
-    self:RegisterEvent("UNIT_ENTERED_VEHICLE")
-    self:RegisterEvent("UNIT_EXITED_VEHICLE")
+        self:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", unit)
+        self:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", unit)
+        self:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", unit)
+        self:RegisterUnitEvent("UNIT_EXITED_VEHICLE", unit)
+        
+        self:RegisterUnitEvent("UNIT_FLAGS", unit) -- afk
+        self:RegisterUnitEvent("UNIT_FACTION", unit) -- mind control
+        
+        self:RegisterUnitEvent("UNIT_CONNECTION", unit) -- offline
+        self:RegisterUnitEvent("UNIT_NAME_UPDATE", unit) -- unknown target
+    else
+        self:RegisterEvent("UNIT_HEALTH")
+        self:RegisterEvent("UNIT_MAXHEALTH")
+
+        self:RegisterEvent("UNIT_POWER_FREQUENT")
+        self:RegisterEvent("UNIT_MAXPOWER")
+        self:RegisterEvent("UNIT_DISPLAYPOWER")
+
+        self:RegisterEvent("UNIT_AURA")
+
+        self:RegisterEvent("UNIT_HEAL_PREDICTION")
+        self:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
+        self:RegisterEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED")
+
+        self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
+        self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
+        self:RegisterEvent("UNIT_ENTERED_VEHICLE")
+        self:RegisterEvent("UNIT_EXITED_VEHICLE")
+
+        self:RegisterEvent("UNIT_FLAGS") -- afk
+        self:RegisterEvent("UNIT_FACTION") -- mind control
+        
+        self:RegisterEvent("UNIT_CONNECTION") -- offline
+        self:RegisterEvent("UNIT_NAME_UPDATE") -- unknown target
+    end
 
     self:RegisterEvent("INCOMING_SUMMON_CHANGED")
-    self:RegisterEvent("UNIT_FLAGS") -- afk
-    self:RegisterEvent("UNIT_FACTION") -- mind control
 
-    self:RegisterEvent("UNIT_CONNECTION") -- offline
     self:RegisterEvent("PLAYER_FLAGS_CHANGED") -- afk
-    self:RegisterEvent("UNIT_NAME_UPDATE") -- unknown target
     self:RegisterEvent("ZONE_CHANGED_NEW_AREA") --? update status text
 
     -- self:RegisterEvent("PARTY_LEADER_CHANGED") -- GROUP_ROSTER_UPDATE
@@ -2729,7 +2767,7 @@ local function UnitButton_RegisterEvents(self)
     end
 end
 
-local function UnitButton_UnregisterEvents(self)
+function UnitButton_UnregisterEvents(self)
     self:UnregisterAllEvents()
 end
 
@@ -2901,9 +2939,14 @@ local function UnitButton_OnAttributeChanged(self, name, value)
         end
 
         if type(value) == "string" then
+            local reRegister = value and value ~= self.states.unit
             self.states.unit = value
             self.states.displayedUnit = value
             if string.find(value, "^raid%d+$") then Cell.unitButtons.raid.units[value] = self end
+            if reRegister then
+                UnitButton_UnregisterEvents(self)
+                UnitButton_RegisterEvents(self)
+            end
 
             -- range
             -- if value ~= "focus" and not strfind(value, "target$") then
@@ -2934,6 +2977,7 @@ local function UnitButton_OnShow(self)
     -- print(GetTime(), "OnShow", self:GetName())
     self._updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
     self._powerUpdateRequired = 1
+    UnitButton_UnregisterEvents(self)
     UnitButton_RegisterEvents(self)
 
     --[[
