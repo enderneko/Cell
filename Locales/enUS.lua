@@ -89,6 +89,11 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r274-release (2026-01-22 19:07 GMT+8)</h1>
+        <p>* Update Molten Core debuffs (thanks Rurutia).</p>
+        <p>* Fixed an issue with getting hostile boss frames via LibGetFrame.</p>
+        <br/>
+
         <h1>r273-release (2025-12-29 17:40 GMT+8)</h1>
         <p>+ Added support for TBC classic.</p>
         <p>* Improved range check.</p>

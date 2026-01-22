@@ -1,5 +1,4 @@
-[View Full Changelog](https://github.com/enderneko/Cell/compare/r272-release...88207cb30a4c56463185d44fdf0472fbecc4cd23)
+[View Full Changelog](https://github.com/enderneko/Cell/compare/r273-release...c376c32494926a90b93cc63bfc564234fb6e5cd6)
 
-- Improve range check
-- Add TBC support
-- Update locales
+- Update Molten Core debuffs
+- Fix boss unit button mapping
