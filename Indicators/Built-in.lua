@@ -11,6 +11,7 @@ local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
+local LSM = LibStub("LibSharedMedia-3.0", true)
 
 local function noop() end
 
@@ -2096,7 +2097,16 @@ function I.CreateShieldBar(parent)
     shieldBar.parentHealthBar = parent.widgets.healthBar
 
     function shieldBar:SetColor(r, g, b, a)
-        tex:SetColorTexture(r, g, b, a)
+        tex:SetVertexColor(r, g, b, a)
+    end
+
+    function shieldBar:SetTexture(name, ...)
+        local barTextures = F.Copy(LSM:HashTable("statusbar"))
+        if barTextures[name] then
+            tex:SetTexture(barTextures[name], ...)
+        else
+            tex:SetTexture(name, ...)
+        end
     end
 
     function shieldBar:UpdatePixelPerfect()
