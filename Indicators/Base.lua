@@ -7,6 +7,10 @@ local I = Cell.iFuncs
 ---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 
+-- NOTE (Midnight 12.0.0+): Health text formatting with arithmetic on health/maxHealth
+-- is guarded for secret values in Indicators/Built-in.lua (HealthText_SetValue).
+-- All other numeric display in this file uses SetText/SetFormattedText which accept secrets.
+
 local LCG = LibStub("LibCustomGlow-1.0")
 
 CELL_BORDER_SIZE = 1
@@ -370,7 +374,7 @@ local function Icon_OnUpdate(frame, elapsed)
         if Cell.vars.iconDurationRoundUp then
             frame.duration:SetFormattedText("%d", ceil(frame._remain))
         else
-            if frame._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and frame._remain < Cell.vars.iconDurationDecimal then
                 frame.duration:SetFormattedText("%.1f", frame._remain)
             else
                 frame.duration:SetFormattedText("%d", frame._remain)
@@ -1148,7 +1152,7 @@ local function Rect_OnUpdate(frame, elapsed)
         if Cell.vars.iconDurationRoundUp then
             frame.duration:SetFormattedText("%d", ceil(frame._remain))
         else
-            if frame._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and frame._remain < Cell.vars.iconDurationDecimal then
                 frame.duration:SetFormattedText("%.1f", frame._remain)
             else
                 frame.duration:SetFormattedText("%d", frame._remain)
@@ -1274,7 +1278,7 @@ local function Bar_OnUpdate(bar, elapsed)
         if Cell.vars.iconDurationRoundUp then
             bar.duration:SetFormattedText("%d", ceil(bar._remain))
         else
-            if bar._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and bar._remain < Cell.vars.iconDurationDecimal then
                 bar.duration:SetFormattedText("%.1f", bar._remain)
             else
                 bar.duration:SetFormattedText("%d", bar._remain)
@@ -1380,7 +1384,7 @@ local function Bars_OnUpdate(bar, elapsed)
         if Cell.vars.iconDurationRoundUp then
             bar.duration:SetFormattedText("%d", ceil(bar._remain))
         else
-            if bar._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and bar._remain < Cell.vars.iconDurationDecimal then
                 bar.duration:SetFormattedText("%.1f", bar._remain)
             else
                 bar.duration:SetFormattedText("%d", bar._remain)
@@ -1988,7 +1992,7 @@ local function Block_OnUpdate_Duration(frame, elapsed)
         if Cell.vars.iconDurationRoundUp then
             frame.duration:SetFormattedText("%d", ceil(frame._remain))
         else
-            if frame._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and frame._remain < Cell.vars.iconDurationDecimal then
                 frame.duration:SetFormattedText("%.1f", frame._remain)
             else
                 frame.duration:SetFormattedText("%d", frame._remain)
@@ -2062,7 +2066,7 @@ local function Block_OnUpdate_Stack(frame, elapsed)
         if Cell.vars.iconDurationRoundUp then
             frame.duration:SetFormattedText("%d", ceil(frame._remain))
         else
-            if frame._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and frame._remain < Cell.vars.iconDurationDecimal then
                 frame.duration:SetFormattedText("%.1f", frame._remain)
             else
                 frame.duration:SetFormattedText("%d", frame._remain)
@@ -2198,7 +2202,7 @@ local function Blocks_OnUpdate(frame, elapsed)
         if Cell.vars.iconDurationRoundUp then
             frame.duration:SetFormattedText("%d", ceil(frame._remain))
         else
-            if frame._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and frame._remain < Cell.vars.iconDurationDecimal then
                 frame.duration:SetFormattedText("%.1f", frame._remain)
             else
                 frame.duration:SetFormattedText("%d", frame._remain)

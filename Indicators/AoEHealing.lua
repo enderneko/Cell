@@ -8,42 +8,44 @@ local I = Cell.iFuncs
 -------------------------------------------------
 -- CreateAoEHealing -- not support for npc
 -------------------------------------------------
-local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
+-- NOTE: This indicator relied on COMBAT_LOG_EVENT_UNFILTERED (SPELL_HEAL /
+-- SPELL_PERIODIC_HEAL / SPELL_SUMMON) to detect AoE healing events.
+-- COMBAT_LOG_EVENT_UNFILTERED is removed in Midnight (WoW 12.0.0).
+-- When Cell.isMidnight is true the eventFrame is never registered, so no
+-- flash animation will trigger. The indicator frame still exists and can be
+-- re-enabled if a suitable non-CLEU API becomes available in a future build.
 
 local function Display(b)
     b.indicators.aoeHealing:Display()
 end
 
-local playerSummoned = {}
 local eventFrame = CreateFrame("Frame")
-eventFrame:SetScript("OnEvent", function()
-    if not CombatLogGetCurrentEventInfo then return end
-    local ok, timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = pcall(CombatLogGetCurrentEventInfo)
-    if not ok then return end
-    -- if subevent == "SPELL_SUMMON" then print(subevent, sourceName, sourceGUID, destName, destGUID, spellName) end
-    if subevent == "SPELL_SUMMON" then
-        -- print(sourceGUID == Cell.vars.playerGUID, destGUID, spellName, spellId)
-        if sourceGUID == Cell.vars.playerGUID and destGUID and I.IsAoEHealing(spellName, spellId) then
-            local duration = I.GetSummonDuration(spellName)
-            if duration then
-                playerSummoned[destGUID] = GetTime() + duration -- expirationTime
-                C_Timer.After(duration, function()
-                    playerSummoned[destGUID] = nil
-                end)
+
+if not Cell.isMidnight then
+    local playerSummoned = {}
+    eventFrame:SetScript("OnEvent", function()
+        local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
+        -- if subevent == "SPELL_SUMMON" then print(subevent, sourceName, sourceGUID, destName, destGUID, spellName) end
+        if subevent == "SPELL_SUMMON" then
+            if sourceGUID == Cell.vars.playerGUID and destGUID and I.IsAoEHealing(spellName, spellId) then
+                local duration = I.GetSummonDuration(spellName)
+                if duration then
+                    playerSummoned[destGUID] = GetTime() + duration -- expirationTime
+                    C_Timer.After(duration, function()
+                        playerSummoned[destGUID] = nil
+                    end)
+                end
             end
         end
-        -- texplore(playerSummoned)
-    end
-    -- if (subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL") then print(subevent, sourceName, sourceGUID, destName, spellId, spellName) end
-    if subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL" then
-        if destGUID then
-            -- print(sourceGUID == Cell.vars.playerGUID, sourceGUID, playerSummoned[sourceGUID])
-            if (sourceGUID == Cell.vars.playerGUID and I.IsAoEHealing(spellName, spellId)) or playerSummoned[sourceGUID] then
-                F.HandleUnitButton("guid", destGUID, Display)
+        if subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL" then
+            if destGUID then
+                if (sourceGUID == Cell.vars.playerGUID and I.IsAoEHealing(spellName, spellId)) or playerSummoned[sourceGUID] then
+                    F.HandleUnitButton("guid", destGUID, Display)
+                end
             end
         end
-    end
-end)
+    end)
+end
 
 function I.CreateAoEHealing(parent)
     local aoeHealing = CreateFrame("Frame", parent:GetName().."AoEHealing", parent.widgets.indicatorFrame)
@@ -91,9 +93,10 @@ function I.CreateAoEHealing(parent)
 end
 
 function I.EnableAoEHealing(enabled)
-    -- CLEU (CombatLogGetCurrentEventInfo) removed in 12.0+
-    if not CombatLogGetCurrentEventInfo then return end
-
+    -- On Midnight (12.0.0+) COMBAT_LOG_EVENT_UNFILTERED is unavailable;
+    -- the eventFrame has no OnEvent script in that case, so registration
+    -- is intentionally skipped.
+    if Cell.isMidnight then return end
     if enabled then
         eventFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     else
