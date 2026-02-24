@@ -1166,8 +1166,15 @@ local function HandleDebuff(self, auraInfo)
     local count = auraInfo.applications
     local debuffType = auraInfo.dispelName or ""
     local expirationTime = auraInfo.expirationTime or 0
-    local start = expirationTime - auraInfo.duration
     local duration = auraInfo.duration
+    -- Midnight 12.0.0+: expirationTime and duration may be secret — skip arithmetic entirely
+    local start
+    if Cell.isMidnight then
+        start = 0
+        duration = 0
+    else
+        start = expirationTime - duration
+    end
     local source = auraInfo.sourceUnit
     local spellId = auraInfo.spellId
     -- local attribute = auraInfo.points[1] -- UnitAura:arg16
@@ -1454,8 +1461,15 @@ local function HandleBuff(self, auraInfo)
     local count = auraInfo.applications
     -- local debuffType = auraInfo.isHarmful and auraInfo.dispelName
     local expirationTime = auraInfo.expirationTime or 0
-    local start = expirationTime - auraInfo.duration
     local duration = auraInfo.duration
+    -- Midnight 12.0.0+: expirationTime and duration may be secret — skip arithmetic entirely
+    local start
+    if Cell.isMidnight then
+        start = 0
+        duration = 0
+    else
+        start = expirationTime - duration
+    end
     local source = auraInfo.sourceUnit
     local spellId = auraInfo.spellId
     -- local attribute = auraInfo.points[1] -- UnitAura:arg16
@@ -1706,7 +1720,16 @@ UnitButton_UpdateAuras = function(self, updateInfo)
         UnitButton_UpdateBuffs(self, true)
         UnitButton_UpdateDebuffs(self, true)
     else
-        -- partial update
+        -- Midnight 12.0.0+: aura fields (isHelpful, isHarmful, expirationTime, etc.) may be
+        -- secret at any time during combat/instances. F.IsAuraRestricted() is unreliable.
+        -- Always force full update on Midnight to avoid secret boolean/arithmetic errors.
+        if Cell.isMidnight then
+            UnitButton_UpdateBuffs(self, true)
+            UnitButton_UpdateDebuffs(self, true)
+            I.UpdateStatusIcon(self)
+            return
+        end
+
         local buffsChanged, debuffsChanged
         wipe(self._missing_auras)
 
@@ -1909,7 +1932,10 @@ local function UnitButton_UpdatePowerStates(self)
 
     self.states.power = UnitPower(unit)
     self.states.powerMax = UnitPowerMax(unit)
-    if self.states.powerMax <= 0 then self.states.powerMax = 1 end
+    -- Midnight 12.0.0+: UnitPowerMax may return a secret number during restricted contexts
+    if not (Cell.isMidnight and F.IsAuraRestricted()) then
+        if self.states.powerMax <= 0 then self.states.powerMax = 1 end
+    end
 end
 
 -------------------------------------------------
@@ -2111,7 +2137,8 @@ UnitButton_UpdateRole = function(self)
         roleIcon:SetRole(role)
 
         --! check vehicle root
-        if self.states.guid and strfind(self.states.guid, "^Vehicle") and not UnitInPartyIsAI(unit) then
+        -- Midnight 12.0.0+: guid may be secret for NPC/boss units
+        if self.states.guid and not (issecretvalue and issecretvalue(self.states.guid)) and strfind(self.states.guid, "^Vehicle") and not UnitInPartyIsAI(unit) then
             CheckVehicleRoot(self, unit)
         end
     else
@@ -2639,6 +2666,9 @@ local function UnitButton_UpdateInRange(self, ir)
     if not unit then return end
 
     local inRange = IsInRange(unit)
+    -- Nil-safety: if IsInRange errors (e.g. secret value issue), default to true
+    -- so frames don't grey out incorrectly
+    if inRange == nil then inRange = true end
 
     self.states.inRange = inRange
     if Cell.loaded then
@@ -2710,7 +2740,8 @@ UnitButton_UpdateStatusText = function(self)
         statusText:Show()
         statusText:SetStatus("OFFLINE")
         statusText:ShowTimer()
-    elseif UnitIsAFK(unit) then
+    -- Midnight 12.0.0+: UnitIsAFK may return a secret boolean — skip on Midnight
+    elseif not Cell.isMidnight and UnitIsAFK(unit) then
         statusText:Show()
         statusText:SetStatus("AFK")
         statusText:ShowTimer()

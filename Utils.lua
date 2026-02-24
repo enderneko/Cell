@@ -2013,6 +2013,8 @@ end
 
 if Cell.isRetail then
     function F.FindDebuffByIds(unit, spellIds)
+        -- Midnight 12.0.0+: aura fields are secret during restricted contexts
+        if Cell.isMidnight and F.IsAuraRestricted() then return {} end
         local debuffs = {}
         AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if spellIds[spellId] then
@@ -2023,6 +2025,8 @@ if Cell.isRetail then
     end
 
     function F.FindAuraByDebuffTypes(unit, types)
+        -- Midnight 12.0.0+: aura fields are secret during restricted contexts
+        if Cell.isMidnight and F.IsAuraRestricted() then return {} end
         local debuffs = {}
         AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if types == "all" or types[debuffType] then
@@ -2356,6 +2360,10 @@ function F.IsInRange(unit, check)
         -- NOTE: UnitInRange only works with group players/pets
         --! but not available for PLAYER PET when SOLO
         local inRange, checked = UnitInRange(unit)
+        -- Midnight 12.0.0+: UnitInRange returns secret booleans during restricted contexts
+        if Cell.isMidnight and issecretvalue and issecretvalue(checked) then
+            return F.IsInRange(unit, true)
+        end
         if not checked then
             return F.IsInRange(unit, true)
         end
@@ -2376,7 +2384,10 @@ function F.IsInRange(unit, check)
             end
 
             local inRange, checked = UnitInRange(unit)
-            if checked then
+            -- Midnight 12.0.0+: UnitInRange returns secret booleans during restricted contexts
+            if Cell.isMidnight and issecretvalue and issecretvalue(checked) then
+                -- Skip, fall through to pet/interact checks below
+            elseif checked then
                 return inRange
             end
 

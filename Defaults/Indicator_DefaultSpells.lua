@@ -184,6 +184,7 @@ function I.UpdateAoEHealings(t)
 end
 
 function I.IsAoEHealing(name, id)
+    if issecretvalue and (issecretvalue(name) or issecretvalue(id)) then return end
     return builtInAoEHealings[name] or builtInAoEHealings[id] or customAoEHealings[id]
 end
 
@@ -338,6 +339,7 @@ end
 local UnitIsUnit = UnitIsUnit
 local bos = F.GetSpellInfo(6940) -- 牺牲祝福
 function I.IsExternalCooldown(name, id, source, target)
+    if issecretvalue and (issecretvalue(name) or issecretvalue(id)) then return end
     if name == bos then
         if source and target then
             -- NOTE: hide bos on caster
@@ -488,6 +490,7 @@ function I.UpdateDefensives(t)
 end
 
 function I.IsDefensiveCooldown(name, id)
+    if issecretvalue and (issecretvalue(name) or issecretvalue(id)) then return end
     return builtInDefensives[name] or builtInDefensives[id] or customDefensives[id]
 end
 
@@ -546,6 +549,7 @@ do
 end
 
 function I.IsTankActiveMitigation(spellId)
+    if issecretvalue and issecretvalue(spellId) then return end
     return tankActiveMitigations[spellId]
 end
 
@@ -733,6 +737,7 @@ do
 end
 
 function I.IsDrinking(name)
+    if issecretvalue and issecretvalue(name) then return end
     return drinks[name]
 end
 
@@ -1306,5 +1311,6 @@ function I.UpdateCrowdControls(t)
 end
 
 function I.IsCrowdControls(name, id)
+    if issecretvalue and (issecretvalue(name) or issecretvalue(id)) then return end
     return builtInCrowdControls[name] or builtInCrowdControls[id] or customCrowdControls[name]
 end

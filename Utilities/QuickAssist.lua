@@ -297,6 +297,8 @@ end
 
 local function QuickAssist_UpdateCasts(self, spellId)
     if not self.unit then return end
+    -- Midnight 12.0.0+: spellId from UNIT_SPELLCAST_SUCCEEDED is secret during restricted contexts
+    if Cell.isMidnight and issecretvalue and issecretvalue(spellId) then return end
     if not offensiveCasts[spellId] then return end
 
     self._casts[spellId] = GetTime()

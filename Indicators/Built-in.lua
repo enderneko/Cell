@@ -1367,14 +1367,19 @@ local function StatusText_ShowTimer(self)
 
     self.timer:Show()
 
-    if not startTimeCache[self.parent.states.guid] then startTimeCache[self.parent.states.guid] = GetTime() end
+    -- Midnight 12.0.0+: guid may be secret for NPC/boss units
+    local showGuid = self.parent.states.guid
+    if not (issecretvalue and issecretvalue(showGuid)) then
+        if showGuid and not startTimeCache[showGuid] then startTimeCache[showGuid] = GetTime() end
+    end
 
     self.ticker = C_Timer.NewTicker(1, function()
         if not self.parent.states.guid and self.parent.states.unit then -- ElvUI AFK mode
             self.parent.states.guid = UnitGUID(self.parent.states.unit)
         end
-        if self.parent.states.guid and startTimeCache[self.parent.states.guid] then
-            self.timer:SetFormattedText(F.FormatTime(GetTime() - startTimeCache[self.parent.states.guid]))
+        local tickGuid = self.parent.states.guid
+        if tickGuid and not (issecretvalue and issecretvalue(tickGuid)) and startTimeCache[tickGuid] then
+            self.timer:SetFormattedText(F.FormatTime(GetTime() - startTimeCache[tickGuid]))
         else
             self.timer:SetText("")
         end
@@ -1386,7 +1391,11 @@ local function StatusText_HideTimer(self, reset)
     self.timer:SetText("")
     if reset then
         if self.ticker then self.ticker:Cancel() end
-        startTimeCache[self.parent.states.guid] = nil
+        -- Midnight 12.0.0+: guid may be secret for NPC/boss units
+        local guid = self.parent.states.guid
+        if guid and not (issecretvalue and issecretvalue(guid)) then
+            startTimeCache[guid] = nil
+        end
     end
 end
 

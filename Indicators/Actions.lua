@@ -40,6 +40,9 @@ eventFrame:SetScript("OnEvent", function(self, event, unit, castGUID, spellID)
         print("|cFFFF3030[Cell]|r |cFFB2B2B2" .. event .. ":|r", unit, "|cFF00FF00" .. (spellID or "nil") .. "|r", name)
     end
 
+    -- Midnight 12.0.0+: spellID from UNIT_SPELLCAST_SUCCEEDED is secret during restricted contexts
+    if Cell.isMidnight and issecretvalue and issecretvalue(spellID) then return end
+
     if Cell.vars.actions[spellID] then
         F.HandleUnitButton("unit", unit, Display, unpack(Cell.vars.actions[spellID]))
     end

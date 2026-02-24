@@ -255,12 +255,21 @@ end
 function I.UpdateCustomIndicators(unitButton, auraInfo)
     local unit = unitButton.states.displayedUnit
 
+    -- Midnight 12.0.0+: aura fields may be secret — bail early if so
+    if issecretvalue and issecretvalue(auraInfo.isHelpful) then return end
+
     local auraType = auraInfo.isHelpful and "buff" or "debuff"
     local icon = auraInfo.icon
     local debuffType = auraInfo.isHarmful and (auraInfo.dispelName or "") or nil
     local count = auraInfo.applications
     local duration = auraInfo.duration
-    local start = (auraInfo.expirationTime or 0) - auraInfo.duration
+    local start
+    if Cell.isMidnight and issecretvalue and issecretvalue(auraInfo.expirationTime) then
+        start = 0
+        duration = 0
+    else
+        start = (auraInfo.expirationTime or 0) - auraInfo.duration
+    end
     local castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"
 
     -- check Bleed

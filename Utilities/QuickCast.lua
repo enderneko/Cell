@@ -893,6 +893,8 @@ end
 -- ----------------------------------------------------------------------- --
 local function QuickCast_UpdateAuras(self)
     if not self.unit then return end
+    -- Midnight 12.0.0+: AuraUtil.ForEachAura callback receives secret fields during restricted contexts
+    if Cell.isMidnight and F.IsAuraRestricted() then return end
 
     local glowBuffFound, outerBuffFound, innerBuffFound
 
@@ -921,6 +923,8 @@ local function QuickCast_UpdateAuras(self)
 end
 
 local function QuickCast_UpdateCasts(self, spellId)
+    -- Midnight 12.0.0+: spellId from UNIT_SPELLCAST_SUCCEEDED is secret during restricted contexts
+    if Cell.isMidnight and issecretvalue and issecretvalue(spellId) then return end
     if glowCasts[spellId] then
         self:SetGlowCastCooldown(GetTime(), glowCasts[spellId])
     end
