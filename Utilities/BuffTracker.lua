@@ -693,11 +693,17 @@ end, unpack(fadeOuts))
 local GetAuraDataBySpellName = C_UnitAuras.GetAuraDataBySpellName
 
 local function UnitBuffExists(unit, buff)
+    -- C_UnitAuras.GetAuraDataBySpellName is blocked when auras are restricted (Midnight 12.0.0+)
+    -- Guard: bail out early so we don't error; treat all buffs as absent during restrictions
+    if Cell.isMidnight and F.IsAuraRestricted() then return end
+
     local names = buffs[buff]["names"]
     local aura
     for _, name in next, names do
         aura = GetAuraDataBySpellName(unit, name, "HELPFUL")
         if aura then
+            -- aura.sourceUnit is a secret field on Midnight during restrictions,
+            -- but we only reach here when not restricted, so this is safe
             return true, aura.sourceUnit == "player"
         end
     end
