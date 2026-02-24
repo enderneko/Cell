@@ -21,6 +21,7 @@ Cell.vars.playerFaction = UnitFactionGroup("player")
 Cell.isAsian = LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR
 
 Cell.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+Cell.isMidnight = Cell.isRetail and (select(4, GetBuildInfo()) >= 120000)
 Cell.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 Cell.isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
@@ -2524,4 +2525,34 @@ end
 ---------------------------------------------------------------------
 if Cell.isMists then
 
+end
+
+-------------------------------------------------
+-- Secret value utilities (Patch 12.0.0+)
+-------------------------------------------------
+-- issecretvalue() is a native WoW API available in 12.0.0+
+function F.IsSecretValue(val)
+    if issecretvalue then
+        return issecretvalue(val)
+    end
+    return false
+end
+
+-- GetRestrictedActionStatus() returns non-secret boolean
+-- Enum.RestrictedActionType.SecretAuras = 0
+-- Enum.RestrictedActionType.SecretCooldowns = 1
+function F.IsAuraRestricted()
+    if GetRestrictedActionStatus and Enum and Enum.RestrictedActionType then
+        local isRestricted = GetRestrictedActionStatus(Enum.RestrictedActionType.SecretAuras)
+        return isRestricted == true
+    end
+    return false
+end
+
+function F.IsCooldownRestricted()
+    if GetRestrictedActionStatus and Enum and Enum.RestrictedActionType then
+        local isRestricted = GetRestrictedActionStatus(Enum.RestrictedActionType.SecretCooldowns)
+        return isRestricted == true
+    end
+    return false
 end
