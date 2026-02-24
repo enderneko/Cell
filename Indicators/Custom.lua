@@ -5,6 +5,15 @@ local F = Cell.funcs
 ---@class CellIndicatorFuncs
 local I = Cell.iFuncs
 
+-- NOTE for Custom Indicator authors (Midnight 12.0.0+):
+-- In restricted contexts (encounters, M+, PvP, combat), aura data fields
+-- (spellId, expirationTime, applications, icon, etc.) are Secret Values.
+-- - DO NOT compare secret values with == or use arithmetic on them
+-- - DO NOT use secret values as table keys
+-- - FontString:SetText() and SetTexture() ACCEPT secrets safely
+-- - Use issecretvalue(val) to check if a value is secret
+-- - Use GetRestrictedActionStatus(0) to check if aura access is restricted
+
 -------------------------------------------------
 -- custom indicators
 -------------------------------------------------

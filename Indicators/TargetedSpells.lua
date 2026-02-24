@@ -141,6 +141,15 @@ end
 local function CheckUnitCast(sourceUnit, isRecheck)
     if not UnitIsEnemy("player", sourceUnit) then return end
 
+    -- On Midnight 12.0.0+, enemy spellcast info is secret in instances
+    -- Player's own casts (and pets) are always non-secret
+    if Cell.isMidnight then
+        local isPlayerCast = (sourceUnit == "player" or sourceUnit == "pet" or sourceUnit == "vehicle")
+        if not isPlayerCast and F.IsAuraRestricted and F.IsAuraRestricted() then
+            return -- skip enemy spell tracking during restricted periods
+        end
+    end
+
     local sourceGUID = UnitGUID(sourceUnit)
     local targetGUID
     local previousTarget, isChanneling

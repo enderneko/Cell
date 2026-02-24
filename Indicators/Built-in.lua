@@ -1539,6 +1539,17 @@ local function HealthText_SetFormat(self, format)
 end
 
 local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
+    -- On Midnight 12.0.0+, health/maxHealth may be secret values in restricted contexts.
+    -- Arithmetic (/, *, -, comparison) on secret values causes errors.
+    -- AbbreviateNumbers() and FontString:SetText() accept secret values safely.
+    -- DO NOT divide, multiply, or compare secret values.
+    if Cell.isMidnight and F.IsAuraRestricted and F.IsAuraRestricted() then
+        local healthStr = AbbreviateNumbers and AbbreviateNumbers(health) or tostring(health)
+        self.text:SetText(healthStr)
+        self:SetWidth(self.text:GetStringWidth())
+        return
+    end
+
     maxHealth = maxHealth == 0 and 1 or maxHealth
 
     self.text:SetFormattedText("%s%s%s%s",
