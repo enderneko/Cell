@@ -90,7 +90,11 @@ options:SetScript("OnClick", function(self, button)
 end)
 options:HookScript("OnEnter", function()
     CellTooltip:SetOwner(options, "ANCHOR_NONE")
-    CellTooltip:SetPoint(tooltipPoint, options, tooltipRelativePoint, tooltipX, tooltipY)
+    if tooltipPoint then
+        CellTooltip:SetPoint(tooltipPoint, options, tooltipRelativePoint, tooltipX, tooltipY)
+    else
+        CellTooltip:SetPoint("TOPLEFT", options, "BOTTOMLEFT", 0, -3)
+    end
     CellTooltip:AddLine(L["Options"])
     CellTooltip:AddLine("|cffffb5c5"..L["Right-Click"]..": |cffffffff"..L["refresh unit buttons"])
     CellTooltip:Show()
@@ -353,7 +357,11 @@ end
 
 raid:HookScript("OnEnter", function()
     CellTooltip:SetOwner(raid, "ANCHOR_NONE")
-    CellTooltip:SetPoint(tooltipPoint, raid, tooltipRelativePoint, tooltipX, tooltipY)
+    if tooltipPoint then
+        CellTooltip:SetPoint(tooltipPoint, raid, tooltipRelativePoint, tooltipX, tooltipY)
+    else
+        CellTooltip:SetPoint("TOPLEFT", raid, "BOTTOMLEFT", 0, -3)
+    end
     UpdateRaidSetupTooltip()
 end)
 
