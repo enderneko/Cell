@@ -28,7 +28,9 @@ local RESURRECTING = F.GetSpellInfo(160029)
 
 local cleuFrame = CreateFrame("Frame")
 cleuFrame:SetScript("OnEvent", function()
-    local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
+    if not CombatLogGetCurrentEventInfo then return end
+    local ok, timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = pcall(CombatLogGetCurrentEventInfo)
+    if not ok then return end
 
     if subEvent == "SPELL_AURA_REMOVED" then
         if spellName == SOULSTONE then
@@ -322,11 +324,15 @@ function I.EnableStatusIcon(enabled)
         if Cell.isRetail and CELL_SUMMON_ICONS_ENABLED then
             eventFrame:RegisterEvent("INCOMING_SUMMON_CHANGED")
         end
-        -- resurrection
-        cleuFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        -- resurrection (CLEU removed in 12.0+, soulstone/res tracking via CLEU unavailable)
+        if CombatLogGetCurrentEventInfo then
+            cleuFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        end
     else
         eventFrame:UnregisterAllEvents()
-        cleuFrame:UnregisterAllEvents()
+        if CombatLogGetCurrentEventInfo then
+            cleuFrame:UnregisterAllEvents()
+        end
         F.IterateAllUnitButtons(function(b)
             b.indicators.statusIcon:Hide()
             b.indicators.resurrectionIcon:Hide()

@@ -817,10 +817,12 @@ function eventFrame:PLAYER_LOGIN()
     Cell.vars.playerNameShort = GetUnitName("player")
     Cell.vars.playerNameFull = F.UnitFullName("player")
 
-    --! init bgMaxPlayers
-    for i = 1, GetNumBattlegroundTypes() do
-        local bgName, _, _, _, _, _, bgId, maxPlayers = GetBattlegroundInfo(i)
-        bgMaxPlayers[bgId] = maxPlayers
+    --! init bgMaxPlayers (GetBattlegroundInfo removed in 12.0)
+    if GetBattlegroundInfo then
+        for i = 1, GetNumBattlegroundTypes() do
+            local bgName, _, _, _, _, _, bgId, maxPlayers = GetBattlegroundInfo(i)
+            bgMaxPlayers[bgId] = maxPlayers
+        end
     end
 
     Cell.vars.playerGUID = UnitGUID("player")

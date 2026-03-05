@@ -20,6 +20,15 @@ Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 Cell.isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 Cell.isTWW = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WAR_WITHIN
+Cell.isMidnight = LE_EXPANSION_LEVEL_CURRENT == (LE_EXPANSION_MIDNIGHT or math.huge)
+
+-------------------------------------------------
+-- 12.0+ API compatibility shims
+-------------------------------------------------
+-- IsEncounterInProgress moved to C_InstanceEncounter namespace in 12.0
+if not IsEncounterInProgress and C_InstanceEncounter and C_InstanceEncounter.IsEncounterInProgress then
+    IsEncounterInProgress = C_InstanceEncounter.IsEncounterInProgress
+end
 
 if Cell.isRetail then
     Cell.flavor = "retail"
@@ -2286,11 +2295,18 @@ local harmItems = {
 local UnitInSpellRange
 if C_Spell and C_Spell.IsSpellInRange then
     UnitInSpellRange = function(spellName, unit)
-        return IsSpellInRange(spellName, unit)
+        local ok, result = pcall(function()
+            local r = IsSpellInRange(spellName, unit)
+            if r then return true else return false end
+        end)
+        if not ok then return nil end
+        return result
     end
 else
     UnitInSpellRange = function(spellName, unit)
-        return IsSpellInRange(spellName, unit) == 1
+        local ok, result = pcall(function() return IsSpellInRange(spellName, unit) == 1 end)
+        if not ok then return nil end
+        return result
     end
 end
 
@@ -2344,7 +2360,8 @@ end
 rc:SetScript("OnEvent", DELAYED_SPELLS_CHANGED)
 
 function F.IsInRange(unit, check)
-    if not UnitIsVisible(unit) then
+    local okVis, visible = pcall(function() if UnitIsVisible(unit) then return true else return false end end)
+    if not okVis or not visible then
         return false
     end
 
@@ -2354,7 +2371,12 @@ function F.IsInRange(unit, check)
     elseif not check and F.UnitInGroup(unit) then
         -- NOTE: UnitInRange only works with group players/pets
         --! but not available for PLAYER PET when SOLO
-        local inRange, checked = UnitInRange(unit)
+        local ok, inRange, checked = pcall(function()
+            local r, c = UnitInRange(unit)
+            -- force boolean test inside pcall to catch secret values
+            if c then return r, true else return r, false end
+        end)
+        if not ok then return F.IsInRange(unit, true) end
         if not checked then
             return F.IsInRange(unit, true)
         end
@@ -2374,9 +2396,12 @@ function F.IsInRange(unit, check)
                 return UnitInSpellRange(spell_friend, unit)
             end
 
-            local inRange, checked = UnitInRange(unit)
-            if checked then
-                return inRange
+            local ok2, inRange2, checked2 = pcall(function()
+                local r, c = UnitInRange(unit)
+                if c then return r, true else return r, false end
+            end)
+            if ok2 and checked2 then
+                return inRange2
             end
 
             if UnitIsUnit(unit, "pet") and spell_pet then

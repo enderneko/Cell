@@ -240,7 +240,12 @@ end
 
 frame:SetScript("OnEvent", function(self, event, ...)
     if event == "COMBAT_LOG_EVENT_UNFILTERED" then
-        self:COMBAT_LOG_EVENT_UNFILTERED(CombatLogGetCurrentEventInfo())
+        if CombatLogGetCurrentEventInfo then
+            local ok, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14 = pcall(CombatLogGetCurrentEventInfo)
+            if ok then
+                self:COMBAT_LOG_EVENT_UNFILTERED(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14)
+            end
+        end
     else
         self[event](self, ...)
     end
@@ -250,6 +255,9 @@ end)
 -- priority
 ----------------------------------------------------
 local function UpdatePriority(hasHighestPriority)
+    -- CLEU (CombatLogGetCurrentEventInfo) removed in 12.0+; death report requires CLEU
+    if not CombatLogGetCurrentEventInfo then return end
+
     if hasHighestPriority and CellDB["tools"]["deathReport"][1] then
         frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     else

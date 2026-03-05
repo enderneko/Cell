@@ -262,6 +262,7 @@ hoverFrame:SetScript("OnLeave", function()
 end)
 
 local function UpdateHoverFrame()
+    if not Cell.vars.currentLayoutTable then return end
     local anchor = Cell.vars.currentLayoutTable["main"]["anchor"]
     local top, bottom, left, right
 
@@ -399,6 +400,7 @@ Cell.RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFram
 -- load & update
 -------------------------------------------------
 local function UpdatePosition()
+    if not Cell.vars.currentLayoutTable then return end
     local anchor = Cell.vars.currentLayoutTable["main"]["anchor"]
 
     cellMainFrame:ClearAllPoints()

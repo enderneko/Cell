@@ -17,7 +17,9 @@ end
 local playerSummoned = {}
 local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function()
-    local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
+    if not CombatLogGetCurrentEventInfo then return end
+    local ok, timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = pcall(CombatLogGetCurrentEventInfo)
+    if not ok then return end
     -- if subevent == "SPELL_SUMMON" then print(subevent, sourceName, sourceGUID, destName, destGUID, spellName) end
     if subevent == "SPELL_SUMMON" then
         -- print(sourceGUID == Cell.vars.playerGUID, destGUID, spellName, spellId)
@@ -89,6 +91,9 @@ function I.CreateAoEHealing(parent)
 end
 
 function I.EnableAoEHealing(enabled)
+    -- CLEU (CombatLogGetCurrentEventInfo) removed in 12.0+
+    if not CombatLogGetCurrentEventInfo then return end
+
     if enabled then
         eventFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     else

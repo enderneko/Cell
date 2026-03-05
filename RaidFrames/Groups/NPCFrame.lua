@@ -201,7 +201,9 @@ local boss678_buttonToGuid = {}
 
 local cleu = CreateFrame("Frame")
 cleu:SetScript("OnEvent", function()
-    local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
+    if not CombatLogGetCurrentEventInfo then return end
+    local ok, timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = pcall(CombatLogGetCurrentEventInfo)
+    if not ok then return end
     if boss678_guidToButton[destGUID] then
         if subEvent == "SPELL_HEAL" or subEvent == "SPELL_PERIODIC_HEAL" or subEvent == "SPELL_DAMAGE" or subEvent == "SPELL_PERIODIC_DAMAGE" then
             -- print("UpdateHealth:", boss678_guidToButton[destGUID]:GetName())
@@ -259,7 +261,7 @@ for i = 6, 8 do
         end
 
         if button.helper.elapsed2 >= 1 then
-            if not cleu:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
+            if CombatLogGetCurrentEventInfo and not cleu:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
                 cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
             end
             button.helper.elapsed2 = 0

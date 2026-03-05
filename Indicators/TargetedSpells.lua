@@ -141,7 +141,12 @@ end
 local function CheckUnitCast(sourceUnit, isRecheck)
     if not UnitIsEnemy("player", sourceUnit) then return end
 
+    -- UnitGUID may return secret values in 12.0+
     local sourceGUID = UnitGUID(sourceUnit)
+    if not sourceGUID then return end
+    -- validate it's not a secret string by trying to use it as a table key
+    local okG = pcall(function() local _ = ({[sourceGUID]=true})[sourceGUID] end)
+    if not okG then return end
     local targetGUID
     local previousTarget, isChanneling
 
@@ -165,6 +170,11 @@ local function CheckUnitCast(sourceUnit, isRecheck)
 
     -- print(sourceUnit, name, spellId)
 
+    -- spellId may be secret in 12.0+
+    local okSp
+    okSp, spellId = pcall(function() return spellId + 0 end)
+    if not okSp then spellId = nil end
+
     if spellId and (Cell.vars.targetedSpellsList[spellId] or showAllSpells) then
         if casts[sourceGUID] then
             casts[sourceGUID]["startTime"] = startTimeMS/1000
@@ -187,7 +197,13 @@ local function CheckUnitCast(sourceUnit, isRecheck)
 
         local targetUnit = sourceUnit.."target"
         targetUnit = F.GetTargetUnitID(targetUnit) -- units in group (players/pets), no npcs
-        if targetUnit then targetGUID = UnitGUID(targetUnit) end
+        if targetUnit then
+            targetGUID = UnitGUID(targetUnit)
+            if targetGUID then
+                local okTG = pcall(function() local _ = ({[targetGUID]=true})[targetGUID] end)
+                if not okTG then targetGUID = nil end
+            end
+        end
 
         -- update spell target
         casts[sourceGUID]["targetUnit"] = targetUnit
@@ -264,6 +280,9 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
 
     elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
         local sourceGUID = UnitGUID(sourceUnit)
+        if not sourceGUID then return end
+        local okG = pcall(function() local _ = ({[sourceGUID]=true})[sourceGUID] end)
+        if not okG then return end
         if casts[sourceGUID] then
             previousTarget = casts[sourceGUID]["targetGUID"]
             casts[sourceGUID] = nil
@@ -272,6 +291,9 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
 
     elseif event == "NAME_PLATE_UNIT_REMOVED" then
         local sourceGUID = UnitGUID(sourceUnit)
+        if not sourceGUID then return end
+        local okG = pcall(function() local _ = ({[sourceGUID]=true})[sourceGUID] end)
+        if not okG then return end
         if casts[sourceGUID] and not casts[sourceGUID]["nonNameplate"] then
             previousTarget = casts[sourceGUID]["targetGUID"]
             casts[sourceGUID] = nil
