@@ -125,14 +125,14 @@ local aoeHealings = {
     },
 
     ["PRIEST"] = {
-        [120517] = true,   -- 光晕 - Halo
+        [120517] = true,   -- 光晕 - Halo (moved to Archon hero talent in 12.0)
         [34861]  = true,   -- 圣言术：灵 - Holy Word: Sanctify
         [596]    = true,   -- 治疗祷言 - Prayer of Healing
         [64843]  = true,   -- 神圣赞美诗 - Divine Hymn
-        [110744] = true,   -- 神圣之星 - Divine Star
+        -- [110744] = true,   -- 神圣之星 - Divine Star (removed in 12.0)
         [204883] = true,   -- 治疗之环 - Circle of Healing
         [281265] = true,   -- 神圣新星 - Holy Nova
-        [314867] = true,   -- 暗影盟约 - Shadow Covenant
+        -- [314867] = true,   -- 暗影盟约 - Shadow Covenant (removed in 12.0)
         [15290]  = true,   -- 吸血鬼的拥抱 - Vampiric Embrace
         [372787] = true,   -- 神言术：佑 - Divine Word: Sanctuary
     },
@@ -143,7 +143,7 @@ local aoeHealings = {
         [108280] = true,   -- 治疗之潮图腾 (SUMMON) - Healing Tide Totem
         [52042]  = true,   -- 治疗之泉图腾 (SUMMON) - Healing Stream Totem
         [197995] = true,   -- 奔涌之流 - Wellspring
-        [157503] = true,   -- 暴雨图腾 - Cloudburst
+        -- [157503] = true,   -- 暴雨图腾 - Cloudburst (removed in 12.0)
         [114911] = true,   -- 先祖指引 - Ancestral Guidance
         [382311] = true,   -- 先祖复苏 - Ancestral Awakening
         [207778] = true,   -- 倾盆大雨 - Downpour
@@ -622,11 +622,11 @@ local dispelNodeIDs = {
 
     -- SHAMAN ---------------
         -- 262 - Elemental
-        [262] = {["Curse"] = 103608, ["Poison"] = 103609},
+        [262] = {["Curse"] = 103608, ["Poison"] = 103599},
         -- 263 - Enhancement
-        [263] = {["Curse"] = 103608, ["Poison"] = 103609},
+        [263] = {["Curse"] = 103608, ["Poison"] = 103599},
         -- 264 - Restoration
-        [264] = {["Curse"] = 81073, ["Magic"] = true, ["Poison"] = 103609},
+        [264] = {["Curse"] = 81073, ["Magic"] = true, ["Poison"] = 103599},
     -------------------------
 
     -- WARLOCK --------------
@@ -753,7 +753,7 @@ local spells =  {
     145205, -- 百花齐放 - Efflorescence
     383193, -- 林地护理 - Grove Tending
     439530, -- 共生绽华 - Symbiotic Blooms
-    429224, -- 次级塞纳里奥结界 - Minor Cenarion Ward
+    -- 429224, -- 次级塞纳里奥结界 - Minor Cenarion Ward (removed in 12.0, Durability of Nature redesigned)
 
     -- evoker
     363502, -- 梦境飞行 - Dream Flight
@@ -801,13 +801,14 @@ local spells =  {
     200654, -- 提尔的拯救 - Tyr's Deliverance
 
     -- priest
-    139, -- 恢复 - Renew
+    -- 139, -- 恢复 - Renew (removed in 12.0)
+    200829, -- 恳求 - Plea (added in 12.0, Disc)
     41635, -- 愈合祷言 - Prayer of Mending
     17, -- 真言术：盾 - Power Word: Shield
     194384, -- 救赎 - Atonement
     77489, -- 圣光回响 - Echo of Light
     372847, -- 光明之泉恢复 - Blessed Bolt
-    443526, -- 慰藉预兆 - Premonition of Solace
+    -- 443526, -- 慰藉预兆 - Premonition of Solace (removed in 12.0)
 
     -- shaman
     974, -- 大地之盾 - Earth Shield
