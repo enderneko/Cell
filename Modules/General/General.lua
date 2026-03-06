@@ -303,10 +303,10 @@ end
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local alwaysUpdateAurasCB, useCleuCB, translitCB
+local alwaysUpdateAurasCB, translitCB
 
 local function CreateMiscPane()
-    local miscPane = Cell.CreateTitledPane(generalTab, L["Misc"], 205, 130)
+    local miscPane = Cell.CreateTitledPane(generalTab, L["Misc"], 205, 105)
     miscPane:SetPoint("TOPLEFT", generalTab, 222, -300)
 
     alwaysUpdateAurasCB = Cell.CreateCheckButton(miscPane, L["Always Update Auras"], function(checked, self)
@@ -316,17 +316,14 @@ local function CreateMiscPane()
     alwaysUpdateAurasCB:SetPoint("TOPLEFT", 5, -27)
     alwaysUpdateAurasCB:SetEnabled(Cell.isMists)
 
-    useCleuCB = Cell.CreateCheckButton(miscPane, L["Faster Health Updates"], function(checked, self)
-        CellDB["general"]["useCleuHealthUpdater"] = checked
-        Cell.Fire("UpdateCLEU")
-    end, "|cffff2727"..L["HIGH CPU USAGE"].." (EXPERIMENTAL)", L["Use CLEU events to increase health update rate"])
-    useCleuCB:SetPoint("TOPLEFT", alwaysUpdateAurasCB, "BOTTOMLEFT", 0, -9)
+    -- NOTE: useCleuHealthUpdater (Faster Health Updates) was removed in r275.
+    -- CLEU-based health updates are not available in Midnight 12.0.0+.
 
     translitCB = Cell.CreateCheckButton(miscPane, L["Translit Cyrillic to Latin"], function(checked, self)
         CellDB["general"]["translit"] = checked
         Cell.Fire("TranslitNames")
     end)
-    translitCB:SetPoint("TOPLEFT", useCleuCB, "BOTTOMLEFT", 0, -9)
+    translitCB:SetPoint("TOPLEFT", alwaysUpdateAurasCB, "BOTTOMLEFT", 0, -9)
 end
 
 -------------------------------------------------
@@ -522,7 +519,6 @@ local function ShowTab(tab)
         -- misc
         alwaysUpdateAurasCB:SetChecked(CellDB["general"]["alwaysUpdateAuras"])
         framePriorityWidget:Load(CellDB["general"]["framePriority"])
-        useCleuCB:SetChecked(CellDB["general"]["useCleuHealthUpdater"])
         translitCB:SetChecked(CellDB["general"]["translit"])
 
     else
