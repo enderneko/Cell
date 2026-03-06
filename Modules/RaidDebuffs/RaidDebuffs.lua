@@ -393,9 +393,10 @@ local function CreateWidgets()
     local expansionItems = {}
     for i = EJ_GetNumTiers(), 1, -1 do
         local eName = EJ_GetTierInfo(i)
+        local ejList = encounterJournalList[eName]
         tinsert(expansionItems, {
             ["text"] = eName,
-            ["disabled"] = #encounterJournalList[eName] == 0,
+            ["disabled"] = not ejList or #ejList == 0,
             ["onClick"] = function()
                 LoadExpansion(eName)
             end,
