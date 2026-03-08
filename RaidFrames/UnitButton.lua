@@ -232,6 +232,8 @@ local function ResolveDispelTypeByColor(unit, auraInstanceID)
     if not ok or not color then return nil end
     if issecretvalue(color) then return nil end
     local r, g, b = color:GetRGB()
+    -- RGB components can themselves be secret in combat
+    if issecretvalue(r) or issecretvalue(g) or issecretvalue(b) then return nil end
     local key = string.format("%.2f:%.2f:%.2f", r, g, b)
     return dispelColorToName[key]
 end
@@ -3194,6 +3196,11 @@ local function UnitButton_OnEvent(self, event, unit, arg)
 
         elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
             UnitButton_UpdateLeader(self, event)
+            if event == "PLAYER_REGEN_ENABLED" then
+                -- 12.0+: secret values cleared on combat end; re-scan all auras
+                -- to replace hollow cached entries with real data
+                UnitButton_UpdateAuras(self)
+            end
 
         elseif event == "PLAYER_TARGET_CHANGED" then
             UnitButton_UpdateTarget(self)
