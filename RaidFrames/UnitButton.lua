@@ -69,6 +69,7 @@ local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo -- nil in 12.0
 local _GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
 local GetAuraSlots = C_UnitAuras.GetAuraSlots
 local _GetAuraDataBySlot = C_UnitAuras.GetAuraDataBySlot
+local _GetAuraDispelTypeColor = C_UnitAuras.GetAuraDispelTypeColor
 -- wrapped versions applied after SanitizeAura is defined (see below)
 local GetAuraDataByAuraInstanceID, GetAuraDataBySlot
 local IsDelveInProgress = C_PartyInfo.IsDelveInProgress
@@ -98,40 +99,48 @@ local CheckCLEURequired
 -------------------------------------------------
 -- 12.0+ secret value sanitizer for aura data
 -------------------------------------------------
+local function _notSecret(v)
+    return v ~= nil and not issecretvalue(v)
+end
+
 local function SanitizeAura(aura)
     if not aura then return nil end
-    local ok, clean = pcall(function()
-        local t = {}
-        -- copy all fields, forcing evaluation to catch secrets
-        t.name = aura.name and (aura.name .. "")
-        t.icon = aura.icon
-        t.applications = aura.applications and (aura.applications + 0) or 0
-        t.expirationTime = aura.expirationTime and (aura.expirationTime + 0) or 0
-        t.duration = aura.duration and (aura.duration + 0) or 0
-        t.spellId = aura.spellId and (aura.spellId + 0)
-        t.auraInstanceID = aura.auraInstanceID and (aura.auraInstanceID + 0)
-        t.sourceUnit = aura.sourceUnit
-        t.dispelName = aura.dispelName
-        t.isHelpful = aura.isHelpful and true or false
-        t.isHarmful = aura.isHarmful and true or false
-        t.isBossAura = aura.isBossAura and true or false
-        t.isRaid = aura.isRaid and true or false
-        t.isStealable = aura.isStealable and true or false
-        t.isFromPlayerOrPlayerPet = aura.isFromPlayerOrPlayerPet and true or false
-        t.canApplyAura = aura.canApplyAura and true or false
-        t.nameplateShowAll = aura.nameplateShowAll and true or false
-        t.nameplateShowPersonal = aura.nameplateShowPersonal and true or false
-        t.canActivePlayerDispel = aura.canActivePlayerDispel and true or false
-        t.timeMod = aura.timeMod and (aura.timeMod + 0) or 1
-        t.points = aura.points
-        -- preserve fields used by Cell
-        t.refreshing = aura.refreshing
-        t.oldExpirationTime = aura.oldExpirationTime
-        t.oldApplications = aura.oldApplications
-        return t
-    end)
-    if not ok then return nil end
-    return clean
+    -- auraInstanceID is the cache key — if secret, drop the aura
+    if not _notSecret(aura.auraInstanceID) then return nil end
+
+    local t = {}
+    t.auraInstanceID = aura.auraInstanceID
+    t.icon = aura.icon  -- texture IDs are never secret
+
+    -- string fields: nil when secret
+    t.name       = _notSecret(aura.name) and aura.name or nil
+    t.sourceUnit = _notSecret(aura.sourceUnit) and aura.sourceUnit or nil
+    t.dispelName = _notSecret(aura.dispelName) and aura.dispelName or nil
+
+    -- number fields: safe default when secret
+    t.spellId        = _notSecret(aura.spellId) and aura.spellId or nil
+    t.applications   = _notSecret(aura.applications) and aura.applications or 0
+    t.expirationTime = _notSecret(aura.expirationTime) and aura.expirationTime or 0
+    t.duration       = _notSecret(aura.duration) and aura.duration or 0
+    t.timeMod        = _notSecret(aura.timeMod) and aura.timeMod or 1
+
+    -- boolean fields: secret booleans are truthy, and/or coercion works
+    t.isHelpful              = aura.isHelpful and true or false
+    t.isHarmful              = aura.isHarmful and true or false
+    t.isBossAura             = aura.isBossAura and true or false
+    t.isRaid                 = aura.isRaid and true or false
+    t.isStealable            = aura.isStealable and true or false
+    t.isFromPlayerOrPlayerPet = aura.isFromPlayerOrPlayerPet and true or false
+    t.canApplyAura           = aura.canApplyAura and true or false
+    t.nameplateShowAll       = aura.nameplateShowAll and true or false
+    t.nameplateShowPersonal  = aura.nameplateShowPersonal and true or false
+    t.canActivePlayerDispel  = aura.canActivePlayerDispel and true or false
+
+    t.points = aura.points
+    t.refreshing = aura.refreshing
+    t.oldExpirationTime = aura.oldExpirationTime
+    t.oldApplications = aura.oldApplications
+    return t
 end
 
 -- wrap aura data retrieval to sanitize secret values
@@ -140,6 +149,75 @@ GetAuraDataByAuraInstanceID = function(unit, id)
 end
 GetAuraDataBySlot = function(unit, slot)
     return SanitizeAura(_GetAuraDataBySlot(unit, slot))
+end
+
+-------------------------------------------------
+-- 12.0+ dispel color curve for secret dispelName
+-------------------------------------------------
+local dispelColorCurve
+local dispelColorToName
+
+do
+    local ok = pcall(function()
+        if not C_CurveUtil or not C_CurveUtil.CreateColorCurve then return end
+        if not _GetAuraDispelTypeColor then return end
+        local stepType = Enum and Enum.LuaCurveType and Enum.LuaCurveType.Step
+        if not stepType then return end
+
+        dispelColorCurve = C_CurveUtil.CreateColorCurve()
+        dispelColorCurve:SetType(stepType)
+
+        -- DispelType enum indices → unique colors for reverse lookup
+        local types = {
+            {0,  "none",    0.80, 0.00, 0.00},
+            {1,  "Magic",   0.20, 0.60, 1.00},
+            {2,  "Curse",   0.60, 0.00, 1.00},
+            {3,  "Disease", 0.60, 0.40, 0.00},
+            {4,  "Poison",  0.00, 0.60, 0.00},
+            {9,  "none",    0.80, 0.00, 0.00},  -- Enrage
+            {11, "Bleed",   1.00, 0.20, 0.60},
+        }
+        dispelColorToName = {}
+        for _, t in ipairs(types) do
+            local id, name, r, g, b = unpack(t)
+            dispelColorCurve:AddPoint(id, CreateColor(r, g, b, 1))
+            if name ~= "none" then
+                dispelColorToName[string.format("%.2f:%.2f:%.2f", r, g, b)] = name
+            end
+        end
+    end)
+    if not ok then
+        dispelColorCurve = nil
+        dispelColorToName = nil
+    end
+end
+
+local function ResolveDispelTypeByColor(unit, auraInstanceID)
+    if not dispelColorCurve or not _GetAuraDispelTypeColor then return nil end
+    local ok, color = pcall(_GetAuraDispelTypeColor, unit, auraInstanceID, dispelColorCurve)
+    if not ok or not color then return nil end
+    if issecretvalue(color) then return nil end
+    local r, g, b = color:GetRGB()
+    local key = string.format("%.2f:%.2f:%.2f", r, g, b)
+    return dispelColorToName[key]
+end
+
+-------------------------------------------------
+-- debug: dispel trace & diagnostics
+-------------------------------------------------
+local _dispelTraceEnabled = false
+function F.ToggleDispelTrace()
+    _dispelTraceEnabled = not _dispelTraceEnabled
+    print("|cff00ff00[Cell]|r Dispel trace:", _dispelTraceEnabled and "ON" or "OFF")
+end
+function F.PrintDispelDiag()
+    local n = 0
+    if dispelColorToName then for _ in pairs(dispelColorToName) do n = n + 1 end end
+    print("|cff00ff00[Cell Dispel Diag]|r")
+    print("  GetAuraDispelTypeColor:", _GetAuraDispelTypeColor and "exists" or "MISSING")
+    print("  dispelColorCurve:", dispelColorCurve and "initialized" or "NIL")
+    print("  dispelColorToName:", dispelColorToName and (n .. " entries") or "NIL")
+    print("  issecretvalue:", rawget(_G, "issecretvalue") and "native" or "fallback")
 end
 
 -------------------------------------------------
@@ -1186,6 +1264,13 @@ local function HandleDebuff(self, auraInfo)
     local icon = auraInfo.icon
     local count = auraInfo.applications
     local debuffType = auraInfo.dispelName or ""
+    -- 12.0+: dispelName may be nil when secret; resolve via color curve
+    if debuffType == "" and self.states.displayedUnit then
+        debuffType = ResolveDispelTypeByColor(self.states.displayedUnit, auraInstanceID) or ""
+        if debuffType ~= "" then
+            auraInfo.dispelName = debuffType
+        end
+    end
     local expirationTime = auraInfo.expirationTime or 0
     local start = expirationTime - auraInfo.duration
     local duration = auraInfo.duration
@@ -1194,6 +1279,12 @@ local function HandleDebuff(self, auraInfo)
     -- local attribute = auraInfo.points[1] -- UnitAura:arg16
 
     auraInfo.refreshing = false
+
+    if _dispelTraceEnabled and auraInfo.isHarmful then
+        print(string.format("|cff00ff00[Dispel]|r id=%s name=%s dispel=%s unit=%s",
+            tostring(auraInstanceID), tostring(name),
+            tostring(debuffType), tostring(self.states.displayedUnit)))
+    end
 
     -- check Bleed
     debuffType = I.CheckDebuffType(debuffType, spellId)
