@@ -1567,12 +1567,14 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
         -- bigDebuffs first
         for auraInstanceID in next, self._debuffs_big do
             local auraInfo = self._debuffs_cache[auraInstanceID]
-            if startIndex <= indicatorNums["debuffs"] then
+            if auraInfo and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing, true)
                 self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
                 self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
+            elseif not auraInfo then
+                -- skip: aura removed from cache between HandleDebuff and display
             else
                 break
             end
@@ -1580,12 +1582,14 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
         -- then normal debuffs
         for auraInstanceID in next, self._debuffs_normal do
             local auraInfo = self._debuffs_cache[auraInstanceID]
-            if startIndex <= indicatorNums["debuffs"] then
+            if auraInfo and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing)
                 self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
                 self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
+            elseif not auraInfo then
+                -- skip: aura removed from cache between HandleDebuff and display
             else
                 break
             end
@@ -1603,24 +1607,27 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     if F.UnitInGroup(unit) or UnitIsFriend("player", unit) then
         self.indicators.dispels:SetDispels(self._debuffs_dispel)
         -- 12.0+: when dispelName was secret but color curve returned raw (secret) RGB,
-        -- apply the color directly via C-level functions (SetVertexColor accepts secrets
-        -- just like SetTexture accepts secret icons and SetValue accepts secret health)
+        -- apply the color directly via C-level functions that accept secret values
         if not next(self._debuffs_dispel) and self._debuffs_secretDispelColor then
             local sc = self._debuffs_secretDispelColor
             local highlight = self.indicators.dispels.highlight
             if highlight and self.indicators.dispels.highlightType ~= "none" then
-                local ht = self.indicators.dispels.highlightType
-                if ht == "entire" then
-                    highlight:SetTexture(Cell.vars.whiteTexture)
-                    highlight:SetVertexColor(sc[1], sc[2], sc[3], 0.5)
-                elseif ht == "current" or ht == "current+" then
-                    highlight:SetTexture(Cell.vars.texture)
-                    highlight:SetVertexColor(sc[1], sc[2], sc[3], 1)
-                elseif ht == "gradient" or ht == "gradient-half" then
-                    highlight:SetTexture(Cell.vars.whiteTexture)
-                    highlight:SetGradient("VERTICAL", CreateColor(sc[1], sc[2], sc[3], 1), CreateColor(sc[1], sc[2], sc[3], 0))
-                end
-                highlight:Show()
+                -- pcall: not all C functions accept secret values (e.g. SetGradient rejects them)
+                pcall(function()
+                    local ht = self.indicators.dispels.highlightType
+                    if ht == "entire" then
+                        highlight:SetTexture(Cell.vars.whiteTexture)
+                        highlight:SetVertexColor(sc[1], sc[2], sc[3], 0.5)
+                    elseif ht == "current" or ht == "current+" then
+                        highlight:SetTexture(Cell.vars.texture)
+                        highlight:SetVertexColor(sc[1], sc[2], sc[3], 1)
+                    elseif ht == "gradient" or ht == "gradient-half" then
+                        highlight:SetTexture(Cell.vars.whiteTexture)
+                        -- gradient needs valid ColorMixin; fall back to SetVertexColor
+                        highlight:SetVertexColor(sc[1], sc[2], sc[3], 0.5)
+                    end
+                    highlight:Show()
+                end)
             end
         end
     end
