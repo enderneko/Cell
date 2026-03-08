@@ -100,7 +100,11 @@ local CheckCLEURequired
 -- 12.0+ secret value sanitizer for aura data
 -------------------------------------------------
 local function _notSecret(v)
-    return v ~= nil and not issecretvalue(v)
+    -- issecretvalue() is the only safe operation on secret values;
+    -- must check it BEFORE any comparison (even ~= nil) to avoid
+    -- producing a secret boolean that crashes on and/or
+    if issecretvalue(v) then return false end
+    return v ~= nil
 end
 
 local function SanitizeAura(aura)
@@ -110,31 +114,30 @@ local function SanitizeAura(aura)
 
     local t = {}
     t.auraInstanceID = aura.auraInstanceID
-    t.icon = aura.icon  -- texture IDs are never secret
 
-    -- string fields: nil when secret
+    -- every field can be secret in combat; guard each independently
+    t.icon       = _notSecret(aura.icon) and aura.icon or nil
     t.name       = _notSecret(aura.name) and aura.name or nil
     t.sourceUnit = _notSecret(aura.sourceUnit) and aura.sourceUnit or nil
     t.dispelName = _notSecret(aura.dispelName) and aura.dispelName or nil
 
-    -- number fields: safe default when secret
     t.spellId        = _notSecret(aura.spellId) and aura.spellId or nil
     t.applications   = _notSecret(aura.applications) and aura.applications or 0
     t.expirationTime = _notSecret(aura.expirationTime) and aura.expirationTime or 0
     t.duration       = _notSecret(aura.duration) and aura.duration or 0
     t.timeMod        = _notSecret(aura.timeMod) and aura.timeMod or 1
 
-    -- boolean fields: secret booleans are truthy, and/or coercion works
-    t.isHelpful              = aura.isHelpful and true or false
-    t.isHarmful              = aura.isHarmful and true or false
-    t.isBossAura             = aura.isBossAura and true or false
-    t.isRaid                 = aura.isRaid and true or false
-    t.isStealable            = aura.isStealable and true or false
-    t.isFromPlayerOrPlayerPet = aura.isFromPlayerOrPlayerPet and true or false
-    t.canApplyAura           = aura.canApplyAura and true or false
-    t.nameplateShowAll       = aura.nameplateShowAll and true or false
-    t.nameplateShowPersonal  = aura.nameplateShowPersonal and true or false
-    t.canActivePlayerDispel  = aura.canActivePlayerDispel and true or false
+    -- boolean fields: secret booleans crash on and/or, must guard with _notSecret
+    t.isHelpful              = _notSecret(aura.isHelpful) and aura.isHelpful or false
+    t.isHarmful              = _notSecret(aura.isHarmful) and aura.isHarmful or false
+    t.isBossAura             = _notSecret(aura.isBossAura) and aura.isBossAura or false
+    t.isRaid                 = _notSecret(aura.isRaid) and aura.isRaid or false
+    t.isStealable            = _notSecret(aura.isStealable) and aura.isStealable or false
+    t.isFromPlayerOrPlayerPet = _notSecret(aura.isFromPlayerOrPlayerPet) and aura.isFromPlayerOrPlayerPet or false
+    t.canApplyAura           = _notSecret(aura.canApplyAura) and aura.canApplyAura or false
+    t.nameplateShowAll       = _notSecret(aura.nameplateShowAll) and aura.nameplateShowAll or false
+    t.nameplateShowPersonal  = _notSecret(aura.nameplateShowPersonal) and aura.nameplateShowPersonal or false
+    t.canActivePlayerDispel  = _notSecret(aura.canActivePlayerDispel) and aura.canActivePlayerDispel or false
 
     t.points = aura.points
     t.refreshing = aura.refreshing
@@ -1264,8 +1267,8 @@ local function HandleDebuff(self, auraInfo)
     local icon = auraInfo.icon
     local count = auraInfo.applications
     local debuffType = auraInfo.dispelName or ""
-    -- 12.0+: dispelName may be nil when secret; resolve via color curve
-    if debuffType == "" and self.states.displayedUnit then
+    -- 12.0+: dispelName may be nil when secret in combat; resolve via color curve
+    if debuffType == "" and self.states.displayedUnit and InCombatLockdown() then
         debuffType = ResolveDispelTypeByColor(self.states.displayedUnit, auraInstanceID) or ""
         if debuffType ~= "" then
             auraInfo.dispelName = debuffType
