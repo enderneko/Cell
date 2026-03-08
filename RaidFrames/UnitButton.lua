@@ -1294,8 +1294,39 @@ local function ResetDebuffVars(self)
     self.states.BGOrb = nil -- TODO: move to _debuffs
 end
 
+-- 12.0+: fields to preserve from old cache when current read returns nil (secret)
+local _secretMergeFields = {"name", "icon", "sourceUnit", "spellId", "dispelName"}
+
+local function _mergeSecretAura(auraInfo, oldCache)
+    if not oldCache then return end
+    local old = oldCache[auraInfo.auraInstanceID]
+    if not old then return end
+    for _, field in ipairs(_secretMergeFields) do
+        if auraInfo[field] == nil and old[field] ~= nil then
+            auraInfo[field] = old[field]
+        end
+    end
+    -- preserve duration/expirationTime if both defaulted to 0 but old had real values
+    if auraInfo.duration == 0 and old.duration and old.duration > 0 then
+        auraInfo.duration = old.duration
+    end
+    if auraInfo.expirationTime == 0 and old.expirationTime and old.expirationTime > 0 then
+        auraInfo.expirationTime = old.expirationTime
+    end
+end
+
+-- upvalue set by UnitButton_UpdateDebuffs/UpdateBuffs during combat full updates
+local _oldDebuffsCache
+local _oldBuffsCache
+
 local function HandleDebuff(self, auraInfo)
     local auraInstanceID = auraInfo.auraInstanceID
+
+    -- 12.0+: merge with previously-known good data when fields are secret
+    if _oldDebuffsCache then
+        _mergeSecretAura(auraInfo, _oldDebuffsCache)
+    end
+
     local name = auraInfo.name
     local icon = auraInfo.icon
     local count = auraInfo.applications
@@ -1411,8 +1442,16 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     I.ResetCustomIndicators(self, "debuff")
 
     if isFullUpdate then
-        wipe(self._debuffs_cache)
+        -- 12.0+: save old cache during combat so HandleDebuff can merge
+        -- previously-known field values when current read returns secrets
+        if InCombatLockdown() then
+            _oldDebuffsCache = self._debuffs_cache
+            self._debuffs_cache = {}
+        else
+            wipe(self._debuffs_cache)
+        end
         ForEachAura(self, "HARMFUL", HandleDebuff)
+        _oldDebuffsCache = nil
     else
         ForEachAuraCache(self, "HARMFUL", HandleDebuff)
     end
@@ -1580,6 +1619,12 @@ local function HandleBuff(self, auraInfo)
     local unit = self.states.displayedUnit
 
     local auraInstanceID = auraInfo.auraInstanceID
+
+    -- 12.0+: merge with previously-known good data when fields are secret
+    if _oldBuffsCache then
+        _mergeSecretAura(auraInfo, _oldBuffsCache)
+    end
+
     local name = auraInfo.name
     local icon = auraInfo.icon
     local count = auraInfo.applications
@@ -1652,8 +1697,14 @@ local function UnitButton_UpdateBuffs(self, isFullUpdate)
     I.ResetCustomIndicators(self, "buff")
 
     if isFullUpdate then
-        wipe(self._buffs_cache)
+        if InCombatLockdown() then
+            _oldBuffsCache = self._buffs_cache
+            self._buffs_cache = {}
+        else
+            wipe(self._buffs_cache)
+        end
         ForEachAura(self, "HELPFUL", HandleBuff)
+        _oldBuffsCache = nil
     else
         ForEachAuraCache(self, "HELPFUL", HandleBuff)
     end
@@ -1903,6 +1954,10 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                     buffsChanged = true
                     aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                     if aura then
+                        -- 12.0+: merge secret-nil fields with previously cached values
+                        if InCombatLockdown() then
+                            _mergeSecretAura(aura, self._buffs_cache)
+                        end
                         aura.oldExpirationTime = self._buffs_cache[auraInstanceID].expirationTime or 0
                         aura.oldApplications = self._buffs_cache[auraInstanceID].applications
                         self._buffs_cache[auraInstanceID] = aura
@@ -1911,6 +1966,9 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                     debuffsChanged = true
                     aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                     if aura then
+                        if InCombatLockdown() then
+                            _mergeSecretAura(aura, self._debuffs_cache)
+                        end
                         aura.oldExpirationTime = self._debuffs_cache[auraInstanceID].expirationTime or 0
                         aura.oldApplications = self._debuffs_cache[auraInstanceID].applications
                         self._debuffs_cache[auraInstanceID] = aura
