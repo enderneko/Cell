@@ -1111,8 +1111,13 @@ end
 local function UpdateAuraRefreshState(auraInfo)
     if Cell.vars.iconAnimation == "duration" then
         local timeIncreased, countIncreased
-        if Cell.isMidnight and not F.IsAuraNonSecret(auraInfo) then
-            -- Secret aura: can't do arithmetic/comparison on secret expirationTime or applications (Midnight 12.0.0+)
+        if Cell.isMidnight and (
+            not F.IsValueNonSecret(auraInfo.expirationTime)
+            or not F.IsValueNonSecret(auraInfo.oldExpirationTime)
+            or not F.IsValueNonSecret(auraInfo.applications)
+            or not F.IsValueNonSecret(auraInfo.oldApplications)
+        ) then
+            -- One or more fields are secret: can't do arithmetic/comparison (Midnight 12.0.0+)
             timeIncreased = false
             countIncreased = false
         else
@@ -1121,8 +1126,11 @@ local function UpdateAuraRefreshState(auraInfo)
         end
         auraInfo.refreshing = timeIncreased or countIncreased
     elseif Cell.vars.iconAnimation == "stack" then
-        if Cell.isMidnight and not F.IsAuraNonSecret(auraInfo) then
-            -- Secret aura: can't compare secret applications value (Midnight 12.0.0+)
+        if Cell.isMidnight and (
+            not F.IsValueNonSecret(auraInfo.applications)
+            or not F.IsValueNonSecret(auraInfo.oldApplications)
+        ) then
+            -- Secret applications: can't compare (Midnight 12.0.0+)
             auraInfo.refreshing = false
         else
             auraInfo.refreshing = auraInfo.oldApplications and (auraInfo.applications > auraInfo.oldApplications) or false
@@ -1167,10 +1175,10 @@ local function HandleDebuff(self, auraInfo)
     local debuffType = auraInfo.dispelName or ""
     local expirationTime = auraInfo.expirationTime or 0
     local duration = auraInfo.duration
-    -- Midnight 12.0.0+: expirationTime and duration may be secret for some auras.
-    -- Use per-aura check: non-secret auras get proper duration/cooldown display.
+    -- Midnight 12.0.0+: expirationTime and duration may be secret even when spellId is not.
+    -- Guard per-field: non-secret temporal fields get proper duration/cooldown display.
     local start
-    if F.IsAuraNonSecret(auraInfo) then
+    if F.IsValueNonSecret(expirationTime) and F.IsValueNonSecret(duration) then
         start = expirationTime - duration
     else
         start = 0
@@ -1320,9 +1328,17 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             local auraInstanceID = self._debuffs_raid[i]
             if auraInstanceID then
                 local auraInfo = self._debuffs_cache[auraInstanceID]
+                local rdStart, rdDur
+                if F.IsValueNonSecret(auraInfo.expirationTime) and F.IsValueNonSecret(auraInfo.duration) then
+                    rdStart = (auraInfo.expirationTime or 0) - auraInfo.duration
+                    rdDur = auraInfo.duration
+                else
+                    rdStart = 0
+                    rdDur = 0
+                end
                 self.indicators.raidDebuffs[i]:SetCooldown(
-                    (auraInfo.expirationTime or 0) - auraInfo.duration,
-                    auraInfo.duration,
+                    rdStart,
+                    rdDur,
                     auraInfo.dispelName or "",
                     auraInfo.icon,
                     auraInfo.applications,
@@ -1389,7 +1405,15 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             local auraInfo = self._debuffs_cache[auraInstanceID]
             if startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
-                self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing, true)
+                local bStart, bDur
+                if F.IsValueNonSecret(auraInfo.expirationTime) and F.IsValueNonSecret(auraInfo.duration) then
+                    bStart = (auraInfo.expirationTime or 0) - auraInfo.duration
+                    bDur = auraInfo.duration
+                else
+                    bStart = 0
+                    bDur = 0
+                end
+                self.indicators.debuffs[startIndex]:SetCooldown(bStart, bDur, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing, true)
                 self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
                 self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
@@ -1402,7 +1426,15 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             local auraInfo = self._debuffs_cache[auraInstanceID]
             if startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
-                self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing)
+                local nStart, nDur
+                if F.IsValueNonSecret(auraInfo.expirationTime) and F.IsValueNonSecret(auraInfo.duration) then
+                    nStart = (auraInfo.expirationTime or 0) - auraInfo.duration
+                    nDur = auraInfo.duration
+                else
+                    nStart = 0
+                    nDur = 0
+                end
+                self.indicators.debuffs[startIndex]:SetCooldown(nStart, nDur, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing)
                 self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
                 self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
@@ -1461,10 +1493,10 @@ local function HandleBuff(self, auraInfo)
     -- local debuffType = auraInfo.isHarmful and auraInfo.dispelName
     local expirationTime = auraInfo.expirationTime or 0
     local duration = auraInfo.duration
-    -- Midnight 12.0.0+: expirationTime and duration may be secret for some auras.
-    -- Use per-aura check: non-secret auras get proper duration/cooldown display.
+    -- Midnight 12.0.0+: expirationTime and duration may be secret even when spellId is not.
+    -- Guard per-field: non-secret temporal fields get proper duration/cooldown display.
     local start
-    if F.IsAuraNonSecret(auraInfo) then
+    if F.IsValueNonSecret(expirationTime) and F.IsValueNonSecret(duration) then
         start = expirationTime - duration
     else
         start = 0
@@ -1757,8 +1789,11 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                     aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                     if aura then
                         if F.IsAuraNonSecret(aura) then
-                            aura.oldExpirationTime = self._buffs_cache[auraInstanceID].expirationTime or 0
-                            aura.oldApplications = self._buffs_cache[auraInstanceID].applications
+                            -- Sanitize cached values: they may be secret even if new aura's spellId is not
+                            local cachedExp = self._buffs_cache[auraInstanceID].expirationTime
+                            local cachedApp = self._buffs_cache[auraInstanceID].applications
+                            aura.oldExpirationTime = (cachedExp and F.IsValueNonSecret(cachedExp)) and cachedExp or 0
+                            aura.oldApplications = (cachedApp and F.IsValueNonSecret(cachedApp)) and cachedApp or nil
                         end
                         self._buffs_cache[auraInstanceID] = aura
                     end
@@ -1767,8 +1802,11 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                     aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                     if aura then
                         if F.IsAuraNonSecret(aura) then
-                            aura.oldExpirationTime = self._debuffs_cache[auraInstanceID].expirationTime or 0
-                            aura.oldApplications = self._debuffs_cache[auraInstanceID].applications
+                            -- Sanitize cached values: they may be secret even if new aura's spellId is not
+                            local cachedExp = self._debuffs_cache[auraInstanceID].expirationTime
+                            local cachedApp = self._debuffs_cache[auraInstanceID].applications
+                            aura.oldExpirationTime = (cachedExp and F.IsValueNonSecret(cachedExp)) and cachedExp or 0
+                            aura.oldApplications = (cachedApp and F.IsValueNonSecret(cachedApp)) and cachedApp or nil
                         end
                         self._debuffs_cache[auraInstanceID] = aura
                     end
