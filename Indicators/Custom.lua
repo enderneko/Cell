@@ -255,7 +255,8 @@ end
 function I.UpdateCustomIndicators(unitButton, auraInfo)
     local unit = unitButton.states.displayedUnit
 
-    -- Midnight 12.0.0+: aura fields may be secret — bail early if so
+    -- Midnight 12.0.0+: bail only if aura type (isHelpful) is secret — we need it to classify buff/debuff.
+    -- spellId may still be secret for some auras even with hotfix; don't bail on spellId.
     if issecretvalue and issecretvalue(auraInfo.isHelpful) then return end
 
     local auraType = auraInfo.isHelpful and "buff" or "debuff"
@@ -263,12 +264,13 @@ function I.UpdateCustomIndicators(unitButton, auraInfo)
     local debuffType = auraInfo.isHarmful and (auraInfo.dispelName or "") or nil
     local count = auraInfo.applications
     local duration = auraInfo.duration
+    -- Use per-aura check for duration: non-secret auras get real timers, secret ones get zeroed.
     local start
-    if Cell.isMidnight and issecretvalue and issecretvalue(auraInfo.expirationTime) then
+    if F.IsAuraNonSecret(auraInfo) then
+        start = (auraInfo.expirationTime or 0) - auraInfo.duration
+    else
         start = 0
         duration = 0
-    else
-        start = (auraInfo.expirationTime or 0) - auraInfo.duration
     end
     local castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"
 

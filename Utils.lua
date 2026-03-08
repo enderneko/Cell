@@ -2535,3 +2535,32 @@ function F.IsCooldownRestricted()
     end
     return false
 end
+
+-- Per-aura non-secret check: returns true if the aura's fields are real (non-secret) values.
+-- On Midnight 12.0.0+, Blizzard flags certain spells as non-secret; their auraInfo fields
+-- (spellId, expirationTime, duration, etc.) return real values instead of secrets.
+-- If spellId is readable (non-secret), ALL fields for this aura are non-secret.
+function F.IsAuraNonSecret(auraInfo)
+    if not Cell.isMidnight then return true end
+    if not issecretvalue then return true end
+    return not issecretvalue(auraInfo.spellId)
+end
+
+-- Proactive check: queries whether a spell ID will produce secret aura values.
+-- Uses C_Secrets.ShouldSpellAuraBeSecret() if available (Midnight 12.0.0+).
+-- Returns true if the spell's aura data will be non-secret (readable).
+function F.IsSpellAuraNonSecret(spellId)
+    if not Cell.isMidnight then return true end
+    if C_Secrets and C_Secrets.ShouldSpellAuraBeSecret then
+        return not C_Secrets.ShouldSpellAuraBeSecret(spellId)
+    end
+    return false -- assume secret if API unavailable
+end
+
+-- Generic check: returns true if a given value is NOT a secret value.
+-- Works for any return value from WoW APIs that may produce secrets on Midnight 12.0.0+.
+function F.IsValueNonSecret(val)
+    if not Cell.isMidnight then return true end
+    if not issecretvalue then return true end
+    return not issecretvalue(val)
+end

@@ -893,12 +893,13 @@ end
 -- ----------------------------------------------------------------------- --
 local function QuickCast_UpdateAuras(self)
     if not self.unit then return end
-    -- Midnight 12.0.0+: AuraUtil.ForEachAura callback receives secret fields during restricted contexts
-    if Cell.isMidnight and F.IsAuraRestricted() then return end
 
     local glowBuffFound, outerBuffFound, innerBuffFound
 
     AuraUtil.ForEachAura(self.unit, "HELPFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+        -- Midnight 12.0.0+: skip auras whose fields are secret; non-secret auras (e.g. raid buffs) are safe to read
+        if Cell.isMidnight and issecretvalue and issecretvalue(spellId) then return end
+
         if glowBuffs[name] then
             glowBuffFound = true
             self:SetGlowBuffCooldown(expirationTime - duration, duration)
