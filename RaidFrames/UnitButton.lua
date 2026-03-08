@@ -227,21 +227,15 @@ do
     end
 end
 
--- Returns: typeName, r, g, b
--- typeName may be nil when RGB is secret; r,g,b are raw (possibly secret) for C-level UI use
 local function ResolveDispelTypeByColor(unit, auraInstanceID)
     if not dispelColorCurve or not _GetAuraDispelTypeColor then return nil end
     local ok, color = pcall(_GetAuraDispelTypeColor, unit, auraInstanceID, dispelColorCurve)
     if not ok or not color then return nil end
     if issecretvalue(color) then return nil end
     local r, g, b = color:GetRGB()
-    -- try readable name lookup first
-    if not issecretvalue(r) and not issecretvalue(g) and not issecretvalue(b) then
-        local key = string.format("%.2f:%.2f:%.2f", r, g, b)
-        return dispelColorToName[key], r, g, b
-    end
-    -- RGB is secret but C-level SetVertexColor/CreateColor can use them
-    return nil, r, g, b
+    if issecretvalue(r) or issecretvalue(g) or issecretvalue(b) then return nil end
+    local key = string.format("%.2f:%.2f:%.2f", r, g, b)
+    return dispelColorToName[key]
 end
 
 -------------------------------------------------
@@ -1296,7 +1290,6 @@ end
 local function ResetDebuffVars(self)
     self._debuffs.resurrectionFound = false
     self._debuffs.crowdControlsFound = 0
-    self._debuffs_secretDispelColor = nil
 
     self.states.BGOrb = nil -- TODO: move to _debuffs
 end
@@ -1340,16 +1333,10 @@ local function HandleDebuff(self, auraInfo)
     local debuffType = auraInfo.dispelName or ""
     -- 12.0+: dispelName may be nil when secret in combat; resolve via color curve
     if debuffType == "" and self.states.displayedUnit and InCombatLockdown() then
-        local resolvedType, dr, dg, db = ResolveDispelTypeByColor(self.states.displayedUnit, auraInstanceID)
+        local resolvedType = ResolveDispelTypeByColor(self.states.displayedUnit, auraInstanceID)
         if resolvedType then
             debuffType = resolvedType
             auraInfo.dispelName = resolvedType
-        elseif dr then
-            -- type name unknown (RGB is secret) but raw color available for C-level UI
-            self._debuffs_secretDispelColor = self._debuffs_secretDispelColor or {}
-            self._debuffs_secretDispelColor[1] = dr
-            self._debuffs_secretDispelColor[2] = dg
-            self._debuffs_secretDispelColor[3] = db
         end
     end
     local expirationTime = auraInfo.expirationTime or 0
@@ -1606,30 +1593,6 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     -- update dispels
     if F.UnitInGroup(unit) or UnitIsFriend("player", unit) then
         self.indicators.dispels:SetDispels(self._debuffs_dispel)
-        -- 12.0+: when dispelName was secret but color curve returned raw (secret) RGB,
-        -- apply the color directly via C-level functions that accept secret values
-        if not next(self._debuffs_dispel) and self._debuffs_secretDispelColor then
-            local sc = self._debuffs_secretDispelColor
-            local highlight = self.indicators.dispels.highlight
-            if highlight and self.indicators.dispels.highlightType ~= "none" then
-                -- pcall: not all C functions accept secret values (e.g. SetGradient rejects them)
-                pcall(function()
-                    local ht = self.indicators.dispels.highlightType
-                    if ht == "entire" then
-                        highlight:SetTexture(Cell.vars.whiteTexture)
-                        highlight:SetVertexColor(sc[1], sc[2], sc[3], 0.5)
-                    elseif ht == "current" or ht == "current+" then
-                        highlight:SetTexture(Cell.vars.texture)
-                        highlight:SetVertexColor(sc[1], sc[2], sc[3], 1)
-                    elseif ht == "gradient" or ht == "gradient-half" then
-                        highlight:SetTexture(Cell.vars.whiteTexture)
-                        -- gradient needs valid ColorMixin; fall back to SetVertexColor
-                        highlight:SetVertexColor(sc[1], sc[2], sc[3], 0.5)
-                    end
-                    highlight:Show()
-                end)
-            end
-        end
     end
 
     -- update crowdControls
