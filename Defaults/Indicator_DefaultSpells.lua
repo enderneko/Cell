@@ -779,6 +779,9 @@ local spells =  {
     406789, -- 空间悖论 - Spatial Paradox
     445740, -- 纵焰 - Enkindle
     409895, -- 精神之花 - Spiritbloom (Reverberations, Chronowarden Hero Talent)
+    410263, -- 炼狱祝福 - Inferno's Blessing
+    410686, -- 共生绽放 - Symbiotic Bloom
+    413984, -- 流沙 - Shifting Sands
 
     -- monk
     119611, -- 复苏之雾 - Renewing Mist
@@ -789,6 +792,7 @@ local spells =  {
     450769, -- 和谐化身 - Aspect of Harmony
     450805, -- 净化之魂 - Purified Spirit
     467281, -- 金创药 - Healing Elixir
+    115175, -- 抚慰之雾 - Soothing Mist
 
     -- paladin
     53563, -- 圣光道标 - Beacon of Light
@@ -804,9 +808,10 @@ local spells =  {
     388010, -- 暮秋祝福 - Blessing of Autumn
     388011, -- 凛冬祝福 - Blessing of Winter
     200654, -- 提尔的拯救 - Tyr's Deliverance
+    1244893, -- 救世主道标 - Beacon of the Savior
 
     -- priest
-    -- 139, -- 恢复 - Renew (removed in 12.0)
+    139, -- 恢复 - Renew
     200829, -- 恳求 - Plea (added in 12.0, Disc)
     41635, -- 愈合祷言 - Prayer of Mending
     17, -- 真言术：盾 - Power Word: Shield
@@ -814,6 +819,7 @@ local spells =  {
     77489, -- 圣光回响 - Echo of Light
     372847, -- 光明之泉恢复 - Blessed Bolt
     -- 443526, -- 慰藉预兆 - Premonition of Solace (removed in 12.0)
+    1253593, -- 虚空之盾 - Void Shield
 
     -- shaman
     974, -- 大地之盾 - Earth Shield
