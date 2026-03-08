@@ -109,13 +109,45 @@ end
 
 local function SanitizeAura(aura)
     if not aura then return nil end
+
+    -- Out of combat: secret values never exist, fast shallow copy only
+    -- (copy needed because Cell mutates aura data: .refreshing, .oldExpirationTime, etc.)
+    if not InCombatLockdown() then
+        return {
+            auraInstanceID = aura.auraInstanceID,
+            icon = aura.icon,
+            name = aura.name,
+            sourceUnit = aura.sourceUnit,
+            dispelName = aura.dispelName,
+            spellId = aura.spellId,
+            applications = aura.applications or 0,
+            expirationTime = aura.expirationTime or 0,
+            duration = aura.duration or 0,
+            timeMod = aura.timeMod or 1,
+            isHelpful = aura.isHelpful and true or false,
+            isHarmful = aura.isHarmful and true or false,
+            isBossAura = aura.isBossAura and true or false,
+            isRaid = aura.isRaid and true or false,
+            isStealable = aura.isStealable and true or false,
+            isFromPlayerOrPlayerPet = aura.isFromPlayerOrPlayerPet and true or false,
+            canApplyAura = aura.canApplyAura and true or false,
+            nameplateShowAll = aura.nameplateShowAll and true or false,
+            nameplateShowPersonal = aura.nameplateShowPersonal and true or false,
+            canActivePlayerDispel = aura.canActivePlayerDispel and true or false,
+            points = aura.points,
+            refreshing = aura.refreshing,
+            oldExpirationTime = aura.oldExpirationTime,
+            oldApplications = aura.oldApplications,
+        }
+    end
+
+    -- In combat: guard every field against secret values independently
     -- auraInstanceID is the cache key — if secret, drop the aura
     if not _notSecret(aura.auraInstanceID) then return nil end
 
     local t = {}
     t.auraInstanceID = aura.auraInstanceID
 
-    -- every field can be secret in combat; guard each independently
     t.icon       = _notSecret(aura.icon) and aura.icon or nil
     t.name       = _notSecret(aura.name) and aura.name or nil
     t.sourceUnit = _notSecret(aura.sourceUnit) and aura.sourceUnit or nil
@@ -127,7 +159,6 @@ local function SanitizeAura(aura)
     t.duration       = _notSecret(aura.duration) and aura.duration or 0
     t.timeMod        = _notSecret(aura.timeMod) and aura.timeMod or 1
 
-    -- boolean fields: secret booleans crash on and/or, must guard with _notSecret
     t.isHelpful              = _notSecret(aura.isHelpful) and aura.isHelpful or false
     t.isHarmful              = _notSecret(aura.isHarmful) and aura.isHarmful or false
     t.isBossAura             = _notSecret(aura.isBossAura) and aura.isBossAura or false
