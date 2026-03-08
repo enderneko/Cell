@@ -70,6 +70,7 @@ local _GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
 local GetAuraSlots = C_UnitAuras.GetAuraSlots
 local _GetAuraDataBySlot = C_UnitAuras.GetAuraDataBySlot
 local _GetAuraDispelTypeColor = C_UnitAuras.GetAuraDispelTypeColor
+local _IsAuraFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID
 -- wrapped versions applied after SanitizeAura is defined (see below)
 local GetAuraDataByAuraInstanceID, GetAuraDataBySlot
 local IsDelveInProgress = C_PartyInfo.IsDelveInProgress
@@ -148,7 +149,7 @@ local function SanitizeAura(aura)
     local t = {}
     t.auraInstanceID = aura.auraInstanceID
 
-    t.icon       = _notSecret(aura.icon) and aura.icon or nil
+    t.icon       = aura.icon  -- raw; SetTexture() is C-level and accepts secret values
     t.name       = _notSecret(aura.name) and aura.name or nil
     t.sourceUnit = _notSecret(aura.sourceUnit) and aura.sourceUnit or nil
     t.dispelName = _notSecret(aura.dispelName) and aura.dispelName or nil
@@ -1927,19 +1928,18 @@ UnitButton_UpdateAuras = function(self, updateInfo)
             for _, rawAura in next, updateInfo.addedAuras do
                 local aura = SanitizeAura(rawAura)
                 if aura then
-                    if not aura.isHelpful and not aura.isHarmful then
-                        -- both secret (defaulted to false) — can't determine cache;
-                        -- fall back to full update which uses API-level HELPFUL/HARMFUL filter
-                        UnitButton_UpdateBuffs(self, true)
-                        UnitButton_UpdateDebuffs(self, true)
-                        I.UpdateStatusIcon(self)
-                        return
+                    local isHelpful, isHarmful = aura.isHelpful, aura.isHarmful
+                    -- 12.0+: isHelpful/isHarmful may be secret (defaulted to false);
+                    -- use IsAuraFilteredOutByInstanceID as fallback
+                    if not isHelpful and not isHarmful and _IsAuraFilteredOut then
+                        isHarmful = not _IsAuraFilteredOut(unit, aura.auraInstanceID, "HARMFUL")
+                        isHelpful = not isHarmful and not _IsAuraFilteredOut(unit, aura.auraInstanceID, "HELPFUL")
                     end
-                    if aura.isHelpful then
+                    if isHelpful then
                         buffsChanged = true
                         self._buffs_cache[aura.auraInstanceID] = aura
                     end
-                    if aura.isHarmful then
+                    if isHarmful then
                         debuffsChanged = true
                         self._debuffs_cache[aura.auraInstanceID] = aura
                     end
@@ -1996,16 +1996,15 @@ UnitButton_UpdateAuras = function(self, updateInfo)
         if next(self._missing_auras) then
             for _, aura in next, self._missing_auras do
                 if aura then
-                    if not aura.isHelpful and not aura.isHarmful then
-                        UnitButton_UpdateBuffs(self, true)
-                        UnitButton_UpdateDebuffs(self, true)
-                        I.UpdateStatusIcon(self)
-                        return
+                    local isHelpful, isHarmful = aura.isHelpful, aura.isHarmful
+                    if not isHelpful and not isHarmful and _IsAuraFilteredOut then
+                        isHarmful = not _IsAuraFilteredOut(unit, aura.auraInstanceID, "HARMFUL")
+                        isHelpful = not isHarmful and not _IsAuraFilteredOut(unit, aura.auraInstanceID, "HELPFUL")
                     end
-                    if aura.isHelpful then
+                    if isHelpful then
                         buffsChanged = true
                         self._buffs_cache[aura.auraInstanceID] = aura
-                    elseif aura.isHarmful then
+                    elseif isHarmful then
                         debuffsChanged = true
                         self._debuffs_cache[aura.auraInstanceID] = aura
                     end
