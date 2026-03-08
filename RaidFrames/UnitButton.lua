@@ -170,7 +170,7 @@ local function SanitizeAura(aura)
     t.nameplateShowPersonal  = _notSecret(aura.nameplateShowPersonal) and aura.nameplateShowPersonal or false
     t.canActivePlayerDispel  = _notSecret(aura.canActivePlayerDispel) and aura.canActivePlayerDispel or false
 
-    t.points = aura.points
+    t.points = _notSecret(aura.points) and aura.points or nil
     t.refreshing = aura.refreshing
     t.oldExpirationTime = aura.oldExpirationTime
     t.oldApplications = aura.oldApplications
@@ -1874,6 +1874,14 @@ UnitButton_UpdateAuras = function(self, updateInfo)
             for _, rawAura in next, updateInfo.addedAuras do
                 local aura = SanitizeAura(rawAura)
                 if aura then
+                    if not aura.isHelpful and not aura.isHarmful then
+                        -- both secret (defaulted to false) — can't determine cache;
+                        -- fall back to full update which uses API-level HELPFUL/HARMFUL filter
+                        UnitButton_UpdateBuffs(self, true)
+                        UnitButton_UpdateDebuffs(self, true)
+                        I.UpdateStatusIcon(self)
+                        return
+                    end
                     if aura.isHelpful then
                         buffsChanged = true
                         self._buffs_cache[aura.auraInstanceID] = aura
@@ -1927,12 +1935,20 @@ UnitButton_UpdateAuras = function(self, updateInfo)
 
         if next(self._missing_auras) then
             for _, aura in next, self._missing_auras do
-                if aura and aura.isHelpful then
-                    buffsChanged = true
-                    self._buffs_cache[aura.auraInstanceID] = aura
-                elseif aura and aura.isHarmful then
-                    debuffsChanged = true
-                    self._debuffs_cache[aura.auraInstanceID] = aura
+                if aura then
+                    if not aura.isHelpful and not aura.isHarmful then
+                        UnitButton_UpdateBuffs(self, true)
+                        UnitButton_UpdateDebuffs(self, true)
+                        I.UpdateStatusIcon(self)
+                        return
+                    end
+                    if aura.isHelpful then
+                        buffsChanged = true
+                        self._buffs_cache[aura.auraInstanceID] = aura
+                    elseif aura.isHarmful then
+                        debuffsChanged = true
+                        self._debuffs_cache[aura.auraInstanceID] = aura
+                    end
                 end
             end
         end

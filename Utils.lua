@@ -2012,11 +2012,17 @@ local function predicate(...)
 end
 
 function F.FindAuraById(unit, type, spellId)
+    -- 12.0+: AuraUtil.UnpackAuraData may crash on secret values in combat
+    local ok, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13
     if type == "BUFF" then
-        return AuraUtil.FindAura(predicate, unit, "HELPFUL", spellId)
+        ok, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13 = pcall(AuraUtil.FindAura, predicate, unit, "HELPFUL", spellId)
     else
-        return AuraUtil.FindAura(predicate, unit, "HARMFUL", spellId)
+        ok, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13 = pcall(AuraUtil.FindAura, predicate, unit, "HARMFUL", spellId)
     end
+    if ok then
+        return r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13
+    end
+    return nil
 end
 
 if Cell.isRetail then
