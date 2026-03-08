@@ -421,8 +421,10 @@ local function CreatePreviewButtons()
 
     previewButton:SetScript("OnHide", function()
         previewButton.perc = 100
-        ticker:Cancel()
-        ticker = nil
+        if ticker then
+            ticker:Cancel()
+            ticker = nil
+        end
     end)
 
     Cell.Fire("CreatePreview", previewButton, previewButton2)
