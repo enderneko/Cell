@@ -187,10 +187,15 @@ GetAuraDataBySlot = function(unit, slot)
 end
 
 -------------------------------------------------
--- 12.0+ dispel color curve for secret dispelName
+-- 12.0+ dispel type resolution via threshold curves
 -------------------------------------------------
-local dispelColorCurve
-local dispelColorToName
+-- Step curves with a single point at index N return non-nil for any
+-- dispel type index >= N and nil for indices < N. By testing thresholds
+-- we can isolate the exact dispel type without reading RGB values.
+-- Dispel type indices: None=0, Magic=1, Curse=2, Disease=3, Poison=4, Enrage=9, Bleed=11
+
+local _thresholdCurves = {}
+local _thresholdReady = false
 
 do
     local ok = pcall(function()
@@ -199,43 +204,65 @@ do
         local stepType = Enum and Enum.LuaCurveType and Enum.LuaCurveType.Step
         if not stepType then return end
 
-        dispelColorCurve = C_CurveUtil.CreateColorCurve()
-        dispelColorCurve:SetType(stepType)
-
-        -- DispelType enum indices → unique colors for reverse lookup
-        local types = {
-            {0,  "none",    0.80, 0.00, 0.00},
-            {1,  "Magic",   0.20, 0.60, 1.00},
-            {2,  "Curse",   0.60, 0.00, 1.00},
-            {3,  "Disease", 0.60, 0.40, 0.00},
-            {4,  "Poison",  0.00, 0.60, 0.00},
-            {9,  "none",    0.80, 0.00, 0.00},  -- Enrage
-            {11, "Bleed",   1.00, 0.20, 0.60},
-        }
-        dispelColorToName = {}
-        for _, t in ipairs(types) do
-            local id, name, r, g, b = unpack(t)
-            dispelColorCurve:AddPoint(id, CreateColor(r, g, b, 1))
-            if name ~= "none" then
-                dispelColorToName[string.format("%.2f:%.2f:%.2f", r, g, b)] = name
-            end
+        local white = CreateColor(1, 1, 1, 1)
+        -- boundaries: 1 (>=Magic), 2 (>=Curse), 3 (>=Disease), 4 (>=Poison), 5 (>Poison), 10 (>=Bleed)
+        for _, idx in ipairs({1, 2, 3, 4, 5, 10}) do
+            local curve = C_CurveUtil.CreateColorCurve()
+            curve:SetType(stepType)
+            curve:AddPoint(idx, white)
+            _thresholdCurves[idx] = curve
         end
+        _thresholdReady = true
     end)
     if not ok then
-        dispelColorCurve = nil
-        dispelColorToName = nil
+        wipe(_thresholdCurves)
+        _thresholdReady = false
     end
 end
 
-local function ResolveDispelTypeByColor(unit, auraInstanceID)
-    if not dispelColorCurve or not _GetAuraDispelTypeColor then return nil end
-    local ok, color = pcall(_GetAuraDispelTypeColor, unit, auraInstanceID, dispelColorCurve)
-    if not ok or not color then return nil end
-    if issecretvalue(color) then return nil end
-    local r, g, b = color:GetRGB()
-    if issecretvalue(r) or issecretvalue(g) or issecretvalue(b) then return nil end
-    local key = string.format("%.2f:%.2f:%.2f", r, g, b)
-    return dispelColorToName[key]
+-- Check if a debuff's dispel type index is >= threshold
+local function _dispelAtLeast(unit, auraInstanceID, threshold)
+    local curve = _thresholdCurves[threshold]
+    if not curve then return false end
+    local ok, color = pcall(_GetAuraDispelTypeColor, unit, auraInstanceID, curve)
+    if not ok then return false end
+    -- color is nil when curve has no point <= the type index (type < threshold)
+    -- color is a ColorMixin or secret when curve matched (type >= threshold)
+    if issecretvalue(color) then return true end
+    return color ~= nil
+end
+
+-- Cache: auraInstanceID → dispelType name (cleared on combat end)
+local _dispelTypeCache = {}
+
+-- Resolve dispel type by testing threshold curves (binary narrowing)
+local function ResolveDispelType(unit, auraInstanceID)
+    if not _thresholdReady or not _GetAuraDispelTypeColor then return nil end
+
+    -- check cache
+    local cached = _dispelTypeCache[auraInstanceID]
+    if cached then return cached end
+
+    -- type >= 1? (anything dispellable)
+    if not _dispelAtLeast(unit, auraInstanceID, 1) then return nil end -- type 0 (None)
+
+    local typeName
+    if not _dispelAtLeast(unit, auraInstanceID, 2) then
+        typeName = "Magic"    -- type 1
+    elseif not _dispelAtLeast(unit, auraInstanceID, 3) then
+        typeName = "Curse"    -- type 2
+    elseif not _dispelAtLeast(unit, auraInstanceID, 4) then
+        typeName = "Disease"  -- type 3
+    elseif not _dispelAtLeast(unit, auraInstanceID, 5) then
+        typeName = "Poison"   -- type 4
+    elseif not _dispelAtLeast(unit, auraInstanceID, 10) then
+        return nil             -- type 9 (Enrage, not a dispellable type)
+    else
+        typeName = "Bleed"    -- type 11
+    end
+
+    _dispelTypeCache[auraInstanceID] = typeName
+    return typeName
 end
 
 -------------------------------------------------
@@ -247,15 +274,13 @@ function F.ToggleDispelTrace()
     print("|cff00ff00[Cell]|r Dispel trace:", _dispelTraceEnabled and "ON" or "OFF")
 end
 function F.PrintDispelDiag()
-    local n = 0
-    if dispelColorToName then for _ in pairs(dispelColorToName) do n = n + 1 end end
     local k = 0
-    -- _knownDispelTypes defined later; access via upvalue after HandleDebuff is defined
+    for _ in pairs(_dispelTypeCache) do k = k + 1 end
     print("|cff00ff00[Cell Dispel Diag]|r")
     print("  GetAuraDispelTypeColor:", _GetAuraDispelTypeColor and "exists" or "MISSING")
     print("  IsAuraFilteredOut:", _IsAuraFilteredOut and "exists" or "MISSING")
-    print("  dispelColorCurve:", dispelColorCurve and "initialized" or "NIL")
-    print("  dispelColorToName:", dispelColorToName and (n .. " entries") or "NIL")
+    print("  thresholdCurves:", _thresholdReady and "initialized" or "NOT READY")
+    print("  dispelTypeCache:", k .. " entries")
     print("  issecretvalue:", rawget(_G, "issecretvalue") and "native" or "fallback")
 end
 -- F.PrintKnownDispels defined after _knownDispelTypes (see HandleDebuff section)
@@ -1356,9 +1381,10 @@ local function HandleDebuff(self, auraInfo)
             debuffType = _knownDispelTypes[spellId]
             auraInfo.dispelName = debuffType
         end
-        -- fallback 2: color curve (works when RGB is readable)
+        -- fallback 2: threshold curves — identify exact dispel type via nil/non-nil
+        -- detection without reading RGB values (works even when all fields are secret)
         if debuffType == "" and self.states.displayedUnit then
-            local resolvedType = ResolveDispelTypeByColor(self.states.displayedUnit, auraInstanceID)
+            local resolvedType = ResolveDispelType(self.states.displayedUnit, auraInstanceID)
             if resolvedType then
                 debuffType = resolvedType
                 auraInfo.dispelName = resolvedType
@@ -3291,6 +3317,7 @@ local function UnitButton_OnEvent(self, event, unit, arg)
             if event == "PLAYER_REGEN_ENABLED" then
                 -- 12.0+: secret values cleared on combat end; re-scan all auras
                 -- to replace hollow cached entries with real data
+                wipe(_dispelTypeCache)
                 UnitButton_UpdateAuras(self)
             end
 
