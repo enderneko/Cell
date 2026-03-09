@@ -89,6 +89,57 @@ select(2, ...).L = setmetatable({
         <h2>If there are any issues after an update, check through all code snippets first.</h2>
         <br/>
 
+        <h1>r275.5 Added Midnight Raid Debuffs</h1>
+        <h2>Raid Debuffs</h2>
+        <p>+ Added initial Midnight expansion raid debuffs for all 12 instances (6 raids, 6 dungeons) and 41 bosses.</p>
+        <p>* Boss ability spell IDs sourced from the Encounter Journal via wago.tools DB2 tables.</p>
+        <p>! General (trash mob) debuffs still need to be collected in-game and added in a future update.</p>
+        <p>! Spells may need further in-game curation to filter out non-debuff abilities.</p>
+        <br/>
+
+        <h1>r275-release — WoW 12.0.0 (Midnight) Compatibility</h1>
+        <h2>Secret Values (12.0.0+)</h2>
+        <p>+ Added Cell.isMidnight detection flag and F.IsSecretValue(), F.IsAuraRestricted(), F.IsCooldownRestricted() utility functions.</p>
+        <p>+ Added per-aura F.IsAuraNonSecret(), F.IsSpellAuraNonSecret(), F.IsValueNonSecret() helpers — non-secret (whitelisted) auras now get real countdown timers, source detection, and duration display; secret auras gracefully degrade.</p>
+        <p>* UnitButton: major dual-path refactor — Midnight uses UnitHealPredictionCalculator, C_CurveUtil.CreateCurve(), and StatusBar overlays for health/prediction/shields; pre-Midnight retains arithmetic-based paths.</p>
+        <p>* Appearance: IncomingHeal widget uses SetStatusBarTexture on Midnight (StatusBar) vs SetTexture pre-Midnight (Texture).</p>
+        <p>* Indicator_Defaults: local DebuffTypeColor fallback for when the WoW global is removed.</p>
+        <p>* Per-field F.IsValueNonSecret() guards before every arithmetic operation on temporal aura fields (expirationTime, duration, applications).</p>
+        <h2>CLEU Removal</h2>
+        <p>- AoEHealing: disabled on Midnight (CLEU unavailable).</p>
+        <p>* StatusIcon: soulstone/resurrection tracking switches to UNIT_AURA + UNIT_HEALTH on Midnight.</p>
+        <p>* NPCFrame: boss6-8 health/aura tracking switches to unit events on Midnight.</p>
+        <p>* DeathReport: full refactor — Midnight uses UNIT_HEALTH + UnitIsDeadOrGhost() for death detection.</p>
+        <p>* UnitButton: removed CombatLogGetCurrentEventInfo dependency and CheckCLEURequired.</p>
+        <p>- General: removed useCleuHealthUpdater checkbox (CLEU health updater obsolete).</p>
+        <p>* Revise: r275 migration removes useCleuHealthUpdater from saved variables.</p>
+        <h2>Comm Restrictions</h2>
+        <p>+ Comm: IsCommRestricted() detects encounters/M+/PvP; all SendCommMessage calls guarded; pending queue with flush on ENCOUNTER_END.</p>
+        <p>+ Nicknames: all nickname sync sends guarded with F.IsCommRestricted().</p>
+        <h2>Heal Prediction &amp; Health Bar Fixes</h2>
+        <p>* Created a dedicated healPredictionCalculator separate from the shared healthCalculator — fixes corrupted health/absorb reads.</p>
+        <p>* Incoming heal bar is now a StatusBar (instead of Texture) anchored to the health fill texture edge.</p>
+        <p>* Fixed health bar loss color stuck on white/full-health — healthPercent now populated from calculator:GetCurrentHealthPercent().</p>
+        <p>* Dispels now show correctly in combat.</p>
+        <h2>Spell &amp; Default Updates</h2>
+        <p>- Removed: Engulf, Renew, Power Word: Life, Void Shift, Shadow Covenant, Divine Star, Cloudburst Totem, Minor Cenarion Ward, Premonition of Solace.</p>
+        <p>+ Added: Plea (200829, Disc Priest).</p>
+        <p>+ Added missing healing spells to default indicator list (Evoker, Monk, Paladin, Priest).</p>
+        <p>* Moved: Prayer of Mending from class-wide to Holy spec only.</p>
+        <p>* Fixed: Shaman Poison dispel node IDs (103609 → 103599).</p>
+        <h2>Defensive Nil Guards &amp; Fixes</h2>
+        <p>* MainFrame: nil guards for currentLayoutTable and tooltipPoint.</p>
+        <p>* HideBlizzard: guards for PartyMemberFramePool, CompactPartyFrame, PartyMemberBackground.</p>
+        <p>* RaidDebuffs: nil guard for encounter journal expansion data.</p>
+        <p>* TargetedSpells: skip enemy spell tracking during restricted periods.</p>
+        <p>* BuffTracker: guard GetAuraDataBySpellName when auras are restricted; per-aura sourceUnit check.</p>
+        <p>* QuickCast: skip only secret auras in ForEachAura.</p>
+        <p>* Appearance: ticker nil guard in preview OnHide.</p>
+        <h2>Infrastructure</h2>
+        <p>* All 22 XML files updated from FrameXML/UI_shared.xsd → Blizzard_SharedXML/UI.xsd.</p>
+        <p>* Core: version constants bumped to 275, GetBattlegroundInfo guard added.</p>
+        <br/>
+
         <h1>r274-release (2026-01-22 19:07 GMT+8)</h1>
         <p>* Update Molten Core debuffs (thanks Rurutia).</p>
         <p>* Fixed an issue with getting hostile boss frames via LibGetFrame.</p>
