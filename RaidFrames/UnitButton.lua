@@ -115,49 +115,49 @@ local function SanitizeAura(aura)
     if not _notSecret(aura.auraInstanceID) then return nil end
 
     -- Fast path: if name is not secret, no fields are secret.
-    -- Probe once to avoid ~25 issecretvalue checks + table allocation per aura.
+    -- Probe once to skip all sanitization outside combat.
     if not issecretvalue(aura.name) then
+        aura._hasSecrets = false
+        aura._dispelNameIsSecret = false
         return aura
     end
 
-    -- Slow path: one or more fields are secret (combat in 12.0+).
-    -- Guard every field independently so a secret name doesn't kill spellId, etc.
-    local t = {}
-    t.auraInstanceID = aura.auraInstanceID
+    -- Slow path: fields are secret (12.0+ in combat).
+    -- Sanitize in-place — no table copy. GetAuraDataBySlot/ByAuraInstanceID
+    -- return fresh tables per call, so in-place mutation is safe.
+    aura._hasSecrets = true
 
-    t.icon       = aura.icon  -- raw; SetTexture() is C-level and accepts secret values
-    t.name       = nil  -- known secret (probed above)
-    t.sourceUnit = _notSecret(aura.sourceUnit) and aura.sourceUnit or nil
-    t.dispelName = _notSecret(aura.dispelName) and aura.dispelName or nil
-    t._dispelNameIsSecret = issecretvalue(aura.dispelName)
+    -- dispelName: nil = non-dispellable, secret = dispellable but type unknown
+    -- (== nil is safe on secrets; only arithmetic/boolean test/concat crash)
+    aura._dispelNameIsSecret = aura.dispelName ~= nil
 
-    t.spellId        = _notSecret(aura.spellId) and aura.spellId or nil
-    t.applications   = _notSecret(aura.applications) and aura.applications or 0
-    t.expirationTime = _notSecret(aura.expirationTime) and aura.expirationTime or 0
-    t.duration       = _notSecret(aura.duration) and aura.duration or 0
-    t.timeMod        = _notSecret(aura.timeMod) and aura.timeMod or 1
+    -- keep raw values for C-level CooldownFrame:SetCooldown
+    aura._rawDuration       = aura.duration
+    aura._rawExpirationTime = aura.expirationTime
 
-    -- 12.0+: keep raw (possibly secret) values for C-level CooldownFrame:SetCooldown
-    -- which can handle secrets internally. Used when Lua-level duration is 0 (secret).
-    t._rawDuration       = aura.duration
-    t._rawExpirationTime = aura.expirationTime
+    -- replace secret fields with safe defaults in-place
+    aura.icon       = aura.icon  -- raw; SetTexture() is C-level
+    aura.name       = nil
+    aura.sourceUnit = nil
+    aura.dispelName = nil
+    aura.spellId    = nil
+    aura.applications   = 0
+    aura.expirationTime = 0
+    aura.duration       = 0
+    aura.timeMod        = 1
+    aura.isHelpful              = false
+    aura.isHarmful              = false
+    aura.isBossAura             = false
+    aura.isRaid                 = false
+    aura.isStealable            = false
+    aura.isFromPlayerOrPlayerPet = false
+    aura.canApplyAura           = false
+    aura.nameplateShowAll       = false
+    aura.nameplateShowPersonal  = false
+    aura.canActivePlayerDispel  = false
+    aura.points = nil
 
-    t.isHelpful              = _notSecret(aura.isHelpful) and aura.isHelpful or false
-    t.isHarmful              = _notSecret(aura.isHarmful) and aura.isHarmful or false
-    t.isBossAura             = _notSecret(aura.isBossAura) and aura.isBossAura or false
-    t.isRaid                 = _notSecret(aura.isRaid) and aura.isRaid or false
-    t.isStealable            = _notSecret(aura.isStealable) and aura.isStealable or false
-    t.isFromPlayerOrPlayerPet = _notSecret(aura.isFromPlayerOrPlayerPet) and aura.isFromPlayerOrPlayerPet or false
-    t.canApplyAura           = _notSecret(aura.canApplyAura) and aura.canApplyAura or false
-    t.nameplateShowAll       = _notSecret(aura.nameplateShowAll) and aura.nameplateShowAll or false
-    t.nameplateShowPersonal  = _notSecret(aura.nameplateShowPersonal) and aura.nameplateShowPersonal or false
-    t.canActivePlayerDispel  = _notSecret(aura.canActivePlayerDispel) and aura.canActivePlayerDispel or false
-
-    t.points = _notSecret(aura.points) and aura.points or nil
-    t.refreshing = aura.refreshing
-    t.oldExpirationTime = aura.oldExpirationTime
-    t.oldApplications = aura.oldApplications
-    return t
+    return aura
 end
 
 -- wrap aura data retrieval to sanitize secret values
@@ -1443,6 +1443,61 @@ function F.PrintKnownDispels()
     print("  Total:", n, "entries")
 end
 
+-- 12.0+: activate C-level cooldown overlay when duration is secret.
+-- Shared by debuff and buff indicator post-processing.
+-- CooldownFrame:SetCooldown is C-level and handles secrets internally.
+-- VERTICAL style uses Lua arithmetic (OnUpdate) which crashes on secrets,
+-- so we create a temporary CLOCK overlay for those frames.
+local function _ActivateSecretCooldown(frame, auraInfo)
+    local approxStart = auraInfo._addedTime or GetTime()
+    if frame.style == "CLOCK" and frame.cooldown then
+        pcall(frame.cooldown.ShowCooldown, frame.cooldown,
+            approxStart, auraInfo._rawDuration)
+        frame.cooldown:Show()
+    else
+        if not frame._secretClockOverlay then
+            local cd = CreateFrame("Cooldown", nil, frame)
+            cd:SetAllPoints(frame.icon or frame)
+            cd:SetReverse(true)
+            cd:SetDrawEdge(false)
+            cd:SetSwipeTexture(Cell.vars.whiteTexture)
+            cd:SetSwipeColor(0, 0, 0, 0.77)
+            cd:SetHideCountdownNumbers(true)
+            cd.noCooldownCount = true
+            cd._setCooldown = cd.SetCooldown
+            frame._secretClockOverlay = cd
+        end
+        local cd = frame._secretClockOverlay
+        if frame.cooldown then frame.cooldown:Hide() end
+        pcall(cd._setCooldown, cd, approxStart, auraInfo._rawDuration)
+        cd:Show()
+    end
+    frame._secretClockActive = true
+end
+
+local function _DeactivateSecretCooldown(frame)
+    frame._secretClockActive = nil
+    if frame._secretClockOverlay then
+        frame._secretClockOverlay:Hide()
+    end
+end
+
+-- Post-process a set of indicator frames to fix secret-duration cooldowns
+local function _FixSecretCooldowns(indicators, count, cache)
+    for i = 1, count do
+        local frame = indicators[i]
+        if frame then
+            local aid = frame.auraInstanceID
+            local auraInfo = aid and cache[aid]
+            if auraInfo and auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration) then
+                _ActivateSecretCooldown(frame, auraInfo)
+            elseif frame._secretClockActive then
+                _DeactivateSecretCooldown(frame)
+            end
+        end
+    end
+end
+
 local function HandleDebuff(self, auraInfo)
     local auraInstanceID = auraInfo.auraInstanceID
 
@@ -1743,43 +1798,11 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                         end
                     end
                 end
-                -- activate C-level cooldown animation when duration is secret.
-                -- CooldownFrame:SetCooldown is C-level and handles secrets internally.
-                -- VERTICAL style uses Lua arithmetic (OnUpdate: GetValue() + elapsed)
-                -- which crashes on secrets, so we use a temporary CLOCK overlay instead.
-                -- NOTE: must use issecretvalue() — boolean test on secret crashes.
+                -- fix cooldown animation for secret durations
                 if auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration) then
-                    local approxStart = auraInfo._addedTime or GetTime()
-                    if frame.style == "CLOCK" and frame.cooldown then
-                        pcall(frame.cooldown.ShowCooldown, frame.cooldown,
-                            approxStart, auraInfo._rawDuration)
-                        frame.cooldown:Show()
-                    else
-                        -- VERTICAL or other style: create a temporary CLOCK overlay
-                        if not frame._secretClockOverlay then
-                            local cd = CreateFrame("Cooldown", nil, frame)
-                            cd:SetAllPoints(frame.icon or frame)
-                            cd:SetReverse(true)
-                            cd:SetDrawEdge(false)
-                            cd:SetSwipeTexture(Cell.vars.whiteTexture)
-                            cd:SetSwipeColor(0, 0, 0, 0.77)
-                            cd:SetHideCountdownNumbers(true)
-                            cd.noCooldownCount = true
-                            cd._setCooldown = cd.SetCooldown -- save C-level ref
-                            frame._secretClockOverlay = cd
-                        end
-                        local cd = frame._secretClockOverlay
-                        if frame.cooldown then frame.cooldown:Hide() end
-                        pcall(cd._setCooldown, cd, approxStart, auraInfo._rawDuration)
-                        cd:Show()
-                    end
-                    frame._secretClockActive = true
+                    _ActivateSecretCooldown(frame, auraInfo)
                 elseif frame._secretClockActive then
-                    -- duration became readable again: clean up overlay
-                    frame._secretClockActive = nil
-                    if frame._secretClockOverlay then
-                        frame._secretClockOverlay:Hide()
-                    end
+                    _DeactivateSecretCooldown(frame)
                 end
             end
         end
@@ -1934,25 +1957,38 @@ local function HandleBuff(self, auraInfo)
         UpdateAuraRefreshState(auraInfo)
         self._buffs_cache[auraInstanceID] = auraInfo
 
-        -- defensiveCooldowns
-        if enabledIndicators["defensiveCooldowns"] and I.IsDefensiveCooldown(name, spellId) and self._buffs.defensiveFound < indicatorNums["defensiveCooldowns"] then
+        -- defensiveCooldowns / externalCooldowns / allCooldowns
+        -- Use spell name/id when readable; fall back to IsAuraFilteredOutByInstanceID
+        -- with BIG_DEFENSIVE / EXTERNAL_DEFENSIVE filters when fields are secret (12.0+).
+        local isDefensive = I.IsDefensiveCooldown(name, spellId)
+        local isExternal = I.IsExternalCooldown(name, spellId, source, unit)
+
+        if not isDefensive and not isExternal and auraInfo._hasSecrets and _IsAuraFilteredOut then
+            isDefensive = not _IsAuraFilteredOut(unit, auraInstanceID, "HELPFUL|BIG_DEFENSIVE")
+            if not isDefensive then
+                isExternal = not _IsAuraFilteredOut(unit, auraInstanceID, "HELPFUL|EXTERNAL_DEFENSIVE")
+            end
+        end
+
+        if enabledIndicators["defensiveCooldowns"] and isDefensive and self._buffs.defensiveFound < indicatorNums["defensiveCooldowns"] then
             self._buffs.defensiveFound = self._buffs.defensiveFound + 1
-            -- start, duration, debuffType, texture, count, refreshing
-            self.indicators.defensiveCooldowns[self._buffs.defensiveFound]:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
+            local frame = self.indicators.defensiveCooldowns[self._buffs.defensiveFound]
+            frame:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
+            frame.auraInstanceID = auraInstanceID
         end
 
-        -- externalCooldowns
-        if enabledIndicators["externalCooldowns"] and I.IsExternalCooldown(name, spellId, source, unit) and self._buffs.externalFound < indicatorNums["externalCooldowns"] then
+        if enabledIndicators["externalCooldowns"] and isExternal and self._buffs.externalFound < indicatorNums["externalCooldowns"] then
             self._buffs.externalFound = self._buffs.externalFound + 1
-            -- start, duration, debuffType, texture, count, refreshing
-            self.indicators.externalCooldowns[self._buffs.externalFound]:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
+            local frame = self.indicators.externalCooldowns[self._buffs.externalFound]
+            frame:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
+            frame.auraInstanceID = auraInstanceID
         end
 
-        -- allCooldowns
-        if enabledIndicators["allCooldowns"] and (I.IsExternalCooldown(name, spellId, source, unit) or I.IsDefensiveCooldown(name, spellId)) and self._buffs.allFound < indicatorNums["allCooldowns"] then
+        if enabledIndicators["allCooldowns"] and (isDefensive or isExternal) and self._buffs.allFound < indicatorNums["allCooldowns"] then
             self._buffs.allFound = self._buffs.allFound + 1
-            -- start, duration, debuffType, texture, count, refreshing
-            self.indicators.allCooldowns[self._buffs.allFound]:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
+            local frame = self.indicators.allCooldowns[self._buffs.allFound]
+            frame:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
+            frame.auraInstanceID = auraInstanceID
         end
 
         -- tankActiveMitigation
@@ -2030,6 +2066,11 @@ local function UnitButton_UpdateBuffs(self, isFullUpdate)
 
     -- update allCooldowns
     self.indicators.allCooldowns:UpdateSize(self._buffs.allFound)
+
+    -- 12.0+: activate C-level cooldown animation for secret-duration buff indicators
+    _FixSecretCooldowns(self.indicators.defensiveCooldowns, self._buffs.defensiveFound, self._buffs_cache)
+    _FixSecretCooldowns(self.indicators.externalCooldowns, self._buffs.externalFound, self._buffs_cache)
+    _FixSecretCooldowns(self.indicators.allCooldowns, self._buffs.allFound, self._buffs_cache)
 
     -- hide tankActiveMitigation
     if not self._buffs.tankActiveMitigationFound then
