@@ -206,10 +206,12 @@ do
 
         local white = CreateColor(1, 1, 1, 1)
         -- boundaries: 1 (>=Magic), 2 (>=Curse), 3 (>=Disease), 4 (>=Poison), 5 (>Poison), 10 (>=Bleed)
+        -- Each curve has 2 points (threshold + sentinel at 999) for robustness
         for _, idx in ipairs({1, 2, 3, 4, 5, 10}) do
             local curve = C_CurveUtil.CreateColorCurve()
             curve:SetType(stepType)
             curve:AddPoint(idx, white)
+            curve:AddPoint(999, white) -- sentinel
             _thresholdCurves[idx] = curve
         end
         _thresholdReady = true
@@ -282,6 +284,50 @@ function F.PrintDispelDiag()
     print("  thresholdCurves:", _thresholdReady and "initialized" or "NOT READY")
     print("  dispelTypeCache:", k .. " entries")
     print("  issecretvalue:", rawget(_G, "issecretvalue") and "native" or "fallback")
+    print("  InCombatLockdown:", InCombatLockdown() and "YES" or "NO")
+end
+
+-- Test threshold curves against all debuffs on a unit (run in combat to test secret handling)
+function F.TestThresholds(unit)
+    unit = unit or "player"
+    print("|cff00ff00[Cell Threshold Test]|r unit=" .. unit .. " combat=" .. tostring(InCombatLockdown()))
+    print("  _thresholdReady:", _thresholdReady)
+
+    local slots = {GetAuraSlots(unit, "HARMFUL")}
+    if #slots < 2 then
+        print("  No debuffs found on", unit)
+        return
+    end
+    for i = 2, #slots do
+        local rawAura = _GetAuraDataBySlot(unit, slots[i])
+        if rawAura then
+            local id = rawAura.auraInstanceID
+            local idOk = not issecretvalue(id)
+
+            local nameStr = "?"
+            if not issecretvalue(rawAura.name) and rawAura.name then nameStr = rawAura.name end
+            local dispelStr = "?"
+            if not issecretvalue(rawAura.dispelName) then
+                dispelStr = rawAura.dispelName and rawAura.dispelName or "nil"
+            else
+                dispelStr = "SECRET"
+            end
+
+            if idOk then
+                local results = {}
+                for _, threshold in ipairs({1, 2, 3, 4, 5, 10}) do
+                    local ok, val = pcall(_dispelAtLeast, unit, id, threshold)
+                    results[#results+1] = threshold .. "=" .. (ok and tostring(val) or "ERR")
+                end
+                local resolved = ResolveDispelType(unit, id)
+                print(string.format("  id=%s name=%s rawDispel=%s resolved=%s [%s]",
+                    tostring(id), nameStr, dispelStr,
+                    tostring(resolved), table.concat(results, ", ")))
+            else
+                print(string.format("  id=SECRET name=%s rawDispel=%s — cannot test", nameStr, dispelStr))
+            end
+        end
+    end
 end
 -- F.PrintKnownDispels defined after _knownDispelTypes (see HandleDebuff section)
 
@@ -1405,10 +1451,15 @@ local function HandleDebuff(self, auraInfo)
 
     auraInfo.refreshing = false
 
-    if _dispelTraceEnabled then
-        print(string.format("|cff00ff00[Dispel]|r id=%s name=%s dispel=%s spellId=%s unit=%s",
+    if _dispelTraceEnabled and auraInfo.isHarmful then
+        local unit = self.states.displayedUnit
+        local t1 = _thresholdReady and unit and _dispelAtLeast(unit, auraInstanceID, 1) or "N/A"
+        local t2 = _thresholdReady and unit and _dispelAtLeast(unit, auraInstanceID, 2) or "N/A"
+        print(string.format("|cff00ff00[Dispel]|r id=%s name=%s dispel=%s spellId=%s unit=%s t1=%s t2=%s enabled=%s",
             tostring(auraInstanceID), tostring(name),
-            tostring(debuffType), tostring(spellId), tostring(self.states.displayedUnit)))
+            tostring(debuffType), tostring(spellId), tostring(unit),
+            tostring(t1), tostring(t2),
+            tostring(enabledIndicators["dispels"])))
     end
 
     -- check Bleed
