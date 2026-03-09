@@ -153,6 +153,7 @@ local function SanitizeAura(aura)
     t.name       = _notSecret(aura.name) and aura.name or nil
     t.sourceUnit = _notSecret(aura.sourceUnit) and aura.sourceUnit or nil
     t.dispelName = _notSecret(aura.dispelName) and aura.dispelName or nil
+    t._dispelNameIsSecret = issecretvalue(aura.dispelName)
 
     t.spellId        = _notSecret(aura.spellId) and aura.spellId or nil
     t.applications   = _notSecret(aura.applications) and aura.applications or 0
@@ -187,15 +188,36 @@ GetAuraDataBySlot = function(unit, slot)
 end
 
 -------------------------------------------------
--- 12.0+ dispel type resolution via threshold curves
+-- 12.0+ dispel display via bracket curves
 -------------------------------------------------
--- Step curves with a single point at index N return non-nil for any
--- dispel type index >= N and nil for indices < N. By testing thresholds
--- we can isolate the exact dispel type without reading RGB values.
+-- WoW step curves CLAMP below the first point (never return nil).
+-- So we can't use nil/non-nil for type detection. Instead:
+--
+-- 1. Use issecretvalue(aura.dispelName) to detect dispellable vs non-dispellable
+--    (non-dispellable = nil, dispellable = SECRET in combat)
+-- 2. Use "bracket curves" with 3 points to isolate each type:
+--    e.g. Magic: {0:transparent, 1:visible, 2:transparent}
+--    The step curve returns visible only for index 1, transparent for all others.
+-- 3. Pass raw (secret) colors to C-level SetVertexColor for rendering.
+--
 -- Dispel type indices: None=0, Magic=1, Curse=2, Disease=3, Poison=4, Enrage=9, Bleed=11
 
-local _thresholdCurves = {}
-local _thresholdReady = false
+local _dispelCurvesReady = false
+
+-- Highlight curve: maps each type -> its correct display color
+local _dispelHighlightCurve
+
+-- Bracket curves: isolate each type (visible alpha for match, 0 alpha for non-match)
+local _bracketCurves = {} -- [typeName] = curve
+
+-- Type definitions for curve building (order matches Built-in.lua dispelOrder)
+local _dispelTypes = {
+    {name = "Magic",   idx = 1,  nextIdx = 2,  r = 0.20, g = 0.60, b = 1.00},
+    {name = "Curse",   idx = 2,  nextIdx = 3,  r = 0.60, g = 0.00, b = 1.00},
+    {name = "Disease", idx = 3,  nextIdx = 4,  r = 0.60, g = 0.40, b = 0.00},
+    {name = "Poison",  idx = 4,  nextIdx = 5,  r = 0.00, g = 0.60, b = 0.00},
+    {name = "Bleed",   idx = 11, nextIdx = nil, r = 1.00, g = 0.20, b = 0.60},
+}
 
 do
     local ok = pcall(function()
@@ -204,67 +226,46 @@ do
         local stepType = Enum and Enum.LuaCurveType and Enum.LuaCurveType.Step
         if not stepType then return end
 
-        local white = CreateColor(1, 1, 1, 1)
-        -- boundaries: 1 (>=Magic), 2 (>=Curse), 3 (>=Disease), 4 (>=Poison), 5 (>Poison), 10 (>=Bleed)
-        -- Each curve has 2 points (threshold + sentinel at 999) for robustness
-        for _, idx in ipairs({1, 2, 3, 4, 5, 10}) do
+        local transparent = CreateColor(0, 0, 0, 0)
+
+        -- highlight curve: all types -> correct colors, non-dispellable -> transparent
+        _dispelHighlightCurve = C_CurveUtil.CreateColorCurve()
+        _dispelHighlightCurve:SetType(stepType)
+        _dispelHighlightCurve:AddPoint(0, transparent)  -- None
+        for _, t in ipairs(_dispelTypes) do
+            _dispelHighlightCurve:AddPoint(t.idx, CreateColor(t.r, t.g, t.b, 1))
+        end
+        _dispelHighlightCurve:AddPoint(9, transparent)  -- Enrage
+
+        -- bracket curves: isolate each type
+        -- e.g. Magic: {0:transparent, 1:typeColor, 2:transparent}
+        for _, t in ipairs(_dispelTypes) do
             local curve = C_CurveUtil.CreateColorCurve()
             curve:SetType(stepType)
-            curve:AddPoint(idx, white)
-            curve:AddPoint(999, white) -- sentinel
-            _thresholdCurves[idx] = curve
+            curve:AddPoint(0, transparent) -- below target: invisible
+            curve:AddPoint(t.idx, CreateColor(t.r, t.g, t.b, 1)) -- target: visible
+            if t.nextIdx then
+                curve:AddPoint(t.nextIdx, transparent) -- above target: invisible
+            end
+            _bracketCurves[t.name] = curve
         end
-        _thresholdReady = true
+
+        _dispelCurvesReady = true
     end)
     if not ok then
-        wipe(_thresholdCurves)
-        _thresholdReady = false
+        _dispelHighlightCurve = nil
+        wipe(_bracketCurves)
+        _dispelCurvesReady = false
     end
 end
 
--- Check if a debuff's dispel type index is >= threshold
-local function _dispelAtLeast(unit, auraInstanceID, threshold)
-    local curve = _thresholdCurves[threshold]
-    if not curve then return false end
+-- Get a ColorMixin from a curve for a specific aura (returns nil on failure)
+local function _getCurveColor(unit, auraInstanceID, curve)
+    if not curve then return nil end
     local ok, color = pcall(_GetAuraDispelTypeColor, unit, auraInstanceID, curve)
-    if not ok then return false end
-    -- color is nil when curve has no point <= the type index (type < threshold)
-    -- color is a ColorMixin or secret when curve matched (type >= threshold)
-    if issecretvalue(color) then return true end
-    return color ~= nil
-end
-
--- Cache: auraInstanceID → dispelType name (cleared on combat end)
-local _dispelTypeCache = {}
-
--- Resolve dispel type by testing threshold curves (binary narrowing)
-local function ResolveDispelType(unit, auraInstanceID)
-    if not _thresholdReady or not _GetAuraDispelTypeColor then return nil end
-
-    -- check cache
-    local cached = _dispelTypeCache[auraInstanceID]
-    if cached then return cached end
-
-    -- type >= 1? (anything dispellable)
-    if not _dispelAtLeast(unit, auraInstanceID, 1) then return nil end -- type 0 (None)
-
-    local typeName
-    if not _dispelAtLeast(unit, auraInstanceID, 2) then
-        typeName = "Magic"    -- type 1
-    elseif not _dispelAtLeast(unit, auraInstanceID, 3) then
-        typeName = "Curse"    -- type 2
-    elseif not _dispelAtLeast(unit, auraInstanceID, 4) then
-        typeName = "Disease"  -- type 3
-    elseif not _dispelAtLeast(unit, auraInstanceID, 5) then
-        typeName = "Poison"   -- type 4
-    elseif not _dispelAtLeast(unit, auraInstanceID, 10) then
-        return nil             -- type 9 (Enrage, not a dispellable type)
-    else
-        typeName = "Bleed"    -- type 11
-    end
-
-    _dispelTypeCache[auraInstanceID] = typeName
-    return typeName
+    if not ok then return nil end
+    if issecretvalue(color) then return nil end
+    return color
 end
 
 -------------------------------------------------
@@ -276,22 +277,20 @@ function F.ToggleDispelTrace()
     print("|cff00ff00[Cell]|r Dispel trace:", _dispelTraceEnabled and "ON" or "OFF")
 end
 function F.PrintDispelDiag()
-    local k = 0
-    for _ in pairs(_dispelTypeCache) do k = k + 1 end
     print("|cff00ff00[Cell Dispel Diag]|r")
     print("  GetAuraDispelTypeColor:", _GetAuraDispelTypeColor and "exists" or "MISSING")
     print("  IsAuraFilteredOut:", _IsAuraFilteredOut and "exists" or "MISSING")
-    print("  thresholdCurves:", _thresholdReady and "initialized" or "NOT READY")
-    print("  dispelTypeCache:", k .. " entries")
+    print("  bracketCurves:", _dispelCurvesReady and "initialized" or "NOT READY")
+    print("  highlightCurve:", _dispelHighlightCurve and "yes" or "NO")
     print("  issecretvalue:", rawget(_G, "issecretvalue") and "native" or "fallback")
     print("  InCombatLockdown:", InCombatLockdown() and "YES" or "NO")
 end
 
--- Test threshold curves against all debuffs on a unit (run in combat to test secret handling)
-function F.TestThresholds(unit)
+-- Test bracket curves against all debuffs on a unit (run in combat to test secret handling)
+function F.TestBracketCurves(unit)
     unit = unit or "player"
-    print("|cff00ff00[Cell Threshold Test]|r unit=" .. unit .. " combat=" .. tostring(InCombatLockdown()))
-    print("  _thresholdReady:", _thresholdReady)
+    print("|cff00ff00[Cell Bracket Test]|r unit=" .. unit .. " combat=" .. tostring(InCombatLockdown()))
+    print("  _dispelCurvesReady:", _dispelCurvesReady)
 
     local slots = {GetAuraSlots(unit, "HARMFUL")}
     if #slots < 2 then
@@ -314,17 +313,38 @@ function F.TestThresholds(unit)
             end
 
             if idOk then
-                local results = {}
-                for _, threshold in ipairs({1, 2, 3, 4, 5, 10}) do
-                    local ok, val = pcall(_dispelAtLeast, unit, id, threshold)
-                    results[#results+1] = threshold .. "=" .. (ok and tostring(val) or "ERR")
+                -- test highlight curve
+                local hlColor = _getCurveColor(unit, id, _dispelHighlightCurve)
+                local hlInfo = "nil"
+                if hlColor then
+                    local ok, r, g, b, a = pcall(hlColor.GetRGBA, hlColor)
+                    if ok then
+                        local rS = issecretvalue(r) and "S" or string.format("%.2f", r)
+                        local aS = issecretvalue(a) and "S" or string.format("%.2f", a)
+                        hlInfo = "r=" .. rS .. " a=" .. aS
+                    else
+                        hlInfo = "GetRGBA failed"
+                    end
                 end
-                local resolved = ResolveDispelType(unit, id)
-                print(string.format("  id=%s name=%s rawDispel=%s resolved=%s [%s]",
+
+                -- test bracket curves
+                local bracketResults = {}
+                for _, t in ipairs(_dispelTypes) do
+                    local color = _getCurveColor(unit, id, _bracketCurves[t.name])
+                    if color then
+                        local ok, _, _, _, a = pcall(color.GetRGBA, color)
+                        local aStr = (ok and (issecretvalue(a) and "S" or string.format("%.1f", a))) or "ERR"
+                        bracketResults[#bracketResults+1] = t.name .. "=" .. aStr
+                    else
+                        bracketResults[#bracketResults+1] = t.name .. "=nil"
+                    end
+                end
+
+                print(string.format("  id=%s name=%s rawDispel=%s hl=[%s] [%s]",
                     tostring(id), nameStr, dispelStr,
-                    tostring(resolved), table.concat(results, ", ")))
+                    hlInfo, table.concat(bracketResults, ", ")))
             else
-                print(string.format("  id=SECRET name=%s rawDispel=%s — cannot test", nameStr, dispelStr))
+                print(string.format("  id=SECRET name=%s rawDispel=%s", nameStr, dispelStr))
             end
         end
     end
@@ -1365,6 +1385,8 @@ end
 local function ResetDebuffVars(self)
     self._debuffs.resurrectionFound = false
     self._debuffs.crowdControlsFound = 0
+    self._secretDispelAuraID = nil
+    self._secretDispelUnit = nil
 
     self.states.BGOrb = nil -- TODO: move to _debuffs
 end
@@ -1427,14 +1449,12 @@ local function HandleDebuff(self, auraInfo)
             debuffType = _knownDispelTypes[spellId]
             auraInfo.dispelName = debuffType
         end
-        -- fallback 2: threshold curves — identify exact dispel type via nil/non-nil
-        -- detection without reading RGB values (works even when all fields are secret)
-        if debuffType == "" and self.states.displayedUnit then
-            local resolvedType = ResolveDispelType(self.states.displayedUnit, auraInstanceID)
-            if resolvedType then
-                debuffType = resolvedType
-                auraInfo.dispelName = resolvedType
-            end
+        -- fallback 2: if dispelName was secret (not just nil), this IS dispellable
+        -- but we can't read the type name. Store auraInstanceID for curve-based
+        -- display later (highlight + icons via bracket curves).
+        if debuffType == "" and auraInfo._dispelNameIsSecret and self.states.displayedUnit then
+            self._secretDispelAuraID = auraInstanceID
+            self._secretDispelUnit = self.states.displayedUnit
         end
     end
 
@@ -1452,14 +1472,11 @@ local function HandleDebuff(self, auraInfo)
     auraInfo.refreshing = false
 
     if _dispelTraceEnabled and auraInfo.isHarmful then
-        local unit = self.states.displayedUnit
-        local t1 = _thresholdReady and unit and _dispelAtLeast(unit, auraInstanceID, 1) or "N/A"
-        local t2 = _thresholdReady and unit and _dispelAtLeast(unit, auraInstanceID, 2) or "N/A"
-        print(string.format("|cff00ff00[Dispel]|r id=%s name=%s dispel=%s spellId=%s unit=%s t1=%s t2=%s enabled=%s",
+        print(string.format("|cff00ff00[Dispel]|r id=%s name=%s dispel=%s spellId=%s secret=%s stored=%s",
             tostring(auraInstanceID), tostring(name),
-            tostring(debuffType), tostring(spellId), tostring(unit),
-            tostring(t1), tostring(t2),
-            tostring(enabledIndicators["dispels"])))
+            tostring(debuffType), tostring(spellId),
+            tostring(auraInfo._dispelNameIsSecret),
+            tostring(self._secretDispelAuraID)))
     end
 
     -- check Bleed
@@ -1701,6 +1718,60 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     -- update dispels
     if F.UnitInGroup(unit) or UnitIsFriend("player", unit) then
         self.indicators.dispels:SetDispels(self._debuffs_dispel)
+
+        -- 12.0+: if SetDispels found nothing but we detected a secret dispellable debuff,
+        -- use bracket curves to render the dispel indicator directly via SetVertexColor.
+        -- Each bracket curve isolates one type: returns visible color for the matching
+        -- type, transparent for all others. C-level SetVertexColor handles secret values.
+        if self._secretDispelAuraID and _dispelCurvesReady
+            and not self.indicators.dispels.highlight:IsShown()
+            and enabledIndicators["dispels"] then
+
+            local dispels = self.indicators.dispels
+            local sUnit = self._secretDispelUnit
+            local sAuraID = self._secretDispelAuraID
+
+            -- get type color from highlight curve (secret but usable via C-level functions)
+            local hlColor = _getCurveColor(sUnit, sAuraID, _dispelHighlightCurve)
+            if hlColor then
+                local colorOk, cr, cg, cb, ca = pcall(hlColor.GetRGBA, hlColor)
+                if colorOk then
+                    -- highlight: apply correct type color
+                    local ht = dispels.highlightType
+                    if ht and ht ~= "none" then
+                        if ht == "entire" then
+                            dispels.highlight:SetTexture(Cell.vars.whiteTexture)
+                            pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 0.5)
+                        elseif ht == "current" or ht == "current+" then
+                            dispels.highlight:SetTexture(Cell.vars.texture)
+                            pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 1)
+                        elseif ht == "gradient" or ht == "gradient-half" then
+                            -- SetGradient crashes with secret values; use flat color fallback
+                            dispels.highlight:SetTexture(Cell.vars.whiteTexture)
+                            pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 0.5)
+                        end
+                        dispels.highlight:Show()
+                    end
+
+                    -- icon: show a single colored rhombus using the type color.
+                    -- In combat with secret values we can't determine the type name
+                    -- for blizzard-style textures, so we use rhombus universally.
+                    -- Normal style/icons restore when combat ends (PLAYER_REGEN_ENABLED).
+                    if dispels.showIcons then
+                        local icon = dispels[1]
+                        if icon then
+                            icon:SetTexture("Interface\\AddOns\\Cell\\Media\\Debuffs\\Rhombus")
+                            pcall(icon.SetVertexColor, icon, cr, cg, cb, 1)
+                            icon:Show()
+                        end
+                        dispels:UpdateSize(1)
+                        for j = 2, 5 do
+                            dispels[j]:Hide()
+                        end
+                    end
+                end
+            end
+        end
     end
 
     -- update crowdControls
@@ -3368,7 +3439,6 @@ local function UnitButton_OnEvent(self, event, unit, arg)
             if event == "PLAYER_REGEN_ENABLED" then
                 -- 12.0+: secret values cleared on combat end; re-scan all auras
                 -- to replace hollow cached entries with real data
-                wipe(_dispelTypeCache)
                 UnitButton_UpdateAuras(self)
             end
 
