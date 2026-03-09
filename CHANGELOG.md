@@ -1,3 +1,11 @@
+# r275.5 Added Midnight Raid Debuffs
+
+## Raid Debuffs
+- Added initial Midnight expansion raid debuffs for all 12 instances (6 raids, 6 dungeons) and 41 bosses.
+- Boss ability spell IDs sourced from the Encounter Journal via wago.tools DB2 tables.
+- General (trash mob) debuffs still need to be collected in-game and added in a future update.
+- Spells may need further in-game curation to filter out non-debuff abilities.
+
 # r275-release — WoW 12.0.0 (Midnight) Compatibility
 
 Comprehensive compatibility update for WoW Patch 12.0.0 (Midnight), addressing the removal of `COMBAT_LOG_EVENT_UNFILTERED`, the introduction of Secret Values, blocked addon communications during restricted contexts, and spell/API removals. Interface bumped to 120001.
