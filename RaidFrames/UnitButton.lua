@@ -1487,12 +1487,16 @@ local function HandleDebuff(self, auraInfo)
         self._debuffs_cache[auraInstanceID] = auraInfo
 
         if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] then
-            -- all debuffs / only dispellableByMe
-            if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
-                if Cell.vars.bigDebuffs[spellId] then
-                    self._debuffs_big[auraInstanceID] = true
-                else
-                    self._debuffs_normal[auraInstanceID] = true
+            -- 12.0+: skip debuffs that are being handled by the secret dispel indicator
+            -- (dispellable debuffs with secret dispelName should only appear as dispels)
+            if self._secretDispelAuraID ~= auraInstanceID then
+                -- all debuffs / only dispellableByMe
+                if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
+                    if Cell.vars.bigDebuffs[spellId] then
+                        self._debuffs_big[auraInstanceID] = true
+                    else
+                        self._debuffs_normal[auraInstanceID] = true
+                    end
                 end
             end
         end
