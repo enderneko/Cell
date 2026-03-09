@@ -111,38 +111,9 @@ end
 local function SanitizeAura(aura)
     if not aura then return nil end
 
-    -- Out of combat: secret values never exist, fast shallow copy only
-    -- (copy needed because Cell mutates aura data: .refreshing, .oldExpirationTime, etc.)
-    if not InCombatLockdown() then
-        return {
-            auraInstanceID = aura.auraInstanceID,
-            icon = aura.icon,
-            name = aura.name,
-            sourceUnit = aura.sourceUnit,
-            dispelName = aura.dispelName,
-            spellId = aura.spellId,
-            applications = aura.applications or 0,
-            expirationTime = aura.expirationTime or 0,
-            duration = aura.duration or 0,
-            timeMod = aura.timeMod or 1,
-            isHelpful = aura.isHelpful and true or false,
-            isHarmful = aura.isHarmful and true or false,
-            isBossAura = aura.isBossAura and true or false,
-            isRaid = aura.isRaid and true or false,
-            isStealable = aura.isStealable and true or false,
-            isFromPlayerOrPlayerPet = aura.isFromPlayerOrPlayerPet and true or false,
-            canApplyAura = aura.canApplyAura and true or false,
-            nameplateShowAll = aura.nameplateShowAll and true or false,
-            nameplateShowPersonal = aura.nameplateShowPersonal and true or false,
-            canActivePlayerDispel = aura.canActivePlayerDispel and true or false,
-            points = aura.points,
-            refreshing = aura.refreshing,
-            oldExpirationTime = aura.oldExpirationTime,
-            oldApplications = aura.oldApplications,
-        }
-    end
-
-    -- In combat: guard every field against secret values independently
+    -- Guard every field against secret values independently.
+    -- NOTE: always use the safe path — InCombatLockdown() can return false during
+    -- combat transitions while aura fields are still secret (12.0+ timing issue).
     -- auraInstanceID is the cache key — if secret, drop the aura
     if not _notSecret(aura.auraInstanceID) then return nil end
 
@@ -1423,12 +1394,26 @@ local function _mergeSecretAura(auraInfo, oldCache)
             auraInfo[field] = old[field]
         end
     end
+    -- clear secret flag if dispelName was successfully restored from cache
+    if auraInfo.dispelName and auraInfo._dispelNameIsSecret then
+        auraInfo._dispelNameIsSecret = false
+    end
     -- preserve duration/expirationTime if both defaulted to 0 but old had real values
     if auraInfo.duration == 0 and old.duration and old.duration > 0 then
         auraInfo.duration = old.duration
     end
     if auraInfo.expirationTime == 0 and old.expirationTime and old.expirationTime > 0 then
         auraInfo.expirationTime = old.expirationTime
+    end
+    -- preserve boolean fields that defaulted to false but old had true
+    if not auraInfo.isHelpful and old.isHelpful then
+        auraInfo.isHelpful = old.isHelpful
+    end
+    if not auraInfo.isHarmful and old.isHarmful then
+        auraInfo.isHarmful = old.isHarmful
+    end
+    if not auraInfo.isFromPlayerOrPlayerPet and old.isFromPlayerOrPlayerPet then
+        auraInfo.isFromPlayerOrPlayerPet = old.isFromPlayerOrPlayerPet
     end
 end
 
@@ -1588,14 +1573,11 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     I.ResetCustomIndicators(self, "debuff")
 
     if isFullUpdate then
-        -- 12.0+: save old cache during combat so HandleDebuff can merge
-        -- previously-known field values when current read returns secrets
-        if InCombatLockdown() then
-            _oldDebuffsCache = self._debuffs_cache
-            self._debuffs_cache = {}
-        else
-            wipe(self._debuffs_cache)
-        end
+        -- 12.0+: always save old cache so HandleDebuff can merge previously-known
+        -- field values when current read returns secrets. InCombatLockdown() is
+        -- unreliable during combat transitions — secrets can exist before it returns true.
+        _oldDebuffsCache = self._debuffs_cache
+        self._debuffs_cache = {}
         ForEachAura(self, "HARMFUL", HandleDebuff)
         _oldDebuffsCache = nil
     else
@@ -1960,12 +1942,9 @@ local function UnitButton_UpdateBuffs(self, isFullUpdate)
     I.ResetCustomIndicators(self, "buff")
 
     if isFullUpdate then
-        if InCombatLockdown() then
-            _oldBuffsCache = self._buffs_cache
-            self._buffs_cache = {}
-        else
-            wipe(self._buffs_cache)
-        end
+        -- 12.0+: always save old cache for secret field merging (see _mergeSecretAura)
+        _oldBuffsCache = self._buffs_cache
+        self._buffs_cache = {}
         ForEachAura(self, "HELPFUL", HandleBuff)
         _oldBuffsCache = nil
     else
