@@ -268,6 +268,28 @@ local function _getCurveColor(unit, auraInstanceID, curve)
     return color
 end
 
+-- Lazily create per-type gradient overlay textures for secret dispel display.
+-- Each overlay has SetGradient pre-applied with known (non-secret) colors.
+-- In combat, bracket curve SetAlpha selects the matching type (C-level handles secrets).
+local function _ensureGradientOverlays(dispels)
+    if dispels._secretGradientOverlays then return dispels._secretGradientOverlays end
+
+    local hlParent = dispels.highlight:GetParent()
+    local overlays = {}
+
+    for _, t in ipairs(_dispelTypes) do
+        local tex = hlParent:CreateTexture(nil, "ARTWORK", nil, 0)
+        tex:SetTexture(Cell.vars.whiteTexture)
+        tex:SetBlendMode("BLEND")
+        tex:SetGradient("VERTICAL", CreateColor(t.r, t.g, t.b, 1), CreateColor(t.r, t.g, t.b, 0))
+        tex:Hide()
+        overlays[t.name] = tex
+    end
+
+    dispels._secretGradientOverlays = overlays
+    return overlays
+end
+
 -------------------------------------------------
 -- debug: dispel trace & diagnostics
 -------------------------------------------------
@@ -1487,16 +1509,12 @@ local function HandleDebuff(self, auraInfo)
         self._debuffs_cache[auraInstanceID] = auraInfo
 
         if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] then
-            -- 12.0+: skip debuffs that are being handled by the secret dispel indicator
-            -- (dispellable debuffs with secret dispelName should only appear as dispels)
-            if self._secretDispelAuraID ~= auraInstanceID then
-                -- all debuffs / only dispellableByMe
-                if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
-                    if Cell.vars.bigDebuffs[spellId] then
-                        self._debuffs_big[auraInstanceID] = true
-                    else
-                        self._debuffs_normal[auraInstanceID] = true
-                    end
+            -- all debuffs / only dispellableByMe
+            if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
+                if Cell.vars.bigDebuffs[spellId] then
+                    self._debuffs_big[auraInstanceID] = true
+                else
+                    self._debuffs_normal[auraInstanceID] = true
                 end
             end
         end
@@ -1730,6 +1748,15 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                 self.indicators.dispels[i]:SetVertexColor(1, 1, 1, 1)
             end
         end
+        -- 12.0+: hide gradient overlays from secret dispel mode
+        if self.indicators.dispels._secretGradientShown then
+            self.indicators.dispels._secretGradientShown = nil
+            if self.indicators.dispels._secretGradientOverlays then
+                for _, tex in pairs(self.indicators.dispels._secretGradientOverlays) do
+                    tex:Hide()
+                end
+            end
+        end
         self.indicators.dispels:SetDispels(self._debuffs_dispel)
 
         -- 12.0+: if SetDispels found nothing but we detected a secret dispellable debuff,
@@ -1754,21 +1781,37 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                         if ht == "entire" then
                             dispels.highlight:SetTexture(Cell.vars.whiteTexture)
                             pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 0.5)
+                            dispels.highlight:Show()
                         elseif ht == "current" or ht == "current+" then
                             dispels.highlight:SetTexture(Cell.vars.texture)
                             pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 1)
+                            dispels.highlight:Show()
                         elseif ht == "gradient" or ht == "gradient-half" then
-                            dispels.highlight:SetTexture(Cell.vars.whiteTexture)
-                            -- try SetGradient (C-level but may crash with secrets); fall back to flat
-                            local gradOk = pcall(function()
-                                dispels.highlight:SetGradient("VERTICAL",
-                                    CreateColor(cr, cg, cb, 1), CreateColor(cr, cg, cb, 0))
-                            end)
-                            if not gradOk then
-                                pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 0.5)
+                            -- SetGradient crashes with secret colors, so use pre-built
+                            -- per-type gradient overlays with known colors + bracket curve alpha.
+                            -- Each overlay has SetGradient pre-applied with known (non-secret)
+                            -- colors; bracket curve SetAlpha selects the matching type.
+                            local overlays = _ensureGradientOverlays(dispels)
+                            for _, t in ipairs(_dispelTypes) do
+                                local tex = overlays[t.name]
+                                if tex then
+                                    tex:ClearAllPoints()
+                                    tex:SetAllPoints(dispels.highlight)
+                                    -- bracket curve: alpha=1 for matching type, 0 for others
+                                    local bColor = _getCurveColor(sUnit, sAuraID, _bracketCurves[t.name])
+                                    if bColor then
+                                        local bOk, _, _, _, ba = pcall(bColor.GetRGBA, bColor)
+                                        if bOk then
+                                            pcall(tex.SetAlpha, tex, ba)
+                                        end
+                                    else
+                                        tex:SetAlpha(0)
+                                    end
+                                    tex:Show()
+                                end
                             end
+                            dispels._secretGradientShown = true
                         end
-                        dispels.highlight:Show()
                     end
 
                     -- icons: stack all 5 type icons at position 1, using bracket curve
