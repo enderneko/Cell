@@ -777,6 +777,9 @@ eventFrame:SetScript("OnEvent", function()
 end)
 
 local function CheckCondition(operator, checkedValue, currentValue)
+    -- Midnight 12.0.0+: applications (count) may be secret even when spellId is not;
+    -- comparisons on secret values throw errors
+    if issecretvalue and (issecretvalue(currentValue) or issecretvalue(checkedValue)) then return end
     if operator == "=" then
         if currentValue == checkedValue then return true end
     elseif operator == ">" then
@@ -793,6 +796,8 @@ local function CheckCondition(operator, checkedValue, currentValue)
 end
 
 function I.GetDebuffOrder(spellName, spellId, count)
+    -- Midnight 12.0.0+: spellId/spellName may be secret; cannot use as table key
+    if issecretvalue and (issecretvalue(spellId) or issecretvalue(spellName)) then return end
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 
@@ -808,6 +813,8 @@ function I.GetDebuffOrder(spellName, spellId, count)
 end
 
 function I.GetDebuffGlow(spellName, spellId, count)
+    -- Midnight 12.0.0+: spellId/spellName may be secret; cannot use as table key
+    if issecretvalue and (issecretvalue(spellId) or issecretvalue(spellName)) then return end
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 
@@ -828,6 +835,8 @@ function I.GetDebuffGlow(spellName, spellId, count)
 end
 
 function I.IsDebuffUseElapsedTime(spellName, spellId)
+    -- Midnight 12.0.0+: spellId/spellName may be secret; cannot use as table key
+    if issecretvalue and (issecretvalue(spellId) or issecretvalue(spellName)) then return end
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 

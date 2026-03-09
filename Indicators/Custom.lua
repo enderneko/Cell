@@ -261,7 +261,9 @@ function I.UpdateCustomIndicators(unitButton, auraInfo)
 
     local auraType = auraInfo.isHelpful and "buff" or "debuff"
     local icon = auraInfo.icon
-    local debuffType = auraInfo.isHarmful and (auraInfo.dispelName or "") or nil
+    -- Midnight 12.0.0+: dispelName may be secret; sanitize to avoid table-key/comparison crashes downstream
+    local rawDispelName = auraInfo.dispelName
+    local debuffType = auraInfo.isHarmful and ((rawDispelName and (not issecretvalue or not issecretvalue(rawDispelName))) and rawDispelName or "") or nil
     local count = auraInfo.applications
     local duration = auraInfo.duration
     -- Use per-aura check for duration: non-secret auras get real timers, secret ones get zeroed.
@@ -288,7 +290,8 @@ function I.UpdateCustomIndicators(unitButton, auraInfo)
                 spell = auraInfo.spellId
             end
 
-            if indicatorTable["auras"][spell] or (indicatorTable["auras"][0] and duration ~= 0) then -- is in indicator spell list
+            -- Midnight 12.0.0+: spell (name or spellId) may be secret; cannot use as table key
+            if spell and (not issecretvalue or not issecretvalue(spell)) and indicatorTable["auras"][spell] or (indicatorTable["auras"][0] and duration ~= 0) then -- is in indicator spell list
                 -- check caster
                 if (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "others" and not castByMe) or (indicatorTable["castBy"] == "anyone") then
                     if auraType == "buff" then

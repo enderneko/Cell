@@ -1172,7 +1172,8 @@ local function HandleDebuff(self, auraInfo)
     -- SetTexture() accepts secret numbers, so this works as-is
     local icon = auraInfo.icon
     local count = auraInfo.applications
-    local debuffType = auraInfo.dispelName or ""
+    -- Midnight 12.0.0+: dispelName may be secret (truthy, so `or ""` won't help); sanitize it
+    local debuffType = (auraInfo.dispelName and (not issecretvalue or not issecretvalue(auraInfo.dispelName))) and auraInfo.dispelName or ""
     local expirationTime = auraInfo.expirationTime or 0
     local duration = auraInfo.duration
     -- Midnight 12.0.0+: expirationTime and duration may be secret even when spellId is not.
@@ -1340,7 +1341,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     self.indicators.raidDebuffs[i]:SetCooldown(
                         rdStart,
                         rdDur,
-                        auraInfo.dispelName or "",
+                        (auraInfo.dispelName and (not issecretvalue or not issecretvalue(auraInfo.dispelName))) and auraInfo.dispelName or "",
                         auraInfo.icon,
                         auraInfo.applications,
                         auraInfo.refreshing,
@@ -1415,7 +1416,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     bStart = 0
                     bDur = 0
                 end
-                self.indicators.debuffs[startIndex]:SetCooldown(bStart, bDur, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing, true)
+                self.indicators.debuffs[startIndex]:SetCooldown(bStart, bDur, (auraInfo.dispelName and (not issecretvalue or not issecretvalue(auraInfo.dispelName))) and auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing, true)
                 self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
                 self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
@@ -1436,7 +1437,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     nStart = 0
                     nDur = 0
                 end
-                self.indicators.debuffs[startIndex]:SetCooldown(nStart, nDur, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing)
+                self.indicators.debuffs[startIndex]:SetCooldown(nStart, nDur, (auraInfo.dispelName and (not issecretvalue or not issecretvalue(auraInfo.dispelName))) and auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing)
                 self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
                 self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
