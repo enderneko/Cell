@@ -132,6 +132,11 @@ local function SanitizeAura(aura)
     t.duration       = _notSecret(aura.duration) and aura.duration or 0
     t.timeMod        = _notSecret(aura.timeMod) and aura.timeMod or 1
 
+    -- 12.0+: keep raw (possibly secret) values for C-level CooldownFrame:SetCooldown
+    -- which can handle secrets internally. Used when Lua-level duration is 0 (secret).
+    t._rawDuration       = aura.duration
+    t._rawExpirationTime = aura.expirationTime
+
     t.isHelpful              = _notSecret(aura.isHelpful) and aura.isHelpful or false
     t.isHarmful              = _notSecret(aura.isHarmful) and aura.isHarmful or false
     t.isBossAura             = _notSecret(aura.isBossAura) and aura.isBossAura or false
@@ -1717,15 +1722,14 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
         self.indicators.debuffs[i].spellId = nil
     end
 
-    -- 12.0+: fix debuff icon backdrop color for secret dispellable debuffs.
-    -- When dispelName is secret, it falls back to "" which gives a red border.
-    -- Re-color using the highlight curve to show the correct type color.
-    if _dispelCurvesReady and self.states.displayedUnit then
-        for i = 1, startIndex - 1 do
-            local frame = self.indicators.debuffs[i]
-            if frame and frame.auraInstanceID then
-                local auraInfo = self._debuffs_cache[frame.auraInstanceID]
-                if auraInfo and auraInfo._dispelNameIsSecret then
+    -- 12.0+: fix debuff icons for secret values (backdrop color + cooldown animation)
+    for i = 1, startIndex - 1 do
+        local frame = self.indicators.debuffs[i]
+        if frame and frame.auraInstanceID then
+            local auraInfo = self._debuffs_cache[frame.auraInstanceID]
+            if auraInfo then
+                -- fix backdrop color for secret dispellable debuffs
+                if auraInfo._dispelNameIsSecret and _dispelCurvesReady and self.states.displayedUnit then
                     local hlColor = _getCurveColor(self.states.displayedUnit, frame.auraInstanceID, _dispelHighlightCurve)
                     if hlColor then
                         local ok, r, g, b = pcall(hlColor.GetRGBA, hlColor)
@@ -1733,6 +1737,17 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                             pcall(frame.SetBackdropColor, frame, r, g, b)
                         end
                     end
+                end
+                -- activate C-level cooldown animation when duration is secret.
+                -- CooldownFrame:SetCooldown is C-level and can handle secret values.
+                -- Use _addedTime as approximate start (accurate for newly applied auras).
+                -- NOTE: must use issecretvalue() — boolean test on secret crashes.
+                if auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration)
+                    and frame.cooldown and frame.cooldown.ShowCooldown then
+                    local approxStart = auraInfo._addedTime or GetTime()
+                    pcall(frame.cooldown.ShowCooldown, frame.cooldown,
+                        approxStart, auraInfo._rawDuration)
+                    frame.cooldown:Show()
                 end
             end
         end
@@ -2169,6 +2184,9 @@ UnitButton_UpdateAuras = function(self, updateInfo)
             for _, rawAura in next, updateInfo.addedAuras do
                 local aura = SanitizeAura(rawAura)
                 if aura then
+                    -- 12.0+: record when the aura was first seen (for C-level cooldown
+                    -- when duration is secret and we can't compute start time)
+                    aura._addedTime = GetTime()
                     local isHelpful, isHarmful = aura.isHelpful, aura.isHarmful
                     -- 12.0+: isHelpful/isHarmful may be secret (defaulted to false);
                     -- use IsAuraFilteredOutByInstanceID as fallback
@@ -2195,10 +2213,8 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                     buffsChanged = true
                     aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                     if aura then
-                        -- 12.0+: merge secret-nil fields with previously cached values
-                        if InCombatLockdown() then
-                            _mergeSecretAura(aura, self._buffs_cache)
-                        end
+                        -- 12.0+: always merge (InCombatLockdown unreliable during transitions)
+                        _mergeSecretAura(aura, self._buffs_cache)
                         aura.oldExpirationTime = self._buffs_cache[auraInstanceID].expirationTime or 0
                         aura.oldApplications = self._buffs_cache[auraInstanceID].applications
                         self._buffs_cache[auraInstanceID] = aura
@@ -2207,9 +2223,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                     debuffsChanged = true
                     aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                     if aura then
-                        if InCombatLockdown() then
-                            _mergeSecretAura(aura, self._debuffs_cache)
-                        end
+                        _mergeSecretAura(aura, self._debuffs_cache)
                         aura.oldExpirationTime = self._debuffs_cache[auraInstanceID].expirationTime or 0
                         aura.oldApplications = self._debuffs_cache[auraInstanceID].applications
                         self._debuffs_cache[auraInstanceID] = aura
