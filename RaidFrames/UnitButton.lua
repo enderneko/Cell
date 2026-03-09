@@ -268,26 +268,24 @@ local function _getCurveColor(unit, auraInstanceID, curve)
     return color
 end
 
--- Lazily create per-type gradient overlay textures for secret dispel display.
--- Each overlay has SetGradient pre-applied with known (non-secret) colors.
--- In combat, bracket curve SetAlpha selects the matching type (C-level handles secrets).
-local function _ensureGradientOverlays(dispels)
-    if dispels._secretGradientOverlays then return dispels._secretGradientOverlays end
+-- Gradient texture path: 1x4 white texture with baked-in vertical alpha gradient
+-- (opaque at bottom, transparent at top). Used with SetVertexColor for secret
+-- dispel display — the alpha gradient comes from the texture file, and the color
+-- is applied via C-level SetVertexColor which handles secret values.
+local GRADIENT_TEXTURE = "Interface\\AddOns\\Cell\\Media\\gradient"
+
+-- Lazily create a single gradient overlay texture for secret dispel display.
+local function _ensureGradientOverlay(dispels)
+    if dispels._secretGradientOverlay then return dispels._secretGradientOverlay end
 
     local hlParent = dispels.highlight:GetParent()
-    local overlays = {}
+    local tex = hlParent:CreateTexture(nil, "ARTWORK", nil, 0)
+    tex:SetTexture(GRADIENT_TEXTURE)
+    tex:SetBlendMode("BLEND")
+    tex:Hide()
 
-    for _, t in ipairs(_dispelTypes) do
-        local tex = hlParent:CreateTexture(nil, "ARTWORK", nil, 0)
-        tex:SetTexture(Cell.vars.whiteTexture)
-        tex:SetBlendMode("BLEND")
-        tex:SetGradient("VERTICAL", CreateColor(t.r, t.g, t.b, 1), CreateColor(t.r, t.g, t.b, 0))
-        tex:Hide()
-        overlays[t.name] = tex
-    end
-
-    dispels._secretGradientOverlays = overlays
-    return overlays
+    dispels._secretGradientOverlay = tex
+    return tex
 end
 
 -------------------------------------------------
@@ -1769,13 +1767,11 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                 self.indicators.dispels[i]:SetVertexColor(1, 1, 1, 1)
             end
         end
-        -- 12.0+: hide gradient overlays from secret dispel mode
+        -- 12.0+: hide gradient overlay from secret dispel mode
         if self.indicators.dispels._secretGradientShown then
             self.indicators.dispels._secretGradientShown = nil
-            if self.indicators.dispels._secretGradientOverlays then
-                for _, tex in pairs(self.indicators.dispels._secretGradientOverlays) do
-                    tex:Hide()
-                end
+            if self.indicators.dispels._secretGradientOverlay then
+                self.indicators.dispels._secretGradientOverlay:Hide()
             end
         end
         self.indicators.dispels:SetDispels(self._debuffs_dispel)
@@ -1808,29 +1804,14 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                             pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 1)
                             dispels.highlight:Show()
                         elseif ht == "gradient" or ht == "gradient-half" then
-                            -- SetGradient crashes with secret colors, so use pre-built
-                            -- per-type gradient overlays with known colors + bracket curve alpha.
-                            -- Each overlay has SetGradient pre-applied with known (non-secret)
-                            -- colors; bracket curve SetAlpha selects the matching type.
-                            local overlays = _ensureGradientOverlays(dispels)
-                            for _, t in ipairs(_dispelTypes) do
-                                local tex = overlays[t.name]
-                                if tex then
-                                    tex:ClearAllPoints()
-                                    tex:SetAllPoints(dispels.highlight)
-                                    -- bracket curve: alpha=1 for matching type, 0 for others
-                                    local bColor = _getCurveColor(sUnit, sAuraID, _bracketCurves[t.name])
-                                    if bColor then
-                                        local bOk, _, _, _, ba = pcall(bColor.GetRGBA, bColor)
-                                        if bOk then
-                                            pcall(tex.SetAlpha, tex, ba)
-                                        end
-                                    else
-                                        tex:SetAlpha(0)
-                                    end
-                                    tex:Show()
-                                end
-                            end
+                            -- SetGradient crashes with secret colors. Instead, use a
+                            -- gradient texture (baked-in alpha gradient) + SetVertexColor
+                            -- (C-level, handles secrets) for immediate correct coloring.
+                            local overlay = _ensureGradientOverlay(dispels)
+                            overlay:ClearAllPoints()
+                            overlay:SetAllPoints(dispels.highlight)
+                            pcall(overlay.SetVertexColor, overlay, cr, cg, cb, 1)
+                            overlay:Show()
                             dispels._secretGradientShown = true
                         end
                     end
