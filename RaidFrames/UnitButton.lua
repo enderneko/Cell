@@ -111,17 +111,22 @@ end
 local function SanitizeAura(aura)
     if not aura then return nil end
 
-    -- Guard every field against secret values independently.
-    -- NOTE: always use the safe path — InCombatLockdown() can return false during
-    -- combat transitions while aura fields are still secret (12.0+ timing issue).
     -- auraInstanceID is the cache key — if secret, drop the aura
     if not _notSecret(aura.auraInstanceID) then return nil end
 
+    -- Fast path: if name is not secret, no fields are secret.
+    -- Probe once to avoid ~25 issecretvalue checks + table allocation per aura.
+    if not issecretvalue(aura.name) then
+        return aura
+    end
+
+    -- Slow path: one or more fields are secret (combat in 12.0+).
+    -- Guard every field independently so a secret name doesn't kill spellId, etc.
     local t = {}
     t.auraInstanceID = aura.auraInstanceID
 
     t.icon       = aura.icon  -- raw; SetTexture() is C-level and accepts secret values
-    t.name       = _notSecret(aura.name) and aura.name or nil
+    t.name       = nil  -- known secret (probed above)
     t.sourceUnit = _notSecret(aura.sourceUnit) and aura.sourceUnit or nil
     t.dispelName = _notSecret(aura.dispelName) and aura.dispelName or nil
     t._dispelNameIsSecret = issecretvalue(aura.dispelName)
