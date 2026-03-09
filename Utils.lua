@@ -6,6 +6,13 @@ local F = Cell.funcs
 ---@type CellIndicatorFuncs
 local I = Cell.iFuncs
 
+-- 12.0+ secret boolean helper
+local function SafeBoolTest(val)
+    local ok, r = pcall(function(v) if v then return true else return false end end, val)
+    if ok then return r end
+    return false
+end
+
 Cell.vars.playerFaction = UnitFactionGroup("player")
 
 -------------------------------------------------
@@ -820,7 +827,7 @@ end
 -- end
 
 function F.UnitFullName(unit)
-    if not unit or not UnitIsPlayer(unit) then return end
+    if not unit or not SafeBoolTest(UnitIsPlayer(unit)) then return end
 
     local name = GetUnitName(unit, true)
 
@@ -1002,7 +1009,7 @@ function F.GetUnitButtonByUnit(unit, getSpotlights, getQuickAssist)
     if getSpotlights then
         spotlights = {}
         for _, b in pairs(Cell.unitButtons.spotlight) do
-            if b.unit and UnitIsUnit(b.unit, unit) then
+            if b.unit and SafeBoolTest(UnitIsUnit(b.unit, unit)) then
                 tinsert(spotlights, b)
             end
         end
@@ -1054,7 +1061,7 @@ function F.HandleUnitButton(type, unit, func, ...)
     end
 
     for _, b in pairs(Cell.unitButtons.spotlight) do
-        if b.states.unit and UnitIsUnit(b.states.unit, unit) then
+        if b.states.unit and SafeBoolTest(UnitIsUnit(b.states.unit, unit)) then
             func(b, ...)
             handled = true
         end
@@ -1169,7 +1176,7 @@ function F.GetUnitClassColor(unit, class, guid)
     class = class or select(2, UnitClass(unit))
     guid = guid or UnitGUID(unit)
 
-    if UnitIsPlayer(unit) or UnitInPartyIsAI(unit) then -- player
+    if SafeBoolTest(UnitIsPlayer(unit)) or SafeBoolTest(UnitInPartyIsAI(unit)) then -- player
         return F.GetClassColor(class)
     elseif F.IsPet(guid, unit) then -- pet
         return 0.5, 0.5, 1
@@ -1435,31 +1442,31 @@ end
 
 function F.UnitInGroup(unit, ignorePets)
     if ignorePets then
-        return UnitIsUnit(unit, "player") or UnitInParty(unit) or UnitInRaid(unit) or UnitInPartyIsAI(unit)
+        return SafeBoolTest(UnitIsUnit(unit, "player")) or SafeBoolTest(UnitInParty(unit)) or SafeBoolTest(UnitInRaid(unit)) or SafeBoolTest(UnitInPartyIsAI(unit))
     else
-        return UnitIsUnit(unit, "player") or UnitIsUnit(unit, "pet") or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) or UnitInPartyIsAI(unit)
+        return SafeBoolTest(UnitIsUnit(unit, "player")) or SafeBoolTest(UnitIsUnit(unit, "pet")) or SafeBoolTest(UnitPlayerOrPetInParty(unit)) or SafeBoolTest(UnitPlayerOrPetInRaid(unit)) or SafeBoolTest(UnitInPartyIsAI(unit))
     end
 end
 
 -- UnitTokenFromGUID
 function F.GetTargetUnitID(target)
-    if UnitIsUnit(target, "player") then
+    if SafeBoolTest(UnitIsUnit(target, "player")) then
         return "player"
-    elseif UnitIsUnit(target, "pet") then
+    elseif SafeBoolTest(UnitIsUnit(target, "pet")) then
         return "pet"
     end
 
     if not F.UnitInGroup(target) then return end
 
-    if UnitIsPlayer(target) or UnitInPartyIsAI(target) then
+    if SafeBoolTest(UnitIsPlayer(target)) or SafeBoolTest(UnitInPartyIsAI(target)) then
         for unit in F.IterateGroupMembers() do
-            if UnitIsUnit(target, unit) then
+            if SafeBoolTest(UnitIsUnit(target, unit)) then
                 return unit
             end
         end
     else
         for unit in F.IterateGroupPets() do
-            if UnitIsUnit(target, unit) then
+            if SafeBoolTest(UnitIsUnit(target, unit)) then
                 return unit
             end
         end
@@ -1467,15 +1474,15 @@ function F.GetTargetUnitID(target)
 end
 
 function F.GetTargetPetID(target)
-    if UnitIsUnit(target, "player") then
+    if SafeBoolTest(UnitIsUnit(target, "player")) then
         return "pet"
     end
 
     if not F.UnitInGroup(target) then return end
 
-    if UnitIsPlayer(target) or UnitInPartyIsAI(target) then
+    if SafeBoolTest(UnitIsPlayer(target)) or SafeBoolTest(UnitInPartyIsAI(target)) then
         for unit in F.IterateGroupMembers() do
-            if UnitIsUnit(target, unit) then
+            if SafeBoolTest(UnitIsUnit(target, unit)) then
                 return F.GetPetUnit(unit)
             end
         end
@@ -1520,28 +1527,28 @@ function F.IsVehicle(guid)
 end
 
 function F.GetTargetUnitInfo()
-    if UnitIsUnit("target", "player") then
+    if SafeBoolTest(UnitIsUnit("target", "player")) then
         return "player", UnitName("player"), UnitClassBase("player")
-    elseif UnitIsUnit("target", "pet") then
+    elseif SafeBoolTest(UnitIsUnit("target", "pet")) then
         return "pet", UnitName("pet")
     end
     if not F.UnitInGroup("target") then return end
 
     if IsInRaid() then
         for i = 1, GetNumGroupMembers() do
-            if UnitIsUnit("target", "raid"..i) then
+            if SafeBoolTest(UnitIsUnit("target", "raid"..i)) then
                 return "raid"..i, UnitName("raid"..i), UnitClassBase("raid"..i)
             end
-            if UnitIsUnit("target", "raidpet"..i) then
+            if SafeBoolTest(UnitIsUnit("target", "raidpet"..i)) then
                 return "raidpet"..i, UnitName("raidpet"..i)
             end
         end
     elseif IsInGroup() then
         for i = 1, GetNumGroupMembers()-1 do
-            if UnitIsUnit("target", "party"..i) then
+            if SafeBoolTest(UnitIsUnit("target", "party"..i)) then
                 return "party"..i, UnitName("party"..i), UnitClassBase("party"..i)
             end
-            if UnitIsUnit("target", "partypet"..i) then
+            if SafeBoolTest(UnitIsUnit("target", "partypet"..i)) then
                 return "partypet"..i, UnitName("partypet"..i)
             end
         end
@@ -2365,7 +2372,7 @@ function F.IsInRange(unit, check)
         return false
     end
 
-    if UnitIsUnit("player", unit) then
+    if SafeBoolTest(UnitIsUnit("player", unit)) then
         return true
 
     elseif not check and F.UnitInGroup(unit) then
@@ -2383,17 +2390,17 @@ function F.IsInRange(unit, check)
         return inRange
 
     else
-        if UnitCanAssist("player", unit) then -- or UnitCanCooperate("player", unit)
-            if not (UnitIsConnected(unit) and UnitInSamePhase(unit)) then
+        if SafeBoolTest(UnitCanAssist("player", unit)) then -- or UnitCanCooperate("player", unit)
+            if not (SafeBoolTest(UnitIsConnected(unit)) and SafeBoolTest(UnitInSamePhase(unit))) then
                 return false
             end
 
-            if UnitIsDead(unit) then
+            if SafeBoolTest(UnitIsDead(unit)) then
                 if spell_dead then
-                    return UnitInSpellRange(spell_dead, unit)
+                    return SafeBoolTest(UnitInSpellRange(spell_dead, unit))
                 end
             elseif spell_friend then
-                return UnitInSpellRange(spell_friend, unit)
+                return SafeBoolTest(UnitInSpellRange(spell_friend, unit))
             end
 
             local ok2, inRange2, checked2 = pcall(function()
@@ -2404,18 +2411,18 @@ function F.IsInRange(unit, check)
                 return inRange2
             end
 
-            if UnitIsUnit(unit, "pet") and spell_pet then
+            if SafeBoolTest(UnitIsUnit(unit, "pet")) and spell_pet then
                 -- no spell_friend, use spell_pet
-                return UnitInSpellRange(spell_pet, unit)
+                return SafeBoolTest(UnitInSpellRange(spell_pet, unit))
             end
 
-        elseif UnitCanAttack("player", unit) then
-            if UnitIsDead(unit) then
-                return CheckInteractDistance(unit, 4) -- 28 yards
+        elseif SafeBoolTest(UnitCanAttack("player", unit)) then
+            if SafeBoolTest(UnitIsDead(unit)) then
+                return SafeBoolTest(CheckInteractDistance(unit, 4)) -- 28 yards
             elseif spell_harm then
-                return UnitInSpellRange(spell_harm, unit)
+                return SafeBoolTest(UnitInSpellRange(spell_harm, unit))
             end
-            return IsItemInRange(harmItems[playerClass], unit)
+            return SafeBoolTest(IsItemInRange(harmItems[playerClass], unit))
         end
 
         if not InCombatLockdown() then

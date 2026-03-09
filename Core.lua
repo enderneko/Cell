@@ -39,7 +39,7 @@ Cell.MIN_DEBUFFS_VERSION = 246
 Cell.MIN_QUICKASSIST_VERSION = 246
 
 --@debug@
-local debugMode = true
+local debugMode = false
 --@end-debug@
 function F.Debug(arg, ...)
     if debugMode then

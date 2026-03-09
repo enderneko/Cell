@@ -8,7 +8,7 @@ Cell.frames.aboutTab = aboutTab
 aboutTab:SetAllPoints(Cell.frames.optionsFrame)
 aboutTab:Hide()
 
-local authorText, specialThanksText, supportersText1, supportersText2
+local authorText, supportersText1, supportersText2
 local translatorsTextCN, translatorsTextKR, translatorsTextPT, translatorsTextDE, translatorsTextRU, translatorsTextFR, translatorsTextES, translatorsTextIT
 local UpdateFont
 
@@ -46,7 +46,7 @@ end
 -- author
 -------------------------------------------------
 local function CreateAuthorPane()
-    local authorPane = Cell.CreateTitledPane(aboutTab, L["Author"], 205, 50)
+    local authorPane = Cell.CreateTitledPane(aboutTab, L["Author"], 205, 65)
     authorPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -130)
 
     authorText = authorPane:CreateFontString(nil, "OVERLAY")
@@ -55,7 +55,7 @@ local function CreateAuthorPane()
     authorText.size = 12
     UpdateFont(authorText)
 
-    authorText:SetText("篠崎-影之哀伤 (CN)")
+    authorText:SetText("篠崎-影之哀伤 (CN)\nadorotheou (12.0 Fork)")
 end
 
 -------------------------------------------------
@@ -164,30 +164,6 @@ local function CreateTranslatorsPane()
     translatorsTextES:SetSpacing(5)
     translatorsTextES:SetJustifyH("LEFT")
     translatorsTextES:SetText("|cff999999esES:|r Zurent, maylisdalan, F3R_Lv72    |cff999999esMX:|r maylisdalan")
-end
-
--------------------------------------------------
--- special thanks
--------------------------------------------------
-local function CreateSpecialThanksPane()
-    local specialThanksPane = Cell.CreateTitledPane(aboutTab, L["Special Thanks"], 422, 120)
-    specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -320)
-
-    specialThanksText = specialThanksPane:CreateFontString(nil, "OVERLAY")
-    specialThanksText.font = UNIT_NAME_FONT_CHINESE
-    specialThanksText.size = 13
-    UpdateFont(specialThanksText)
-
-    specialThanksText:SetPoint("TOPLEFT", 5, -27)
-    specialThanksText:SetPoint("RIGHT", -5, 0)
-    specialThanksText:SetSpacing(5)
-    specialThanksText:SetJustifyH("LEFT")
-    specialThanksText:SetText(
-        "|cfffb6f92露露缇娅, Reat TV, 钛锬, Floofe, warbaby|r\n"..
-        "|cffff0000Wago:|r Ora\n"..
-        "|cffff3333YouTube:|r AutomaticJak, JFunkGaming, yumytv\n"..
-        "|cff5662f6Discord:|r |cff7fff00clankz.|r, |cff7fff00DreadMesh|r, |cff7fff00Missgunst|r, |cff00ffffVollmerino|r, aba, BinarySunshine, Bruds, Gharr, honeyhoney, leaKsi, Serghei, swirl, Xepheris"
-    )
 end
 
 -------------------------------------------------
@@ -430,7 +406,7 @@ end
 
 local function CreateLinksPane()
     local linksPane = Cell.CreateTitledPane(aboutTab, L["Links"], 422, 100)
-    linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -480)
+    linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -340)
 
     local current
 
@@ -522,7 +498,7 @@ end
 -------------------------------------------------
 local function CreateImportExportPane()
     local iePane = Cell.CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
-    iePane:SetPoint("TOPLEFT", 5, -595)
+    iePane:SetPoint("TOPLEFT", 5, -455)
 
     local importBtn = Cell.CreateButton(iePane, L["Import"], "accent-hover", {134, 20})
     importBtn:SetPoint("TOPLEFT", 5, -27)
@@ -551,7 +527,6 @@ local function ShowTab(tab)
             CreateDescriptionPane()
             CreateAuthorPane()
             CreateSlashPane()
-            CreateSpecialThanksPane()
             CreateTranslatorsPane()
             CreateLinksPane()
             CreateImportExportPane()
@@ -583,7 +558,6 @@ function Cell.UpdateAboutFont()
     UpdateFont(translatorsTextRU)
     UpdateFont(translatorsTextFR)
     UpdateFont(translatorsTextES)
-    UpdateFont(specialThanksText)
     UpdateFont(supportersText1)
     UpdateFont(supportersText2)
 end

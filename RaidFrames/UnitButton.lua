@@ -27,6 +27,11 @@ local UnitGetTotalAbsorbs = UnitGetTotalAbsorbs
 local UnitGetTotalHealAbsorbs = UnitGetTotalHealAbsorbs
 -- 12.0+ APIs for secret value support
 local issecretvalue = issecretvalue or function() return false end
+local function SafeBoolTest(val)
+    local ok, r = pcall(function(v) if v then return true else return false end end, val)
+    if ok then return r end
+    return false
+end
 local UnitHealthPercent = UnitHealthPercent
 local CreateUnitHealPredictionCalculator = CreateUnitHealPredictionCalculator
 local UnitGetDetailedHealPrediction = UnitGetDetailedHealPrediction
@@ -1420,7 +1425,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     end
 
     -- update dispels
-    if F.UnitInGroup(unit) or UnitIsFriend("player", unit) then
+    if F.UnitInGroup(unit) or SafeBoolTest(UnitIsFriend("player", unit)) then
         self.indicators.dispels:SetDispels(self._debuffs_dispel)
     end
 
@@ -1875,7 +1880,7 @@ local function UnitButton_UpdateHealthStates(self, diff)
     end
 
     self.states.wasDeadOrGhost = self.states.isDeadOrGhost
-    self.states.isDeadOrGhost = UnitIsDeadOrGhost(unit)
+    self.states.isDeadOrGhost = SafeBoolTest(UnitIsDeadOrGhost(unit))
     if self.states.wasDeadOrGhost ~= self.states.isDeadOrGhost then
         I.UpdateStatusIcon_Resurrection(self)
         UnitButton_UpdateHealthColor(self)
@@ -1935,7 +1940,7 @@ ShouldShowPowerText = function(b)
     elseif F.IsPet(b.states.guid) then
         class = "PET"
     elseif F.IsNPC(b.states.guid) then
-        if UnitInPartyIsAI(b.states.unit) then
+        if SafeBoolTest(UnitInPartyIsAI(b.states.unit)) then
             class = b.states.class
             role = GetRole(b)
         else
@@ -1977,7 +1982,7 @@ ShouldShowPowerBar = function(b)
     elseif F.IsPet(b.states.guid) then
         class = "PET"
     elseif F.IsNPC(b.states.guid) then
-        if UnitInPartyIsAI(b.states.unit) then
+        if SafeBoolTest(UnitInPartyIsAI(b.states.unit)) then
             class = b.states.class
             role = GetRole(b)
         else
@@ -2063,7 +2068,7 @@ local function UnitButton_UpdateTarget(self)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    if UnitIsUnit(unit, "target") then
+    if SafeBoolTest(UnitIsUnit(unit, "target")) then
         if highlightEnabled then self.widgets.targetHighlight:Show() end
     else
         self.widgets.targetHighlight:Hide()
@@ -2101,7 +2106,7 @@ UnitButton_UpdateRole = function(self)
         roleIcon:SetRole(role)
 
         --! check vehicle root
-        if self.states.guid and strfind(self.states.guid, "^Vehicle") and not UnitInPartyIsAI(unit) then
+        if self.states.guid and strfind(self.states.guid, "^Vehicle") and not SafeBoolTest(UnitInPartyIsAI(unit)) then
             CheckVehicleRoot(self, unit)
         end
     else
@@ -2121,9 +2126,9 @@ UnitButton_UpdateLeader = function(self, event)
             return
         end
 
-        local isLeader = UnitIsGroupLeader(unit)
+        local isLeader = SafeBoolTest(UnitIsGroupLeader(unit))
         self.states.isLeader = isLeader
-        local isAssistant = UnitIsGroupAssistant(unit) and IsInRaid()
+        local isAssistant = SafeBoolTest(UnitIsGroupAssistant(unit)) and IsInRaid()
         self.states.isAssistant = isAssistant
 
         leaderIcon:SetIcon(isLeader, isAssistant)
@@ -2252,7 +2257,7 @@ UnitButton_UpdatePowerType = function(self)
     local r, g, b, lossR, lossG, lossB
     local a = Cell.loaded and CellDB["appearance"]["lossAlpha"] or 1
 
-    if not UnitIsConnected(unit) then
+    if not SafeBoolTest(UnitIsConnected(unit)) then
         r, g, b = 0.4, 0.4, 0.4
         lossR, lossG, lossB = 0.4, 0.4, 0.4
     else
@@ -2517,10 +2522,10 @@ end
 
 local function UnitButton_UpdateThreat(self)
     local unit = self.states.displayedUnit
-    if not unit or not UnitExists(unit) then return end
+    if not unit or not SafeBoolTest(UnitExists(unit)) then return end
 
-    local status = UnitThreatSituation(unit)
-    if status and status >= 1 then
+    local ok, status = pcall(UnitThreatSituation, unit)
+    if ok and status and status >= 1 then
         if enabledIndicators["aggroBlink"] then
             self.indicators.aggroBlink:ShowAggro(GetThreatStatusColor(status))
         end
@@ -2540,7 +2545,7 @@ local function UnitButton_UpdateThreatBar(self)
     end
 
     local unit = self.states.displayedUnit
-    if not unit or not UnitExists(unit) then return end
+    if not unit or not SafeBoolTest(UnitExists(unit)) then return end
 
     -- isTanking, status, scaledPercentage, rawPercentage, threatValue = UnitDetailedThreatSituation(unit, mobUnit)
     local _, status, scaledPercentage, rawPercentage = UnitDetailedThreatSituation(unit, "target")
@@ -2559,7 +2564,7 @@ local function UnitButton_UpdateCombatIcon(self)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    if not (indicatorBooleans["combatIcon"] and InCombatLockdown()) and UnitAffectingCombat(unit) then
+    if not (indicatorBooleans["combatIcon"] and InCombatLockdown()) and SafeBoolTest(UnitAffectingCombat(unit)) then
         self.indicators.combatIcon:Show()
     else
         self.indicators.combatIcon:Hide()
@@ -2600,7 +2605,7 @@ local function UnitButton_UpdateVehicleStatus(self)
     local unit = self.states.unit
     if not unit then return end
 
-    if UnitHasVehicleUI(unit) then -- or UnitInVehicle(unit) or UnitUsingVehicle(unit) then
+    if SafeBoolTest(UnitHasVehicleUI(unit)) then -- or UnitInVehicle(unit) or UnitUsingVehicle(unit) then
         self.states.inVehicle = true
         if unit == "player" then
             self.states.displayedUnit = "vehicle"
@@ -2631,27 +2636,27 @@ UnitButton_UpdateStatusText = function(self)
     self.states.guid = UnitGUID(unit) -- update!
     if not self.states.guid then return end
 
-    if not UnitIsConnected(unit) and UnitIsPlayer(unit) then
+    if not SafeBoolTest(UnitIsConnected(unit)) and SafeBoolTest(UnitIsPlayer(unit)) then
         statusText:Show()
         statusText:SetStatus("OFFLINE")
         statusText:ShowTimer()
-    elseif UnitIsAFK(unit) then
+    elseif SafeBoolTest(UnitIsAFK(unit)) then
         statusText:Show()
         statusText:SetStatus("AFK")
         statusText:ShowTimer()
-    elseif UnitIsFeignDeath(unit) then
+    elseif SafeBoolTest(UnitIsFeignDeath(unit)) then
         statusText:Show()
         statusText:SetStatus("FEIGN")
         statusText:HideTimer(true)
-    elseif UnitIsDeadOrGhost(unit) then
+    elseif SafeBoolTest(UnitIsDeadOrGhost(unit)) then
         statusText:Show()
         statusText:HideTimer(true)
-        if UnitIsGhost(unit) then
+        if SafeBoolTest(UnitIsGhost(unit)) then
             statusText:SetStatus("GHOST")
         else
             statusText:SetStatus("DEAD")
         end
-    elseif C_IncomingSummon.HasIncomingSummon(unit) then
+    elseif SafeBoolTest(C_IncomingSummon.HasIncomingSummon(unit)) then
         statusText:Show()
         statusText:HideTimer()
         local status = C_IncomingSummon.IncomingSummonStatus(unit)
@@ -2684,7 +2689,7 @@ local function UnitButton_UpdateName(self)
     self.states.fullName = F.UnitFullName(unit)
     self.states.class = UnitClassBase(unit)
     self.states.guid = UnitGUID(unit)
-    self.states.isPlayer = UnitIsPlayer(unit)
+    self.states.isPlayer = SafeBoolTest(UnitIsPlayer(unit))
 
     self.indicators.nameText:UpdateName()
 end
@@ -2694,8 +2699,8 @@ UnitButton_UpdateNameTextColor = function(self)
     if not unit then return end
 
     if enabledIndicators["nameText"] then
-        if indicatorColors["nameText"][1] == "class_color" or not UnitIsConnected(unit)
-        or ((UnitIsPlayer(unit) or UnitInPartyIsAI(unit)) and UnitIsCharmed(unit)) or self.states.inVehicle then
+        if indicatorColors["nameText"][1] == "class_color" or not SafeBoolTest(UnitIsConnected(unit))
+        or ((SafeBoolTest(UnitIsPlayer(unit)) or SafeBoolTest(UnitInPartyIsAI(unit))) and SafeBoolTest(UnitIsCharmed(unit))) or self.states.inVehicle then
             self.indicators.nameText:SetColor(F.GetUnitClassColor(unit))
         else
             self.indicators.nameText:SetColor(unpack(indicatorColors["nameText"][2]))
@@ -2727,11 +2732,11 @@ UnitButton_UpdateHealthColor = function(self)
         lossA =  CellDB["appearance"]["lossAlpha"]
     end
 
-    if UnitIsPlayer(unit) or UnitInPartyIsAI(unit) then -- player
-        if not UnitIsConnected(unit) then
+    if SafeBoolTest(UnitIsPlayer(unit)) or SafeBoolTest(UnitInPartyIsAI(unit)) then -- player
+        if not SafeBoolTest(UnitIsConnected(unit)) then
             barR, barG, barB = 0.4, 0.4, 0.4
             lossR, lossG, lossB = 0.4, 0.4, 0.4
-        elseif UnitIsCharmed(unit) then
+        elseif SafeBoolTest(UnitIsCharmed(unit)) then
             barR, barG, barB, barA = 0.5, 0, 1, 1
             lossR, lossG, lossB, lossA = barR*0.2, barG*0.2, barB*0.2, 1
         elseif self.states.inVehicle then
@@ -3242,7 +3247,7 @@ local function UnitButton_OnTick(self)
                 if not self.isSpotlight then Cell.vars.guids[guid] = self.states.unit end
 
                 -- NOTE: only save players' names
-                if UnitIsPlayer(self.states.unit) then
+                if SafeBoolTest(UnitIsPlayer(self.states.unit)) then
                     -- update Cell.vars.names
                     local name = GetUnitName(self.states.unit, true)
                     if (name and self.__nameRetries and self.__nameRetries >= 4) or (name and name ~= UNKNOWN and name ~= UNKNOWNOBJECT) then

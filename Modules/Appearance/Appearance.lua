@@ -566,7 +566,7 @@ local function CheckTextures()
     local textures, textureNames
     local defaultTexture, defaultTextureName = "Interface\\AddOns\\Cell\\Media\\statusbar.tga", "Cell ".._G.DEFAULT
 
-    -- if LSM then
+    if LSM then
         textures, textureNames = F.Copy(LSM:HashTable("statusbar")), F.Copy(LSM:List("statusbar"))
 
         -- make default texture first
@@ -584,24 +584,24 @@ local function CheckTextures()
                 end,
             })
         end
-    -- else
-    --     textureNames = {defaultTextureName}
-    --     textures = {[defaultTextureName] = defaultTexture}
+    else
+        textureNames = {defaultTextureName}
+        textures = {[defaultTextureName] = defaultTexture}
 
-    --     tinsert(items, {
-    --         ["text"] = defaultTextureName,
-    --         ["texture"] = defaultTexture,
-    --         ["onClick"] = function()
-    --             CellDB["appearance"]["texture"] = defaultTextureName
-    --             F.GetBarTexture() -- update Cell.vars.texture NOW
-    --             Cell.Fire("UpdateAppearance", "texture")
-    --         end,
-    --     })
-    -- end
+        tinsert(items, {
+            ["text"] = defaultTextureName,
+            ["texture"] = defaultTexture,
+            ["onClick"] = function()
+                CellDB["appearance"]["texture"] = defaultTextureName
+                F.GetBarTexture() -- update Cell.vars.texture NOW
+                Cell.Fire("UpdateAppearance", "texture")
+            end,
+        })
+    end
     textureDropdown:SetItems(items)
 
     -- validation
-    if textures[CellDB["appearance"]["texture"]] then
+    if textures and textures[CellDB["appearance"]["texture"]] then
         textureDropdown:SetSelected(CellDB["appearance"]["texture"], textures[CellDB["appearance"]["texture"]])
     else
         textureDropdown:SetSelected(defaultTextureName, defaultTexture)

@@ -138,6 +138,17 @@ lib.specRoles = specRoles
 -- functions
 local NotifyInspect = NotifyInspect
 local UnitGUID = UnitGUID
+local issecretvalue = issecretvalue or function() return false end
+local function SafeBoolTest(val)
+    local ok, r = pcall(function(v) if v then return true else return false end end, val)
+    if ok then return r end
+    return false
+end
+local function SafeUnitGUID(unit)
+    local ok, guid = pcall(UnitGUID, unit)
+    if not ok or not guid or issecretvalue(guid) then return nil end
+    return guid
+end
 local UnitClassBase = UnitClassBase
 local UnitIsUnit = UnitIsUnit
 local UnitIsDead = UnitIsDead
@@ -566,14 +577,14 @@ end
 -- other events: update
 ---------------------------------------------------------------------
 function frame:PLAYER_SPECIALIZATION_CHANGED(unit)
-    if not UnitIsPlayer(unit) then return end
+    if not SafeBoolTest(UnitIsPlayer(unit)) then return end
     if strfind(unit, "target") or strfind(unit, "nameplate") then return end
 
     if UnitIsUnit(unit, "player") then
         Query(unit)
     else
-        local guid = UnitGUID(unit)
-        if cache[guid] then
+        local guid = SafeUnitGUID(unit)
+        if guid and cache[guid] then
             cache[guid].inspected = nil
         end
         if queueGUIDs[guid] then
@@ -597,8 +608,8 @@ end
 -- end
 
 function frame:UNIT_LEVEL(unit)
-    local guid = UnitGUID(unit)
-    if cache[guid] then
+    local guid = SafeUnitGUID(unit)
+    if guid and cache[guid] then
         cache[guid].level = UnitLevel(unit)
     end
 end
