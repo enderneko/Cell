@@ -1744,16 +1744,42 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     end
                 end
                 -- activate C-level cooldown animation when duration is secret.
-                -- Only CLOCK style works: its ShowCooldown is the C-level SetCooldown
-                -- which handles secrets internally. VERTICAL style uses Lua arithmetic
-                -- in OnUpdate (GetValue() + elapsed) which crashes on secret-tainted values.
+                -- CooldownFrame:SetCooldown is C-level and handles secrets internally.
+                -- VERTICAL style uses Lua arithmetic (OnUpdate: GetValue() + elapsed)
+                -- which crashes on secrets, so we use a temporary CLOCK overlay instead.
                 -- NOTE: must use issecretvalue() — boolean test on secret crashes.
-                if auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration)
-                    and frame.cooldown and frame.style == "CLOCK" then
+                if auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration) then
                     local approxStart = auraInfo._addedTime or GetTime()
-                    pcall(frame.cooldown.ShowCooldown, frame.cooldown,
-                        approxStart, auraInfo._rawDuration)
-                    frame.cooldown:Show()
+                    if frame.style == "CLOCK" and frame.cooldown then
+                        pcall(frame.cooldown.ShowCooldown, frame.cooldown,
+                            approxStart, auraInfo._rawDuration)
+                        frame.cooldown:Show()
+                    else
+                        -- VERTICAL or other style: create a temporary CLOCK overlay
+                        if not frame._secretClockOverlay then
+                            local cd = CreateFrame("Cooldown", nil, frame)
+                            cd:SetAllPoints(frame.icon or frame)
+                            cd:SetReverse(true)
+                            cd:SetDrawEdge(false)
+                            cd:SetSwipeTexture(Cell.vars.whiteTexture)
+                            cd:SetSwipeColor(0, 0, 0, 0.77)
+                            cd:SetHideCountdownNumbers(true)
+                            cd.noCooldownCount = true
+                            cd._setCooldown = cd.SetCooldown -- save C-level ref
+                            frame._secretClockOverlay = cd
+                        end
+                        local cd = frame._secretClockOverlay
+                        if frame.cooldown then frame.cooldown:Hide() end
+                        pcall(cd._setCooldown, cd, approxStart, auraInfo._rawDuration)
+                        cd:Show()
+                    end
+                    frame._secretClockActive = true
+                elseif frame._secretClockActive then
+                    -- duration became readable again: clean up overlay
+                    frame._secretClockActive = nil
+                    if frame._secretClockOverlay then
+                        frame._secretClockOverlay:Hide()
+                    end
                 end
             end
         end
