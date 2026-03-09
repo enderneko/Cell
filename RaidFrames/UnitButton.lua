@@ -1739,11 +1739,12 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     end
                 end
                 -- activate C-level cooldown animation when duration is secret.
-                -- CooldownFrame:SetCooldown is C-level and can handle secret values.
-                -- Use _addedTime as approximate start (accurate for newly applied auras).
+                -- Only CLOCK style works: its ShowCooldown is the C-level SetCooldown
+                -- which handles secrets internally. VERTICAL style uses Lua arithmetic
+                -- in OnUpdate (GetValue() + elapsed) which crashes on secret-tainted values.
                 -- NOTE: must use issecretvalue() — boolean test on secret crashes.
                 if auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration)
-                    and frame.cooldown and frame.cooldown.ShowCooldown then
+                    and frame.cooldown and frame.style == "CLOCK" then
                     local approxStart = auraInfo._addedTime or GetTime()
                     pcall(frame.cooldown.ShowCooldown, frame.cooldown,
                         approxStart, auraInfo._rawDuration)
