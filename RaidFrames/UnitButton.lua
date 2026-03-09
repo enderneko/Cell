@@ -1737,6 +1737,27 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
         self.indicators.debuffs[i].spellId = nil
     end
 
+    -- 12.0+: fix debuff icon backdrop color for secret dispellable debuffs.
+    -- When dispelName is secret, it falls back to "" which gives a red border.
+    -- Re-color using the highlight curve to show the correct type color.
+    if _dispelCurvesReady and self.states.displayedUnit then
+        for i = 1, startIndex - 1 do
+            local frame = self.indicators.debuffs[i]
+            if frame and frame.auraInstanceID then
+                local auraInfo = self._debuffs_cache[frame.auraInstanceID]
+                if auraInfo and auraInfo._dispelNameIsSecret then
+                    local hlColor = _getCurveColor(self.states.displayedUnit, frame.auraInstanceID, _dispelHighlightCurve)
+                    if hlColor then
+                        local ok, r, g, b = pcall(hlColor.GetRGBA, hlColor)
+                        if ok then
+                            pcall(frame.SetBackdropColor, frame, r, g, b)
+                        end
+                    end
+                end
+            end
+        end
+    end
+
     -- update dispels
     if F.UnitInGroup(unit) or UnitIsFriend("player", unit) then
         -- 12.0+: restore icon positions and alpha if they were stacked by secret dispel mode
