@@ -1192,10 +1192,18 @@ local function HandleDebuff(self, auraInfo)
     local count = auraInfo.applications
     local debuffType = auraInfo.dispelName or ""
     local expirationTime = auraInfo.expirationTime or 0
-    local start = expirationTime - auraInfo.duration
-    local duration = auraInfo.duration
+    local duration = auraInfo.duration or 0
+    local start
+    if issecretvalue and (issecretvalue(expirationTime) or issecretvalue(duration)) then
+        start = 0
+        duration = 0
+        expirationTime = 0
+    else
+        start = expirationTime - duration
+    end
     local source = auraInfo.sourceUnit
     local spellId = auraInfo.spellId
+    if issecretvalue and issecretvalue(spellId) then spellId = 0 end
     -- local attribute = auraInfo.points[1] -- UnitAura:arg16
 
     auraInfo.refreshing = false

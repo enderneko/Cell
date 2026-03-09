@@ -793,7 +793,9 @@ local function CheckCondition(operator, checkedValue, currentValue)
 end
 
 function I.GetDebuffOrder(spellName, spellId, count)
-    local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
+    if issecretvalue and issecretvalue(spellId) then spellId = nil end
+    if issecretvalue and issecretvalue(count) then count = 0 end
+    local t = (spellId and currentAreaDebuffs[spellId]) or currentAreaDebuffs[spellName]
     if not t then return end
 
     -- check condition
@@ -808,7 +810,9 @@ function I.GetDebuffOrder(spellName, spellId, count)
 end
 
 function I.GetDebuffGlow(spellName, spellId, count)
-    local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
+    if issecretvalue and issecretvalue(spellId) then spellId = nil end
+    if issecretvalue and issecretvalue(count) then count = 0 end
+    local t = (spellId and currentAreaDebuffs[spellId]) or currentAreaDebuffs[spellName]
     if not t then return end
 
     local showGlow
@@ -828,7 +832,8 @@ function I.GetDebuffGlow(spellName, spellId, count)
 end
 
 function I.IsDebuffUseElapsedTime(spellName, spellId)
-    local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
+    if issecretvalue and issecretvalue(spellId) then spellId = nil end
+    local t = (spellId and currentAreaDebuffs[spellId]) or currentAreaDebuffs[spellName]
     if not t then return end
 
     return t["useElapsedTime"]
