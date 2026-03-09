@@ -1721,12 +1721,20 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
 
     -- update dispels
     if F.UnitInGroup(unit) or UnitIsFriend("player", unit) then
+        -- 12.0+: restore icon positions and alpha if they were stacked by secret dispel mode
+        if self.indicators.dispels._secretIconsStacked then
+            self.indicators.dispels:SetOrientation(self.indicators.dispels._orientation)
+            self.indicators.dispels._secretIconsStacked = nil
+            for i = 1, 5 do
+                self.indicators.dispels[i]:SetAlpha(1)
+                self.indicators.dispels[i]:SetVertexColor(1, 1, 1, 1)
+            end
+        end
         self.indicators.dispels:SetDispels(self._debuffs_dispel)
 
         -- 12.0+: if SetDispels found nothing but we detected a secret dispellable debuff,
-        -- use bracket curves to render the dispel indicator directly via SetVertexColor.
-        -- Each bracket curve isolates one type: returns visible color for the matching
-        -- type, transparent for all others. C-level SetVertexColor handles secret values.
+        -- use color curves to render the dispel indicator directly via SetVertexColor.
+        -- C-level SetVertexColor handles secret values from the curves.
         if self._secretDispelAuraID and _dispelCurvesReady
             and not self.indicators.dispels.highlight:IsShown()
             and enabledIndicators["dispels"] then
@@ -1740,7 +1748,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             if hlColor then
                 local colorOk, cr, cg, cb, ca = pcall(hlColor.GetRGBA, hlColor)
                 if colorOk then
-                    -- highlight: apply correct type color
+                    -- highlight: match the user's highlight type setting
                     local ht = dispels.highlightType
                     if ht and ht ~= "none" then
                         if ht == "entire" then
@@ -1750,28 +1758,50 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                             dispels.highlight:SetTexture(Cell.vars.texture)
                             pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 1)
                         elseif ht == "gradient" or ht == "gradient-half" then
-                            -- SetGradient crashes with secret values; use flat color fallback
                             dispels.highlight:SetTexture(Cell.vars.whiteTexture)
-                            pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 0.5)
+                            -- try SetGradient (C-level but may crash with secrets); fall back to flat
+                            local gradOk = pcall(function()
+                                dispels.highlight:SetGradient("VERTICAL",
+                                    CreateColor(cr, cg, cb, 1), CreateColor(cr, cg, cb, 0))
+                            end)
+                            if not gradOk then
+                                pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 0.5)
+                            end
                         end
                         dispels.highlight:Show()
                     end
 
-                    -- icon: show a single colored rhombus using the type color.
-                    -- In combat with secret values we can't determine the type name
-                    -- for blizzard-style textures, so we use rhombus universally.
-                    -- Normal style/icons restore when combat ends (PLAYER_REGEN_ENABLED).
+                    -- icons: stack all 5 type icons at position 1, using bracket curve
+                    -- alpha to control visibility (matching type=opaque, others=transparent).
+                    -- SetDispel sets texture/color per user's style (blizzard or rhombus).
+                    -- SetAlpha with secret bracket curve alpha controls which icon renders.
                     if dispels.showIcons then
-                        local icon = dispels[1]
-                        if icon then
-                            icon:SetTexture("Interface\\AddOns\\Cell\\Media\\Debuffs\\Rhombus")
-                            pcall(icon.SetVertexColor, icon, cr, cg, cb, 1)
-                            icon:Show()
+                        for i, t in ipairs(_dispelTypes) do
+                            local icon = dispels[i]
+                            if icon then
+                                -- set texture/color via user's chosen style
+                                if icon.SetDispel then
+                                    icon:SetDispel(t.name)
+                                end
+                                -- bracket curve: alpha=1 for matching type, 0 for others
+                                -- SetAlpha is C-level and handles secret values
+                                local bColor = _getCurveColor(sUnit, sAuraID, _bracketCurves[t.name])
+                                if bColor then
+                                    local bOk, _, _, _, ba = pcall(bColor.GetRGBA, bColor)
+                                    if bOk then
+                                        pcall(icon.SetAlpha, icon, ba)
+                                    end
+                                end
+                                -- stack at icon 1's position
+                                if i > 1 then
+                                    icon:ClearAllPoints()
+                                    icon:SetAllPoints(dispels[1])
+                                end
+                                icon:Show()
+                            end
                         end
                         dispels:UpdateSize(1)
-                        for j = 2, 5 do
-                            dispels[j]:Hide()
-                        end
+                        dispels._secretIconsStacked = true
                     end
                 end
             end
