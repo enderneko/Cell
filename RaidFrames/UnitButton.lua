@@ -249,12 +249,16 @@ end
 function F.PrintDispelDiag()
     local n = 0
     if dispelColorToName then for _ in pairs(dispelColorToName) do n = n + 1 end end
+    local k = 0
+    -- _knownDispelTypes defined later; access via upvalue after HandleDebuff is defined
     print("|cff00ff00[Cell Dispel Diag]|r")
     print("  GetAuraDispelTypeColor:", _GetAuraDispelTypeColor and "exists" or "MISSING")
+    print("  IsAuraFilteredOut:", _IsAuraFilteredOut and "exists" or "MISSING")
     print("  dispelColorCurve:", dispelColorCurve and "initialized" or "NIL")
     print("  dispelColorToName:", dispelColorToName and (n .. " entries") or "NIL")
     print("  issecretvalue:", rawget(_G, "issecretvalue") and "native" or "fallback")
 end
+-- F.PrintKnownDispels defined after _knownDispelTypes (see HandleDebuff section)
 
 -------------------------------------------------
 -- unit button func declarations
@@ -1319,6 +1323,18 @@ end
 local _oldDebuffsCache
 local _oldBuffsCache
 
+-- persistent spellId → dispelName cache; survives across auraInstanceID changes
+local _knownDispelTypes = {}
+function F.PrintKnownDispels()
+    local n = 0
+    print("|cff00ff00[Cell Known Dispel Types]|r")
+    for spellId, dispelType in pairs(_knownDispelTypes) do
+        print(string.format("  %d = %s", spellId, dispelType))
+        n = n + 1
+    end
+    print("  Total:", n, "entries")
+end
+
 local function HandleDebuff(self, auraInfo)
     local auraInstanceID = auraInfo.auraInstanceID
 
@@ -1331,27 +1347,42 @@ local function HandleDebuff(self, auraInfo)
     local icon = auraInfo.icon
     local count = auraInfo.applications
     local debuffType = auraInfo.dispelName or ""
-    -- 12.0+: dispelName may be nil when secret in combat; resolve via color curve
-    if debuffType == "" and self.states.displayedUnit and InCombatLockdown() then
-        local resolvedType = ResolveDispelTypeByColor(self.states.displayedUnit, auraInstanceID)
-        if resolvedType then
-            debuffType = resolvedType
-            auraInfo.dispelName = resolvedType
+    local spellId = auraInfo.spellId
+
+    -- 12.0+: resolve secret dispelName via multiple fallbacks
+    if debuffType == "" and InCombatLockdown() then
+        -- fallback 1: persistent spellId → dispelName cache
+        if spellId and _knownDispelTypes[spellId] then
+            debuffType = _knownDispelTypes[spellId]
+            auraInfo.dispelName = debuffType
+        end
+        -- fallback 2: color curve (works when RGB is readable)
+        if debuffType == "" and self.states.displayedUnit then
+            local resolvedType = ResolveDispelTypeByColor(self.states.displayedUnit, auraInstanceID)
+            if resolvedType then
+                debuffType = resolvedType
+                auraInfo.dispelName = resolvedType
+            end
         end
     end
+
+    -- learn dispelName for this spellId whenever both are readable
+    if spellId and debuffType ~= "" then
+        _knownDispelTypes[spellId] = debuffType
+    end
+
     local expirationTime = auraInfo.expirationTime or 0
     local start = expirationTime - auraInfo.duration
     local duration = auraInfo.duration
     local source = auraInfo.sourceUnit
-    local spellId = auraInfo.spellId
     -- local attribute = auraInfo.points[1] -- UnitAura:arg16
 
     auraInfo.refreshing = false
 
-    if _dispelTraceEnabled and auraInfo.isHarmful then
-        print(string.format("|cff00ff00[Dispel]|r id=%s name=%s dispel=%s unit=%s",
+    if _dispelTraceEnabled then
+        print(string.format("|cff00ff00[Dispel]|r id=%s name=%s dispel=%s spellId=%s unit=%s",
             tostring(auraInstanceID), tostring(name),
-            tostring(debuffType), tostring(self.states.displayedUnit)))
+            tostring(debuffType), tostring(spellId), tostring(self.states.displayedUnit)))
     end
 
     -- check Bleed
