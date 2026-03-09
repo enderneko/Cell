@@ -2013,39 +2013,93 @@ end
 -- NOTE: FrameXML/AuraUtil.lua
 -- AuraUtil.FindAura(predicate, unit, filter, predicateArg1, predicateArg2, predicateArg3)
 -- predicate(predicateArg1, predicateArg2, predicateArg3, ...)
-local function predicate(...)
-    local idToFind = ...
-    local id = select(13, ...)
-    return idToFind == id
-end
+if Cell.isMidnight then
+    -- Midnight: AuraUtil.FindAura calls UnpackAuraData which errors on secret points.
+    -- Use C_UnitAuras.GetAuraDataBySpellName or iterate with GetAuraDataByIndex instead.
+    function F.FindAuraById(unit, type, spellId)
+        local filter = (type == "BUFF") and "HELPFUL" or "HARMFUL"
+        for i = 1, 40 do
+            local aura = C_UnitAuras.GetAuraDataByIndex(unit, i, filter)
+            if not aura then break end
+            local ok, sid = pcall(function() return aura.spellId end)
+            if ok and sid == spellId then
+                local dur = 0
+                local expir = 0
+                pcall(function() dur = aura.duration or 0 end)
+                pcall(function() expir = aura.expirationTime or 0 end)
+                return aura.name, aura.icon, aura.applications, aura.dispelName, dur, expir, aura.sourceUnit
+            end
+        end
+    end
+else
+    local function predicate(...)
+        local idToFind = ...
+        local id = select(13, ...)
+        return idToFind == id
+    end
 
-function F.FindAuraById(unit, type, spellId)
-    if type == "BUFF" then
-        return AuraUtil.FindAura(predicate, unit, "HELPFUL", spellId)
-    else
-        return AuraUtil.FindAura(predicate, unit, "HARMFUL", spellId)
+    function F.FindAuraById(unit, type, spellId)
+        if type == "BUFF" then
+            return AuraUtil.FindAura(predicate, unit, "HELPFUL", spellId)
+        else
+            return AuraUtil.FindAura(predicate, unit, "HARMFUL", spellId)
+        end
     end
 end
 
 if Cell.isRetail then
-    function F.FindDebuffByIds(unit, spellIds)
-        local debuffs = {}
-        AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
-            if spellIds[spellId] then
-                debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
+    if Cell.isMidnight then
+        function F.FindDebuffByIds(unit, spellIds)
+            local debuffs = {}
+            for i = 1, 40 do
+                local aura = C_UnitAuras.GetAuraDataByIndex(unit, i, "HARMFUL")
+                if not aura then break end
+                local ok, sid = pcall(function() return aura.spellId end)
+                if ok and not issecretvalue(sid) and spellIds[sid] then
+                    local dispel = ""
+                    pcall(function() dispel = aura.dispelName or "" end)
+                    debuffs[sid] = I.CheckDebuffType(dispel, sid)
+                end
             end
-        end)
-        return debuffs
-    end
+            return debuffs
+        end
 
-    function F.FindAuraByDebuffTypes(unit, types)
-        local debuffs = {}
-        AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
-            if types == "all" or types[debuffType] then
-                debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
+        function F.FindAuraByDebuffTypes(unit, types)
+            local debuffs = {}
+            for i = 1, 40 do
+                local aura = C_UnitAuras.GetAuraDataByIndex(unit, i, "HARMFUL")
+                if not aura then break end
+                local ok, sid = pcall(function() return aura.spellId end)
+                if ok and not issecretvalue(sid) then
+                    local dispel = ""
+                    pcall(function() dispel = aura.dispelName or "" end)
+                    if types == "all" or types[dispel] then
+                        debuffs[sid] = I.CheckDebuffType(dispel, sid)
+                    end
+                end
             end
-        end)
-        return debuffs
+            return debuffs
+        end
+    else
+        function F.FindDebuffByIds(unit, spellIds)
+            local debuffs = {}
+            AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+                if spellIds[spellId] then
+                    debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
+                end
+            end)
+            return debuffs
+        end
+
+        function F.FindAuraByDebuffTypes(unit, types)
+            local debuffs = {}
+            AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+                if types == "all" or types[debuffType] then
+                    debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
+                end
+            end)
+            return debuffs
+        end
     end
 else
     function F.FindDebuffByIds(unit, spellIds)
