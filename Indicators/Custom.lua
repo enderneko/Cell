@@ -11,7 +11,7 @@ local I = Cell.iFuncs
 -- - DO NOT compare secret values with == or use arithmetic on them
 -- - DO NOT use secret values as table keys
 -- - FontString:SetText() and SetTexture() ACCEPT secrets safely
--- - Use issecretvalue(val) to check if a value is secret
+-- - Use F.IsSecretValue(val) to check if a value is secret
 -- - Use GetRestrictedActionStatus(0) to check if aura access is restricted
 
 -------------------------------------------------
@@ -258,8 +258,8 @@ function I.UpdateCustomIndicators(unitButton, auraInfo)
     local isHelpful = auraInfo.isHelpful
     local isHarmful = auraInfo.isHarmful
     if Cell.isMidnight then
-        if issecretvalue(isHelpful) then isHelpful = nil end
-        if issecretvalue(isHarmful) then isHarmful = nil end
+        if F.IsSecretValue(isHelpful) then isHelpful = nil end
+        if F.IsSecretValue(isHarmful) then isHarmful = nil end
     end
 
     local auraType = isHelpful and "buff" or "debuff"
@@ -273,13 +273,13 @@ function I.UpdateCustomIndicators(unitButton, auraInfo)
     local spellId = auraInfo._safeSpellId or auraInfo.spellId
 
     if Cell.isMidnight then
-        if issecretvalue(count) then count = 0 end
-        if issecretvalue(duration) then duration = 0 end
-        if issecretvalue(expirationTime) then expirationTime = 0 end
-        if issecretvalue(source) then source = nil end
-        if issecretvalue(name) then name = nil end
-        if issecretvalue(spellId) then spellId = 0 end
-        if issecretvalue(debuffType) then debuffType = "" end
+        if F.IsSecretValue(count) then count = 0 end
+        if F.IsSecretValue(duration) then duration = 0 end
+        if F.IsSecretValue(expirationTime) then expirationTime = 0 end
+        if F.IsSecretValue(source) then source = nil end
+        if F.IsSecretValue(name) then name = nil end
+        if F.IsSecretValue(spellId) then spellId = 0 end
+        if F.IsSecretValue(debuffType) then debuffType = "" end
     end
 
     local start = (duration > 0) and (expirationTime - duration) or 0

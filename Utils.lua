@@ -2022,7 +2022,7 @@ if Cell.isMidnight then
             local aura = C_UnitAuras.GetAuraDataByIndex(unit, i, filter)
             if not aura then break end
             local ok, sid = pcall(function() return aura.spellId end)
-            if ok and not issecretvalue(sid) and sid == spellId then
+            if ok and not F.IsSecretValue(sid) and sid == spellId then
                 local dur = 0
                 local expir = 0
                 pcall(function() dur = aura.duration or 0 end)
@@ -2055,7 +2055,7 @@ if Cell.isRetail then
                 local aura = C_UnitAuras.GetAuraDataByIndex(unit, i, "HARMFUL")
                 if not aura then break end
                 local ok, sid = pcall(function() return aura.spellId end)
-                if ok and not issecretvalue(sid) and spellIds[sid] then
+                if ok and not F.IsSecretValue(sid) and spellIds[sid] then
                     local dispel = ""
                     pcall(function() dispel = aura.dispelName or "" end)
                     debuffs[sid] = I.CheckDebuffType(dispel, sid)
@@ -2070,7 +2070,7 @@ if Cell.isRetail then
                 local aura = C_UnitAuras.GetAuraDataByIndex(unit, i, "HARMFUL")
                 if not aura then break end
                 local ok, sid = pcall(function() return aura.spellId end)
-                if ok and not issecretvalue(sid) then
+                if ok and not F.IsSecretValue(sid) then
                     local dispel = ""
                     pcall(function() dispel = aura.dispelName or "" end)
                     if types == "all" or types[dispel] then

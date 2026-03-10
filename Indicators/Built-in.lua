@@ -798,9 +798,9 @@ function I.GetCurrentAreaDebuffs()
 end
 
 function I.GetDebuffOrder(spellName, spellId, count)
-    if issecretvalue and issecretvalue(spellId) then spellId = nil end
-    if issecretvalue and issecretvalue(spellName) then spellName = nil end
-    if issecretvalue and issecretvalue(count) then count = 0 end
+    if F.IsSecretValue(spellId) then spellId = nil end
+    if F.IsSecretValue(spellName) then spellName = nil end
+    if F.IsSecretValue(count) then count = 0 end
     local t = (spellId and currentAreaDebuffs[spellId]) or (spellName and currentAreaDebuffs[spellName])
     if not t then return end
 
@@ -816,9 +816,9 @@ function I.GetDebuffOrder(spellName, spellId, count)
 end
 
 function I.GetDebuffGlow(spellName, spellId, count)
-    if issecretvalue and issecretvalue(spellId) then spellId = nil end
-    if issecretvalue and issecretvalue(spellName) then spellName = nil end
-    if issecretvalue and issecretvalue(count) then count = 0 end
+    if F.IsSecretValue(spellId) then spellId = nil end
+    if F.IsSecretValue(spellName) then spellName = nil end
+    if F.IsSecretValue(count) then count = 0 end
     local t = (spellId and currentAreaDebuffs[spellId]) or (spellName and currentAreaDebuffs[spellName])
     if not t then return end
 
@@ -839,8 +839,8 @@ function I.GetDebuffGlow(spellName, spellId, count)
 end
 
 function I.IsDebuffUseElapsedTime(spellName, spellId)
-    if issecretvalue and issecretvalue(spellId) then spellId = nil end
-    if issecretvalue and issecretvalue(spellName) then spellName = nil end
+    if F.IsSecretValue(spellId) then spellId = nil end
+    if F.IsSecretValue(spellName) then spellName = nil end
     local t = (spellId and currentAreaDebuffs[spellId]) or (spellName and currentAreaDebuffs[spellName])
     if not t then return end
 
