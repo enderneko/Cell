@@ -2628,21 +2628,31 @@ end
 -- Determine class and role for a unit button (used by power filter functions)
 local function GetClassAndRole(b)
     local class, role
+    local guid = b.states.guid
+    -- 12.0+: guid may be secret for NPC units — can't use string.find on secrets
+    if guid and issecretvalue and issecretvalue(guid) then
+        -- Fallback: use UnitInPartyIsAI to detect AI followers without needing guid
+        if b.states.unit and UnitInPartyIsAI(b.states.unit) then
+            class = b.states.class
+            role = GetRole(b)
+        end
+        return class, role
+    end
     if b.states.inVehicle then
         class = "VEHICLE"
-    elseif F.IsPlayer(b.states.guid) then
+    elseif F.IsPlayer(guid) then
         class = b.states.class
         role = GetRole(b)
-    elseif F.IsPet(b.states.guid) then
+    elseif F.IsPet(guid) then
         class = "PET"
-    elseif F.IsNPC(b.states.guid) then
+    elseif F.IsNPC(guid) then
         if UnitInPartyIsAI(b.states.unit) then
             class = b.states.class
             role = GetRole(b)
         else
             class = "NPC"
         end
-    elseif F.IsVehicle(b.states.guid) then
+    elseif F.IsVehicle(guid) then
         class = "VEHICLE"
     end
     return class, role
