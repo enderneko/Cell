@@ -53,11 +53,7 @@ local defaultSpells = {
             212040, -- Revitalize - 新生
             88423, -- Nature's Cure - 自然之愈
             "33763S", -- Lifebloom - 生命绽放
-            "102351S", -- Cenarion Ward - 塞纳里奥结界
-            "50464S", -- Nourish - 滋养
             "102342S", -- Ironbark - 铁木树皮
-            "203651S", -- Overgrowth - 过度生长
-            "392160S", -- Invigorate - 鼓舞
             "18562S", -- Swiftmend - 迅捷治愈
             "102693H", -- Grove Guardians - 林莽卫士
             "305497P", -- pvp - Thorns - 荆棘术
@@ -91,7 +87,6 @@ local defaultSpells = {
             360823, -- Naturalize - 自然平衡
             "364343S", -- Echo - 回响
             "366155S", -- Reversion - 逆转
-            "367226S", -- Spiritbloom - 精神之花
             "357170S", -- Time Dilation - 时间膨胀
         },
         -- 1473 - Augmentation
@@ -184,12 +179,11 @@ local defaultSpells = {
             "223306S", -- Bestow Faith -- 赋予信仰
             "114165S", -- Holy Prism - 神圣棱镜
             "183998S", -- Light of the Martyr -- 殉道者之光
-            "148039S", -- Barrier of Faith - 信仰屏障
             "156910S", -- Beacon of Faith - 信仰道标
-            "388007S", -- Blessing of Summer - 仲夏祝福
             "200025S", -- Beacon of Virtue -- 美德道标
             "432459H", -- Holy Bulwark - 神圣壁垒
             "156322H", -- Eternal Flame - 永恒之火
+            "148039P", -- pvp - Barrier of Faith - 信仰屏障
         },
         -- 66 - Protection
         [66] = {
@@ -229,6 +223,7 @@ local defaultSpells = {
             "194509S", -- Power Word: Radiance - 真言术：耀
             "33206S", -- Pain Suppression - 痛苦压制
             "47536S", -- Rapture - 全神贯注
+            "62618S", -- Power Word: Barrier - 真言术：障
             -- "314867S", -- Shadow Covenant - 暗影盟约 (removed in 12.0)
             -- "421453S", -- Ultimate Penitence - 终极苦修
         },
@@ -239,16 +234,19 @@ local defaultSpells = {
             2060, -- Heal - 治疗术
             "33076S", -- Prayer of Mending - 愈合祷言 (moved from class to Holy in 12.0)
             "2050S", -- Holy Word: Serenity - 圣言术：静
+            "34861S", -- Holy Word: Sanctify - 圣言术：灵
             "596S", -- Prayer of Healing - 治疗祷言
             "47788S", -- Guardian Spirit - 守护之魂
             "204883S", -- Circle of Healing - 治疗之环
+            "64843S", -- Divine Hymn - 神圣赞美诗
+            "200183S", -- Apotheosis - 神化
             "289666P", -- pvp - Greater Heal - 强效治疗术
             "213610P", -- pvp - Holy Ward - 神圣守卫
             "197268P", -- pvp - Ray of Hope - 希望之光
         },
         -- 258 - Shadow
         [258] = {
-            "213634C", -- Purify Disease - 净化疾病
+            "213634C", -- Purify Disease
         },
     },
 
@@ -266,7 +264,6 @@ local defaultSpells = {
         ["common"] = {
             462854, -- Skyfury - 天怒
             2008, -- Ancestral Spirit - 先祖之魂
-            8004, -- Healing Surge - 治疗之涌
             546, -- Water Walking - 水上行走
             "1064C", -- Chain Heal - 治疗链
             "974C", -- Earth Shield - 大地之盾
@@ -287,7 +284,6 @@ local defaultSpells = {
             "61295S", -- Riptide - 激流
             "77472S", -- Healing Wave - 治疗波
             "73685S", -- Unleash Life - 生命释放
-            "428332S", -- Primordial Wave - 始源之潮
         },
     },
 

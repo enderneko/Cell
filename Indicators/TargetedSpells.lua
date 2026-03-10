@@ -152,7 +152,8 @@ local function CheckUnitCast(sourceUnit, isRecheck)
 
     local sourceGUID = UnitGUID(sourceUnit)
     -- Midnight 12.0.0+: UnitGUID for nameplates may return secret strings
-    if Cell.isMidnight and issecretvalue and issecretvalue(sourceGUID) then return end
+    if issecretvalue and issecretvalue(sourceGUID) then return end
+    if not sourceGUID then return end
     local targetGUID
     local previousTarget, isChanneling
 
@@ -176,6 +177,11 @@ local function CheckUnitCast(sourceUnit, isRecheck)
 
     -- print(sourceUnit, name, spellId)
 
+    -- spellId may be secret in 12.0+
+    local okSp
+    okSp, spellId = pcall(function() return spellId + 0 end)
+    if not okSp then spellId = nil end
+
     if spellId and (Cell.vars.targetedSpellsList[spellId] or showAllSpells) then
         if casts[sourceGUID] then
             casts[sourceGUID]["startTime"] = startTimeMS/1000
@@ -198,7 +204,13 @@ local function CheckUnitCast(sourceUnit, isRecheck)
 
         local targetUnit = sourceUnit.."target"
         targetUnit = F.GetTargetUnitID(targetUnit) -- units in group (players/pets), no npcs
-        if targetUnit then targetGUID = UnitGUID(targetUnit) end
+        if targetUnit then
+            targetGUID = UnitGUID(targetUnit)
+            if targetGUID then
+                local okTG = pcall(function() local _ = ({[targetGUID]=true})[targetGUID] end)
+                if not okTG then targetGUID = nil end
+            end
+        end
 
         -- update spell target
         casts[sourceGUID]["targetUnit"] = targetUnit
@@ -277,6 +289,7 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
         local sourceGUID = UnitGUID(sourceUnit)
         -- Midnight 12.0.0+: UnitGUID may return secret strings — can't use as table key
         if issecretvalue and issecretvalue(sourceGUID) then return end
+        if not sourceGUID then return end
         if casts[sourceGUID] then
             previousTarget = casts[sourceGUID]["targetGUID"]
             casts[sourceGUID] = nil
@@ -287,6 +300,7 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
         local sourceGUID = UnitGUID(sourceUnit)
         -- Midnight 12.0.0+: UnitGUID may return secret strings — can't use as table key
         if issecretvalue and issecretvalue(sourceGUID) then return end
+        if not sourceGUID then return end
         if casts[sourceGUID] and not casts[sourceGUID]["nonNameplate"] then
             previousTarget = casts[sourceGUID]["targetGUID"]
             casts[sourceGUID] = nil

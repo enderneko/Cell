@@ -11,6 +11,8 @@ local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
+local issecretvalue = issecretvalue or function() return false end
+local AbbreviateNumbers = AbbreviateNumbers
 
 local function noop() end
 
@@ -1542,6 +1544,66 @@ local function BuildPattern(config)
     end
 end
 
+-- Build a C-level format segment for secret values. Returns the format string
+-- segment (with %d placeholder) and a key identifying which argument to use:
+--   "health" = raw health, "pct" = health percent (0-100), "shields" = absorbs,
+--   "healAbsorbs" = heal absorbs, nil = skip (format is "none")
+local function BuildSecretSegment(config)
+    if config.format == "none" then
+        return nil, nil
+    end
+
+    local prefix
+    if config.delimiter == nil then
+        prefix = ""
+    else
+        prefix = "|cffababab" .. config.delimiter .. "|r"
+    end
+
+    local isPercent = config.format:find("percent$") and true or false
+
+    local colorStart, colorEnd
+    if config.color[1] == "class_color" then
+        colorStart, colorEnd = "", ""
+    else
+        colorStart = "|cff" .. F.ConvertRGBToHEX(F.ConvertRGB_256(unpack(config.color[2])))
+        colorEnd = "|r"
+    end
+
+    -- Determine which argument to pass for this segment
+    local fmt = config.format:gsub("_no_sign$", "")
+    local argKey
+    local isAbsorb = false
+    if fmt == "shields" or fmt == "shields_short" or fmt == "shields_percent" then
+        argKey = "shields"
+        isAbsorb = true
+    elseif fmt == "healabsorbs" or fmt == "healabsorbs_short" or fmt == "healabsorbs_percent" then
+        argKey = "healAbsorbs"
+        isAbsorb = true
+    elseif isPercent then
+        argKey = "pct"
+    else
+        argKey = "health"
+    end
+
+    -- For absorb percentages, we can't compute absorbs/maxHealth on secrets,
+    -- so fall back to abbreviated raw number (no %% suffix).
+    -- Health percent uses UnitHealthPercent (C-level) so it gets a real 0-100 value.
+    local isAbsorbPercent = isAbsorb and isPercent
+    local suffix = (isPercent and not isAbsorbPercent) and "%%" or ""
+
+    -- Use abbreviated display for _short formats and absorb percent fallback
+    local useAbbrev = (config.format:find("short") or isAbsorbPercent) and not (isPercent and not isAbsorbPercent)
+    local specifier = (useAbbrev and AbbreviateNumbers) and "%s" or "%d"
+    local segment = prefix .. colorStart .. specifier .. suffix .. colorEnd
+
+    if useAbbrev and AbbreviateNumbers then
+        argKey = argKey .. "_abbr"
+    end
+
+    return segment, argKey
+end
+
 local function HealthText_SetFormat(self, format)
     self.GetHealth1 = formatter[format.health1.format:gsub("_no_sign$", "")]
     self.GetHealth2 = formatter[format.health2.format:gsub("_no_sign$", "")]
@@ -1554,20 +1616,105 @@ local function HealthText_SetFormat(self, format)
     self.health2_hideIfEmptyOrFull = format.health2.hideIfEmptyOrFull
     self.shields = BuildPattern(format.shields)
     self.healAbsorbs = BuildPattern(format.healAbsorbs)
+
+    -- Pre-build C-level format segments for use when values are secret.
+    -- Each active component gets a segment with a %d/%s placeholder.
+    -- Stored individually so the render path can skip zero-value absorb components.
+    local segments = {}
+    local argKeys = {}
+    for _, cfg in ipairs({format.health1, format.health2, format.shields, format.healAbsorbs}) do
+        local seg, key = BuildSecretSegment(cfg)
+        if seg then
+            segments[#segments + 1] = seg
+            argKeys[#argKeys + 1] = key
+        end
+    end
+    if #segments > 0 then
+        self._secretSegments = segments
+        self._secretArgKeys = argKeys
+    else
+        self._secretSegments = nil
+        self._secretArgKeys = nil
+    end
+
+    -- Pre-compute flag: should the entire indicator hide when health is at full/empty?
+    -- True when all health components have hideIfEmptyOrFull and no absorb components are active.
+    local h1Active = format.health1.format ~= "none"
+    local h2Active = format.health2.format ~= "none"
+    local shieldsActive = format.shields.format ~= "none"
+    local healAbsorbsActive = format.healAbsorbs.format ~= "none"
+    local allHealthHide = true
+    if h1Active and not format.health1.hideIfEmptyOrFull then allHealthHide = false end
+    if h2Active and not format.health2.hideIfEmptyOrFull then allHealthHide = false end
+    if not h1Active and not h2Active then allHealthHide = false end -- no health components
+    self._secretHideAtFull = allHealthHide and not shieldsActive and not healAbsorbsActive
 end
 
 local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
-    -- On Midnight 12.0.0+, health/maxHealth may be secret values in restricted contexts.
-    -- Arithmetic (/, *, -, comparison) on secret values causes errors.
-    -- AbbreviateNumbers() and FontString:SetText() accept secret values safely.
-    -- DO NOT divide, multiply, or compare secret values.
-    if Cell.isMidnight and F.IsAuraRestricted and F.IsAuraRestricted() then
-        local healthStr = AbbreviateNumbers and AbbreviateNumbers(health) or tostring(health)
-        self.text:SetText(healthStr)
-        self:SetWidth(self.text:GetStringWidth())
+    -- 12.0+: UnitHealth/UnitHealthMax/absorbs may return secret values in combat.
+    -- C-level SetFormattedText/SetText (AllowedWhenTainted) handles secrets for display.
+    -- The caller in UnitButton passes secrets to C-level directly; this guard is a
+    -- safety net for any remaining Lua arithmetic in the formatters below.
+    if issecretvalue(health) or issecretvalue(maxHealth)
+        or issecretvalue(shields) or issecretvalue(healAbsorbs) then
+        -- Check hideIfEmptyOrFull via pcall (comparison may fail on secrets)
+        if self._secretHideAtFull then
+            local ok, shouldHide = pcall(function()
+                return health == 0 or health == maxHealth
+            end)
+            if ok and shouldHide then
+                self.text:SetText("")
+                self:SetWidth(0)
+                return
+            end
+        end
+        -- Use pre-built secret segments (individual per component).
+        -- Absorb components are skipped when their value is known to be 0.
+        local segments = self._secretSegments
+        local argKeys = self._secretArgKeys
+        if segments and argKeys then
+            local fmtParts = {}
+            local argValues = {}
+            for i, key in ipairs(argKeys) do
+                local raw
+                local isAbsorbKey = (key == "shields" or key == "shields_abbr"
+                    or key == "healAbsorbs" or key == "healAbsorbs_abbr")
+                if key == "pct" or key == "health" or key == "health_abbr" then
+                    raw = health
+                elseif key == "shields" or key == "shields_abbr" then
+                    raw = rawequal(shields, nil) and 0 or shields
+                elseif key == "healAbsorbs" or key == "healAbsorbs_abbr" then
+                    raw = rawequal(healAbsorbs, nil) and 0 or healAbsorbs
+                else
+                    raw = 0
+                end
+                -- Skip absorb components that are known to be 0 (non-secret)
+                if isAbsorbKey and not issecretvalue(raw) and raw == 0 then
+                    -- skip this component
+                else
+                    fmtParts[#fmtParts + 1] = segments[i]
+                    argValues[#argValues + 1] = key:sub(-5) == "_abbr" and AbbreviateNumbers(raw) or raw
+                end
+            end
+            local fmt = table.concat(fmtParts)
+            local n = #argValues
+            if n == 0 then
+                self.text:SetText("")
+            elseif n == 1 then
+                self.text:SetFormattedText(fmt, argValues[1])
+            elseif n == 2 then
+                self.text:SetFormattedText(fmt, argValues[1], argValues[2])
+            elseif n == 3 then
+                self.text:SetFormattedText(fmt, argValues[1], argValues[2], argValues[3])
+            elseif n == 4 then
+                self.text:SetFormattedText(fmt, argValues[1], argValues[2], argValues[3], argValues[4])
+            end
+        else
+            self.text:SetFormattedText("%d", health)
+        end
+        -- skip SetWidth: GetStringWidth returns secret when text is tainted
         return
     end
-
     maxHealth = maxHealth == 0 and 1 or maxHealth
 
     self.text:SetFormattedText("%s%s%s%s",
@@ -1600,7 +1747,9 @@ local function HealthText_SetFont(self, font, size, outline, shadow)
         self.text:SetShadowColor(0, 0, 0, 0)
     end
 
-    self:SetSize(self.text:GetStringWidth(), size)
+    -- 12.0+: GetStringWidth returns secret when text is tainted; use fallback
+    local w = self.text:GetStringWidth()
+    self:SetSize(issecretvalue(w) and 50 or w, size)
 end
 
 local function HealthText_SetPoint(self, point, relativeTo, relativePoint, x, y)
@@ -1654,6 +1803,20 @@ end
 -- power text
 -------------------------------------------------
 local function SetPower_Percentage(self, current, max)
+    -- 12.0+: UnitPower() may return secret values in combat.
+    -- SetFormattedText is C-level (AllowedWhenTainted) and handles secrets.
+    if issecretvalue(current) or issecretvalue(max) then
+        if self.hideIfEmptyOrFull then
+            local ok, isEmpty = pcall(function() return current == 0 or current == max end)
+            if ok and isEmpty then
+                self:Hide()
+                return
+            end
+        end
+        self.text:SetFormattedText("%d%%", current)
+        self:Show()
+        return
+    end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else
@@ -1664,6 +1827,18 @@ local function SetPower_Percentage(self, current, max)
 end
 
 local function SetPower_Number(self, current, max)
+    if issecretvalue(current) or issecretvalue(max) then
+        if self.hideIfEmptyOrFull then
+            local ok, isEmpty = pcall(function() return current == 0 or current == max end)
+            if ok and isEmpty then
+                self:Hide()
+                return
+            end
+        end
+        self.text:SetText(current)
+        self:Show()
+        return
+    end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else
@@ -1674,6 +1849,22 @@ local function SetPower_Number(self, current, max)
 end
 
 local function SetPower_Number_Short(self, current, max)
+    if issecretvalue(current) or issecretvalue(max) then
+        if self.hideIfEmptyOrFull then
+            local ok, isEmpty = pcall(function() return current == 0 or current == max end)
+            if ok and isEmpty then
+                self:Hide()
+                return
+            end
+        end
+        if AbbreviateNumbers then
+            self.text:SetFormattedText("%s", AbbreviateNumbers(current))
+        else
+            self.text:SetText(current)
+        end
+        self:Show()
+        return
+    end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else
@@ -1705,7 +1896,9 @@ local function PowerText_SetFont(self, font, size, outline, shadow)
         self.text:SetShadowColor(0, 0, 0, 0)
     end
 
-    self:SetSize(self.text:GetStringWidth(), size)
+    -- 12.0+: GetStringWidth returns secret when text is tainted; use fallback
+    local w = self.text:GetStringWidth()
+    self:SetSize(issecretvalue(w) and 50 or w, size)
 end
 
 local function PowerText_SetPoint(self, point, relativeTo, relativePoint, x, y)
@@ -1721,6 +1914,7 @@ local function PowerText_SetPoint(self, point, relativeTo, relativePoint, x, y)
 end
 
 local function PowerText_SetFormat(self, format)
+    self._format = format -- store for secret value fallback path
     if format == "percentage" then
         self.SetValue = SetPower_Percentage
     elseif format == "number" then
@@ -2075,6 +2269,10 @@ local function ShieldBar_SetHorizontalValue(bar, percent)
         barWidth = maxWidth * percent
     end
     bar:SetWidth(max(barWidth, 3))
+    -- StatusBar must be "full" so the texture fills the frame;
+    -- the frame width controls the visible portion.
+    bar:SetMinMaxValues(0, 1)
+    bar:SetValue(1)
 end
 
 local function ShieldBar_SetVerticalValue(bar, percent)
@@ -2086,46 +2284,48 @@ local function ShieldBar_SetVerticalValue(bar, percent)
         barHeight = maxHeight * percent
     end
     bar:SetHeight(max(barHeight, 3))
+    bar:SetMinMaxValues(0, 1)
+    bar:SetValue(1)
+end
+
+-- Secret-safe: sets absorbs/max directly, C-level handles the sizing
+local function ShieldBar_SetAbsorbs(bar, absorbs, healthMax)
+    bar:SetMinMaxValues(0, healthMax)
+    bar:SetValue(absorbs)
 end
 
 local function ShieldBar_SetPoint(bar, point, anchorTo, anchorPoint, x, y)
-    -- if point == "HEALTH_BAR_HORIZONTAL" then
-    --     bar:_SetPoint("TOPLEFT", b.widgets.healthBar)
-    --     bar:_SetPoint("BOTTOMLEFT", b.widgets.healthBar)
-    --     bar.SetValue = ShieldBar_SetHorizontalValue
-    -- elseif point == "HEALTH_BAR_VERTICAL" then
-    --     bar:_SetPoint("TOPLEFT", b.widgets.healthBar)
-    --     bar:_SetPoint("BOTTOMLEFT", b.widgets.healthBar)
-    --     bar.SetValue = ShieldBar_SetVerticalValue
     if point == "HEALTH_BAR" then
         bar:_SetPoint("TOPLEFT", bar.parentHealthBar, P.Scale(-1), P.Scale(1))
         bar:_SetPoint("BOTTOMLEFT", bar.parentHealthBar, P.Scale(-1), P.Scale(-1))
-        bar.SetValue = ShieldBar_SetHorizontalValue
+        bar.SetPercent = ShieldBar_SetHorizontalValue
     else
         bar:_SetPoint(point, anchorTo, anchorPoint, x, y)
-        bar.SetValue = ShieldBar_SetHorizontalValue
+        bar.SetPercent = ShieldBar_SetHorizontalValue
     end
 end
 
 function I.CreateShieldBar(parent)
-    local shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widgets.indicatorFrame, "BackdropTemplate")
+    local shieldBar = CreateFrame("StatusBar", parent:GetName().."ShieldBar", parent.widgets.indicatorFrame, "BackdropTemplate")
     parent.indicators.shieldBar = shieldBar
-    -- shieldBar:SetSize(4, 4)
     shieldBar:Hide()
     shieldBar:SetBackdrop({edgeFile=Cell.vars.whiteTexture, edgeSize=P.Scale(1)})
     shieldBar:SetBackdropBorderColor(0, 0, 0, 1)
-
-    local tex = shieldBar:CreateTexture(nil, "BORDER", nil, -7)
-    tex:SetAllPoints()
+    shieldBar:SetStatusBarTexture(Cell.vars.whiteTexture)
+    shieldBar:SetMinMaxValues(0, 1)
+    shieldBar:SetValue(0)
 
     shieldBar._SetPoint = shieldBar.SetPoint
     shieldBar.SetPoint = ShieldBar_SetPoint
-    shieldBar.SetValue = ShieldBar_SetHorizontalValue
+    -- Percentage-based SetValue for normal (non-secret) path
+    shieldBar.SetPercent = ShieldBar_SetHorizontalValue
+    -- Secret-safe SetAbsorbs for combat path
+    shieldBar.SetAbsorbs = ShieldBar_SetAbsorbs
 
     shieldBar.parentHealthBar = parent.widgets.healthBar
 
     function shieldBar:SetColor(r, g, b, a)
-        tex:SetColorTexture(r, g, b, a)
+        shieldBar:SetStatusBarColor(r, g, b, a)
     end
 
     function shieldBar:UpdatePixelPerfect()

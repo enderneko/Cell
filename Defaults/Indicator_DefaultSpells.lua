@@ -811,7 +811,7 @@ local spells =  {
     1244893, -- 救世主道标 - Beacon of the Savior
 
     -- priest
-    139, -- 恢复 - Renew
+    -- 139, -- 恢复 - Renew (removed in 12.0)
     200829, -- 恳求 - Plea (added in 12.0, Disc)
     41635, -- 愈合祷言 - Prayer of Mending
     17, -- 真言术：盾 - Power Word: Shield

@@ -208,6 +208,9 @@ end
 -- Shared event handlers (both paths)
 ----------------------------------------------------
 function frame:PLAYER_ENTERING_WORLD()
+    -- 12.0+: CombatLogGetCurrentEventInfo removed; death report is non-functional
+    if not CombatLogGetCurrentEventInfo then return end
+
     local isIn, iType = IsInInstance()
     instanceType = iType
 
@@ -241,9 +244,10 @@ end
 
 local timer
 function frame:GROUP_ROSTER_UPDATE()
+    if not CombatLogGetCurrentEventInfo then return end
     if IsInGroup() then
         if IsEncounterInProgress() then
-            frame:RegisterEvent("ENCOUNTER_END")
+            pcall(frame.RegisterEvent, frame, "ENCOUNTER_END")
         else
             if timer then timer:Cancel() end
             timer = C_Timer.NewTimer(7, function()
@@ -259,7 +263,7 @@ function frame:GROUP_ROSTER_UPDATE()
 end
 
 function frame:ENCOUNTER_END()
-    frame:UnregisterEvent("ENCOUNTER_END")
+    pcall(frame.UnregisterEvent, frame, "ENCOUNTER_END")
     frame:GROUP_ROSTER_UPDATE()
 end
 
@@ -271,14 +275,15 @@ end
 -- priority
 ----------------------------------------------------
 local function UpdatePriority(hasHighestPriority)
+    if not CombatLogGetCurrentEventInfo then return end
     if Cell.isMidnight then
         -- Midnight: CLEU unavailable; UNIT_HEALTH registration is handled in UpdateTools
         return
     end
     if hasHighestPriority and CellDB["tools"]["deathReport"][1] then
-        frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        pcall(frame.RegisterEvent, frame, "COMBAT_LOG_EVENT_UNFILTERED")
     else
-        frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        pcall(frame.UnregisterEvent, frame, "COMBAT_LOG_EVENT_UNFILTERED")
     end
 end
 Cell.RegisterCallback("UpdatePriority", "DeathReport_UpdatePriority", UpdatePriority)

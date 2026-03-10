@@ -21,6 +21,15 @@ Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 Cell.isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 Cell.isTWW = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WAR_WITHIN
+Cell.isMidnight = LE_EXPANSION_LEVEL_CURRENT == (LE_EXPANSION_MIDNIGHT or math.huge)
+
+-------------------------------------------------
+-- 12.0+ API compatibility shims
+-------------------------------------------------
+-- IsEncounterInProgress moved to C_InstanceEncounter namespace in 12.0
+if not IsEncounterInProgress and C_InstanceEncounter and C_InstanceEncounter.IsEncounterInProgress then
+    IsEncounterInProgress = C_InstanceEncounter.IsEncounterInProgress
+end
 
 if Cell.isRetail then
     Cell.flavor = "retail"
@@ -2004,11 +2013,17 @@ local function predicate(...)
 end
 
 function F.FindAuraById(unit, type, spellId)
+    -- 12.0+: AuraUtil.UnpackAuraData may crash on secret values in combat
+    local ok, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13
     if type == "BUFF" then
-        return AuraUtil.FindAura(predicate, unit, "HELPFUL", spellId)
+        ok, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13 = pcall(AuraUtil.FindAura, predicate, unit, "HELPFUL", spellId)
     else
-        return AuraUtil.FindAura(predicate, unit, "HARMFUL", spellId)
+        ok, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13 = pcall(AuraUtil.FindAura, predicate, unit, "HARMFUL", spellId)
     end
+    if ok then
+        return r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13
+    end
+    return nil
 end
 
 if Cell.isRetail then
@@ -2291,11 +2306,18 @@ local harmItems = {
 local UnitInSpellRange
 if C_Spell and C_Spell.IsSpellInRange then
     UnitInSpellRange = function(spellName, unit)
-        return IsSpellInRange(spellName, unit)
+        local ok, result = pcall(function()
+            local r = IsSpellInRange(spellName, unit)
+            if r then return true else return false end
+        end)
+        if not ok then return nil end
+        return result
     end
 else
     UnitInSpellRange = function(spellName, unit)
-        return IsSpellInRange(spellName, unit) == 1
+        local ok, result = pcall(function() return IsSpellInRange(spellName, unit) == 1 end)
+        if not ok then return nil end
+        return result
     end
 end
 
@@ -2349,7 +2371,8 @@ end
 rc:SetScript("OnEvent", DELAYED_SPELLS_CHANGED)
 
 function F.IsInRange(unit, check)
-    if not UnitIsVisible(unit) then
+    local okVis, visible = pcall(function() if UnitIsVisible(unit) then return true else return false end end)
+    if not okVis or not visible then
         return false
     end
 

@@ -264,7 +264,12 @@ end
 
 SR:SetScript("OnEvent", function(self, event, ...)
     if event == "COMBAT_LOG_EVENT_UNFILTERED" then
-        self:COMBAT_LOG_EVENT_UNFILTERED(CombatLogGetCurrentEventInfo())
+        if CombatLogGetCurrentEventInfo then
+            local ok, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11 = pcall(CombatLogGetCurrentEventInfo)
+            if ok then
+                self:COMBAT_LOG_EVENT_UNFILTERED(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
+            end
+        end
     else
         self[event](self, ...)
     end
@@ -298,7 +303,9 @@ local function SR_UpdateRequests(which)
                 SR:UnregisterEvent("CHAT_MSG_WHISPER")
             end
 
-            SR:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+            if CombatLogGetCurrentEventInfo then
+                SR:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+            end
         else
             SR:UnregisterAllEvents()
         end
@@ -351,7 +358,9 @@ end
 -- hide glow if removed
 DR:SetScript("OnEvent", function(self, event)
     if event == "COMBAT_LOG_EVENT_UNFILTERED" then
-        local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellID = CombatLogGetCurrentEventInfo()
+        if not CombatLogGetCurrentEventInfo then return end
+        local ok, timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellID = pcall(CombatLogGetCurrentEventInfo)
+        if not ok then return end
         if subEvent == "SPELL_AURA_REMOVED" then
             local unit = Cell.vars.guids[destGUID]
             if unit and drUnits[unit] and drUnits[unit][spellID] then
@@ -422,7 +431,9 @@ local function DR_UpdateRequests(which)
             drDebuffs = F.ConvertTable(CellDB["dispelRequest"]["debuffs"])
             drDisplayType = CellDB["dispelRequest"]["type"]
 
-            DR:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+            if CombatLogGetCurrentEventInfo then
+                DR:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+            end
             DR:RegisterEvent("ENCOUNTER_START")
             DR:RegisterEvent("ENCOUNTER_END")
         else

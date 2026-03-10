@@ -396,7 +396,9 @@ function I.EnableStatusIcon(enabled)
         end
     else
         eventFrame:UnregisterAllEvents()
-        cleuFrame:UnregisterAllEvents()
+        if CombatLogGetCurrentEventInfo then
+            cleuFrame:UnregisterAllEvents()
+        end
         F.IterateAllUnitButtons(function(b)
             b.indicators.statusIcon:Hide()
             b.indicators.resurrectionIcon:Hide()

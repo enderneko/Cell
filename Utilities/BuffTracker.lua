@@ -692,6 +692,8 @@ end, unpack(fadeOuts))
 ---------------------------------------------------------------------
 local GetAuraDataBySpellName = C_UnitAuras.GetAuraDataBySpellName
 
+local issecretvalue = issecretvalue or function() return false end
+
 local function UnitBuffExists(unit, buff)
     local names = buffs[buff]["names"]
     local aura

@@ -12,146 +12,10 @@ local Cell = select(2, ...)
 local F = Cell.funcs
 
 local debuffs = {
-    [1299] = { -- Windrunner Spire
-        ["general"] = {
-        },
-        [2655] = { -- Emberdawn
-            465904, -- Burning Gale
-            466556, -- Flaming Updraft
-            466064, -- Searing Beak
-            469633, -- Flaming Twisters
-            467120, -- Ignited Embers
-            1217762, -- Fire Breath
-        },
-        [2656] = { -- Derelict Duo
-            472736, -- Debilitating Shriek
-            474105, -- Curse of Darkness
-            472724, -- Shadow Bolt
-            472795, -- Heaving Yank
-            474075, -- Heaving Chop
-            472745, -- Splattering Spew
-            472777, -- Gunk Splatter
-            472888, -- Bone Hack
-            1219551, -- Broken Bond
-            1282272, -- Splattered
-            1215813, -- Shadowy
-        },
-        [2657] = { -- Commander Kroluk
-            470963, -- Bladestorm
-            468070, -- Rallying Bellow
-            467620, -- Rampage
-            1217094, -- Throw Axe
-            472043, -- Rallying Bellow
-            472081, -- Reckless Leap
-            1250851, -- Shield Wall
-            1253026, -- Intimidating Shout
-            1251981, -- Chain Lightning
-            467815, -- Intercepting Charge
-            1270620, -- Flame Nova
-            1283357, -- Falling Rubble
-        },
-        [2658] = { -- The Restless Heart
-            1253986, -- Gust Shot
-            468429, -- Bullseye Windblast
-            468442, -- Billowing Wind
-            472556, -- Arrow Rain
-            1253977, -- Turbulent Arrows
-            474528, -- Bolt Gale
-            472662, -- Tempest Slash
-            1216042, -- Squall Leap
-            1282932, -- Storming Soulfont
-        },
-    },
-
-    [1300] = { -- Magisters' Terrace
-        ["general"] = {
-        },
-        [2659] = { -- Arcanotron Custos
-            474345, -- Refueling Protocol
-            474308, -- Energy Orb
-            474496, -- Repulsing Slam
-            1214038, -- Ethereal Shackles
-            1243905, -- Unstable Energy
-            1214081, -- Arcane Expulsion
-            474407, -- Arcane Empowerment
-            1214089, -- Arcane Residue
-        },
-        [2661] = { -- Seranel Sunlash
-            1224903, -- Suppression Zone
-            1225135, -- Feedback
-            1225193, -- Wave of Silence
-            1225792, -- Runic Mark
-            1246446, -- Null Reaction
-            1248689, -- Hastening Ward
-        },
-        [2660] = { -- Gemellus
-            1223847, -- Triplicate
-            1223936, -- Synaptic Nexus
-            1224299, -- Astral Grasp
-            1224401, -- Cosmic Radiation
-            1224100, -- Void Secretions
-            1284958, -- Cosmic Sting
-            1253707, -- Neural Link
-        },
-        [2662] = { -- Degentrius
-            1215087, -- Unstable Void Essence
-            1215161, -- Void Destruction
-            1214714, -- Void Torrent
-            1280113, -- Hulking Fragment
-            1215897, -- Devouring Entropy
-            1271066, -- Entropy Blast
-            1269631, -- Entropy Orb
-            1284627, -- Umbral Splinters
-            1284628, -- Stygian Ichor
-        },
-    },
-
-    [1304] = { -- Murder Row
-        ["general"] = {
-        },
-        [2679] = { -- Kystia Manaheart
-            1230289, -- Illicit Infusion
-            1217989, -- Felshield
-            1223906, -- Fel Nova
-            1230298, -- Chaos Barrage
-            1253811, -- Fel Spray
-            1228198, -- Corroding Spittle
-            1264095, -- Mirror Images
-            1264106, -- Felstorm
-            1230304, -- Light Infusion
-            1265412, -- Destabilized
-        },
-        [2680] = { -- Zaen Bladesorrow
-            474478, -- Killing Spree
-            1218347, -- Murder in a Row
-            474765, -- Same-Day Delivery
-            1201553, -- Fel-Infused Freight
-            1214357, -- Fire Bomb
-            1222795, -- Envenom
-            474515, -- Heartstop Poison
-            1266241, -- Freight Explosion
-        },
-        [2681] = { -- Xathuux the Annihilator
-            1214663, -- Axe Toss
-            474197, -- Demonic Rage
-            474234, -- Burning Steps
-            473898, -- Legion Strike
-            1214650, -- Fel Lightning
-        },
-        [2682] = { -- Lithiel Cinderfury
-            1223204, -- Felfire Burst
-            474375, -- Chaos Bolt
-            1214675, -- Demonic Gateway
-            474457, -- Fingers of Gul'dan
-            1217384, -- Malefic Wave
-            1217415, -- Felshield
-            1226469, -- Malefic Empowerment
-            1231262, -- Felfire Core
-            1216945, -- Searing Fel Flame
-        },
-    },
-
-    [1307] = { -- The Voidspire
+    -- ====================================================================
+    -- The Voidspire (Raid - 6 bosses)
+    -- ====================================================================
+    [1307] = {
         ["general"] = {
         },
         [2733] = { -- Imperator Averzian
@@ -192,24 +56,6 @@ local debuffs = {
             1272527, -- Creep Spit
             1280101, -- Dark Energy
         },
-        [2736] = { -- Fallen-King Salhadaar
-            1246175, -- Entropic Unraveling
-            1250686, -- Twisting Obscurity
-            1254081, -- Fractured Projection
-            1247738, -- Void Convergence
-            1254088, -- Shadow Fracture
-            1271577, -- Destabilizing Strikes
-            1260015, -- Umbral Beams
-            1245960, -- Void Infusion
-            1250991, -- Dark Radiation
-            1253032, -- Shattering Twilight
-            1251213, -- Twilight Spikes
-            1245592, -- Torturous Extract
-            1248697, -- Despotic Command
-            1248709, -- Oppressive Darkness
-            1275056, -- Nexus Shield
-            1250828, -- Void Exposure
-        },
         [2735] = { -- Vaelgor & Ezzorak
             1244221, -- Dread Breath
             1262623, -- Nullbeam
@@ -237,6 +83,24 @@ local debuffs = {
             1270250, -- Twilight Fury
             1270852, -- Diminish
             1270513, -- Shadowmark
+        },
+        [2736] = { -- Fallen-King Salhadaar
+            1246175, -- Entropic Unraveling
+            1250686, -- Twisting Obscurity
+            1254081, -- Fractured Projection
+            1247738, -- Void Convergence
+            1254088, -- Shadow Fracture
+            1271577, -- Destabilizing Strikes
+            1260015, -- Umbral Beams
+            1245960, -- Void Infusion
+            1250991, -- Dark Radiation
+            1253032, -- Shattering Twilight
+            1251213, -- Twilight Spikes
+            1245592, -- Torturous Extract
+            1248697, -- Despotic Command
+            1248709, -- Oppressive Darkness
+            1275056, -- Nexus Shield
+            1250828, -- Void Exposure
         },
         [2737] = { -- Lightblinded Vanguard
             1246162, -- Aura of Devotion
@@ -272,7 +136,7 @@ local debuffs = {
             1280159, -- Execution Sentence
             1249130, -- Elekk Charge
         },
-        [2738] = { -- Crown of the Cosmos
+        [2738] = { -- Crown of the Cosmos (Xal'atath)
             1239080, -- Aspect of the End
             1232470, -- Grasp of Emptiness
             1233865, -- Null Corona
@@ -315,7 +179,10 @@ local debuffs = {
         },
     },
 
-    [1308] = { -- March on Quel'Danas
+    -- ====================================================================
+    -- March on Quel'Danas (Raid - 2 bosses)
+    -- ====================================================================
+    [1308] = {
         ["general"] = {
         },
         [2739] = { -- Belo'ren, Child of Al'ar
@@ -414,40 +281,287 @@ local debuffs = {
         },
     },
 
-    [1314] = { -- The Dreamrift
+    -- ====================================================================
+    -- Windrunner Spire (Dungeon)
+    -- ====================================================================
+    [1299] = {
         ["general"] = {
+            1216985, -- Puncturing Bite (Apex Lynx)
+            1253739, -- Shred Flesh (Loyal Worg)
+            468659, -- Throw Axe (Spectral Axethrower)
+            1215803, -- Curse of Darkness
+            1253834, -- Curse of Darkness
+            1216459, -- Ephemeral Bloodlust (Phantasmal Mystic)
+            1216298, -- Soul Torment (Restless Steward)
+            473795, -- Poison Blades (Ardent Cutthroat)
+            1216825, -- Poison Spray (Creeping Spindleweb)
+            1216133, -- Shear Armor (Dutiful Groundskeeper)
+            1216834, -- Acidic Demise (Creeping Spindleweb)
+            1216963, -- Spore Dispersal (Bloated Lasher)
+            1217010, -- Ferocious Pounce (Apex Lynx)
+            473868, -- Shadowrive (Ardent Cutthroat)
+            473776, -- Fetid Spew (Flesh Behemoth)
+            1277799, -- Brutal Chop (Flesh Behemoth)
+            473668, -- Pulsing Shriek (Devoted Woebringer)
         },
-        [2795] = { -- Chimaerus the Undreamt God
-            1262289, -- Alndust Upheaval
-            1245486, -- Corrupted Devastation
-            1245698, -- Alnsight
-            1245406, -- Ravenous Dive
-            1245844, -- Cannibalized Essence
-            1245919, -- Alndust Essence
-            1246132, -- Rift Shroud
-            1272726, -- Rending Tear
-            1249017, -- Fearsome Cry
-            1249207, -- Discordant Roar
-            1250953, -- Rift Sickness
-            1252863, -- Insatiable
-            1246653, -- Caustic Phlegm
-            1257087, -- Consuming Miasma
-            1253744, -- Rift Vulnerability
-            1257093, -- Lingering Miasma
-            1258610, -- Rift Emergence
-            1261997, -- Essence Bolt
-            1262020, -- Colossal Strikes
-            1245727, -- Alnshroud
-            1246621, -- Caustic Phlegm
-            1257085, -- Consuming Miasma
-            1267201, -- Dissonance
-            1264756, -- Rift Madness
-            1245396, -- Consume
-            1282001, -- Alndust Upheaval
+        [2655] = { -- Emberdawn
+            465904, -- Burning Gale
+            466556, -- Flaming Updraft
+            466064, -- Searing Beak
+            469633, -- Flaming Twisters
+            467120, -- Ignited Embers
+            1217762, -- Fire Breath
+        },
+        [2656] = { -- Derelict Duo
+            472736, -- Debilitating Shriek
+            474105, -- Curse of Darkness
+            472724, -- Shadow Bolt
+            472795, -- Heaving Yank
+            474075, -- Heaving Chop
+            472745, -- Splattering Spew
+            472777, -- Gunk Splatter
+            472888, -- Bone Hack
+            1219551, -- Broken Bond
+            1282272, -- Splattered
+            1215813, -- Shadowy
+        },
+        [2657] = { -- Commander Kroluk
+            470963, -- Bladestorm
+            468070, -- Rallying Bellow
+            467620, -- Rampage
+            1217094, -- Throw Axe
+            472043, -- Rallying Bellow
+            472081, -- Reckless Leap
+            1250851, -- Shield Wall
+            1253026, -- Intimidating Shout
+            1251981, -- Chain Lightning
+            467815, -- Intercepting Charge
+            1270620, -- Flame Nova
+            1283357, -- Falling Rubble
+        },
+        [2658] = { -- The Restless Heart
+            1253986, -- Gust Shot
+            468429, -- Bullseye Windblast
+            468442, -- Billowing Wind
+            472556, -- Arrow Rain
+            1253977, -- Turbulent Arrows
+            474528, -- Bolt Gale
+            472662, -- Tempest Slash
+            1216042, -- Squall Leap
+            1282932, -- Storming Soulfont
         },
     },
 
-    [1309] = { -- The Blinding Vale
+    -- ====================================================================
+    -- Magisters' Terrace (Dungeon)
+    -- ====================================================================
+    [1300] = {
+        ["general"] = {
+            1252909, -- Arcane Blade (Sunblade Enforcer)
+            1265561, -- Arcane Blade
+            1245068, -- Consuming Void (Void Terror)
+            1282055, -- Ethereal Shackles (Arcane Sentry)
+            1255187, -- Holy Fire (Lightward Healer)
+            468966, -- Polymorph (Arcane Magister)
+            1284627, -- Umbral Splinters
+            1264693, -- Void Surge
+            1254338, -- Ignition (Blazing Pyromancer)
+            1255462, -- Call Of The Void (Shadowrift Voidcaller)
+        },
+        [2659] = { -- Arcanotron Custos
+            474345, -- Refueling Protocol
+            474308, -- Energy Orb
+            474496, -- Repulsing Slam
+            1214038, -- Ethereal Shackles
+            1243905, -- Unstable Energy
+            1214081, -- Arcane Expulsion
+            474407, -- Arcane Empowerment
+            1214089, -- Arcane Residue
+        },
+        [2661] = { -- Seranel Sunlash
+            1224903, -- Suppression Zone
+            1225135, -- Feedback
+            1225193, -- Wave of Silence
+            1225792, -- Runic Mark
+            1246446, -- Null Reaction
+            1248689, -- Hastening Ward
+        },
+        [2660] = { -- Gemellus
+            1223847, -- Triplicate
+            1223936, -- Synaptic Nexus
+            1224299, -- Astral Grasp
+            1224401, -- Cosmic Radiation
+            1224100, -- Void Secretions
+            1284958, -- Cosmic Sting
+            1253707, -- Neural Link
+        },
+        [2662] = { -- Degentrius
+            1215087, -- Unstable Void Essence
+            1215161, -- Void Destruction
+            1214714, -- Void Torrent
+            1280113, -- Hulking Fragment
+            1215897, -- Devouring Entropy
+            1271066, -- Entropy Blast
+            1269631, -- Entropy Orb
+            1284627, -- Umbral Splinters
+            1284628, -- Stygian Ichor
+        },
+    },
+
+    -- ====================================================================
+    -- Blackrock Depths (Dungeon)
+    -- ====================================================================
+    [1301] = {
+        ["general"] = {
+        },
+        [2663] = { -- Lord Roccor
+            462346, -- Living Magma
+            463674, -- Crystallize
+            462322, -- Eruption
+            462320, -- Igneous Crystallization
+            462351, -- Roiling Magma
+        },
+        [2664] = { -- Bael'Gar
+            462974,
+            463890,
+            463143,
+            462972,
+            462968,
+        },
+        [2665] = { -- Lord Incendius
+            463487,
+            463503,
+            463486,
+            463471,
+            463472,
+            463495,
+            463499,
+        },
+        [2666] = { -- Golem Lord Argelmach
+            463821,
+            463829,
+            464485,
+            463852,
+            463847,
+            463823,
+            463837,
+            464489,
+        },
+        [2667] = { -- The Seven
+            464347,
+            464348,
+            464358,
+            464359,
+            464361,
+            464331,
+            464371,
+            464333,
+            464334,
+            464353,
+            464363,
+            464362,
+            464366,
+            464367,
+            464337,
+            464340,
+            464344,
+        },
+        [2668] = { -- General Angerforge
+            464425,
+            466265,
+            466273,
+            467424,
+            467423,
+            466259,
+            466107,
+            464417,
+            467464,
+            466096,
+            466086,
+        },
+        [2669] = { -- Ambassador Flamelash
+            464372, -- Burning Spirit
+            464998,
+            470244,
+            464769,
+            470203,
+            470207,
+            464379,
+            464981,
+            464382,
+            464983,
+            464377,
+        },
+        [2670] = { -- Emperor Dagran Thaurissan
+            465069,
+            465077,
+            465079,
+            465268,
+            465093,
+            465060,
+            465070,
+            465225,
+            465065,
+            465086,
+            466371,
+            465091,
+            466504,
+            465099,
+        },
+    },
+
+    -- ====================================================================
+    -- Murder Row (Dungeon)
+    -- ====================================================================
+    [1304] = {
+        ["general"] = {
+        },
+        [2679] = { -- Kystia Manaheart
+            1230289, -- Illicit Infusion
+            1217989, -- Felshield
+            1223906, -- Fel Nova
+            1230298, -- Chaos Barrage
+            1253811, -- Fel Spray
+            1228198, -- Corroding Spittle
+            1264095, -- Mirror Images
+            1264106, -- Felstorm
+            1230304, -- Light Infusion
+            1265412, -- Destabilized
+        },
+        [2680] = { -- Zaen Bladesorrow
+            474478, -- Killing Spree
+            1218347, -- Murder in a Row
+            474765, -- Same-Day Delivery
+            1201553, -- Fel-Infused Freight
+            1214357, -- Fire Bomb
+            1222795, -- Envenom
+            474515, -- Heartstop Poison
+            1266241, -- Freight Explosion
+        },
+        [2681] = { -- Xathuux the Annihilator
+            1214663, -- Axe Toss
+            474197, -- Demonic Rage
+            474234, -- Burning Steps
+            473898, -- Legion Strike
+            1214650, -- Fel Lightning
+        },
+        [2682] = { -- Lithiel Cinderfury
+            1223204, -- Felfire Burst
+            474375, -- Chaos Bolt
+            1214675, -- Demonic Gateway
+            474457, -- Fingers of Gul'dan
+            1217384, -- Malefic Wave
+            1217415, -- Felshield
+            1226469, -- Malefic Empowerment
+            1231262, -- Felfire Core
+            1216945, -- Searing Fel Flame
+        },
+    },
+
+    -- ====================================================================
+    -- The Blinding Vale (Dungeon)
+    -- ====================================================================
+    [1309] = {
         ["general"] = {
         },
         [2769] = { -- Lightblossom Trinity
@@ -501,7 +615,10 @@ local debuffs = {
         },
     },
 
-    [1311] = { -- Den of Nalorakk
+    -- ====================================================================
+    -- Den of Nalorakk (Dungeon)
+    -- ====================================================================
+    [1311] = {
         ["general"] = {
         },
         [2776] = { -- The Hoardmonger
@@ -532,51 +649,17 @@ local debuffs = {
             1242860, -- Echoing Maul
             1255385, -- Forceful Roar
             1243585, -- Overwhelming Onslaught
-            1262253, -- Demoralizing Scream
-            1243063, -- Concussive Shock
-            1255577, -- Spectral Slash
-            1261776, -- Defensive Stance
+            1262253, -- Brutal Slam
+            1243063, -- Tempest of Fury
+            1255577, -- Raging Tempest
+            1261776, -- Echoing Tempest
         },
     },
 
-    [1312] = { -- Midnight
-        ["general"] = {
-        },
-        [2827] = { -- Lu'ashal
-            1276436, -- Dawncrazed Halo
-            1276247, -- Dawnfire Breath
-            1243963, -- Radiant Sunder
-            1243988, -- Blinding Fissure
-            1258427, -- Radiant Flare
-            1258426, -- Radiant Ember
-        },
-        [2829] = { -- Thorm'belan
-            1257825, -- Scintillating Shard
-            1257320, -- Radiant Mote
-            1257737, -- Shard Eruption
-            1258136, -- Rending Claw
-            1257618, -- Dazzling Radiance
-            1258639, -- Shredding Tendrils
-        },
-        [2828] = { -- Predaxas
-            1276193, -- Regurgitation
-            1276320, -- Seismic Slam
-            1276884, -- Voidscatter
-            1277043, -- Bilepool
-            1276988, -- Toxin Splatter
-            1277711, -- Bestial Rage
-            1277694, -- Blood Nova
-            1277829, -- Devour
-        },
-        [2782] = { -- Cragpine
-            1235144, -- War Club
-            1257906, -- Ancient Seeds
-            1235131, -- Rootquake
-            1235134, -- Erupting Roots
-        },
-    },
-
-    [1313] = { -- Voidscar Arena
+    -- ====================================================================
+    -- Voidscar Arena (Dungeon)
+    -- ====================================================================
+    [1313] = {
         ["general"] = {
         },
         [2791] = { -- Taz'Rah
@@ -607,8 +690,64 @@ local debuffs = {
         },
     },
 
-    [1315] = { -- Maisara Caverns
+    -- ====================================================================
+    -- The Dreamrift (Dungeon)
+    -- ====================================================================
+    [1314] = {
         ["general"] = {
+        },
+        [2795] = { -- Chimaerus the Undreamt God
+            1262289, -- Alndust Upheaval
+            1245486, -- Corrupted Devastation
+            1245698, -- Alnsight
+            1245406, -- Ravenous Dive
+            1245844, -- Cannibalized Essence
+            1245919, -- Alndust Essence
+            1246132, -- Rift Shroud
+            1272726, -- Rending Tear
+            1249017, -- Fearsome Cry
+            1249207, -- Discordant Roar
+            1250953, -- Rift Sickness
+            1252863, -- Insatiable
+            1246653, -- Caustic Phlegm
+            1257087, -- Consuming Miasma
+            1253744, -- Rift Vulnerability
+            1257093, -- Lingering Miasma
+            1258610, -- Rift Emergence
+            1261997, -- Essence Bolt
+            1262020, -- Colossal Strikes
+            1245727, -- Alnshroud
+            1246621, -- Caustic Phlegm
+            1257085, -- Consuming Miasma
+            1267201, -- Dissonance
+            1264756, -- Rift Madness
+            1245396, -- Consume
+            1282001, -- Alndust Upheaval
+        },
+    },
+
+    -- ====================================================================
+    -- Maisara Caverns (Dungeon)
+    -- ====================================================================
+    [1315] = {
+        ["general"] = {
+            1266381, -- Hooked Snare (Keen Headhunter)
+            1266488, -- Open Wound
+            1255765, -- Blood Frenzy (Frenzied Berserker)
+            1271623, -- Frost Nova (Hollow Soulrender)
+            1270079, -- Grim Ward (Grim Skirmisher)
+            1256008, -- Hex (Ritual Hexxer)
+            1262411, -- Ritual Firebrand
+            1259255, -- Spirit Rend (Tormented Shade)
+            1256059, -- Rending Gore (Hulking Juggernaut)
+            1256047, -- Deafening Roar (Hulking Juggernaut)
+            1256561, -- Crunch Armor (Bramblemaw Bear)
+            1256584, -- Diseased Claws (Hexbound Eagle)
+            1257781, -- Shredding Talons (Hexbound Eagle)
+            1263292, -- Shrink (Umbral Shadowbinder)
+            1265832, -- Shadow Burst (Umbral Shadowbinder)
+            1259631, -- Staggering Blow (Restless Gnarldin)
+            1259182, -- Piercing Screech (Gloomwing Bat)
         },
         [2810] = { -- Muro'jin and Nekraxx
             1246666, -- Infected Pinions
@@ -656,8 +795,23 @@ local debuffs = {
         },
     },
 
-    [1316] = { -- Nexus-Point Xenas
+    -- ====================================================================
+    -- Nexus-Point Xenas (Dungeon)
+    -- ====================================================================
+    [1316] = {
         ["general"] = {
+            1216502, -- Crimson Glaive
+            1238439, -- Razor Dive
+            1217882, -- Bad Omens
+            1281636, -- Creeping Void (Cursed Voidcaller)
+            1277557, -- Burning Radiance (Lightwrought)
+            1263783, -- Holy Echo (Flarebat)
+            1249815, -- Transference (Corewright Arcanist)
+            1262510, -- Umbral Bolt (Nexus Adept)
+            1252062, -- Entropic Leech (Duskfright Herald)
+            1252076, -- Dark Beckoning (Duskfright Herald)
+            1282944, -- Cluster Weakness (Radiant Swarm)
+            1252429, -- Nullwark Blast (Null Sentinel)
         },
         [2813] = { -- Chief Corewright Kasreth
             1250553, -- Arcane Zap
@@ -689,6 +843,46 @@ local debuffs = {
             1266713, -- Mirrored Rend
             1257613, -- Divine Guile
             1271511, -- Core Exposure
+        },
+    },
+
+    -- ====================================================================
+    -- Midnight (Dungeon)
+    -- ====================================================================
+    [1312] = {
+        ["general"] = {
+        },
+        [2827] = { -- Lu'ashal
+            1276436, -- Dawncrazed Halo
+            1276247, -- Dawnfire Breath
+            1243963, -- Radiant Sunder
+            1243988, -- Blinding Fissure
+            1258427, -- Radiant Flare
+            1258426, -- Radiant Ember
+        },
+        [2829] = { -- Thorm'belan
+            1257825, -- Scintillating Shard
+            1257320, -- Radiant Mote
+            1257737, -- Shard Eruption
+            1258136, -- Rending Claw
+            1257618, -- Dazzling Radiance
+            1258639, -- Shredding Tendrils
+        },
+        [2828] = { -- Predaxas
+            1276193, -- Regurgitation
+            1276320, -- Seismic Slam
+            1276884, -- Voidscatter
+            1277043, -- Bilepool
+            1276988, -- Toxin Splatter
+            1277711, -- Bestial Rage
+            1277694, -- Blood Nova
+            1277829, -- Devour
+        },
+        [2782] = { -- Cragpine
+            1235144, -- War Club
+            1257906, -- Ancient Seeds
+            1235131, -- Rootquake
+            1235134, -- Erupting Roots
         },
     },
 

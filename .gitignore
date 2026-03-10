@@ -17,3 +17,4 @@ Libs/*
 !Libs/LoadLibs.xml
 !Libs/LoadLibs_Classic.xml
 !Libs/LibTranslit-1.0
+.DS_Store
