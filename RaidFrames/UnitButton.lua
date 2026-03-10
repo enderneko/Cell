@@ -2989,7 +2989,7 @@ UnitButton_UpdatePowerMax = function(self)
         self.widgets.powerBar:SetMinMaxSmoothedValue(0, self.states.powerMax)
     else
         self.widgets.powerBar:SetMinMaxValues(0, self.states.powerMax)
-    end)
+    end
 end
 
 UnitButton_UpdatePower = function(self)
