@@ -2221,6 +2221,10 @@ local function ShieldBar_SetHorizontalValue(bar, percent)
         barWidth = maxWidth * percent
     end
     bar:SetWidth(max(barWidth, 3))
+    -- StatusBar must be "full" so the texture fills the frame;
+    -- the frame width controls the visible portion.
+    bar:SetMinMaxValues(0, 1)
+    bar:SetValue(1)
 end
 
 local function ShieldBar_SetVerticalValue(bar, percent)
@@ -2232,6 +2236,8 @@ local function ShieldBar_SetVerticalValue(bar, percent)
         barHeight = maxHeight * percent
     end
     bar:SetHeight(max(barHeight, 3))
+    bar:SetMinMaxValues(0, 1)
+    bar:SetValue(1)
 end
 
 -- Secret-safe: sets absorbs/max directly, C-level handles the sizing

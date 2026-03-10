@@ -2547,14 +2547,24 @@ local function GetRole(b)
     return info.role
 end
 
-ShouldShowPowerText = function(b)
-    if not enabledIndicators["powerText"] then return end
-    if not (b:IsVisible() or b.isPreview) then return end
-
-    if not b.states.guid then
-        return true
+-- Evaluate a role filter table when the specific role is unknown.
+-- Returns false if ALL roles in the table are disabled, true otherwise.
+local function EvaluateFilterWithoutRole(filterTable)
+    if type(filterTable) == "boolean" then
+        return filterTable
     end
+    -- If any role is enabled, show (safe default when role unknown)
+    for _, enabled in pairs(filterTable) do
+        if enabled then
+            return true
+        end
+    end
+    -- All roles disabled for this class → hide
+    return false
+end
 
+-- Determine class and role for a unit button (used by power filter functions)
+local function GetClassAndRole(b)
     local class, role
     if b.states.inVehicle then
         class = "VEHICLE"
@@ -2573,15 +2583,30 @@ ShouldShowPowerText = function(b)
     elseif F.IsVehicle(b.states.guid) then
         class = "VEHICLE"
     end
+    return class, role
+end
+
+ShouldShowPowerText = function(b)
+    if not enabledIndicators["powerText"] then return end
+    if not (b:IsVisible() or b.isPreview) then return end
+
+    if not b.states.guid then
+        return true
+    end
+
+    local class, role = GetClassAndRole(b)
 
     if class then
-        if type(indicatorCustoms["powerText"][class]) == "boolean" then
-            return indicatorCustoms["powerText"][class]
+        local filter = indicatorCustoms["powerText"] and indicatorCustoms["powerText"][class]
+        if filter == nil then
+            return true
+        elseif type(filter) == "boolean" then
+            return filter
         else
             if role then
-                return indicatorCustoms["powerText"][class][role]
+                return filter[role]
             else
-                return true -- show power if role not found
+                return EvaluateFilterWithoutRole(filter)
             end
         end
     end
@@ -2597,33 +2622,19 @@ ShouldShowPowerBar = function(b)
         return true
     end
 
-    local class, role
-    if b.states.inVehicle then
-        class = "VEHICLE"
-    elseif F.IsPlayer(b.states.guid) then
-        class = b.states.class
-        role = GetRole(b)
-    elseif F.IsPet(b.states.guid) then
-        class = "PET"
-    elseif F.IsNPC(b.states.guid) then
-        if UnitInPartyIsAI(b.states.unit) then
-            class = b.states.class
-            role = GetRole(b)
-        else
-            class = "NPC"
-        end
-    elseif F.IsVehicle(b.states.guid) then
-        class = "VEHICLE"
-    end
+    local class, role = GetClassAndRole(b)
 
     if class and Cell.vars.currentLayoutTable then
-        if type(Cell.vars.currentLayoutTable["powerFilters"][class]) == "boolean" then
-            return Cell.vars.currentLayoutTable["powerFilters"][class]
+        local filter = Cell.vars.currentLayoutTable["powerFilters"] and Cell.vars.currentLayoutTable["powerFilters"][class]
+        if filter == nil then
+            return true
+        elseif type(filter) == "boolean" then
+            return filter
         else
             if role then
-                return Cell.vars.currentLayoutTable["powerFilters"][class][role]
+                return filter[role]
             else
-                return true -- show power if role not found
+                return EvaluateFilterWithoutRole(filter)
             end
         end
     end
@@ -3806,8 +3817,13 @@ local function UnitButton_OnEvent(self, event, unit, arg)
         elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
             UnitButton_UpdateLeader(self, event)
             if event == "PLAYER_REGEN_ENABLED" then
-                -- 12.0+: secret values cleared on combat end; re-scan all auras
-                -- to replace hollow cached entries with real data
+                -- 12.0+: secret values cleared on combat end; refresh all
+                -- values that may have been stored as secrets during combat
+                UnitButton_UpdateHealth(self, nil, true)
+                UnitButton_UpdateShieldAbsorbs(self, true)
+                UnitButton_UpdateHealAbsorbs(self, true)
+                UnitButton_UpdatePowerStates(self)
+                UnitButton_UpdatePowerText(self)
                 UnitButton_UpdateAuras(self)
             end
 
