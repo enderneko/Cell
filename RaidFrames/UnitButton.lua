@@ -2568,8 +2568,8 @@ local function UnitButton_UpdatePowerStates(self)
     -- 12.0+: UnitPower may return secret values; store raw for SetValue
     self.states.power = UnitPower(unit)
     self.states.powerMax = UnitPowerMax(unit)
-    -- Midnight 12.0.0+: UnitPowerMax may return a secret number during restricted contexts
-    if not (Cell.isMidnight and F.IsAuraRestricted()) then
+    -- Midnight 12.0.0+: UnitPowerMax may be secret — only clamp when non-secret
+    if F.IsValueNonSecret(self.states.powerMax) then
         if self.states.powerMax <= 0 then self.states.powerMax = 1 end
     end
 end
