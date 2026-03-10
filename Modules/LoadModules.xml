@@ -25,6 +25,8 @@
     <Script file="RaidDebuffs\ImportExport.lua"/>
     <!-- Utilities -->
     <Script file="Utilities\Utilities.lua"/>
+    <!-- Performance Monitor -->
+    <Script file="PerfMonitor.lua"/>
     <!-- About -->
     <Script file="About\About.lua"/>
     <Script file="About\ImportExport.lua"/>

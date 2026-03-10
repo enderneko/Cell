@@ -3215,6 +3215,9 @@ local function UnitButton_UnregisterEvents(self)
 end
 
 local function UnitButton_OnEvent(self, event, unit, arg)
+    -- perf monitor: count events processed
+    if F.PerfCountEvent then F.PerfCountEvent() end
+
     if unit and (self.states.displayedUnit == unit or self.states.unit == unit) then
         if  event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE" or event == "UNIT_CONNECTION" then
             self._updateRequired = 1
@@ -4515,8 +4518,8 @@ function CellUnitButton_OnLoad(button)
     button:HookScript("OnHide", UnitButton_OnHide) -- use _onhide for click-castings
     button:HookScript("OnEnter", UnitButton_OnEnter) -- SecureHandlerEnterLeaveTemplate
     button:HookScript("OnLeave", UnitButton_OnLeave) -- SecureHandlerEnterLeaveTemplate
-    button:SetScript("OnUpdate", UnitButton_OnUpdate)
-    button:SetScript("OnEvent", UnitButton_OnEvent)
+    button:SetScript("OnUpdate", F.ProfileWrap and F.ProfileWrap("OnUpdate", UnitButton_OnUpdate) or UnitButton_OnUpdate)
+    button:SetScript("OnEvent", F.ProfileWrap and F.ProfileWrap("OnEvent", UnitButton_OnEvent) or UnitButton_OnEvent)
     button:RegisterForClicks("AnyDown")
 end
 

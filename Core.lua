@@ -1035,11 +1035,15 @@ function SlashCmdList.CELL(msg, editbox)
     --         F.Print(L["A positive integer is required."])
     --     end
 
+    elseif command == "perf" then
+        F.TogglePerfMonitor()
+
     else
         F.Print(L["Available slash commands"]..":\n"..
             "|cFFFFB5C5/cell options|r, |cFFFFB5C5/cell opt|r: "..L["show Cell options frame"]..".\n"..
             "|cFFFFB5C5/cell healers|r: "..L["create a \"Healers\" indicator"]..".\n"..
             "|cFFFFB5C5/cell rescale|r: "..strlower(L["Apply Recommended Scale"])..".\n"..
+            "|cFFFFB5C5/cell perf|r: toggle performance monitor overlay.\n"..
             "|cFFFF7777"..L["These \"reset\" commands below affect all your characters in this account"]..".|r\n"..
             "|cFFFFB5C5/cell reset position|r: "..L["reset Cell position"]..".\n"..
             "|cFFFFB5C5/cell reset layouts|r: "..L["reset all Layouts and Indicators"]..".\n"..
