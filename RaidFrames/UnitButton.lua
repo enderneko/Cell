@@ -1964,9 +1964,11 @@ local function HandleBuff(self, auraInfo)
         local isExternal = I.IsExternalCooldown(name, spellId, source, unit)
 
         if not isDefensive and not isExternal and auraInfo._hasSecrets and _IsAuraFilteredOut then
-            isDefensive = not _IsAuraFilteredOut(unit, auraInstanceID, "HELPFUL|BIG_DEFENSIVE")
-            if not isDefensive then
-                isExternal = not _IsAuraFilteredOut(unit, auraInstanceID, "HELPFUL|EXTERNAL_DEFENSIVE")
+            -- check external first: spells like Pain Suppression / Ironbark match
+            -- both BIG_DEFENSIVE and EXTERNAL_DEFENSIVE; Cell treats them as external
+            isExternal = not _IsAuraFilteredOut(unit, auraInstanceID, "HELPFUL|EXTERNAL_DEFENSIVE")
+            if not isExternal then
+                isDefensive = not _IsAuraFilteredOut(unit, auraInstanceID, "HELPFUL|BIG_DEFENSIVE")
             end
         end
 
