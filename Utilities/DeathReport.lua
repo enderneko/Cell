@@ -129,6 +129,9 @@ local frame = CreateFrame("Frame")
 -- frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
 function frame:PLAYER_ENTERING_WORLD()
+    -- 12.0+: CombatLogGetCurrentEventInfo removed; death report is non-functional
+    if not CombatLogGetCurrentEventInfo then return end
+
     local isIn, iType = IsInInstance()
     instanceType = iType
 
@@ -161,6 +164,7 @@ end
 
 local timer
 function frame:GROUP_ROSTER_UPDATE()
+    if not CombatLogGetCurrentEventInfo then return end
     if IsInGroup() then
         if IsEncounterInProgress() then
             pcall(frame.RegisterEvent, frame, "ENCOUNTER_END")

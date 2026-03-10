@@ -2531,8 +2531,9 @@ local function GetRole(b)
 
     -- For the player's own unit, get role from current spec directly
     -- (UnitGroupRolesAssigned returns "NONE" when solo or in non-LFG groups)
-    if b.states.unit and UnitIsUnit(b.states.unit, "player") then
-        local spec = GetSpecialization and GetSpecialization()
+    if GetSpecialization and GetSpecializationRole
+        and b.states.unit and UnitIsUnit(b.states.unit, "player") then
+        local spec = GetSpecialization()
         if spec then
             local specRole = GetSpecializationRole(spec)
             if specRole and specRole ~= "NONE" then
