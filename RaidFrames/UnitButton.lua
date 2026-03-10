@@ -90,14 +90,14 @@ local shieldEnabled, overshieldEnabled, overshieldReverseFillEnabled
 local absorbEnabled, absorbInvertColor
 
 -- Midnight: Curve for CELL_FADE_OUT_HEALTH_PERCENT feature
--- Maps health percent â†’ alpha so we can evaluate secret health% without comparisons
+-- Maps health percent â†' alpha so we can evaluate secret health% without comparisons
 local fadeOutHealthCurve
 local fadeOutHealthCurve_threshold -- track last threshold to know when to rebuild
 local fadeOutHealthCurve_alpha -- track last outOfRangeAlpha to know when to rebuild
 
 -- Builds/rebuilds the fade-out health curve when threshold or alpha changes.
--- health% < threshold â†’ alpha 1.0 (fully visible, needs healing)
--- health% >= threshold â†’ outOfRangeAlpha (faded out, healthy enough)
+-- health% < threshold â†' alpha 1.0 (fully visible, needs healing)
+-- health% >= threshold â†' outOfRangeAlpha (faded out, healthy enough)
 local function RebuildFadeOutHealthCurve()
     if not Cell.isMidnight or not C_CurveUtil then return end
     local threshold = CELL_FADE_OUT_HEALTH_PERCENT
@@ -1684,7 +1684,7 @@ local function HandleDebuff(self, auraInfo)
 
         -- Per-aura check: only compare spellId if non-secret
         if F.IsAuraNonSecret(auraInfo) then
-            -- resurrections: å›¾è…¾å¤ç”Ÿ/å¤ç”Ÿ
+            -- resurrections: å›¾è…¾å¤ç"Ÿ/å¤ç"Ÿ
             if spellId == 255234 or spellId == 225080 then
                 -- NOTE: this rez lasts longer than the debuff
                 self._debuffs.resurrectionFound = true
@@ -2276,9 +2276,9 @@ local function UpdateMirrorImage(b, event)
 end
 
 local SelfBarriers = {
-    [11426] = true, -- å¯’å†°æŠ¤ä½“ (self)
-    [235313] = true, -- çƒˆç„°æŠ¤ä½“ (self)
-    [235450] = true, -- æ£±å…‰æŠ¤ä½“ (self)
+    [11426] = true, -- å¯'å†°æŠ¤ä½" (self)
+    [235313] = true, -- çƒˆç„°æŠ¤ä½" (self)
+    [235450] = true, -- æ£±å…‰æŠ¤ä½" (self)
 }
 
 local function UpdateMassBarrier(b, event)
@@ -2344,7 +2344,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
     else
         -- Midnight 12.0.0+: some aura fields may still be secret. Per-aura checks in
         -- HandleBuff/HandleDebuff handle this. We no longer force full update for ALL
-        -- Midnight aura events â€” only fall back to full update if we encounter secret
+        -- Midnight aura events â€" only fall back to full update if we encounter secret
         -- isHelpful/isHarmful fields in addedAuras that prevent classification.
         local buffsChanged, debuffsChanged
         wipe(self._missing_auras)
@@ -2444,7 +2444,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                         self._debuffs_cache[aura.auraInstanceID] = aura
                     end
                 end
-                -- Secret missing auras are silently dropped â€” they'll be
+                -- Secret missing auras are silently dropped â€" they'll be
                 -- picked up on the next full update if needed
             end
         end
@@ -2935,7 +2935,7 @@ UnitButton_UpdatePowerText = function(self)
         pcall(function()
             local unit = self.states.displayedUnit
             local fmt = self.indicators.powerText._format
-            if fmt == “percentage” then
+            if fmt == "percentage" then
                 -- UnitPowerPercent returns 0-1 by default; use ScaleTo100 curve for 0-100
                 local pct
                 if unit and UnitPowerPercent then
@@ -2948,15 +2948,15 @@ UnitButton_UpdatePowerText = function(self)
                     end
                 end
                 if pct then
-                    self.indicators.powerText.text:SetFormattedText(“%d%%”, pct)
+                    self.indicators.powerText.text:SetFormattedText("%d%%", pct)
                 else
-                    self.indicators.powerText.text:SetFormattedText(“%d”, power)
+                    self.indicators.powerText.text:SetFormattedText("%d", power)
                 end
-            elseif fmt == “number-short” and AbbreviateNumbers then
-                self.indicators.powerText.text:SetFormattedText(“%s”, AbbreviateNumbers(power))
+            elseif fmt == "number-short" and AbbreviateNumbers then
+                self.indicators.powerText.text:SetFormattedText("%s", AbbreviateNumbers(power))
             else
-                -- “number” or “number-short” without AbbreviateNumbers: raw number
-                self.indicators.powerText.text:SetFormattedText(“%d”, power)
+                -- "number" or "number-short" without AbbreviateNumbers: raw number
+                self.indicators.powerText.text:SetFormattedText("%d", power)
             end
         end)
         -- GetStringWidth returns secret when text is tainted; skip SetWidth
@@ -3033,7 +3033,7 @@ local function UnitButton_UpdateHealthMax(self)
 
     if Cell.isMidnight and self.widgets.healthCalculator then
         -- MIDNIGHT PATH: pass secret maxHealth directly
-        -- SetMinMaxSmoothedValue is a Lua mixin that does arithmetic (Clamp) â€” fails on secrets.
+        -- SetMinMaxSmoothedValue is a Lua mixin that does arithmetic (Clamp) â€" fails on secrets.
         -- Always use native SetMinMaxValues on Midnight since maxHealth may be secret.
         local maxHealth = self.widgets.healthCalculator:GetMaximumHealth()
         self.widgets.healthBar:SetMinMaxValues(0, maxHealth)
@@ -3103,7 +3103,7 @@ local function UnitButton_UpdateHealth(self, diff, skipStateUpdates)
                 -- EvaluateCurrentHealthPercent feeds secret health% into the curve
                 -- Curve output: 1.0 if below threshold (needs healing), outOfRangeAlpha if above
                 local targetAlpha = self.widgets.healthCalculator:EvaluateCurrentHealthPercent(fadeOutHealthCurve)
-                -- targetAlpha is a secret value â€” SetAlpha accepts secrets on Midnight
+                -- targetAlpha is a secret value â€" SetAlpha accepts secrets on Midnight
                 self:SetAlpha(targetAlpha)
             end
         end
@@ -3244,7 +3244,7 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
         self.widgets.shieldBar:Show()
 
         -- Overshield glow and reverse-fill bar
-        -- NOTE: absorbs is a secret value on Midnight â€” we can't compare it to health to detect overshield.
+        -- NOTE: absorbs is a secret value on Midnight â€" we can't compare it to health to detect overshield.
         -- Show the glow whenever shields are present and overshieldEnabled is on.
         -- TODO: Use a Curve to map (absorbs + health - maxHealth) to glow visibility for precise overshield detection.
         if overshieldReverseFillEnabled then
@@ -3655,7 +3655,7 @@ UnitButton_UpdateStatusText = function(self)
         statusText:Show()
         statusText:SetStatus("OFFLINE")
         statusText:ShowTimer()
-    -- Midnight 12.0.0+: UnitIsAFK may return a secret boolean â€” skip on Midnight
+    -- Midnight 12.0.0+: UnitIsAFK may return a secret boolean â€" skip on Midnight
     elseif not Cell.isMidnight and UnitIsAFK(unit) then
         statusText:Show()
         statusText:SetStatus("AFK")
@@ -3947,7 +3947,7 @@ local function UnitButton_RegisterEvents(self)
     -- self:RegisterEvent("UNIT_PET")
     self:RegisterEvent("UNIT_PORTRAIT_UPDATE") -- pet summoned far away
 
-    --! OnShowæ—¶ç«‹å³æ‰§è¡Œï¼Œä½†UpdateIndicatorså¯èƒ½å¹¶æœªæ‰§è¡Œå®Œæ¯•ï¼Œå¯¼è‡´åœ¨ResetCustomIndicatorsè¿‡ç¨‹ä¸­æŒ‡ç¤ºå™¨å‘ç”Ÿå˜åŒ–ï¼Œè¿›è€ŒæŠ¥é”™
+    --! OnShowæ—¶ç«‹å³æ‰§è¡Œï¼Œä½†UpdateIndicatorså¯èƒ½å¹¶æœªæ‰§è¡Œå®Œæ¯•ï¼Œå¯¼è‡´åœ¨ResetCustomIndicatorsè¿‡ç¨‹ä¸­æŒ‡ç¤ºå™¨å'ç"Ÿå˜åŒ–ï¼Œè¿›è€ŒæŠ¥é"™
     local success, result = pcall(UnitButton_UpdateAll, self)
     if not success then
         F.Debug("UnitButton_UpdateAll |cffff0000FAILED:|r", self:GetName(), result)
@@ -4275,7 +4275,7 @@ local function UnitButton_OnTick(self)
                 -- update Cell.vars.guids
                 self.__unitGuid = guid
                 -- On Midnight 12.0.0+, GUIDs for non-player units in instances are secret
-                -- Can't use a secret as a table key â€” only store non-secret GUIDs
+                -- Can't use a secret as a table key â€" only store non-secret GUIDs
                 if not self.isSpotlight then
                     if not (Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(guid)) then
                         Cell.vars.guids[guid] = self.states.unit
