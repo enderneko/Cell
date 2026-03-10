@@ -2420,10 +2420,21 @@ local function UnitButton_UpdateHealthStates(self, diff)
     end
 
     if enabledIndicators["healthText"] then -- and not self.states.isDeadOrGhost then
-        -- healthText:SetValue may need plain numbers; wrap in pcall
-        pcall(function()
+        if not issecretvalue(health) and not issecretvalue(healthMax) then
             self.indicators.healthText:SetValue(health, healthMax, self.states.totalAbsorbs, self.states.healAbsorbs)
-        end)
+        else
+            -- 12.0+: pass secret values to C-level SetFormattedText directly.
+            -- SetFormattedText is marked AllowedWhenTainted and handles secrets.
+            -- Use UnitHealthPercent for percentage display (returns secret, C formats it).
+            local pct = UnitHealthPercent and UnitHealthPercent(unit)
+            if pct then
+                self.indicators.healthText.text:SetFormattedText("%d%%", pct)
+            else
+                -- fallback: display raw secret health number
+                self.indicators.healthText.text:SetFormattedText("%d", health)
+            end
+            self.indicators.healthText:SetWidth(self.indicators.healthText.text:GetStringWidth())
+        end
         self.indicators.healthText:Show()
     else
         self.indicators.healthText:Hide()
@@ -2743,10 +2754,27 @@ end
 UnitButton_UpdatePowerText = function(self)
     if not self._shouldShowPowerText then return end
 
-    if self.states.powerMax and self.states.power and not self.states.isDeadOrGhost then
-        self.indicators.powerText:SetValue(self.states.power, self.states.powerMax)
-    else
+    local power = self.states.power
+    local powerMax = self.states.powerMax
+    if not power or self.states.isDeadOrGhost then
         self.indicators.powerText:Hide()
+        return
+    end
+
+    if not issecretvalue(power) and (not powerMax or not issecretvalue(powerMax)) then
+        self.indicators.powerText:SetValue(power, powerMax)
+    else
+        -- 12.0+: pass secret values to C-level SetFormattedText directly.
+        -- SetFormattedText is marked AllowedWhenTainted and handles secrets.
+        local unit = self.states.displayedUnit
+        local pct = unit and UnitPowerPercent and UnitPowerPercent(unit)
+        if pct then
+            self.indicators.powerText.text:SetFormattedText("%d%%", pct)
+        else
+            self.indicators.powerText.text:SetFormattedText("%d", power)
+        end
+        self.indicators.powerText:SetWidth(self.indicators.powerText.text:GetStringWidth())
+        self.indicators.powerText:Show()
     end
 end
 

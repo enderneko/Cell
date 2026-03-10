@@ -1540,10 +1540,15 @@ local function HealthText_SetFormat(self, format)
 end
 
 local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
-    -- 12.0+: UnitHealth/UnitHealthMax/absorbs may return secret values in combat
+    -- 12.0+: UnitHealth/UnitHealthMax/absorbs may return secret values in combat.
+    -- C-level SetFormattedText/SetText (AllowedWhenTainted) handles secrets for display.
+    -- The caller in UnitButton passes secrets to C-level directly; this guard is a
+    -- safety net for any remaining Lua arithmetic in the formatters below.
     if issecretvalue(health) or issecretvalue(maxHealth)
         or issecretvalue(shields) or issecretvalue(healAbsorbs) then
-        self:Hide()
+        -- fall back to raw number display via C-level
+        self.text:SetFormattedText("%d", health)
+        self:SetWidth(self.text:GetStringWidth())
         return
     end
     maxHealth = maxHealth == 0 and 1 or maxHealth
@@ -1632,8 +1637,15 @@ end
 -- power text
 -------------------------------------------------
 local function SetPower_Percentage(self, current, max)
-    -- 12.0+: UnitPower() may return secret values in combat
-    if issecretvalue(current) or issecretvalue(max) then self:Hide() return end
+    -- 12.0+: UnitPower() may return secret values in combat.
+    -- SetFormattedText is C-level (AllowedWhenTainted) and handles secrets.
+    -- Skip hideIfEmptyOrFull when secret (comparisons crash).
+    if issecretvalue(current) or issecretvalue(max) then
+        self.text:SetFormattedText("%d%%", current)
+        self:SetWidth(self.text:GetStringWidth())
+        self:Show()
+        return
+    end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else
@@ -1644,7 +1656,13 @@ local function SetPower_Percentage(self, current, max)
 end
 
 local function SetPower_Number(self, current, max)
-    if issecretvalue(current) or issecretvalue(max) then self:Hide() return end
+    if issecretvalue(current) or issecretvalue(max) then
+        -- SetText is C-level (AllowedWhenTainted) and handles secret numbers
+        self.text:SetText(current)
+        self:SetWidth(self.text:GetStringWidth())
+        self:Show()
+        return
+    end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else
@@ -1655,7 +1673,13 @@ local function SetPower_Number(self, current, max)
 end
 
 local function SetPower_Number_Short(self, current, max)
-    if issecretvalue(current) or issecretvalue(max) then self:Hide() return end
+    if issecretvalue(current) or issecretvalue(max) then
+        -- Can't do F.FormatNumber (Lua arithmetic), fall back to raw number via C-level
+        self.text:SetText(current)
+        self:SetWidth(self.text:GetStringWidth())
+        self:Show()
+        return
+    end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else

@@ -692,13 +692,17 @@ end, unpack(fadeOuts))
 ---------------------------------------------------------------------
 local GetAuraDataBySpellName = C_UnitAuras.GetAuraDataBySpellName
 
+local issecretvalue = issecretvalue or function() return false end
+
 local function UnitBuffExists(unit, buff)
     local names = buffs[buff]["names"]
     local aura
     for _, name in next, names do
         aura = GetAuraDataBySpellName(unit, name, "HELPFUL")
         if aura then
-            return true, aura.sourceUnit == "player"
+            -- 12.0+: sourceUnit may be secret in combat; assume not from player
+            local fromMe = not issecretvalue(aura.sourceUnit) and aura.sourceUnit == "player"
+            return true, fromMe
         end
     end
 end
