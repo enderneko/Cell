@@ -47,6 +47,8 @@ local SetRaidTargetIconTexture = SetRaidTargetIconTexture
 local GetTime = GetTime
 local GetRaidTargetIndex = GetRaidTargetIndex
 local GetReadyCheckStatus = GetReadyCheckStatus
+local GetSpecialization = GetSpecialization
+local GetSpecializationRole = GetSpecializationRole
 local UnitHasVehicleUI = UnitHasVehicleUI
 -- local UnitInVehicle = UnitInVehicle
 -- local UnitUsingVehicle = UnitUsingVehicle
@@ -2431,21 +2433,10 @@ local function UnitButton_UpdateHealthStates(self, diff)
             -- Each component (health1, health2, shields, healAbsorbs) that is not "none"
             -- gets a %d slot with inline |cff color escapes. SetFormattedText is
             -- AllowedWhenTainted and handles secret arguments.
-            -- Wrap in pcall: UnitHealthPercent may error for some unit types,
-            -- and we must not crash UnitButton_UpdateHealthStates for the whole frame.
-            -- 12.0+: check hideIfEmptyOrFull via UnitHealthPercent (C-level)
-            -- Both the API call and comparison must be in pcall since the return is secret
+            -- 12.0+: hideIfEmptyOrFull cannot work in combat because secret
+            -- value comparisons throw even inside pcall. The normal (non-secret)
+            -- path handles hideIfEmptyOrFull correctly out of combat.
             local ht = self.indicators.healthText
-            if ht._secretHideAtFull and UnitHealthPercent then
-                local okHide, shouldHide = pcall(function()
-                    local hpct = UnitHealthPercent(unit)
-                    return hpct == 0 or hpct == 1
-                end)
-                if okHide and shouldHide then
-                    self.indicators.healthText:Hide()
-                    return
-                end
-            end
 
             pcall(function()
                 local segments = ht._secretSegments
@@ -2536,6 +2527,18 @@ end
 local function GetRole(b)
     if b.states.role and b.states.role ~= "NONE" then
         return b.states.role
+    end
+
+    -- For the player's own unit, get role from current spec directly
+    -- (UnitGroupRolesAssigned returns "NONE" when solo or in non-LFG groups)
+    if b.states.unit and UnitIsUnit(b.states.unit, "player") then
+        local spec = GetSpecialization and GetSpecialization()
+        if spec then
+            local specRole = GetSpecializationRole(spec)
+            if specRole and specRole ~= "NONE" then
+                return specRole
+            end
+        end
     end
 
     local info = LGI:GetCachedInfo(b.states.guid)
@@ -2842,22 +2845,10 @@ UnitButton_UpdatePowerText = function(self)
     if not issecretvalue(power) and (rawequal(powerMax, nil) or not issecretvalue(powerMax)) then
         self.indicators.powerText:SetValue(power, powerMax)
     else
-        -- 12.0+: check hideIfEmptyOrFull via UnitPowerPercent (C-level, safe with secrets)
-        -- Both the API call and the comparison must be in pcall since the return value is secret
-        if self.indicators.powerText.hideIfEmptyOrFull and UnitPowerPercent then
-            local unit = self.states.displayedUnit
-            if unit then
-                local okHide, shouldHide = pcall(function()
-                    local pctVal = UnitPowerPercent(unit)
-                    return pctVal == 0 or pctVal == 1
-                end)
-                if okHide and shouldHide then
-                    self.indicators.powerText:Hide()
-                    return
-                end
-            end
-        end
-        -- 12.0+: pass secret values to C-level SetFormattedText directly.
+        -- 12.0+: hideIfEmptyOrFull cannot work in combat because secret
+        -- value comparisons throw even inside pcall. The normal (non-secret)
+        -- path handles hideIfEmptyOrFull correctly out of combat.
+        -- Pass secret values to C-level SetFormattedText directly.
         -- Wrap in pcall: UnitPowerPercent may error for some unit types.
         pcall(function()
             local unit = self.states.displayedUnit

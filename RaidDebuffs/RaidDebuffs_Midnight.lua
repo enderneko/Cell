@@ -239,6 +239,23 @@ local debuffs = {
     -- ====================================================================
     [1299] = {
         ["general"] = {
+            1216985, -- Puncturing Bite (Apex Lynx)
+            1253739, -- Shred Flesh (Loyal Worg)
+            468659, -- Throw Axe (Spectral Axethrower)
+            1215803, -- Curse of Darkness
+            1253834, -- Curse of Darkness
+            1216459, -- Ephemeral Bloodlust (Phantasmal Mystic)
+            1216298, -- Soul Torment (Restless Steward)
+            473795, -- Poison Blades (Ardent Cutthroat)
+            1216825, -- Poison Spray (Creeping Spindleweb)
+            1216133, -- Shear Armor (Dutiful Groundskeeper)
+            1216834, -- Acidic Demise (Creeping Spindleweb)
+            1216963, -- Spore Dispersal (Bloated Lasher)
+            1217010, -- Ferocious Pounce (Apex Lynx)
+            473868, -- Shadowrive (Ardent Cutthroat)
+            473776, -- Fetid Spew (Flesh Behemoth)
+            1277799, -- Brutal Chop (Flesh Behemoth)
+            473668, -- Pulsing Shriek (Devoted Woebringer)
         },
         [2655] = { -- Emberdawn
             466556,
@@ -279,6 +296,16 @@ local debuffs = {
     -- ====================================================================
     [1300] = {
         ["general"] = {
+            1252909, -- Arcane Blade (Sunblade Enforcer)
+            1265561, -- Arcane Blade
+            1245068, -- Consuming Void (Void Terror)
+            1282055, -- Ethereal Shackles (Arcane Sentry)
+            1255187, -- Holy Fire (Lightward Healer)
+            468966, -- Polymorph (Arcane Magister)
+            1284627, -- Umbral Splinters
+            1264693, -- Void Surge
+            1254338, -- Ignition (Blazing Pyromancer)
+            1255462, -- Call Of The Void (Shadowrift Voidcaller)
         },
         [2659] = { -- Arcanotron Custos
             474345,
@@ -606,6 +633,23 @@ local debuffs = {
     -- ====================================================================
     [1315] = {
         ["general"] = {
+            1266381, -- Hooked Snare (Keen Headhunter)
+            1266488, -- Open Wound
+            1255765, -- Blood Frenzy (Frenzied Berserker)
+            1271623, -- Frost Nova (Hollow Soulrender)
+            1270079, -- Grim Ward (Grim Skirmisher)
+            1256008, -- Hex (Ritual Hexxer)
+            1262411, -- Ritual Firebrand
+            1259255, -- Spirit Rend (Tormented Shade)
+            1256059, -- Rending Gore (Hulking Juggernaut)
+            1256047, -- Deafening Roar (Hulking Juggernaut)
+            1256561, -- Crunch Armor (Bramblemaw Bear)
+            1256584, -- Diseased Claws (Hexbound Eagle)
+            1257781, -- Shredding Talons (Hexbound Eagle)
+            1263292, -- Shrink (Umbral Shadowbinder)
+            1265832, -- Shadow Burst (Umbral Shadowbinder)
+            1259631, -- Staggering Blow (Restless Gnarldin)
+            1259182, -- Piercing Screech (Gloomwing Bat)
         },
         [2810] = { -- Muro'jin and Nekraxx
             1246666,
@@ -651,6 +695,18 @@ local debuffs = {
     -- ====================================================================
     [1316] = {
         ["general"] = {
+            1216502, -- Crimson Glaive
+            1238439, -- Razor Dive
+            1217882, -- Bad Omens
+            1281636, -- Creeping Void (Cursed Voidcaller)
+            1277557, -- Burning Radiance (Lightwrought)
+            1263783, -- Holy Echo (Flarebat)
+            1249815, -- Transference (Corewright Arcanist)
+            1262510, -- Umbral Bolt (Nexus Adept)
+            1252062, -- Entropic Leech (Duskfright Herald)
+            1252076, -- Dark Beckoning (Duskfright Herald)
+            1282944, -- Cluster Weakness (Radiant Swarm)
+            1252429, -- Nullwark Blast (Null Sentinel)
         },
         [2813] = { -- Chief Corewright Kasreth
             1250553,
