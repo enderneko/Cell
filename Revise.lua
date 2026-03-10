@@ -3413,6 +3413,16 @@ function F.Revise()
         end
     end
 
+    -- Migration for Cell r275 (Midnight 12.0.0 compatibility)
+    if not CellDB["revise"] or dbRevision < 275 then
+        -- Remove useCleuHealthUpdater setting (CLEU-based health updater removed in 12.0.0)
+        if CellDB["general"] then
+            CellDB["general"]["useCleuHealthUpdater"] = nil
+        end
+        -- Note: profile import compatibility warning added elsewhere.
+        -- Saved variable secrets: any secrets stored before this version will be nil'd by WoW.
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

@@ -7,7 +7,23 @@ local I = Cell.iFuncs
 ---@type PixelPerfectFuncs
 local P = Cell.pixelPerfectFuncs
 
+-- NOTE (Midnight 12.0.0+): Health text formatting with arithmetic on health/maxHealth
+-- is guarded for secret values in Indicators/Built-in.lua (HealthText_SetValue).
+-- All other numeric display in this file uses SetText/SetFormattedText which accept secrets.
+
 local LCG = LibStub("LibCustomGlow-1.0")
+
+-- Midnight 12.0.0+: aura count (applications) may be secret; sanitize for safe comparisons/table-key use
+local function _SanitizeCount(count)
+    if issecretvalue and issecretvalue(count) then return 0 end
+    return count or 0
+end
+
+-- Midnight 12.0.0+: helper for stack text display (most common pattern)
+local function _StackText(count)
+    count = _SanitizeCount(count)
+    return (count == 0 or count == 1) and "" or count
+end
 
 CELL_BORDER_SIZE = 1
 CELL_BORDER_COLOR = {0, 0, 0, 1}
@@ -370,7 +386,7 @@ local function Icon_OnUpdate(frame, elapsed)
         if Cell.vars.iconDurationRoundUp then
             frame.duration:SetFormattedText("%d", ceil(frame._remain))
         else
-            if frame._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and frame._remain < Cell.vars.iconDurationDecimal then
                 frame.duration:SetFormattedText("%.1f", frame._remain)
             else
                 frame.duration:SetFormattedText("%d", frame._remain)
@@ -467,7 +483,7 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
     end
 
     frame.icon:SetTexture(texture)
-    frame.stack:SetText((count == 0 or count == 1) and "" or count)
+    frame.stack:SetText(_StackText(count))
     frame:Show()
 
     if refreshing then
@@ -611,7 +627,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
     end
 
     frame.icon:SetTexture(texture)
-    frame.stack:SetText((count == 0 or count == 1) and "" or count)
+    frame.stack:SetText(_StackText(count))
     frame:Show()
 
     if refreshing then
@@ -1036,6 +1052,7 @@ local circled = {"①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","�
 local function Text_SetCooldown(frame, start, duration, debuffType, texture, count)
     if duration == 0 then
         -- always show stack
+        count = _SanitizeCount(count)
         count = count == 0 and 1 or count
         count = frame.circledStackNums and circled[count] or count
         frame.text:SetText(count)
@@ -1051,6 +1068,7 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
         frame._duration = duration
 
         if frame.durationTbl[1] then
+            count = _SanitizeCount(count)
             if frame.showStack and count ~= 0 then
                 if frame.circledStackNums then
                     frame._count = circled[count].." "
@@ -1065,6 +1083,7 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
             frame:SetScript("OnUpdate", Text_OnUpdateDuration)
         else
             -- always show stack
+            count = _SanitizeCount(count)
             count = count == 0 and 1 or count
             if frame.circledStackNums then
                 frame.text:SetText(circled[count])
@@ -1148,7 +1167,7 @@ local function Rect_OnUpdate(frame, elapsed)
         if Cell.vars.iconDurationRoundUp then
             frame.duration:SetFormattedText("%d", ceil(frame._remain))
         else
-            if frame._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and frame._remain < Cell.vars.iconDurationDecimal then
                 frame.duration:SetFormattedText("%.1f", frame._remain)
             else
                 frame.duration:SetFormattedText("%d", frame._remain)
@@ -1188,7 +1207,7 @@ local function Rect_SetCooldown(frame, start, duration, debuffType, texture, cou
         frame:SetScript("OnUpdate", Rect_OnUpdate)
     end
 
-    frame.stack:SetText((count == 0 or count == 1) and "" or count)
+    frame.stack:SetText(_StackText(count))
     frame:Show()
 end
 
@@ -1274,7 +1293,7 @@ local function Bar_OnUpdate(bar, elapsed)
         if Cell.vars.iconDurationRoundUp then
             bar.duration:SetFormattedText("%d", ceil(bar._remain))
         else
-            if bar._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and bar._remain < Cell.vars.iconDurationDecimal then
                 bar.duration:SetFormattedText("%.1f", bar._remain)
             else
                 bar.duration:SetFormattedText("%d", bar._remain)
@@ -1320,7 +1339,7 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
         bar:SetScript("OnUpdate", Bar_OnUpdate)
     end
 
-    bar.stack:SetText((count == 0 or count == 1) and "" or count)
+    bar.stack:SetText(_StackText(count))
     bar:Show()
 end
 
@@ -1380,7 +1399,7 @@ local function Bars_OnUpdate(bar, elapsed)
         if Cell.vars.iconDurationRoundUp then
             bar.duration:SetFormattedText("%d", ceil(bar._remain))
         else
-            if bar._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and bar._remain < Cell.vars.iconDurationDecimal then
                 bar.duration:SetFormattedText("%.1f", bar._remain)
             else
                 bar.duration:SetFormattedText("%d", bar._remain)
@@ -1426,7 +1445,7 @@ local function Bars_SetCooldown(bar, start, duration, debuffType, texture, count
 
     bar:SetStatusBarColor(color[1], color[2], color[3], color[4])
     bar:SetBackdropColor(color[1] * 0.2, color[2] * 0.2, color[3] * 0.2, color[4])
-    bar.stack:SetText((count == 0 or count == 1) and "" or count)
+    bar.stack:SetText(_StackText(count))
     bar:Show()
 end
 
@@ -1988,7 +2007,7 @@ local function Block_OnUpdate_Duration(frame, elapsed)
         if Cell.vars.iconDurationRoundUp then
             frame.duration:SetFormattedText("%d", ceil(frame._remain))
         else
-            if frame._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and frame._remain < Cell.vars.iconDurationDecimal then
                 frame.duration:SetFormattedText("%.1f", frame._remain)
             else
                 frame.duration:SetFormattedText("%d", frame._remain)
@@ -2038,7 +2057,7 @@ local function Block_SetCooldown_Duration(frame, start, duration, debuffType, te
         frame:SetScript("OnUpdate", Block_OnUpdate_Duration)
     end
 
-    frame.stack:SetText((count == 0 or count == 1) and "" or count)
+    frame.stack:SetText(_StackText(count))
     frame:Show()
 
     if refreshing then
@@ -2062,7 +2081,7 @@ local function Block_OnUpdate_Stack(frame, elapsed)
         if Cell.vars.iconDurationRoundUp then
             frame.duration:SetFormattedText("%d", ceil(frame._remain))
         else
-            if frame._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and frame._remain < Cell.vars.iconDurationDecimal then
                 frame.duration:SetFormattedText("%.1f", frame._remain)
             else
                 frame.duration:SetFormattedText("%d", frame._remain)
@@ -2112,7 +2131,7 @@ local function Block_SetCooldown_Stack(frame, start, duration, debuffType, textu
         frame:SetBackdropColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3], frame.colors[2][4])
     end
 
-    frame.stack:SetText((count == 0 or count == 1) and "" or count)
+    frame.stack:SetText(_StackText(count))
     frame:Show()
 
     if refreshing then
@@ -2198,7 +2217,7 @@ local function Blocks_OnUpdate(frame, elapsed)
         if Cell.vars.iconDurationRoundUp then
             frame.duration:SetFormattedText("%d", ceil(frame._remain))
         else
-            if frame._remain < Cell.vars.iconDurationDecimal then
+            if Cell.vars.iconDurationDecimal and frame._remain < Cell.vars.iconDurationDecimal then
                 frame.duration:SetFormattedText("%.1f", frame._remain)
             else
                 frame.duration:SetFormattedText("%d", frame._remain)
@@ -2239,7 +2258,7 @@ local function Blocks_SetCooldown(frame, start, duration, debuffType, texture, c
     end
 
     frame:SetBackdropColor(color[1], color[2], color[3], color[4])
-    frame.stack:SetText((count == 0 or count == 1) and "" or count)
+    frame.stack:SetText(_StackText(count))
     frame:Show()
 
     if refreshing then

@@ -29,6 +29,50 @@ local function Deserialize(encoded)
 end
 
 -----------------------------------------
+-- Comm restriction (Midnight 12.0.0+)
+-- Addon communications are blocked during active encounters, M+ keys, and PvP matches.
+-----------------------------------------
+local function IsCommRestricted()
+    if not Cell.isMidnight then return false end
+    -- Check encounter
+    if IsEncounterInProgress and IsEncounterInProgress() then return true end
+    -- Check M+
+    if C_MythicPlus and C_MythicPlus.IsRunActive and C_MythicPlus.IsRunActive() then return true end
+    -- Check PvP
+    if C_PvP and C_PvP.IsActiveBattlefield and C_PvP.IsActiveBattlefield() then return true end
+    return false
+end
+
+-- Export for use in other Comm files (e.g. Nicknames.lua)
+function F.IsCommRestricted()
+    return IsCommRestricted()
+end
+
+-- Simple queue for deferred sends (used when comms are restricted)
+local pendingComms = {}
+
+local function QueueComm(prefix, message, channel, target, priority)
+    tinsert(pendingComms, {prefix=prefix, message=message, channel=channel, target=target, priority=priority})
+end
+
+local function FlushPendingComms()
+    if IsCommRestricted() then return end
+    if #pendingComms == 0 then return end
+    local toSend = pendingComms
+    pendingComms = {}
+    for _, msg in ipairs(toSend) do
+        Comm:SendCommMessage(msg.prefix, msg.message, msg.channel, msg.target, msg.priority or "NORMAL")
+    end
+end
+
+local commFrame = CreateFrame("Frame")
+commFrame:RegisterEvent("ENCOUNTER_END")
+commFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
+commFrame:SetScript("OnEvent", function()
+    C_Timer.After(1, FlushPendingComms)
+end)
+
+-----------------------------------------
 -- for WA
 -----------------------------------------
 function F.Notify(type, ...)
@@ -64,6 +108,11 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     if IsInGroup() then
         eventFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
         UpdateSendChannel()
+        -- Addon comms blocked during encounters/M+/PvP on Midnight 12.0.0+
+        if IsCommRestricted() then
+            F.Debug("Cell: Comm suppressed - restricted context (CELL_VERSION group)")
+            return
+        end
         Comm:SendCommMessage("CELL_VERSION", Cell.version, sendChannel, nil, "NORMAL")
     end
 end
@@ -71,6 +120,11 @@ end
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 function eventFrame:PLAYER_LOGIN()
     if IsInGuild() then
+        -- Addon comms blocked during encounters/M+/PvP on Midnight 12.0.0+
+        if IsCommRestricted() then
+            F.Debug("Cell: Comm suppressed - restricted context (CELL_VERSION guild)")
+            return
+        end
         Comm:SendCommMessage("CELL_VERSION", Cell.version, "GUILD", nil, "NORMAL")
     end
 end
@@ -107,6 +161,11 @@ function F.NotifyMarkLock(mark, name, class)
     F.Print(L["%s lock %s on %s."]:format(L["You"], F.GetMarkEscapeSequence(mark), name))
 
     UpdateSendChannel()
+    -- Addon comms blocked during encounters/M+/PvP on Midnight 12.0.0+
+    if IsCommRestricted() then
+        F.Debug("Cell: Comm suppressed - restricted context (CELL_MARKS lock)")
+        return
+    end
     Comm:SendCommMessage("CELL_MARKS", Serialize({true, mark, name}), sendChannel, nil, "ALERT")
 end
 
@@ -115,6 +174,11 @@ function F.NotifyMarkUnlock(mark, name, class)
     F.Print(L["%s unlock %s from %s."]:format(L["You"], F.GetMarkEscapeSequence(mark), name))
 
     UpdateSendChannel()
+    -- Addon comms blocked during encounters/M+/PvP on Midnight 12.0.0+
+    if IsCommRestricted() then
+        F.Debug("Cell: Comm suppressed - restricted context (CELL_MARKS unlock)")
+        return
+    end
     Comm:SendCommMessage("CELL_MARKS", Serialize({false, mark, name}), sendChannel, nil, "ALERT")
 end
 
@@ -167,6 +231,11 @@ function F.CheckPriority()
     -- NOTE: needs time to calc myPriority
     C_Timer.After(1, function()
         UpdateSendChannel()
+        -- Addon comms blocked during encounters/M+/PvP on Midnight 12.0.0+
+        if IsCommRestricted() then
+            F.Debug("Cell: Comm suppressed - restricted context (CELL_CPRIO chk)")
+            return
+        end
         Comm:SendCommMessage("CELL_CPRIO", "chk", sendChannel, nil, "ALERT")
     end)
     -- if t_check then t_check:Cancel() end
@@ -184,6 +253,11 @@ Comm:RegisterComm("CELL_CPRIO", function(prefix, message, channel, sender)
     if t_send then t_send:Cancel() end
     t_send = C_Timer.NewTimer(2, function()
         UpdateSendChannel()
+        -- Addon comms blocked during encounters/M+/PvP on Midnight 12.0.0+
+        if IsCommRestricted() then
+            F.Debug("Cell: Comm suppressed - restricted context (CELL_PRIO)")
+            return
+        end
         Comm:SendCommMessage("CELL_PRIO", tostring(myPriority), sendChannel, nil, "ALERT")
     end)
 end)
@@ -208,6 +282,11 @@ end)
 -- cross realm send
 -----------------------------------------
 local function CrossRealmSendCommMessage(prefix, message, playerName, priority, callbackFn)
+    -- Addon comms blocked during encounters/M+/PvP on Midnight 12.0.0+
+    if IsCommRestricted() then
+        F.Debug("Cell: Comm suppressed - restricted context (CrossRealm:", prefix, ")")
+        return
+    end
     -- NOTE: unit needs to be in your group, or it will always return true
     if UnitIsSameServer(playerName) then
         Comm:SendCommMessage(prefix, message, "WHISPER", playerName, priority, callbackFn)

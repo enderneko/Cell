@@ -5,6 +5,15 @@ local F = Cell.funcs
 ---@class CellIndicatorFuncs
 local I = Cell.iFuncs
 
+-- NOTE for Custom Indicator authors (Midnight 12.0.0+):
+-- In restricted contexts (encounters, M+, PvP, combat), aura data fields
+-- (spellId, expirationTime, applications, icon, etc.) are Secret Values.
+-- - DO NOT compare secret values with == or use arithmetic on them
+-- - DO NOT use secret values as table keys
+-- - FontString:SetText() and SetTexture() ACCEPT secrets safely
+-- - Use issecretvalue(val) to check if a value is secret
+-- - Use GetRestrictedActionStatus(0) to check if aura access is restricted
+
 -------------------------------------------------
 -- custom indicators
 -------------------------------------------------
@@ -246,12 +255,25 @@ end
 function I.UpdateCustomIndicators(unitButton, auraInfo)
     local unit = unitButton.states.displayedUnit
 
+    -- Midnight 12.0.0+: bail only if aura type (isHelpful) is secret — we need it to classify buff/debuff.
+    -- spellId may still be secret for some auras even with hotfix; don't bail on spellId.
+    if issecretvalue and issecretvalue(auraInfo.isHelpful) then return end
+
     local auraType = auraInfo.isHelpful and "buff" or "debuff"
     local icon = auraInfo.icon
-    local debuffType = auraInfo.isHarmful and (auraInfo.dispelName or "") or nil
+    -- Midnight 12.0.0+: dispelName may be secret; sanitize to avoid table-key/comparison crashes downstream
+    local rawDispelName = auraInfo.dispelName
+    local debuffType = auraInfo.isHarmful and ((rawDispelName and (not issecretvalue or not issecretvalue(rawDispelName))) and rawDispelName or "") or nil
     local count = auraInfo.applications
     local duration = auraInfo.duration
-    local start = (auraInfo.expirationTime or 0) - auraInfo.duration
+    -- Use per-aura check for duration: non-secret auras get real timers, secret ones get zeroed.
+    local start
+    if F.IsAuraNonSecret(auraInfo) then
+        start = (auraInfo.expirationTime or 0) - auraInfo.duration
+    else
+        start = 0
+        duration = 0
+    end
     local castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"
 
     -- check Bleed
@@ -268,7 +290,8 @@ function I.UpdateCustomIndicators(unitButton, auraInfo)
                 spell = auraInfo.spellId
             end
 
-            if indicatorTable["auras"][spell] or (indicatorTable["auras"][0] and duration ~= 0) then -- is in indicator spell list
+            -- Midnight 12.0.0+: spell (name or spellId) may be secret; cannot use as table key
+            if spell and (not issecretvalue or not issecretvalue(spell)) and indicatorTable["auras"][spell] or (indicatorTable["auras"][0] and duration ~= 0) then -- is in indicator spell list
                 -- check caster
                 if (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "others" and not castByMe) or (indicatorTable["castBy"] == "anyone") then
                     if auraType == "buff" then
