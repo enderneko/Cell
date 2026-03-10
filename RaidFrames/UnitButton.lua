@@ -3276,16 +3276,17 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
 
         -- Update shield indicator (user-configurable indicator on top of health bar)
         if enabledIndicators["shieldBar"] then
-            -- Size indicator to match health bar, then use SetAbsorbs for proportional fill
             local indBar = self.indicators.shieldBar
-            if self.orientation == "horizontal" then
-                indBar:SetWidth(self.widgets.healthBar:GetWidth())
-            else
-                indBar:SetHeight(self.widgets.healthBar:GetHeight())
-            end
             local healthMax = self.widgets.healthCalculator:GetMaximumHealth()
-            indBar:Show()
-            indBar:SetAbsorbs(absorbs, healthMax)
+            if indicatorBooleans["shieldBar"] then
+                -- onlyShowOvershields: can't compute overshield from secrets, hide indicator
+                -- TODO: Use a Curve to detect overshield (absorbs + health > maxHealth)
+                indBar:Hide()
+            else
+                -- SetAbsorbs anchors to health bar and uses StatusBar fill for proportioning
+                indBar:Show()
+                indBar:SetAbsorbs(absorbs, healthMax)
+            end
         else
             self.indicators.shieldBar:Hide()
         end
