@@ -69,7 +69,7 @@ local UnitPhaseReason = UnitPhaseReason
 local IsInRaid = IsInRaid
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo -- nil in 12.0+
-local GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
+local _GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
 local GetAuraSlots = C_UnitAuras.GetAuraSlots
 local _GetAuraDataBySlot = C_UnitAuras.GetAuraDataBySlot
 local _GetAuraDispelTypeColor = C_UnitAuras.GetAuraDispelTypeColor
@@ -2981,6 +2981,7 @@ end
 
 UnitButton_UpdatePowerMax = function(self)
     if not self._shouldShowPowerBar then return end
+    if self.states.powerMax == nil then return end
 
     -- powerMax may be secret on Midnight 12.0.0+ for some units.
     -- SetMinMaxSmoothedValue is a Lua mixin that does arithmetic (Clamp) â€" fails on secrets.
