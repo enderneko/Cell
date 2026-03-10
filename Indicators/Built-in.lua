@@ -2301,16 +2301,18 @@ local function ShieldBar_SetVerticalValue(bar, percent)
     bar:SetValue(1)
 end
 
--- Secret-safe: set width to full health bar width, use StatusBar proportional
--- fill to show shield amount. Keeps original height/position (thin bar at
--- bottom), hides border so only the filled portion is visible.
+-- Secret-safe: anchor to fill full health bar, use StatusBar proportional
+-- fill to show shield amount. Border is hidden so only the filled portion
+-- is visible. The bar orientation is set to match the health bar.
 local function ShieldBar_SetAbsorbs(bar, absorbs, healthMax)
     bar:SetBackdropBorderColor(0, 0, 0, 0)
-    -- Set width to full health bar so StatusBar fill shows correct proportion
     local parent = bar.parentHealthBar
     if parent then
-        bar:SetWidth(parent:GetWidth())
+        P.ClearPoints(bar)
+        bar:_SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
+        bar:_SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", 0, 0)
     end
+    bar:SetOrientation("horizontal")
     bar:SetMinMaxValues(0, healthMax)
     bar:SetValue(absorbs)
 end

@@ -3246,7 +3246,7 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
         if not unit then return end
         -- Refresh calculator so we have current data (critical for standalone UNIT_ABSORB_AMOUNT_CHANGED events)
         UnitButton_UpdateCalculator(self)
-        local absorbs = self.widgets.healthCalculator:GetDamageAbsorbs()
+        local absorbs = self.widgets.healthCalculator:GetTotalDamageAbsorbs()
         local healthMax = self.widgets.healthCalculator:GetMaximumHealth()
         -- Update the widget shield bar (needs min/max for correct proportioning)
         self.widgets.shieldBar:SetMinMaxValues(0, healthMax)
