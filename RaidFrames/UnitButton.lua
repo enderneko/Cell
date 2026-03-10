@@ -3017,77 +3017,169 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
     end
 
     local shieldBar = self.widgets.shieldBar
-    -- Set size to match health bar for correct proportions
-    if self.orientation == "horizontal" then
-        shieldBar:SetWidth(self.widgets.healthBar:GetWidth())
-    else
-        shieldBar:SetHeight(self.widgets.healthBar:GetHeight())
-    end
+    local totalAbsorbs = self.states.totalAbsorbs or 0
+    local healthMax = self.states.healthMax
+    local health = self.states.health
 
-    -- Use 12.0 calculator API if available (handles secret values via C)
-    local calc = self._healPredCalc
-    local absorbAmt, isClamped
-    if calc and UnitGetDetailedHealPrediction then
-        pcall(function() UnitGetDetailedHealPrediction(unit, nil, calc) end)
-        if calc.GetDamageAbsorbs then
-            absorbAmt, isClamped = calc:GetDamageAbsorbs()
-        end
-    end
-    -- Use calculator value or fall back to raw API
-    local displayAbsorbs = absorbAmt or self.states.totalAbsorbs or 0
+    -- Check if values are secret (12.0+ combat)
+    local isSecret = issecretvalue(totalAbsorbs) or issecretvalue(healthMax) or issecretvalue(health)
 
-    pcall(function()
-        shieldBar:SetMinMaxValues(0, self.states.healthMax)
-        SetBarValueSmooth(shieldBar, displayAbsorbs)
-    end)
-    shieldBar:Show()
-
-    -- Overshield glow: use SetAlphaFromBoolean for secret bool support
-    if overshieldEnabled and isClamped ~= nil then
-        local glow = self.widgets.overShieldGlow
-        if glow.SetAlphaFromBoolean then
-            glow:Show()
-            glow:SetAlphaFromBoolean(isClamped, 1, 0)
+    if isSecret then
+        -- Secret path: use StatusBar min/max approach (C-level handles secrets)
+        -- Set size to match health bar for correct proportions
+        if self.orientation == "horizontal" then
+            shieldBar:SetWidth(self.widgets.healthBar:GetWidth())
         else
-            -- fallback: try comparison
-            local okOver, isOver = pcall(function()
-                return isClamped == true
-            end)
-            if okOver and isOver then glow:Show() else glow:Hide() end
+            shieldBar:SetHeight(self.widgets.healthBar:GetHeight())
         end
-    else
-        self.widgets.overShieldGlow:Hide()
-    end
-    self.widgets.shieldBarR:Hide()
-    self.widgets.overShieldGlowR:Hide()
 
-    -- Indicator (percentage-based, gracefully degrades with secrets)
-    if enabledIndicators["shieldBar"] then
-        local okPct, pct = pcall(function()
-            local ta = (displayAbsorbs or 0) + 0
-            if ta <= 0 then return nil end
-            return ta / (self.states.healthMax + 0)
-        end)
-        if okPct and pct then
-            if indicatorBooleans["shieldBar"] then
-                local okO, osp = pcall(function()
-                    return ((displayAbsorbs + 0) + (self.states.health + 0) - (self.states.healthMax + 0)) / (self.states.healthMax + 0)
-                end)
-                if okO and osp and osp > 0 then
-                    self.indicators.shieldBar:Show()
-                    self.indicators.shieldBar:SetValue(osp)
+        -- Use 12.0 calculator API if available
+        local calc = self._healPredCalc
+        local absorbAmt, isClamped
+        if calc and UnitGetDetailedHealPrediction then
+            pcall(function() UnitGetDetailedHealPrediction(unit, nil, calc) end)
+            if calc.GetDamageAbsorbs then
+                absorbAmt, isClamped = calc:GetDamageAbsorbs()
+            end
+        end
+        local displayAbsorbs = absorbAmt or totalAbsorbs
+
+        if shieldEnabled then
+            pcall(function()
+                shieldBar:SetMinMaxValues(0, healthMax)
+                SetBarValueSmooth(shieldBar, displayAbsorbs)
+            end)
+            shieldBar:Show()
+        else
+            shieldBar:Hide()
+        end
+
+        -- Overshield glow: use SetAlphaFromBoolean for secret bool support
+        if overshieldEnabled and isClamped ~= nil then
+            local glow = self.widgets.overShieldGlow
+            if glow.SetAlphaFromBoolean then
+                glow:Show()
+                glow:SetAlphaFromBoolean(isClamped, 1, 0)
+            else
+                local okOver, isOver = pcall(function() return isClamped == true end)
+                if okOver and isOver then glow:Show() else glow:Hide() end
+            end
+        else
+            self.widgets.overShieldGlow:Hide()
+        end
+        self.widgets.shieldBarR:Hide()
+        self.widgets.overShieldGlowR:Hide()
+
+        -- Indicator: percentage-based, gracefully degrades with secrets
+        if enabledIndicators["shieldBar"] then
+            local okPct, pct = pcall(function()
+                local ta = (displayAbsorbs or 0) + 0
+                if ta <= 0 then return nil end
+                return ta / (healthMax + 0)
+            end)
+            if okPct and pct then
+                if indicatorBooleans["shieldBar"] then
+                    local okO, osp = pcall(function()
+                        return ((displayAbsorbs + 0) + (health + 0) - (healthMax + 0)) / (healthMax + 0)
+                    end)
+                    if okO and osp and osp > 0 then
+                        self.indicators.shieldBar:Show()
+                        self.indicators.shieldBar:SetValue(osp)
+                    else
+                        self.indicators.shieldBar:Hide()
+                    end
                 else
-                    self.indicators.shieldBar:Hide()
+                    self.indicators.shieldBar:Show()
+                    self.indicators.shieldBar:SetValue(pct)
                 end
             else
-                self.indicators.shieldBar:Show()
-                self.indicators.shieldBar:SetValue(pct)
+                self.indicators.shieldBar:Hide()
             end
         else
             self.indicators.shieldBar:Hide()
         end
     else
-        self.indicators.shieldBar:Hide()
+        -- Normal path: Lua arithmetic is safe (non-secret values)
+        if totalAbsorbs > 0 then
+            local shieldPercent = totalAbsorbs / healthMax
+
+            -- Indicator (percentage-based overlay)
+            if enabledIndicators["shieldBar"] then
+                if indicatorBooleans["shieldBar"] then
+                    -- onlyShowOvershields
+                    local overshieldPercent = (totalAbsorbs + health - healthMax) / healthMax
+                    if overshieldPercent > 0 then
+                        self.indicators.shieldBar:Show()
+                        self.indicators.shieldBar:SetValue(overshieldPercent)
+                    else
+                        self.indicators.shieldBar:Hide()
+                    end
+                else
+                    self.indicators.shieldBar:Show()
+                    self.indicators.shieldBar:SetValue(shieldPercent)
+                end
+            else
+                self.indicators.shieldBar:Hide()
+            end
+
+            -- Widget shield bar (StatusBar)
+            if shieldEnabled then
+                -- Set size to match health bar
+                if self.orientation == "horizontal" then
+                    shieldBar:SetWidth(self.widgets.healthBar:GetWidth())
+                else
+                    shieldBar:SetHeight(self.widgets.healthBar:GetHeight())
+                end
+                shieldBar:SetMinMaxValues(0, healthMax)
+                SetBarValueSmooth(shieldBar, totalAbsorbs)
+                shieldBar:Show()
+            else
+                shieldBar:Hide()
+            end
+
+            -- Overshield glow
+            local healthPercent = self.states.healthPercent
+            if shieldPercent + healthPercent > 1 then
+                if overshieldReverseFillEnabled then
+                    local p = shieldPercent + healthPercent - 1
+                    if p > healthPercent then p = healthPercent end
+                    local barSize = (self.orientation == "horizontal")
+                        and self.widgets.healthBar:GetWidth()
+                        or self.widgets.healthBar:GetHeight()
+                    local shieldBarR = self.widgets.shieldBarR
+                    if self.orientation == "horizontal" then
+                        shieldBarR:SetWidth(p * barSize)
+                    else
+                        shieldBarR:SetHeight(p * barSize)
+                    end
+                    shieldBarR:Show()
+                    if overshieldEnabled then
+                        self.widgets.overShieldGlowR:Show()
+                    else
+                        self.widgets.overShieldGlowR:Hide()
+                    end
+                    self.widgets.overShieldGlow:Hide()
+                else
+                    if overshieldEnabled then
+                        self.widgets.overShieldGlow:Show()
+                    else
+                        self.widgets.overShieldGlow:Hide()
+                    end
+                    self.widgets.shieldBarR:Hide()
+                    self.widgets.overShieldGlowR:Hide()
+                end
+            else
+                self.widgets.overShieldGlow:Hide()
+                self.widgets.shieldBarR:Hide()
+                self.widgets.overShieldGlowR:Hide()
+            end
+        else
+            self.indicators.shieldBar:Hide()
+            shieldBar:Hide()
+            self.widgets.overShieldGlow:Hide()
+            self.widgets.shieldBarR:Hide()
+            self.widgets.overShieldGlowR:Hide()
+        end
     end
 end
 
