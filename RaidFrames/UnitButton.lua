@@ -2425,8 +2425,16 @@ local function UnitButton_UpdateHealthStates(self, diff)
         else
             -- 12.0+: pass secret values to C-level SetFormattedText directly.
             -- SetFormattedText is marked AllowedWhenTainted and handles secrets.
-            -- Use UnitHealthPercent for percentage display (returns secret, C formats it).
-            local pct = UnitHealthPercent and UnitHealthPercent(unit)
+            -- UnitHealthPercent returns 0-1 by default; use ScaleTo100 curve to get 0-100
+            -- so %d formats correctly (without it, 100% health shows as "1%").
+            local pct
+            if UnitHealthPercent then
+                if CurveConstants and CurveConstants.ScaleTo100 then
+                    pct = UnitHealthPercent(unit, true, CurveConstants.ScaleTo100)
+                else
+                    pct = UnitHealthPercent(unit)
+                end
+            end
             if pct then
                 self.indicators.healthText.text:SetFormattedText("%d%%", pct)
             else
@@ -2765,9 +2773,16 @@ UnitButton_UpdatePowerText = function(self)
         self.indicators.powerText:SetValue(power, powerMax)
     else
         -- 12.0+: pass secret values to C-level SetFormattedText directly.
-        -- SetFormattedText is marked AllowedWhenTainted and handles secrets.
+        -- UnitPowerPercent returns 0-1 by default; use ScaleTo100 curve to get 0-100.
         local unit = self.states.displayedUnit
-        local pct = unit and UnitPowerPercent and UnitPowerPercent(unit)
+        local pct
+        if unit and UnitPowerPercent then
+            if CurveConstants and CurveConstants.ScaleTo100 then
+                pct = UnitPowerPercent(unit, true, CurveConstants.ScaleTo100)
+            else
+                pct = UnitPowerPercent(unit)
+            end
+        end
         if pct then
             self.indicators.powerText.text:SetFormattedText("%d%%", pct)
         else
