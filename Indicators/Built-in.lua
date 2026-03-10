@@ -1639,6 +1639,17 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
     -- safety net for any remaining Lua arithmetic in the formatters below.
     if issecretvalue(health) or issecretvalue(maxHealth)
         or issecretvalue(shields) or issecretvalue(healAbsorbs) then
+        -- Check hideIfEmptyOrFull via pcall (comparison may fail on secrets)
+        if self._secretHideAtFull then
+            local ok, shouldHide = pcall(function()
+                return health == 0 or health == maxHealth
+            end)
+            if ok and shouldHide then
+                self.text:SetText("")
+                self:SetWidth(0)
+                return
+            end
+        end
         -- Use pre-built secret segments (individual per component).
         -- Absorb components are skipped when their value is known to be 0.
         local segments = self._secretSegments
@@ -1776,8 +1787,14 @@ end
 local function SetPower_Percentage(self, current, max)
     -- 12.0+: UnitPower() may return secret values in combat.
     -- SetFormattedText is C-level (AllowedWhenTainted) and handles secrets.
-    -- Skip hideIfEmptyOrFull when secret (comparisons crash).
     if issecretvalue(current) or issecretvalue(max) then
+        if self.hideIfEmptyOrFull then
+            local ok, isEmpty = pcall(function() return current == 0 or current == max end)
+            if ok and isEmpty then
+                self:Hide()
+                return
+            end
+        end
         self.text:SetFormattedText("%d%%", current)
         self:Show()
         return
@@ -1793,7 +1810,13 @@ end
 
 local function SetPower_Number(self, current, max)
     if issecretvalue(current) or issecretvalue(max) then
-        -- SetText is C-level (AllowedWhenTainted) and handles secret numbers
+        if self.hideIfEmptyOrFull then
+            local ok, isEmpty = pcall(function() return current == 0 or current == max end)
+            if ok and isEmpty then
+                self:Hide()
+                return
+            end
+        end
         self.text:SetText(current)
         self:Show()
         return
@@ -1809,6 +1832,13 @@ end
 
 local function SetPower_Number_Short(self, current, max)
     if issecretvalue(current) or issecretvalue(max) then
+        if self.hideIfEmptyOrFull then
+            local ok, isEmpty = pcall(function() return current == 0 or current == max end)
+            if ok and isEmpty then
+                self:Hide()
+                return
+            end
+        end
         if AbbreviateNumbers then
             self.text:SetFormattedText("%s", AbbreviateNumbers(current))
         else

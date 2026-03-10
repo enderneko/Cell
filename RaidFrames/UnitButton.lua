@@ -2433,10 +2433,19 @@ local function UnitButton_UpdateHealthStates(self, diff)
             -- Each component (health1, health2, shields, healAbsorbs) that is not "none"
             -- gets a %d slot with inline |cff color escapes. SetFormattedText is
             -- AllowedWhenTainted and handles secret arguments.
-            -- 12.0+: hideIfEmptyOrFull cannot work in combat because secret
-            -- value comparisons throw even inside pcall. The normal (non-secret)
-            -- path handles hideIfEmptyOrFull correctly out of combat.
             local ht = self.indicators.healthText
+
+            -- hideIfEmptyOrFull via pcall (comparison may fail on secrets)
+            if ht._secretHideAtFull then
+                local ok, shouldHide = pcall(function()
+                    return health == 0 or health == healthMax
+                end)
+                if ok and shouldHide then
+                    ht.text:SetText("")
+                    ht:SetWidth(0)
+                    return
+                end
+            end
 
             pcall(function()
                 local segments = ht._secretSegments
@@ -2539,6 +2548,15 @@ local function GetRole(b)
             if specRole and specRole ~= "NONE" then
                 return specRole
             end
+        end
+    end
+
+    -- Fresh UnitGroupRolesAssigned check (role may have been assigned after init)
+    if b.states.unit then
+        local freshRole = UnitGroupRolesAssigned(b.states.unit)
+        if freshRole and freshRole ~= "NONE" then
+            b.states.role = freshRole
+            return freshRole
         end
     end
 
@@ -2857,9 +2875,14 @@ UnitButton_UpdatePowerText = function(self)
     if not issecretvalue(power) and (rawequal(powerMax, nil) or not issecretvalue(powerMax)) then
         self.indicators.powerText:SetValue(power, powerMax)
     else
-        -- 12.0+: hideIfEmptyOrFull cannot work in combat because secret
-        -- value comparisons throw even inside pcall. The normal (non-secret)
-        -- path handles hideIfEmptyOrFull correctly out of combat.
+        -- hideIfEmptyOrFull via pcall (comparison may fail on secrets)
+        if self.indicators.powerText.hideIfEmptyOrFull then
+            local ok, isEmpty = pcall(function() return power == 0 or power == powerMax end)
+            if ok and isEmpty then
+                self.indicators.powerText:Hide()
+                return
+            end
+        end
         -- Pass secret values to C-level SetFormattedText directly.
         -- Wrap in pcall: UnitPowerPercent may error for some unit types.
         pcall(function()
@@ -3817,14 +3840,25 @@ local function UnitButton_OnEvent(self, event, unit, arg)
         elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
             UnitButton_UpdateLeader(self, event)
             if event == "PLAYER_REGEN_ENABLED" then
-                -- 12.0+: secret values cleared on combat end; refresh all
-                -- values that may have been stored as secrets during combat
-                UnitButton_UpdateHealth(self, nil, true)
-                UnitButton_UpdateShieldAbsorbs(self, true)
-                UnitButton_UpdateHealAbsorbs(self, true)
+                -- 12.0+: secret values may linger briefly after combat ends.
+                -- Immediate refresh + delayed retry to catch stale secrets.
+                UnitButton_UpdateHealth(self)
+                UnitButton_UpdateShieldAbsorbs(self)
+                UnitButton_UpdateHealAbsorbs(self)
                 UnitButton_UpdatePowerStates(self)
                 UnitButton_UpdatePowerText(self)
                 UnitButton_UpdateAuras(self)
+                -- Delayed retry: values at full health/power won't get events
+                local btn = self
+                C_Timer.After(0.5, function()
+                    if btn.states.displayedUnit then
+                        UnitButton_UpdateHealth(btn)
+                        UnitButton_UpdateShieldAbsorbs(btn)
+                        UnitButton_UpdateHealAbsorbs(btn)
+                        UnitButton_UpdatePowerStates(btn)
+                        UnitButton_UpdatePowerText(btn)
+                    end
+                end)
             end
 
         elseif event == "PLAYER_TARGET_CHANGED" then
