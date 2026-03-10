@@ -2433,7 +2433,7 @@ local function UnitButton_UpdateHealthStates(self, diff)
                 -- fallback: display raw secret health number
                 self.indicators.healthText.text:SetFormattedText("%d", health)
             end
-            self.indicators.healthText:SetWidth(self.indicators.healthText.text:GetStringWidth())
+            -- GetStringWidth returns secret when text is tainted; skip SetWidth
         end
         self.indicators.healthText:Show()
     else
@@ -2773,7 +2773,7 @@ UnitButton_UpdatePowerText = function(self)
         else
             self.indicators.powerText.text:SetFormattedText("%d", power)
         end
-        self.indicators.powerText:SetWidth(self.indicators.powerText.text:GetStringWidth())
+        -- GetStringWidth returns secret when text is tainted; skip SetWidth
         self.indicators.powerText:Show()
     end
 end

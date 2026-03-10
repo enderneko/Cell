@@ -1548,7 +1548,7 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
         or issecretvalue(shields) or issecretvalue(healAbsorbs) then
         -- fall back to raw number display via C-level
         self.text:SetFormattedText("%d", health)
-        self:SetWidth(self.text:GetStringWidth())
+        -- skip SetWidth: GetStringWidth returns secret when text is tainted
         return
     end
     maxHealth = maxHealth == 0 and 1 or maxHealth
@@ -1583,7 +1583,9 @@ local function HealthText_SetFont(self, font, size, outline, shadow)
         self.text:SetShadowColor(0, 0, 0, 0)
     end
 
-    self:SetSize(self.text:GetStringWidth(), size)
+    -- 12.0+: GetStringWidth returns secret when text is tainted; use fallback
+    local w = self.text:GetStringWidth()
+    self:SetSize(issecretvalue(w) and 50 or w, size)
 end
 
 local function HealthText_SetPoint(self, point, relativeTo, relativePoint, x, y)
@@ -1642,7 +1644,6 @@ local function SetPower_Percentage(self, current, max)
     -- Skip hideIfEmptyOrFull when secret (comparisons crash).
     if issecretvalue(current) or issecretvalue(max) then
         self.text:SetFormattedText("%d%%", current)
-        self:SetWidth(self.text:GetStringWidth())
         self:Show()
         return
     end
@@ -1659,7 +1660,6 @@ local function SetPower_Number(self, current, max)
     if issecretvalue(current) or issecretvalue(max) then
         -- SetText is C-level (AllowedWhenTainted) and handles secret numbers
         self.text:SetText(current)
-        self:SetWidth(self.text:GetStringWidth())
         self:Show()
         return
     end
@@ -1676,7 +1676,6 @@ local function SetPower_Number_Short(self, current, max)
     if issecretvalue(current) or issecretvalue(max) then
         -- Can't do F.FormatNumber (Lua arithmetic), fall back to raw number via C-level
         self.text:SetText(current)
-        self:SetWidth(self.text:GetStringWidth())
         self:Show()
         return
     end
@@ -1711,7 +1710,9 @@ local function PowerText_SetFont(self, font, size, outline, shadow)
         self.text:SetShadowColor(0, 0, 0, 0)
     end
 
-    self:SetSize(self.text:GetStringWidth(), size)
+    -- 12.0+: GetStringWidth returns secret when text is tainted; use fallback
+    local w = self.text:GetStringWidth()
+    self:SetSize(issecretvalue(w) and 50 or w, size)
 end
 
 local function PowerText_SetPoint(self, point, relativeTo, relativePoint, x, y)
