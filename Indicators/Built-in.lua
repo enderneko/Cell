@@ -1592,7 +1592,8 @@ local function BuildSecretSegment(config)
     -- so fall back to abbreviated raw number (no %% suffix).
     -- Health percent uses UnitHealthPercent (C-level) so it gets a real 0-100 value.
     local isAbsorbPercent = isAbsorb and isPercent
-    local suffix = (isPercent and not isAbsorbPercent) and "%%" or ""
+    local isNoSign = config.format:find("_no_sign$") and true or false
+    local suffix = (isPercent and not isAbsorbPercent and not isNoSign) and "%%" or ""
 
     -- Use abbreviated display for _short formats and absorb percent fallback
     local useAbbrev = (config.format:find("short") or isAbsorbPercent) and not (isPercent and not isAbsorbPercent)
@@ -1659,21 +1660,9 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
     -- safety net for any remaining Lua arithmetic in the formatters below.
     if issecretvalue(health) or issecretvalue(maxHealth)
         or issecretvalue(shields) or issecretvalue(healAbsorbs) then
-        -- Check hideIfEmptyOrFull via pcall — split comparisons to avoid `or` on secret booleans
-        if self._secretHideAtFull then
-            local hide = false
-            local ok1, eq1 = pcall(function() return health == 0 end)
-            if ok1 and eq1 then hide = true end
-            if not hide then
-                local ok2, eq2 = pcall(function() return health == maxHealth end)
-                if ok2 and eq2 then hide = true end
-            end
-            if hide then
-                self.text:SetText("")
-                self:SetWidth(0)
-                return
-            end
-        end
+        -- hideIfEmptyOrFull: skip when values are secret — comparisons on secret
+        -- values return secret booleans which crash Lua control flow. Out of combat
+        -- values are non-secret and the normal path below handles it correctly.
         -- Use pre-built secret segments (individual per component).
         -- Absorb components are skipped when their value is known to be 0.
         local segments = self._secretSegments

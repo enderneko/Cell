@@ -2923,20 +2923,9 @@ UnitButton_UpdatePowerText = function(self)
     if not issecretvalue(power) and (rawequal(powerMax, nil) or not issecretvalue(powerMax)) then
         self.indicators.powerText:SetValue(power, powerMax)
     else
-        -- hideIfEmptyOrFull via pcall — split comparisons to avoid `or` on secret booleans
-        if self.indicators.powerText.hideIfEmptyOrFull then
-            local hide = false
-            local ok1, eq1 = pcall(function() return power == 0 end)
-            if ok1 and eq1 then hide = true end
-            if not hide then
-                local ok2, eq2 = pcall(function() return power == powerMax end)
-                if ok2 and eq2 then hide = true end
-            end
-            if hide then
-                self.indicators.powerText:Hide()
-                return
-            end
-        end
+        -- hideIfEmptyOrFull: skip when values are secret — comparisons on secret
+        -- values return secret booleans which crash Lua control flow. Out of combat
+        -- values are non-secret and the normal path handles it correctly.
         -- Pass secret values to C-level SetFormattedText directly.
         -- Wrap in pcall: UnitPowerPercent may error for some unit types.
         pcall(function()
@@ -3277,12 +3266,11 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
 
         -- Update shield indicator (user-configurable indicator on top of health bar)
         if enabledIndicators["shieldBar"] then
-            -- On Midnight, we pass the secret absorb value directly; the indicator's SetValue
-            -- accepts secrets since it's backed by a StatusBar on Midnight.
-            -- NOTE: indicatorBooleans["shieldBar"] (onlyShowOvershields) can't be honored with
-            -- secrets since we can't compute overshieldPercent. Show full absorbs instead.
+            -- On Midnight, pass secret absorb/healthMax to SetAbsorbs which uses
+            -- SetMinMaxValues(0, healthMax) + SetValue(absorbs) — all C-level, secret-safe.
+            local healthMax = self.widgets.healthCalculator:GetMaximumHealth()
             self.indicators.shieldBar:Show()
-            self.indicators.shieldBar:SetValue(absorbs)
+            self.indicators.shieldBar:SetAbsorbs(absorbs, healthMax)
         else
             self.indicators.shieldBar:Hide()
         end
