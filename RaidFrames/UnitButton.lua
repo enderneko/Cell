@@ -85,7 +85,8 @@ local GetAuraDispelTypeColor = C_UnitAuras and C_UnitAuras.GetAuraDispelTypeColo
 -- Maps SpellDispelType indices to Cell's debuff type colors
 local midnightDispelCurve
 if C_CurveUtil and C_CurveUtil.CreateColorCurve and Enum and Enum.LuaCurveType then
-    midnightDispelCurve = C_CurveUtil.CreateColorCurve(Enum.LuaCurveType.Step)
+    midnightDispelCurve = C_CurveUtil.CreateColorCurve()
+    midnightDispelCurve:SetType(Enum.LuaCurveType.Step)
     -- Indices from wago.tools DB2 SpellDispelType
     local dispelColors = {
         [0]  = {r=0.80, g=0.00, b=0.00, a=1.0}, -- None (physical) = red
@@ -100,7 +101,6 @@ if C_CurveUtil and C_CurveUtil.CreateColorCurve and Enum and Enum.LuaCurveType t
         midnightDispelCurve:AddPoint(idx, CreateColor(c.r, c.g, c.b, c.a))
     end
 end
-print("[CellDBG] GetAuraDispelTypeColor=" .. tostring(GetAuraDispelTypeColor ~= nil) .. " midnightDispelCurve=" .. tostring(midnightDispelCurve ~= nil) .. " C_CurveUtil=" .. tostring(C_CurveUtil ~= nil))
 local IsDelveInProgress = C_PartyInfo.IsDelveInProgress
 
 --! for AI followers, UnitClassBase is buggy
@@ -1333,9 +1333,7 @@ local function HandleDebuff(self, auraInfo)
         end
 
         -- user created indicators
-        if not (Cell.isMidnight and auraInfo._hasSecrets) then
-            I.UpdateCustomIndicators(self, auraInfo)
-        end
+        I.UpdateCustomIndicators(self, auraInfo)
 
         -- prepare raidDebuffs
         local order = I.GetDebuffOrder(name, spellId, count)
@@ -1641,9 +1639,16 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             local highlightType = self.indicators.dispels.highlightType
             if highlightType and highlightType ~= "none" and highlight then
                 -- Use "entire" overlay style for all types since gradient needs
-                -- CreateColor which can't handle secret values
+                -- CreateColor which can't handle secret values.
+                -- Handle both ColorMixin (:GetRGBA) and raw table (.r/.g/.b) return types
+                local r, g, b, a
+                if color.GetRGBA then
+                    r, g, b, a = color:GetRGBA()
+                else
+                    r, g, b, a = color.r, color.g, color.b, color.a
+                end
                 highlight:SetTexture(Cell.vars.whiteTexture)
-                highlight:SetVertexColor(color.r, color.g, color.b, 0.5)
+                highlight:SetVertexColor(r, g, b, a or 0.5)
                 highlight:Show()
                 self._midnightDispelHighlightShown = true
             end
@@ -1719,8 +1724,9 @@ local function HandleBuff(self, auraInfo)
 
         -- When fields are secret, skip name/spellId matching (can't identify auras)
         if Cell.isMidnight and auraInfo._hasSecrets then
-            -- Skip defensiveCooldowns, externalCooldowns, etc. - can't match
-            -- Skip custom indicators - can't match auras
+            -- Skip defensiveCooldowns, externalCooldowns, etc. - can't match by name/spellId
+            -- But still process custom indicators (Custom.lua handles secrets; wildcard [0] still works)
+            I.UpdateCustomIndicators(self, auraInfo)
         else
             -- defensiveCooldowns
             if enabledIndicators["defensiveCooldowns"] and I.IsDefensiveCooldown(name, spellId) and self._buffs.defensiveFound < indicatorNums["defensiveCooldowns"] then
@@ -4514,4 +4520,3 @@ function CellUnitButton_OnLoad(button)
     button:RegisterForClicks("AnyDown")
 end
 
-print("[CellDBG] UnitButton.lua LOADED, isMidnight=" .. tostring(Cell.isMidnight))
