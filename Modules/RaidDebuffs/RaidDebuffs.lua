@@ -316,8 +316,33 @@ local function LoadDebuffs()
     -- texplore(loadedDebuffs[477]) -- 悬槌堡
 end
 
+-- Fill in instances from unsortedDebuffs that weren't found by the EJ API.
+-- This can happen when new raids/dungeons aren't yet classified in the EJ.
+local function FillMissingInstances()
+    if not unsortedDebuffs then return end
+
+    local latestTierName = tierNames[#tierNames]
+    if not latestTierName or not encounterJournalList[latestTierName] then return end
+
+    for instanceId in pairs(unsortedDebuffs) do
+        if not instanceIdToName[instanceId] then
+            -- This instance wasn't loaded by EJ_GetInstanceByIndex; try direct lookup
+            local name, _, _, image = EJ_GetInstanceInfo(instanceId)
+            if name then
+                local instanceTable = {["name"]=name, ["id"]=instanceId, ["image"]=image, ["bosses"]={}}
+                LoadBossList(instanceId, instanceTable["bosses"])
+                tinsert(encounterJournalList[latestTierName], instanceTable)
+                local iIndex = #encounterJournalList[latestTierName]
+                instanceNameMapping[name] = latestTierName..":"..iIndex..":"..instanceId
+                instanceIdToName[instanceId] = name
+            end
+        end
+    end
+end
+
 local function UpdateRaidDebuffs()
     LoadList()
+    FillMissingInstances()
     -- LoadDungeonsForCurrentSeason()
     LoadDebuffs()
 end

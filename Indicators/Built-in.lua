@@ -1599,9 +1599,9 @@ local function HealthText_SetFormat(self, format)
     self.shields = BuildPattern(format.shields)
     self.healAbsorbs = BuildPattern(format.healAbsorbs)
 
-    -- Pre-build a C-level format string for use when values are secret.
-    -- Each active component gets a %d placeholder; the caller passes the
-    -- matching secret values as arguments to SetFormattedText.
+    -- Pre-build C-level format segments for use when values are secret.
+    -- Each active component gets a segment with a %d/%s placeholder.
+    -- Stored individually so the render path can skip zero-value absorb components.
     local segments = {}
     local argKeys = {}
     for _, cfg in ipairs({format.health1, format.health2, format.shields, format.healAbsorbs}) do
@@ -1612,12 +1612,24 @@ local function HealthText_SetFormat(self, format)
         end
     end
     if #segments > 0 then
-        self._secretFormat = table.concat(segments)
+        self._secretSegments = segments
         self._secretArgKeys = argKeys
     else
-        self._secretFormat = nil
+        self._secretSegments = nil
         self._secretArgKeys = nil
     end
+
+    -- Pre-compute flag: should the entire indicator hide when health is at full/empty?
+    -- True when all health components have hideIfEmptyOrFull and no absorb components are active.
+    local h1Active = format.health1.format ~= "none"
+    local h2Active = format.health2.format ~= "none"
+    local shieldsActive = format.shields.format ~= "none"
+    local healAbsorbsActive = format.healAbsorbs.format ~= "none"
+    local allHealthHide = true
+    if h1Active and not format.health1.hideIfEmptyOrFull then allHealthHide = false end
+    if h2Active and not format.health2.hideIfEmptyOrFull then allHealthHide = false end
+    if not h1Active and not h2Active then allHealthHide = false end -- no health components
+    self._secretHideAtFull = allHealthHide and not shieldsActive and not healAbsorbsActive
 end
 
 local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
@@ -1627,14 +1639,17 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
     -- safety net for any remaining Lua arithmetic in the formatters below.
     if issecretvalue(health) or issecretvalue(maxHealth)
         or issecretvalue(shields) or issecretvalue(healAbsorbs) then
-        -- Use pre-built secret format if available (includes all active components
-        -- with colors, delimiters, and %d slots for C-level formatting)
-        local secretFmt = self._secretFormat
+        -- Use pre-built secret segments (individual per component).
+        -- Absorb components are skipped when their value is known to be 0.
+        local segments = self._secretSegments
         local argKeys = self._secretArgKeys
-        if secretFmt and argKeys then
+        if segments and argKeys then
+            local fmtParts = {}
             local argValues = {}
             for i, key in ipairs(argKeys) do
                 local raw
+                local isAbsorbKey = (key == "shields" or key == "shields_abbr"
+                    or key == "healAbsorbs" or key == "healAbsorbs_abbr")
                 if key == "pct" or key == "health" or key == "health_abbr" then
                     raw = health
                 elseif key == "shields" or key == "shields_abbr" then
@@ -1644,17 +1659,26 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
                 else
                     raw = 0
                 end
-                argValues[i] = key:sub(-5) == "_abbr" and AbbreviateNumbers(raw) or raw
+                -- Skip absorb components that are known to be 0 (non-secret)
+                if isAbsorbKey and not issecretvalue(raw) and raw == 0 then
+                    -- skip this component
+                else
+                    fmtParts[#fmtParts + 1] = segments[i]
+                    argValues[#argValues + 1] = key:sub(-5) == "_abbr" and AbbreviateNumbers(raw) or raw
+                end
             end
+            local fmt = table.concat(fmtParts)
             local n = #argValues
-            if n == 1 then
-                self.text:SetFormattedText(secretFmt, argValues[1])
+            if n == 0 then
+                self.text:SetText("")
+            elseif n == 1 then
+                self.text:SetFormattedText(fmt, argValues[1])
             elseif n == 2 then
-                self.text:SetFormattedText(secretFmt, argValues[1], argValues[2])
+                self.text:SetFormattedText(fmt, argValues[1], argValues[2])
             elseif n == 3 then
-                self.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3])
+                self.text:SetFormattedText(fmt, argValues[1], argValues[2], argValues[3])
             elseif n == 4 then
-                self.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3], argValues[4])
+                self.text:SetFormattedText(fmt, argValues[1], argValues[2], argValues[3], argValues[4])
             end
         else
             self.text:SetFormattedText("%d", health)
@@ -2210,44 +2234,44 @@ local function ShieldBar_SetVerticalValue(bar, percent)
     bar:SetHeight(max(barHeight, 3))
 end
 
+-- Secret-safe: sets absorbs/max directly, C-level handles the sizing
+local function ShieldBar_SetAbsorbs(bar, absorbs, healthMax)
+    bar:SetMinMaxValues(0, healthMax)
+    bar:SetValue(absorbs)
+end
+
 local function ShieldBar_SetPoint(bar, point, anchorTo, anchorPoint, x, y)
-    -- if point == "HEALTH_BAR_HORIZONTAL" then
-    --     bar:_SetPoint("TOPLEFT", b.widgets.healthBar)
-    --     bar:_SetPoint("BOTTOMLEFT", b.widgets.healthBar)
-    --     bar.SetValue = ShieldBar_SetHorizontalValue
-    -- elseif point == "HEALTH_BAR_VERTICAL" then
-    --     bar:_SetPoint("TOPLEFT", b.widgets.healthBar)
-    --     bar:_SetPoint("BOTTOMLEFT", b.widgets.healthBar)
-    --     bar.SetValue = ShieldBar_SetVerticalValue
     if point == "HEALTH_BAR" then
         bar:_SetPoint("TOPLEFT", bar.parentHealthBar, P.Scale(-1), P.Scale(1))
         bar:_SetPoint("BOTTOMLEFT", bar.parentHealthBar, P.Scale(-1), P.Scale(-1))
-        bar.SetValue = ShieldBar_SetHorizontalValue
+        bar.SetPercent = ShieldBar_SetHorizontalValue
     else
         bar:_SetPoint(point, anchorTo, anchorPoint, x, y)
-        bar.SetValue = ShieldBar_SetHorizontalValue
+        bar.SetPercent = ShieldBar_SetHorizontalValue
     end
 end
 
 function I.CreateShieldBar(parent)
-    local shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widgets.indicatorFrame, "BackdropTemplate")
+    local shieldBar = CreateFrame("StatusBar", parent:GetName().."ShieldBar", parent.widgets.indicatorFrame, "BackdropTemplate")
     parent.indicators.shieldBar = shieldBar
-    -- shieldBar:SetSize(4, 4)
     shieldBar:Hide()
     shieldBar:SetBackdrop({edgeFile=Cell.vars.whiteTexture, edgeSize=P.Scale(1)})
     shieldBar:SetBackdropBorderColor(0, 0, 0, 1)
-
-    local tex = shieldBar:CreateTexture(nil, "BORDER", nil, -7)
-    tex:SetAllPoints()
+    shieldBar:SetStatusBarTexture(Cell.vars.whiteTexture)
+    shieldBar:SetMinMaxValues(0, 1)
+    shieldBar:SetValue(0)
 
     shieldBar._SetPoint = shieldBar.SetPoint
     shieldBar.SetPoint = ShieldBar_SetPoint
-    shieldBar.SetValue = ShieldBar_SetHorizontalValue
+    -- Percentage-based SetValue for normal (non-secret) path
+    shieldBar.SetPercent = ShieldBar_SetHorizontalValue
+    -- Secret-safe SetAbsorbs for combat path
+    shieldBar.SetAbsorbs = ShieldBar_SetAbsorbs
 
     shieldBar.parentHealthBar = parent.widgets.healthBar
 
     function shieldBar:SetColor(r, g, b, a)
-        tex:SetColorTexture(r, g, b, a)
+        shieldBar:SetStatusBarColor(r, g, b, a)
     end
 
     function shieldBar:UpdatePixelPerfect()

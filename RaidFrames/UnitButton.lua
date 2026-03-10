@@ -2433,18 +2433,29 @@ local function UnitButton_UpdateHealthStates(self, diff)
             -- AllowedWhenTainted and handles secret arguments.
             -- Wrap in pcall: UnitHealthPercent may error for some unit types,
             -- and we must not crash UnitButton_UpdateHealthStates for the whole frame.
+            -- 12.0+: check hideIfEmptyOrFull via UnitHealthPercent (C-level)
+            local ht = self.indicators.healthText
+            if ht._secretHideAtFull and UnitHealthPercent then
+                local okH, hpct = pcall(UnitHealthPercent, unit)
+                if okH and (hpct == 0 or hpct == 1) then
+                    self.indicators.healthText:Hide()
+                    return
+                end
+            end
+
             pcall(function()
-                local ht = self.indicators.healthText
-                local secretFmt = ht._secretFormat
+                local segments = ht._secretSegments
                 local argKeys = ht._secretArgKeys
-                if secretFmt and argKeys then
-                    -- Resolve the argument values for each %d slot
+                if segments and argKeys then
+                    -- Resolve values, skipping zero-value absorb components
                     local pct
+                    local fmtParts = {}
                     local argValues = {}
                     for i, key in ipairs(argKeys) do
                         local raw
+                        local isAbsorbKey = (key == "shields" or key == "shields_abbr"
+                            or key == "healAbsorbs" or key == "healAbsorbs_abbr")
                         if key == "pct" then
-                            -- Lazily compute percentage once
                             if not pct then
                                 if UnitHealthPercent then
                                     if CurveConstants and CurveConstants.ScaleTo100 then
@@ -2455,7 +2466,7 @@ local function UnitButton_UpdateHealthStates(self, diff)
                                         pct = ok and val or nil
                                     end
                                 end
-                                pct = pct or health -- fallback to raw health
+                                pct = pct or health
                             end
                             raw = pct
                         elseif key == "health" or key == "health_abbr" then
@@ -2469,21 +2480,28 @@ local function UnitButton_UpdateHealthStates(self, diff)
                         else
                             raw = 0
                         end
-                        argValues[i] = key:sub(-5) == "_abbr" and AbbreviateNumbers(raw) or raw
+                        -- Skip absorb components that are known to be 0 (non-secret)
+                        if isAbsorbKey and not issecretvalue(raw) and raw == 0 then
+                            -- skip
+                        else
+                            fmtParts[#fmtParts + 1] = segments[i]
+                            argValues[#argValues + 1] = key:sub(-5) == "_abbr" and AbbreviateNumbers(raw) or raw
+                        end
                     end
-                    -- Call with up to 4 arguments (one per component)
+                    local fmt = table.concat(fmtParts)
                     local n = #argValues
-                    if n == 1 then
-                        ht.text:SetFormattedText(secretFmt, argValues[1])
+                    if n == 0 then
+                        ht.text:SetText("")
+                    elseif n == 1 then
+                        ht.text:SetFormattedText(fmt, argValues[1])
                     elseif n == 2 then
-                        ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2])
+                        ht.text:SetFormattedText(fmt, argValues[1], argValues[2])
                     elseif n == 3 then
-                        ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3])
+                        ht.text:SetFormattedText(fmt, argValues[1], argValues[2], argValues[3])
                     elseif n == 4 then
-                        ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3], argValues[4])
+                        ht.text:SetFormattedText(fmt, argValues[1], argValues[2], argValues[3], argValues[4])
                     end
                 else
-                    -- No active components or format not yet initialized; show raw health
                     self.indicators.healthText.text:SetFormattedText("%d", health)
                 end
             end)
@@ -2820,6 +2838,17 @@ UnitButton_UpdatePowerText = function(self)
     if not issecretvalue(power) and (rawequal(powerMax, nil) or not issecretvalue(powerMax)) then
         self.indicators.powerText:SetValue(power, powerMax)
     else
+        -- 12.0+: check hideIfEmptyOrFull via UnitPowerPercent (C-level, safe with secrets)
+        if self.indicators.powerText.hideIfEmptyOrFull and UnitPowerPercent then
+            local unit = self.states.displayedUnit
+            if unit then
+                local okP, pctVal = pcall(UnitPowerPercent, unit)
+                if okP and (pctVal == 0 or pctVal == 1) then
+                    self.indicators.powerText:Hide()
+                    return
+                end
+            end
+        end
         -- 12.0+: pass secret values to C-level SetFormattedText directly.
         -- Wrap in pcall: UnitPowerPercent may error for some unit types.
         pcall(function()
@@ -3076,31 +3105,17 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
         self.widgets.shieldBarR:Hide()
         self.widgets.overShieldGlowR:Hide()
 
-        -- Indicator: percentage-based, gracefully degrades with secrets
+        -- Indicator: StatusBar-based, C-level handles secret values
         if enabledIndicators["shieldBar"] then
-            local okPct, pct = pcall(function()
-                local ta = (displayAbsorbs or 0) + 0
-                if ta <= 0 then return nil end
-                return ta / (healthMax + 0)
-            end)
-            if okPct and pct then
-                if indicatorBooleans["shieldBar"] then
-                    local okO, osp = pcall(function()
-                        return ((displayAbsorbs + 0) + (health + 0) - (healthMax + 0)) / (healthMax + 0)
-                    end)
-                    if okO and osp and osp > 0 then
-                        self.indicators.shieldBar:Show()
-                        self.indicators.shieldBar:SetValue(osp)
-                    else
-                        self.indicators.shieldBar:Hide()
-                    end
-                else
-                    self.indicators.shieldBar:Show()
-                    self.indicators.shieldBar:SetValue(pct)
-                end
+            -- Size the indicator to match health bar
+            local indBar = self.indicators.shieldBar
+            if self.orientation == "horizontal" then
+                indBar:SetWidth(self.widgets.healthBar:GetWidth())
             else
-                self.indicators.shieldBar:Hide()
+                indBar:SetHeight(self.widgets.healthBar:GetHeight())
             end
+            pcall(indBar.SetAbsorbs, indBar, displayAbsorbs, healthMax)
+            indBar:Show()
         else
             self.indicators.shieldBar:Hide()
         end
@@ -3116,13 +3131,13 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
                     local overshieldPercent = (totalAbsorbs + health - healthMax) / healthMax
                     if overshieldPercent > 0 then
                         self.indicators.shieldBar:Show()
-                        self.indicators.shieldBar:SetValue(overshieldPercent)
+                        self.indicators.shieldBar:SetPercent(overshieldPercent)
                     else
                         self.indicators.shieldBar:Hide()
                     end
                 else
                     self.indicators.shieldBar:Show()
-                    self.indicators.shieldBar:SetValue(shieldPercent)
+                    self.indicators.shieldBar:SetPercent(shieldPercent)
                 end
             else
                 self.indicators.shieldBar:Hide()
