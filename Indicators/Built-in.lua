@@ -13,6 +13,8 @@ local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
 local issecretvalue = issecretvalue or function() return false end
 local AbbreviateNumbers = AbbreviateNumbers
+local UnitHealthPercent = UnitHealthPercent
+local CurveConstants = CurveConstants
 
 local function noop() end
 
@@ -1650,19 +1652,23 @@ local function HealthText_SetFormat(self, format)
     self._secretHideAtFull = allHealthHide and not shieldsActive and not healAbsorbsActive
 end
 
-local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
+local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs, unit)
     -- 12.0+: UnitHealth/UnitHealthMax/absorbs may return secret values in combat.
     -- C-level SetFormattedText/SetText (AllowedWhenTainted) handles secrets for display.
     -- The caller in UnitButton passes secrets to C-level directly; this guard is a
     -- safety net for any remaining Lua arithmetic in the formatters below.
     if issecretvalue(health) or issecretvalue(maxHealth)
         or issecretvalue(shields) or issecretvalue(healAbsorbs) then
-        -- Check hideIfEmptyOrFull via pcall (comparison may fail on secrets)
+        -- Check hideIfEmptyOrFull via pcall — split comparisons to avoid `or` on secret booleans
         if self._secretHideAtFull then
-            local ok, shouldHide = pcall(function()
-                return health == 0 or health == maxHealth
-            end)
-            if ok and shouldHide then
+            local hide = false
+            local ok1, eq1 = pcall(function() return health == 0 end)
+            if ok1 and eq1 then hide = true end
+            if not hide then
+                local ok2, eq2 = pcall(function() return health == maxHealth end)
+                if ok2 and eq2 then hide = true end
+            end
+            if hide then
                 self.text:SetText("")
                 self:SetWidth(0)
                 return
@@ -1675,11 +1681,25 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
         if segments and argKeys then
             local fmtParts = {}
             local argValues = {}
+            -- Get health percent via C-level API for pct segments
+            local healthPct
             for i, key in ipairs(argKeys) do
                 local raw
                 local isAbsorbKey = (key == "shields" or key == "shields_abbr"
                     or key == "healAbsorbs" or key == "healAbsorbs_abbr")
-                if key == "pct" or key == "health" or key == "health_abbr" then
+                if key == "pct" then
+                    -- Use UnitHealthPercent (C-level) for percentage display
+                    if not healthPct and unit and UnitHealthPercent then
+                        if CurveConstants and CurveConstants.ScaleTo100 then
+                            local ok, val = pcall(UnitHealthPercent, unit, true, CurveConstants.ScaleTo100)
+                            healthPct = ok and val or health
+                        else
+                            local ok, val = pcall(UnitHealthPercent, unit)
+                            healthPct = ok and val or health
+                        end
+                    end
+                    raw = healthPct or health
+                elseif key == "health" or key == "health_abbr" then
                     raw = health
                 elseif key == "shields" or key == "shields_abbr" then
                     raw = rawequal(shields, nil) and 0 or shields

@@ -2462,7 +2462,8 @@ local function UnitButton_UpdateCalculator(self)
     if not unit then return end
     local calc = self.widgets.healthCalculator
     if not calc then return end
-    UnitGetDetailedHealPrediction(unit, "player", calc)
+    -- pcall: UnitGetDetailedHealPrediction may fail for AI followers or unavailable units
+    pcall(UnitGetDetailedHealPrediction, unit, "player", calc)
 end
 
 local function UnitButton_UpdateHealthStates(self, diff)
@@ -2496,8 +2497,8 @@ local function UnitButton_UpdateHealthStates(self, diff)
             local maxHealth = calc:GetMaximumHealth()
             local totalAbsorbs = calc:GetTotalDamageAbsorbs()
             local healAbsorbs = calc:GetTotalHealAbsorbs()
-            -- SetValue accepts secret values
-            self.indicators.healthText:SetValue(health, maxHealth, totalAbsorbs, healAbsorbs)
+            -- SetValue accepts secret values; pass unit for UnitHealthPercent
+            self.indicators.healthText:SetValue(health, maxHealth, totalAbsorbs, healAbsorbs, unit)
             self.indicators.healthText:Show()
         else
             self.indicators.healthText:Hide()
@@ -2552,7 +2553,7 @@ local function UnitButton_UpdateHealthStates(self, diff)
         end
 
         if enabledIndicators["healthText"] then -- and not self.states.isDeadOrGhost then
-            self.indicators.healthText:SetValue(health, healthMax, self.states.totalAbsorbs, self.states.healAbsorbs)
+            self.indicators.healthText:SetValue(health, healthMax, self.states.totalAbsorbs, self.states.healAbsorbs, unit)
             self.indicators.healthText:Show()
         else
             self.indicators.healthText:Hide()
@@ -2922,10 +2923,16 @@ UnitButton_UpdatePowerText = function(self)
     if not issecretvalue(power) and (rawequal(powerMax, nil) or not issecretvalue(powerMax)) then
         self.indicators.powerText:SetValue(power, powerMax)
     else
-        -- hideIfEmptyOrFull via pcall (comparison may fail on secrets)
+        -- hideIfEmptyOrFull via pcall — split comparisons to avoid `or` on secret booleans
         if self.indicators.powerText.hideIfEmptyOrFull then
-            local ok, isEmpty = pcall(function() return power == 0 or power == powerMax end)
-            if ok and isEmpty then
+            local hide = false
+            local ok1, eq1 = pcall(function() return power == 0 end)
+            if ok1 and eq1 then hide = true end
+            if not hide then
+                local ok2, eq2 = pcall(function() return power == powerMax end)
+                if ok2 and eq2 then hide = true end
+            end
+            if hide then
                 self.indicators.powerText:Hide()
                 return
             end
@@ -3992,9 +3999,17 @@ local function UnitButton_OnEvent(self, event, unit, arg)
 
         elseif event == "UNIT_ABSORB_AMOUNT_CHANGED" then
             UnitButton_UpdateShieldAbsorbs(self)
+            -- Refresh health text so shield component updates immediately
+            if enabledIndicators["healthText"] then
+                UnitButton_UpdateHealthStates(self)
+            end
 
         elseif event == "UNIT_HEAL_ABSORB_AMOUNT_CHANGED" then
             UnitButton_UpdateHealAbsorbs(self)
+            -- Refresh health text so healAbsorb component updates immediately
+            if enabledIndicators["healthText"] then
+                UnitButton_UpdateHealthStates(self)
+            end
 
         elseif event == "UNIT_MAXPOWER" then
             UnitButton_UpdatePowerStates(self)
