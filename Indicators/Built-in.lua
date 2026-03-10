@@ -1525,6 +1525,51 @@ local function BuildPattern(config)
     end
 end
 
+-- Build a C-level format segment for secret values. Returns the format string
+-- segment (with %d placeholder) and a key identifying which argument to use:
+--   "health" = raw health, "pct" = health percent (0-100), "shields" = absorbs,
+--   "healAbsorbs" = heal absorbs, nil = skip (format is "none")
+local function BuildSecretSegment(config)
+    if config.format == "none" then
+        return nil, nil
+    end
+
+    local prefix
+    if config.delimiter == nil then
+        prefix = ""
+    else
+        prefix = "|cffababab" .. config.delimiter .. "|r"
+    end
+
+    local isPercent = config.format:find("percent$") and true or false
+    local suffix = isPercent and "%%" or ""
+
+    local colorStart, colorEnd
+    if config.color[1] == "class_color" then
+        colorStart, colorEnd = "", ""
+    else
+        colorStart = "|cff" .. F.ConvertRGBToHEX(F.ConvertRGB_256(unpack(config.color[2])))
+        colorEnd = "|r"
+    end
+
+    local segment = prefix .. colorStart .. "%d" .. suffix .. colorEnd
+
+    -- Determine which argument to pass for this segment
+    local fmt = config.format:gsub("_no_sign$", "")
+    local argKey
+    if fmt == "shields" or fmt == "shields_short" or fmt == "shields_percent" then
+        argKey = "shields"
+    elseif fmt == "healabsorbs" or fmt == "healabsorbs_short" or fmt == "healabsorbs_percent" then
+        argKey = "healAbsorbs"
+    elseif isPercent then
+        argKey = "pct"
+    else
+        argKey = "health"
+    end
+
+    return segment, argKey
+end
+
 local function HealthText_SetFormat(self, format)
     self.GetHealth1 = formatter[format.health1.format:gsub("_no_sign$", "")]
     self.GetHealth2 = formatter[format.health2.format:gsub("_no_sign$", "")]
@@ -1537,6 +1582,26 @@ local function HealthText_SetFormat(self, format)
     self.health2_hideIfEmptyOrFull = format.health2.hideIfEmptyOrFull
     self.shields = BuildPattern(format.shields)
     self.healAbsorbs = BuildPattern(format.healAbsorbs)
+
+    -- Pre-build a C-level format string for use when values are secret.
+    -- Each active component gets a %d placeholder; the caller passes the
+    -- matching secret values as arguments to SetFormattedText.
+    local segments = {}
+    local argKeys = {}
+    for _, cfg in ipairs({format.health1, format.health2, format.shields, format.healAbsorbs}) do
+        local seg, key = BuildSecretSegment(cfg)
+        if seg then
+            segments[#segments + 1] = seg
+            argKeys[#argKeys + 1] = key
+        end
+    end
+    if #segments > 0 then
+        self._secretFormat = table.concat(segments)
+        self._secretArgKeys = argKeys
+    else
+        self._secretFormat = nil
+        self._secretArgKeys = nil
+    end
 end
 
 local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
@@ -1728,6 +1793,7 @@ local function PowerText_SetPoint(self, point, relativeTo, relativePoint, x, y)
 end
 
 local function PowerText_SetFormat(self, format)
+    self._format = format -- store for secret value fallback path
     if format == "percentage" then
         self.SetValue = SetPower_Percentage
     elseif format == "number" then

@@ -2423,23 +2423,55 @@ local function UnitButton_UpdateHealthStates(self, diff)
         if not issecretvalue(health) and not issecretvalue(healthMax) then
             self.indicators.healthText:SetValue(health, healthMax, self.states.totalAbsorbs, self.states.healAbsorbs)
         else
-            -- 12.0+: pass secret values to C-level SetFormattedText directly.
-            -- SetFormattedText is marked AllowedWhenTainted and handles secrets.
-            -- UnitHealthPercent returns 0-1 by default; use ScaleTo100 curve to get 0-100
-            -- so %d formats correctly (without it, 100% health shows as "1%").
-            local pct
-            if UnitHealthPercent then
-                if CurveConstants and CurveConstants.ScaleTo100 then
-                    pct = UnitHealthPercent(unit, true, CurveConstants.ScaleTo100)
-                else
-                    pct = UnitHealthPercent(unit)
+            -- 12.0+: use pre-built C-level format string from SetFormat.
+            -- Each component (health1, health2, shields, healAbsorbs) that is not "none"
+            -- gets a %d slot with inline |cff color escapes. SetFormattedText is
+            -- AllowedWhenTainted and handles secret arguments.
+            local ht = self.indicators.healthText
+            local secretFmt = ht._secretFormat
+            local argKeys = ht._secretArgKeys
+            if secretFmt and argKeys then
+                -- Resolve the argument values for each %d slot
+                local pct
+                local argValues = {}
+                for i, key in ipairs(argKeys) do
+                    if key == "pct" then
+                        -- Lazily compute percentage once
+                        if not pct then
+                            if UnitHealthPercent then
+                                if CurveConstants and CurveConstants.ScaleTo100 then
+                                    pct = UnitHealthPercent(unit, true, CurveConstants.ScaleTo100)
+                                else
+                                    pct = UnitHealthPercent(unit)
+                                end
+                            end
+                            pct = pct or health -- fallback to raw health
+                        end
+                        argValues[i] = pct
+                    elseif key == "health" then
+                        argValues[i] = health
+                    elseif key == "shields" then
+                        argValues[i] = self.states.totalAbsorbs or 0
+                    elseif key == "healAbsorbs" then
+                        argValues[i] = self.states.healAbsorbs or 0
+                    else
+                        argValues[i] = 0
+                    end
                 end
-            end
-            if pct then
-                self.indicators.healthText.text:SetFormattedText("%d%%", pct)
+                -- Call with up to 4 arguments (one per component)
+                local n = #argValues
+                if n == 1 then
+                    ht.text:SetFormattedText(secretFmt, argValues[1])
+                elseif n == 2 then
+                    ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2])
+                elseif n == 3 then
+                    ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3])
+                elseif n == 4 then
+                    ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3], argValues[4])
+                end
             else
-                -- fallback: display raw secret health number
-                self.indicators.healthText.text:SetFormattedText("%d", health)
+                -- No active components; show raw health
+                ht.text:SetFormattedText("%d", health)
             end
             -- GetStringWidth returns secret when text is tainted; skip SetWidth
         end
@@ -2764,28 +2796,36 @@ UnitButton_UpdatePowerText = function(self)
 
     local power = self.states.power
     local powerMax = self.states.powerMax
-    if not power or self.states.isDeadOrGhost then
+    -- 12.0+: power may be secret; check nil via rawequal (safe on secrets)
+    -- before boolean test which would crash on secret values
+    if rawequal(power, nil) or self.states.isDeadOrGhost then
         self.indicators.powerText:Hide()
         return
     end
 
-    if not issecretvalue(power) and (not powerMax or not issecretvalue(powerMax)) then
+    if not issecretvalue(power) and (rawequal(powerMax, nil) or not issecretvalue(powerMax)) then
         self.indicators.powerText:SetValue(power, powerMax)
     else
         -- 12.0+: pass secret values to C-level SetFormattedText directly.
-        -- UnitPowerPercent returns 0-1 by default; use ScaleTo100 curve to get 0-100.
         local unit = self.states.displayedUnit
-        local pct
-        if unit and UnitPowerPercent then
-            if CurveConstants and CurveConstants.ScaleTo100 then
-                pct = UnitPowerPercent(unit, nil, true, CurveConstants.ScaleTo100)
-            else
-                pct = UnitPowerPercent(unit)
+        local fmt = self.indicators.powerText._format
+        if fmt == "percentage" then
+            -- UnitPowerPercent returns 0-1 by default; use ScaleTo100 curve for 0-100
+            local pct
+            if unit and UnitPowerPercent then
+                if CurveConstants and CurveConstants.ScaleTo100 then
+                    pct = UnitPowerPercent(unit, nil, true, CurveConstants.ScaleTo100)
+                else
+                    pct = UnitPowerPercent(unit)
+                end
             end
-        end
-        if pct then
-            self.indicators.powerText.text:SetFormattedText("%d%%", pct)
+            if pct then
+                self.indicators.powerText.text:SetFormattedText("%d%%", pct)
+            else
+                self.indicators.powerText.text:SetFormattedText("%d", power)
+            end
         else
+            -- "number" or "number-short": display raw power via C-level
             self.indicators.powerText.text:SetFormattedText("%d", power)
         end
         -- GetStringWidth returns secret when text is tainted; skip SetWidth
