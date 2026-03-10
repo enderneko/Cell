@@ -2995,6 +2995,7 @@ end
 
 UnitButton_UpdatePower = function(self)
     if not self._shouldShowPowerBar then return end
+    if self.states.power == nil then return end
 
     -- self.states.power may be a secret value on Midnight 12.0.0+
     -- SetBarValue maps to SetSmoothedValue in Smooth mode, which does Lua Clamp and fails on secrets.
