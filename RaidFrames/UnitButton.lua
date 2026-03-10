@@ -3247,7 +3247,9 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
         -- Refresh calculator so we have current data (critical for standalone UNIT_ABSORB_AMOUNT_CHANGED events)
         UnitButton_UpdateCalculator(self)
         local absorbs = self.widgets.healthCalculator:GetDamageAbsorbs()
-        -- Update the shield widget bars
+        local healthMax = self.widgets.healthCalculator:GetMaximumHealth()
+        -- Update the widget shield bar (needs min/max for correct proportioning)
+        self.widgets.shieldBar:SetMinMaxValues(0, healthMax)
         self.widgets.shieldBar:SetValue(absorbs)
         self.widgets.shieldBar:Show()
 
@@ -3256,6 +3258,7 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
         -- Show the glow whenever shields are present and overshieldEnabled is on.
         -- TODO: Use a Curve to map (absorbs + health - maxHealth) to glow visibility for precise overshield detection.
         if overshieldReverseFillEnabled then
+            self.widgets.shieldBarR:SetMinMaxValues(0, healthMax)
             self.widgets.shieldBarR:SetValue(absorbs)
             self.widgets.shieldBarR:Show()
             if overshieldEnabled then
@@ -3277,7 +3280,6 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
         -- Update shield indicator (user-configurable indicator on top of health bar)
         if enabledIndicators["shieldBar"] then
             local indBar = self.indicators.shieldBar
-            local healthMax = self.widgets.healthCalculator:GetMaximumHealth()
             if indicatorBooleans["shieldBar"] then
                 -- onlyShowOvershields: can't compute overshield from secrets, hide indicator
                 -- TODO: Use a Curve to detect overshield (absorbs + health > maxHealth)
