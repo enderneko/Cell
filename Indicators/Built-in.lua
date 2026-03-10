@@ -1543,7 +1543,6 @@ local function BuildSecretSegment(config)
     end
 
     local isPercent = config.format:find("percent$") and true or false
-    local suffix = isPercent and "%%" or ""
 
     local colorStart, colorEnd
     if config.color[1] == "class_color" then
@@ -1553,24 +1552,34 @@ local function BuildSecretSegment(config)
         colorEnd = "|r"
     end
 
-    local isShort = config.format:find("short") and not isPercent and true or false
-    local specifier = (isShort and AbbreviateNumbers) and "%s" or "%d"
-    local segment = prefix .. colorStart .. specifier .. suffix .. colorEnd
-
     -- Determine which argument to pass for this segment
     local fmt = config.format:gsub("_no_sign$", "")
     local argKey
+    local isAbsorb = false
     if fmt == "shields" or fmt == "shields_short" or fmt == "shields_percent" then
         argKey = "shields"
+        isAbsorb = true
     elseif fmt == "healabsorbs" or fmt == "healabsorbs_short" or fmt == "healabsorbs_percent" then
         argKey = "healAbsorbs"
+        isAbsorb = true
     elseif isPercent then
         argKey = "pct"
     else
         argKey = "health"
     end
 
-    if isShort and AbbreviateNumbers then
+    -- For absorb percentages, we can't compute absorbs/maxHealth on secrets,
+    -- so fall back to abbreviated raw number (no %% suffix).
+    -- Health percent uses UnitHealthPercent (C-level) so it gets a real 0-100 value.
+    local isAbsorbPercent = isAbsorb and isPercent
+    local suffix = (isPercent and not isAbsorbPercent) and "%%" or ""
+
+    -- Use abbreviated display for _short formats and absorb percent fallback
+    local useAbbrev = (config.format:find("short") or isAbsorbPercent) and not (isPercent and not isAbsorbPercent)
+    local specifier = (useAbbrev and AbbreviateNumbers) and "%s" or "%d"
+    local segment = prefix .. colorStart .. specifier .. suffix .. colorEnd
+
+    if useAbbrev and AbbreviateNumbers then
         argKey = argKey .. "_abbr"
     end
 
@@ -1629,9 +1638,9 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
                 if key == "pct" or key == "health" or key == "health_abbr" then
                     raw = health
                 elseif key == "shields" or key == "shields_abbr" then
-                    raw = shields or 0
+                    raw = rawequal(shields, nil) and 0 or shields
                 elseif key == "healAbsorbs" or key == "healAbsorbs_abbr" then
-                    raw = healAbsorbs or 0
+                    raw = rawequal(healAbsorbs, nil) and 0 or healAbsorbs
                 else
                     raw = 0
                 end

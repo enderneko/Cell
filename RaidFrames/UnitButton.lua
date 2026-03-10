@@ -2392,8 +2392,11 @@ local function UnitButton_UpdateHealthStates(self, diff)
     end
 
     -- absorbs - store raw values (may be secret)
-    self.states.totalAbsorbs = UnitGetTotalAbsorbs(unit) or 0
-    self.states.healAbsorbs = UnitGetTotalHealAbsorbs(unit) or 0
+    -- Use rawequal for nil check since `or` performs boolean test which crashes on secrets
+    local _ta = UnitGetTotalAbsorbs(unit)
+    self.states.totalAbsorbs = rawequal(_ta, nil) and 0 or _ta
+    local _ha = UnitGetTotalHealAbsorbs(unit)
+    self.states.healAbsorbs = rawequal(_ha, nil) and 0 or _ha
 
     -- dead state checks
     if not issecretvalue(health) then
@@ -2458,9 +2461,11 @@ local function UnitButton_UpdateHealthStates(self, diff)
                         elseif key == "health" or key == "health_abbr" then
                             raw = health
                         elseif key == "shields" or key == "shields_abbr" then
-                            raw = self.states.totalAbsorbs or 0
+                            local _s = self.states.totalAbsorbs
+                            raw = rawequal(_s, nil) and 0 or _s
                         elseif key == "healAbsorbs" or key == "healAbsorbs_abbr" then
-                            raw = self.states.healAbsorbs or 0
+                            local _h = self.states.healAbsorbs
+                            raw = rawequal(_h, nil) and 0 or _h
                         else
                             raw = 0
                         end
@@ -3017,7 +3022,8 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
     end
 
     local shieldBar = self.widgets.shieldBar
-    local totalAbsorbs = self.states.totalAbsorbs or 0
+    local _ta = self.states.totalAbsorbs
+    local totalAbsorbs = rawequal(_ta, nil) and 0 or _ta
     local healthMax = self.states.healthMax
     local health = self.states.health
 
@@ -3042,7 +3048,7 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
                 absorbAmt, isClamped = calc:GetDamageAbsorbs()
             end
         end
-        local displayAbsorbs = absorbAmt or totalAbsorbs
+        local displayAbsorbs = rawequal(absorbAmt, nil) and totalAbsorbs or absorbAmt
 
         if shieldEnabled then
             pcall(function()
@@ -3214,7 +3220,9 @@ local function UnitButton_UpdateHealAbsorbs(self, skipStateUpdates)
         end
     end
 
-    local displayAbsorbs = healAbsorbAmt or self.states.healAbsorbs or 0
+    -- Use rawequal for nil check: `or` crashes on secret values (boolean test)
+    local _healAbs = rawequal(healAbsorbAmt, nil) and self.states.healAbsorbs or healAbsorbAmt
+    local displayAbsorbs = rawequal(_healAbs, nil) and 0 or _healAbs
     pcall(function()
         absorbsBar:SetMinMaxValues(0, self.states.health)
         SetBarValueSmooth(absorbsBar, displayAbsorbs)
