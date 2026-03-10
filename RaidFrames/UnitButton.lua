@@ -27,6 +27,7 @@ local UnitGetTotalAbsorbs = UnitGetTotalAbsorbs
 local UnitGetTotalHealAbsorbs = UnitGetTotalHealAbsorbs
 -- 12.0+ APIs for secret value support
 local issecretvalue = issecretvalue or function() return false end
+local AbbreviateNumbers = AbbreviateNumbers
 local UnitHealthPercent = UnitHealthPercent
 local CreateUnitHealPredictionCalculator = CreateUnitHealPredictionCalculator
 local UnitGetDetailedHealPrediction = UnitGetDetailedHealPrediction
@@ -2427,52 +2428,60 @@ local function UnitButton_UpdateHealthStates(self, diff)
             -- Each component (health1, health2, shields, healAbsorbs) that is not "none"
             -- gets a %d slot with inline |cff color escapes. SetFormattedText is
             -- AllowedWhenTainted and handles secret arguments.
-            local ht = self.indicators.healthText
-            local secretFmt = ht._secretFormat
-            local argKeys = ht._secretArgKeys
-            if secretFmt and argKeys then
-                -- Resolve the argument values for each %d slot
-                local pct
-                local argValues = {}
-                for i, key in ipairs(argKeys) do
-                    if key == "pct" then
-                        -- Lazily compute percentage once
-                        if not pct then
-                            if UnitHealthPercent then
-                                if CurveConstants and CurveConstants.ScaleTo100 then
-                                    pct = UnitHealthPercent(unit, true, CurveConstants.ScaleTo100)
-                                else
-                                    pct = UnitHealthPercent(unit)
+            -- Wrap in pcall: UnitHealthPercent may error for some unit types,
+            -- and we must not crash UnitButton_UpdateHealthStates for the whole frame.
+            pcall(function()
+                local ht = self.indicators.healthText
+                local secretFmt = ht._secretFormat
+                local argKeys = ht._secretArgKeys
+                if secretFmt and argKeys then
+                    -- Resolve the argument values for each %d slot
+                    local pct
+                    local argValues = {}
+                    for i, key in ipairs(argKeys) do
+                        local raw
+                        if key == "pct" then
+                            -- Lazily compute percentage once
+                            if not pct then
+                                if UnitHealthPercent then
+                                    if CurveConstants and CurveConstants.ScaleTo100 then
+                                        local ok, val = pcall(UnitHealthPercent, unit, true, CurveConstants.ScaleTo100)
+                                        pct = ok and val or nil
+                                    else
+                                        local ok, val = pcall(UnitHealthPercent, unit)
+                                        pct = ok and val or nil
+                                    end
                                 end
+                                pct = pct or health -- fallback to raw health
                             end
-                            pct = pct or health -- fallback to raw health
+                            raw = pct
+                        elseif key == "health" or key == "health_abbr" then
+                            raw = health
+                        elseif key == "shields" or key == "shields_abbr" then
+                            raw = self.states.totalAbsorbs or 0
+                        elseif key == "healAbsorbs" or key == "healAbsorbs_abbr" then
+                            raw = self.states.healAbsorbs or 0
+                        else
+                            raw = 0
                         end
-                        argValues[i] = pct
-                    elseif key == "health" then
-                        argValues[i] = health
-                    elseif key == "shields" then
-                        argValues[i] = self.states.totalAbsorbs or 0
-                    elseif key == "healAbsorbs" then
-                        argValues[i] = self.states.healAbsorbs or 0
-                    else
-                        argValues[i] = 0
+                        argValues[i] = key:sub(-5) == "_abbr" and AbbreviateNumbers(raw) or raw
                     end
+                    -- Call with up to 4 arguments (one per component)
+                    local n = #argValues
+                    if n == 1 then
+                        ht.text:SetFormattedText(secretFmt, argValues[1])
+                    elseif n == 2 then
+                        ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2])
+                    elseif n == 3 then
+                        ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3])
+                    elseif n == 4 then
+                        ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3], argValues[4])
+                    end
+                else
+                    -- No active components or format not yet initialized; show raw health
+                    self.indicators.healthText.text:SetFormattedText("%d", health)
                 end
-                -- Call with up to 4 arguments (one per component)
-                local n = #argValues
-                if n == 1 then
-                    ht.text:SetFormattedText(secretFmt, argValues[1])
-                elseif n == 2 then
-                    ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2])
-                elseif n == 3 then
-                    ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3])
-                elseif n == 4 then
-                    ht.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3], argValues[4])
-                end
-            else
-                -- No active components; show raw health
-                ht.text:SetFormattedText("%d", health)
-            end
+            end)
             -- GetStringWidth returns secret when text is tainted; skip SetWidth
         end
         self.indicators.healthText:Show()
@@ -2807,27 +2816,34 @@ UnitButton_UpdatePowerText = function(self)
         self.indicators.powerText:SetValue(power, powerMax)
     else
         -- 12.0+: pass secret values to C-level SetFormattedText directly.
-        local unit = self.states.displayedUnit
-        local fmt = self.indicators.powerText._format
-        if fmt == "percentage" then
-            -- UnitPowerPercent returns 0-1 by default; use ScaleTo100 curve for 0-100
-            local pct
-            if unit and UnitPowerPercent then
-                if CurveConstants and CurveConstants.ScaleTo100 then
-                    pct = UnitPowerPercent(unit, nil, true, CurveConstants.ScaleTo100)
-                else
-                    pct = UnitPowerPercent(unit)
+        -- Wrap in pcall: UnitPowerPercent may error for some unit types.
+        pcall(function()
+            local unit = self.states.displayedUnit
+            local fmt = self.indicators.powerText._format
+            if fmt == "percentage" then
+                -- UnitPowerPercent returns 0-1 by default; use ScaleTo100 curve for 0-100
+                local pct
+                if unit and UnitPowerPercent then
+                    if CurveConstants and CurveConstants.ScaleTo100 then
+                        local ok, val = pcall(UnitPowerPercent, unit, nil, true, CurveConstants.ScaleTo100)
+                        pct = ok and val or nil
+                    else
+                        local ok, val = pcall(UnitPowerPercent, unit)
+                        pct = ok and val or nil
+                    end
                 end
-            end
-            if pct then
-                self.indicators.powerText.text:SetFormattedText("%d%%", pct)
+                if pct then
+                    self.indicators.powerText.text:SetFormattedText("%d%%", pct)
+                else
+                    self.indicators.powerText.text:SetFormattedText("%d", power)
+                end
+            elseif fmt == "number-short" and AbbreviateNumbers then
+                self.indicators.powerText.text:SetFormattedText("%s", AbbreviateNumbers(power))
             else
+                -- "number" or "number-short" without AbbreviateNumbers: raw number
                 self.indicators.powerText.text:SetFormattedText("%d", power)
             end
-        else
-            -- "number" or "number-short": display raw power via C-level
-            self.indicators.powerText.text:SetFormattedText("%d", power)
-        end
+        end)
         -- GetStringWidth returns secret when text is tainted; skip SetWidth
         self.indicators.powerText:Show()
     end

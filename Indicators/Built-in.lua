@@ -12,6 +12,7 @@ local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
 local issecretvalue = issecretvalue or function() return false end
+local AbbreviateNumbers = AbbreviateNumbers
 
 local function noop() end
 
@@ -1552,7 +1553,9 @@ local function BuildSecretSegment(config)
         colorEnd = "|r"
     end
 
-    local segment = prefix .. colorStart .. "%d" .. suffix .. colorEnd
+    local isShort = config.format:find("short") and not isPercent and true or false
+    local specifier = (isShort and AbbreviateNumbers) and "%s" or "%d"
+    local segment = prefix .. colorStart .. specifier .. suffix .. colorEnd
 
     -- Determine which argument to pass for this segment
     local fmt = config.format:gsub("_no_sign$", "")
@@ -1565,6 +1568,10 @@ local function BuildSecretSegment(config)
         argKey = "pct"
     else
         argKey = "health"
+    end
+
+    if isShort and AbbreviateNumbers then
+        argKey = argKey .. "_abbr"
     end
 
     return segment, argKey
@@ -1611,8 +1618,38 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
     -- safety net for any remaining Lua arithmetic in the formatters below.
     if issecretvalue(health) or issecretvalue(maxHealth)
         or issecretvalue(shields) or issecretvalue(healAbsorbs) then
-        -- fall back to raw number display via C-level
-        self.text:SetFormattedText("%d", health)
+        -- Use pre-built secret format if available (includes all active components
+        -- with colors, delimiters, and %d slots for C-level formatting)
+        local secretFmt = self._secretFormat
+        local argKeys = self._secretArgKeys
+        if secretFmt and argKeys then
+            local argValues = {}
+            for i, key in ipairs(argKeys) do
+                local raw
+                if key == "pct" or key == "health" or key == "health_abbr" then
+                    raw = health
+                elseif key == "shields" or key == "shields_abbr" then
+                    raw = shields or 0
+                elseif key == "healAbsorbs" or key == "healAbsorbs_abbr" then
+                    raw = healAbsorbs or 0
+                else
+                    raw = 0
+                end
+                argValues[i] = key:sub(-5) == "_abbr" and AbbreviateNumbers(raw) or raw
+            end
+            local n = #argValues
+            if n == 1 then
+                self.text:SetFormattedText(secretFmt, argValues[1])
+            elseif n == 2 then
+                self.text:SetFormattedText(secretFmt, argValues[1], argValues[2])
+            elseif n == 3 then
+                self.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3])
+            elseif n == 4 then
+                self.text:SetFormattedText(secretFmt, argValues[1], argValues[2], argValues[3], argValues[4])
+            end
+        else
+            self.text:SetFormattedText("%d", health)
+        end
         -- skip SetWidth: GetStringWidth returns secret when text is tainted
         return
     end
@@ -1739,8 +1776,11 @@ end
 
 local function SetPower_Number_Short(self, current, max)
     if issecretvalue(current) or issecretvalue(max) then
-        -- Can't do F.FormatNumber (Lua arithmetic), fall back to raw number via C-level
-        self.text:SetText(current)
+        if AbbreviateNumbers then
+            self.text:SetFormattedText("%s", AbbreviateNumbers(current))
+        else
+            self.text:SetText(current)
+        end
         self:Show()
         return
     end
