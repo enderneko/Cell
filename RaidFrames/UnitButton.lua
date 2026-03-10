@@ -1333,6 +1333,17 @@ local function HandleDebuff(self, auraInfo)
         end
 
         -- user created indicators
+        -- Sanitize auraInfo fields in-place so user code snippets that override
+        -- UpdateCustomIndicators can safely do arithmetic on standard fields
+        if Cell.isMidnight and auraInfo._hasSecrets then
+            auraInfo.name = auraInfo._safeName
+            auraInfo.spellId = auraInfo._safeSpellId
+            auraInfo.duration = auraInfo._safeDuration
+            auraInfo.expirationTime = auraInfo._safeExpirationTime
+            auraInfo.applications = auraInfo._safeApplications
+            auraInfo.dispelName = auraInfo._safeDispelName
+            auraInfo.sourceUnit = source
+        end
         I.UpdateCustomIndicators(self, auraInfo)
 
         -- prepare raidDebuffs
@@ -1702,6 +1713,12 @@ local function HandleBuff(self, auraInfo)
         duration = issecretvalue(auraInfo.duration) and 0 or (auraInfo.duration or 0)
         expirationTime = issecretvalue(auraInfo.expirationTime) and 0 or (auraInfo.expirationTime or 0)
 
+        auraInfo._safeName = name
+        auraInfo._safeSpellId = spellId
+        auraInfo._safeDuration = duration
+        auraInfo._safeExpirationTime = expirationTime
+        auraInfo._safeApplications = count
+        auraInfo._safeIcon = issecretvalue(auraInfo.icon) and nil or auraInfo.icon
         auraInfo._hasSecrets = hasSecrets
         auraInfo._unit = unit
     else
@@ -1726,6 +1743,13 @@ local function HandleBuff(self, auraInfo)
         if Cell.isMidnight and auraInfo._hasSecrets then
             -- Skip defensiveCooldowns, externalCooldowns, etc. - can't match by name/spellId
             -- But still process custom indicators (Custom.lua handles secrets; wildcard [0] still works)
+            -- Sanitize auraInfo fields in-place for user code snippet compatibility
+            auraInfo.name = auraInfo._safeName
+            auraInfo.spellId = auraInfo._safeSpellId
+            auraInfo.duration = auraInfo._safeDuration
+            auraInfo.expirationTime = auraInfo._safeExpirationTime
+            auraInfo.applications = auraInfo._safeApplications
+            auraInfo.sourceUnit = source
             I.UpdateCustomIndicators(self, auraInfo)
         else
             -- defensiveCooldowns
