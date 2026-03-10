@@ -11,6 +11,7 @@ local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
+local issecretvalue = issecretvalue or function() return false end
 
 local function noop() end
 
@@ -1539,6 +1540,12 @@ local function HealthText_SetFormat(self, format)
 end
 
 local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
+    -- 12.0+: UnitHealth/UnitHealthMax/absorbs may return secret values in combat
+    if issecretvalue(health) or issecretvalue(maxHealth)
+        or issecretvalue(shields) or issecretvalue(healAbsorbs) then
+        self:Hide()
+        return
+    end
     maxHealth = maxHealth == 0 and 1 or maxHealth
 
     self.text:SetFormattedText("%s%s%s%s",
@@ -1625,6 +1632,8 @@ end
 -- power text
 -------------------------------------------------
 local function SetPower_Percentage(self, current, max)
+    -- 12.0+: UnitPower() may return secret values in combat
+    if issecretvalue(current) or issecretvalue(max) then self:Hide() return end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else
@@ -1635,6 +1644,7 @@ local function SetPower_Percentage(self, current, max)
 end
 
 local function SetPower_Number(self, current, max)
+    if issecretvalue(current) or issecretvalue(max) then self:Hide() return end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else
@@ -1645,6 +1655,7 @@ local function SetPower_Number(self, current, max)
 end
 
 local function SetPower_Number_Short(self, current, max)
+    if issecretvalue(current) or issecretvalue(max) then self:Hide() return end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else

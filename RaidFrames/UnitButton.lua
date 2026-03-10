@@ -1558,7 +1558,15 @@ local function HandleDebuff(self, auraInfo)
 
         if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] then
             -- all debuffs / only dispellableByMe
-            if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
+            local canDispel = not indicatorBooleans["debuffs"] or I.CanDispel(debuffType)
+            -- 12.0+: when dispelName is secret, use server-side filter to check
+            -- if this player can dispel it (works without knowing the type name)
+            if not canDispel and auraInfo._dispelNameIsSecret
+                and _IsAuraFilteredOut and self.states.displayedUnit then
+                canDispel = not _IsAuraFilteredOut(self.states.displayedUnit,
+                    auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
+            end
+            if canDispel then
                 if Cell.vars.bigDebuffs[spellId] then
                     self._debuffs_big[auraInstanceID] = true
                 else
