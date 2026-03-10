@@ -2933,13 +2933,19 @@ UnitButton_UpdatePowerText = function(self)
     if not issecretvalue(power) and (rawequal(powerMax, nil) or not issecretvalue(powerMax)) then
         self.indicators.powerText:SetValue(power, powerMax)
     else
-        -- hideIfEmptyOrFull: skip when values are secret — comparisons on secret
-        -- values return secret booleans which crash Lua control flow. Out of combat
-        -- values are non-secret and the normal path handles it correctly.
         -- Pass secret values to C-level SetFormattedText directly.
-        -- Wrap in pcall: UnitPowerPercent may error for some unit types.
+        -- hideIfEmptyOrFull: use UnitPowerPercent (C-level, returns non-secret %)
+        -- to detect full/empty since direct comparison on secrets crashes Lua.
+        local unit = self.states.displayedUnit
+        if self.indicators.powerText.hideIfEmptyOrFull and unit and UnitPowerPercent then
+            local ok, pctVal = pcall(UnitPowerPercent, unit, nil, true,
+                CurveConstants and CurveConstants.ScaleTo100 or nil)
+            if ok and not issecretvalue(pctVal) and (pctVal == 0 or pctVal == 100) then
+                self.indicators.powerText:Hide()
+                return
+            end
+        end
         pcall(function()
-            local unit = self.states.displayedUnit
             local fmt = self.indicators.powerText._format
             if fmt == "percentage" then
                 -- UnitPowerPercent returns 0-1 by default; use ScaleTo100 curve for 0-100
