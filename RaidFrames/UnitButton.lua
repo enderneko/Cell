@@ -76,6 +76,31 @@ local GetAuraSlots = C_UnitAuras.GetAuraSlots
 local _GetAuraDataBySlot = C_UnitAuras.GetAuraDataBySlot
 -- wrapped versions applied after SanitizeAura is defined (see below)
 local GetAuraDataByAuraInstanceID, GetAuraDataBySlot
+-- 12.0 Midnight secret-safe aura display APIs
+local GetAuraDuration = C_UnitAuras and C_UnitAuras.GetAuraDuration
+local GetAuraApplicationDisplayCount = C_UnitAuras and C_UnitAuras.GetAuraApplicationDisplayCount
+local GetAuraDispelTypeColor = C_UnitAuras and C_UnitAuras.GetAuraDispelTypeColor
+
+-- Build a color curve for dispel type coloring (Midnight 12.0)
+-- Maps SpellDispelType indices to Cell's debuff type colors
+local midnightDispelCurve
+if C_CurveUtil and C_CurveUtil.CreateColorCurve and Enum and Enum.LuaCurveType then
+    midnightDispelCurve = C_CurveUtil.CreateColorCurve(Enum.LuaCurveType.Step)
+    -- Indices from wago.tools DB2 SpellDispelType
+    local dispelColors = {
+        [0]  = {r=0.80, g=0.00, b=0.00, a=1.0}, -- None (physical) = red
+        [1]  = {r=0.20, g=0.60, b=1.00, a=1.0}, -- Magic = blue
+        [2]  = {r=0.60, g=0.00, b=1.00, a=1.0}, -- Curse = purple
+        [3]  = {r=0.60, g=0.40, b=0.00, a=1.0}, -- Disease = brown
+        [4]  = {r=0.00, g=0.60, b=0.00, a=1.0}, -- Poison = green
+        [9]  = {r=0.80, g=0.30, b=0.00, a=1.0}, -- Enrage = orange
+        [11] = {r=0.80, g=0.00, b=0.00, a=1.0}, -- Bleed = red
+    }
+    for idx, c in pairs(dispelColors) do
+        midnightDispelCurve:AddPoint(idx, CreateColor(c.r, c.g, c.b, c.a))
+    end
+end
+print("[CellDBG] GetAuraDispelTypeColor=" .. tostring(GetAuraDispelTypeColor ~= nil) .. " midnightDispelCurve=" .. tostring(midnightDispelCurve ~= nil) .. " C_CurveUtil=" .. tostring(C_CurveUtil ~= nil))
 local IsDelveInProgress = C_PartyInfo.IsDelveInProgress
 
 --! for AI followers, UnitClassBase is buggy
@@ -103,40 +128,87 @@ local CheckCLEURequired
 -------------------------------------------------
 -- 12.0+ secret value sanitizer for aura data
 -------------------------------------------------
+local function SafeVal(val, fallback)
+    if val == nil then return fallback end
+    if issecretvalue and issecretvalue(val) then return fallback end
+    return val
+end
+
+local function SafeBool(val)
+    if val == nil then return false end
+    if issecretvalue and issecretvalue(val) then
+        -- secret boolean: use pcall to evaluate truthiness
+        local ok, r = pcall(function(v) if v then return true else return false end end, val)
+        if ok then return r end
+        return false
+    end
+    return val and true or false
+end
+
 local function SanitizeAura(aura)
     if not aura then return nil end
-    local ok, clean = pcall(function()
-        local t = {}
-        -- copy all fields, forcing evaluation to catch secrets
-        t.name = aura.name and (aura.name .. "")
-        t.icon = aura.icon
-        t.applications = aura.applications and (aura.applications + 0) or 0
-        t.expirationTime = aura.expirationTime and (aura.expirationTime + 0) or 0
-        t.duration = aura.duration and (aura.duration + 0) or 0
-        t.spellId = aura.spellId and (aura.spellId + 0)
-        t.auraInstanceID = aura.auraInstanceID and (aura.auraInstanceID + 0)
-        t.sourceUnit = aura.sourceUnit
-        t.dispelName = aura.dispelName
-        t.isHelpful = aura.isHelpful and true or false
-        t.isHarmful = aura.isHarmful and true or false
-        t.isBossAura = aura.isBossAura and true or false
-        t.isRaid = aura.isRaid and true or false
-        t.isStealable = aura.isStealable and true or false
-        t.isFromPlayerOrPlayerPet = aura.isFromPlayerOrPlayerPet and true or false
-        t.canApplyAura = aura.canApplyAura and true or false
-        t.nameplateShowAll = aura.nameplateShowAll and true or false
-        t.nameplateShowPersonal = aura.nameplateShowPersonal and true or false
-        t.canActivePlayerDispel = aura.canActivePlayerDispel and true or false
-        t.timeMod = aura.timeMod and (aura.timeMod + 0) or 1
-        t.points = aura.points
-        -- preserve fields used by Cell
-        t.refreshing = aura.refreshing
-        t.oldExpirationTime = aura.oldExpirationTime
-        t.oldApplications = aura.oldApplications
-        return t
-    end)
-    if not ok then return nil end
-    return clean
+
+    if not Cell.isMidnight then
+        -- pre-Midnight: original sanitizer (no secrets)
+        local ok, clean = pcall(function()
+            local t = {}
+            t.name = aura.name and (aura.name .. "")
+            t.icon = aura.icon
+            t.applications = aura.applications and (aura.applications + 0) or 0
+            t.expirationTime = aura.expirationTime and (aura.expirationTime + 0) or 0
+            t.duration = aura.duration and (aura.duration + 0) or 0
+            t.spellId = aura.spellId and (aura.spellId + 0)
+            t.auraInstanceID = aura.auraInstanceID and (aura.auraInstanceID + 0)
+            t.sourceUnit = aura.sourceUnit
+            t.dispelName = aura.dispelName
+            t.isHelpful = aura.isHelpful and true or false
+            t.isHarmful = aura.isHarmful and true or false
+            t.isBossAura = aura.isBossAura and true or false
+            t.isRaid = aura.isRaid and true or false
+            t.isStealable = aura.isStealable and true or false
+            t.isFromPlayerOrPlayerPet = aura.isFromPlayerOrPlayerPet and true or false
+            t.canApplyAura = aura.canApplyAura and true or false
+            t.nameplateShowAll = aura.nameplateShowAll and true or false
+            t.nameplateShowPersonal = aura.nameplateShowPersonal and true or false
+            t.canActivePlayerDispel = aura.canActivePlayerDispel and true or false
+            t.timeMod = aura.timeMod and (aura.timeMod + 0) or 1
+            t.points = aura.points
+            t.refreshing = aura.refreshing
+            t.oldExpirationTime = aura.oldExpirationTime
+            t.oldApplications = aura.oldApplications
+            return t
+        end)
+        if not ok then return nil end
+        return clean
+    end
+
+    -- Midnight: keep secret values as-is, only sanitize what we must
+    local t = {}
+    t.auraInstanceID = aura.auraInstanceID -- always non-secret
+    t.name = aura.name                     -- may be secret, handled in HandleDebuff/HandleBuff
+    t.icon = aura.icon
+    t.applications = aura.applications
+    t.expirationTime = aura.expirationTime
+    t.duration = aura.duration
+    t.spellId = aura.spellId
+    t.sourceUnit = aura.sourceUnit
+    t.dispelName = aura.dispelName
+    t.isHelpful = SafeBool(aura.isHelpful)
+    t.isHarmful = SafeBool(aura.isHarmful)
+    t.isBossAura = SafeBool(aura.isBossAura)
+    t.isRaid = SafeBool(aura.isRaid)
+    t.isStealable = SafeBool(aura.isStealable)
+    t.isFromPlayerOrPlayerPet = SafeBool(aura.isFromPlayerOrPlayerPet)
+    t.canApplyAura = SafeBool(aura.canApplyAura)
+    t.nameplateShowAll = SafeBool(aura.nameplateShowAll)
+    t.nameplateShowPersonal = SafeBool(aura.nameplateShowPersonal)
+    t.canActivePlayerDispel = SafeBool(aura.canActivePlayerDispel)
+    t.timeMod = SafeVal(aura.timeMod, 1)
+    t.points = aura.points
+    t.refreshing = aura.refreshing
+    t.oldExpirationTime = aura.oldExpirationTime
+    t.oldApplications = aura.oldApplications
+    return t
 end
 
 -- wrap aura data retrieval to sanitize secret values
@@ -1149,6 +1221,13 @@ end
 -- UpdateAuraRefreshState
 -------------------------------------------------
 local function UpdateAuraRefreshState(auraInfo)
+    if Cell.isMidnight then
+        -- Midnight: expirationTime/applications may be secret; skip refresh detection
+        auraInfo.refreshing = false
+        auraInfo.oldExpirationTime = nil
+        auraInfo.oldApplications = nil
+        return
+    end
     if Cell.vars.iconAnimation == "duration" then
         local timeIncreased = auraInfo.oldExpirationTime and ((auraInfo.expirationTime or 0) - auraInfo.oldExpirationTime >= 0.5) or false
         local countIncreased = auraInfo.oldApplications and (auraInfo.applications > auraInfo.oldApplications) or false
@@ -1181,53 +1260,82 @@ end
 local function ResetDebuffVars(self)
     self._debuffs.resurrectionFound = false
     self._debuffs.crowdControlsFound = 0
+    self._debuffs_midnightDispelColor = nil
 
     self.states.BGOrb = nil -- TODO: move to _debuffs
 end
 
 local function HandleDebuff(self, auraInfo)
     local auraInstanceID = auraInfo.auraInstanceID
-    local name = auraInfo.name
-    local icon = auraInfo.icon
-    local count = auraInfo.applications
-    local debuffType = auraInfo.dispelName or ""
-    local expirationTime = auraInfo.expirationTime or 0
-    local duration = auraInfo.duration or 0
-    local start
-    if issecretvalue and (issecretvalue(expirationTime) or issecretvalue(duration)) then
-        start = 0
-        duration = 0
-        expirationTime = 0
+    local name, icon, count, debuffType, expirationTime, duration, source, spellId
+
+    if Cell.isMidnight then
+        -- Midnight: aura fields may ALL be secret. Extract what we can.
+        local nameSecret = issecretvalue(auraInfo.name)
+        local spellIdSecret = issecretvalue(auraInfo.spellId)
+        local hasSecrets = nameSecret or spellIdSecret
+
+        name = nameSecret and nil or auraInfo.name
+        icon = auraInfo.icon -- keep raw (secret OK for SetTexture)
+        spellId = spellIdSecret and 0 or auraInfo.spellId
+        source = issecretvalue(auraInfo.sourceUnit) and nil or auraInfo.sourceUnit
+        debuffType = issecretvalue(auraInfo.dispelName) and "" or (auraInfo.dispelName or "")
+        count = issecretvalue(auraInfo.applications) and 0 or (auraInfo.applications or 0)
+        duration = issecretvalue(auraInfo.duration) and 0 or (auraInfo.duration or 0)
+        expirationTime = issecretvalue(auraInfo.expirationTime) and 0 or (auraInfo.expirationTime or 0)
+
+        -- Store safe values for code that needs non-secret data
+        auraInfo._safeName = name
+        auraInfo._safeSpellId = spellId
+        auraInfo._safeDuration = duration
+        auraInfo._safeExpirationTime = expirationTime
+        auraInfo._safeApplications = count
+        auraInfo._safeDispelName = debuffType
+        auraInfo._safeIcon = issecretvalue(auraInfo.icon) and nil or auraInfo.icon
+        auraInfo._hasSecrets = hasSecrets
+        auraInfo._unit = self.states.displayedUnit
     else
-        start = expirationTime - duration
+        name = auraInfo.name
+        icon = auraInfo.icon
+        count = auraInfo.applications
+        debuffType = auraInfo.dispelName or ""
+        expirationTime = auraInfo.expirationTime or 0
+        duration = auraInfo.duration or 0
+        source = auraInfo.sourceUnit
+        spellId = auraInfo.spellId
     end
-    local source = auraInfo.sourceUnit
-    local spellId = auraInfo.spellId
-    if issecretvalue and issecretvalue(spellId) then spellId = 0 end
-    -- local attribute = auraInfo.points[1] -- UnitAura:arg16
+
+    local start = (duration > 0) and (expirationTime - duration) or 0
 
     auraInfo.refreshing = false
 
     -- check Bleed
     debuffType = I.CheckDebuffType(debuffType, spellId)
 
-    if duration then
+    if duration ~= nil then
         UpdateAuraRefreshState(auraInfo)
         self._debuffs_cache[auraInstanceID] = auraInfo
 
-        if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] then
-            -- all debuffs / only dispellableByMe
-            if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
-                if Cell.vars.bigDebuffs[spellId] then
-                    self._debuffs_big[auraInstanceID] = true
-                else
-                    self._debuffs_normal[auraInstanceID] = true
+        if enabledIndicators["debuffs"] then
+            if Cell.isMidnight and auraInfo._hasSecrets then
+                -- Can't check blacklist/bigDebuffs with secret spellId, show as normal
+                self._debuffs_normal[auraInstanceID] = true
+            elseif not Cell.vars.debuffBlacklist[spellId] then
+                -- all debuffs / only dispellableByMe
+                if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
+                    if Cell.vars.bigDebuffs[spellId] then
+                        self._debuffs_big[auraInstanceID] = true
+                    else
+                        self._debuffs_normal[auraInstanceID] = true
+                    end
                 end
             end
         end
 
         -- user created indicators
-        I.UpdateCustomIndicators(self, auraInfo)
+        if not (Cell.isMidnight and auraInfo._hasSecrets) then
+            I.UpdateCustomIndicators(self, auraInfo)
+        end
 
         -- prepare raidDebuffs
         local order = I.GetDebuffOrder(name, spellId, count)
@@ -1245,22 +1353,35 @@ local function HandleDebuff(self, auraInfo)
             end
         end
 
-        if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
-            -- all dispels / only dispellableByMe
-            if not indicatorBooleans ["dispels"]["dispellableByMe"] or I.CanDispel(debuffType) then
-                if indicatorBooleans["dispels"][debuffType] then
-                    if Cell.vars.dispelBlacklist[spellId] then
-                        -- no highlight
-                        self._debuffs_dispel[debuffType] = false
-                    else
-                        self._debuffs_dispel[debuffType] = true
+        if enabledIndicators["dispels"] then
+            if Cell.isMidnight and auraInfo._hasSecrets and GetAuraDispelTypeColor and midnightDispelCurve then
+                -- Midnight: use secret-safe API to get dispel type color
+                local ok, color = pcall(GetAuraDispelTypeColor, self.states.displayedUnit, auraInstanceID, midnightDispelCurve)
+                if ok and color then
+                    auraInfo._dispelColor = color
+                    if not self._debuffs_midnightDispelColor then
+                        self._debuffs_midnightDispelColor = color
+                    end
+                else
+                    -- GetAuraDispelTypeColor failed or returned nil
+                end
+            elseif debuffType and debuffType ~= "" then
+                -- all dispels / only dispellableByMe
+                if not indicatorBooleans ["dispels"]["dispellableByMe"] or I.CanDispel(debuffType) then
+                    if indicatorBooleans["dispels"][debuffType] then
+                        if Cell.vars.dispelBlacklist[spellId] then
+                            -- no highlight
+                            self._debuffs_dispel[debuffType] = false
+                        else
+                            self._debuffs_dispel[debuffType] = true
+                        end
                     end
                 end
             end
         end
 
         -- crowdControls
-        if enabledIndicators["crowdControls"] and I.IsCrowdControls(name, spellId) and self._debuffs.crowdControlsFound < indicatorNums["crowdControls"] then
+        if enabledIndicators["crowdControls"] and name and I.IsCrowdControls(name, spellId) and self._debuffs.crowdControlsFound < indicatorNums["crowdControls"] then
             self._debuffs.crowdControlsFound = self._debuffs.crowdControlsFound + 1
             self.indicators.crowdControls[self._debuffs.crowdControlsFound]:SetCooldown(start, duration, debuffType, icon, count, auraInfo.refreshing)
             -- remove from debuffs
@@ -1268,9 +1389,8 @@ local function HandleDebuff(self, auraInfo)
             self._debuffs_normal[auraInstanceID] = nil
         end
 
-        -- resurrections: 图腾复生/复生
+        -- resurrections
         if spellId == 255234 or spellId == 225080 then
-            -- NOTE: this rez lasts longer than the debuff
             self._debuffs.resurrectionFound = true
             self.states.hasRezDebuff = true
         end
@@ -1289,6 +1409,47 @@ local function HandleDebuff(self, auraInfo)
 end
 
 local RAID_DEBUFFS_GLOW_TYPES = {"Normal", "Pixel", "Shine", "Proc"}
+
+-- Midnight: display a debuff using 12.0 secret-safe APIs
+-- Bypasses SetCooldown to avoid arithmetic on secret values
+local function MidnightShowDebuff(indicator, unit, auraInstanceID, auraInfo)
+    local frame = indicator
+    -- Set icon texture (C-level SetTexture accepts secrets)
+    frame.icon:SetTexture(auraInfo.icon)
+    -- Set cooldown using duration object (secret-safe)
+    if GetAuraDuration then
+        local durObj = GetAuraDuration(unit, auraInstanceID)
+        if durObj and frame.cooldown.SetCooldownFromDurationObject then
+            frame.cooldown:Show()
+            frame.cooldown:SetCooldownFromDurationObject(durObj)
+            if frame.border then frame.border:Hide() end
+        elseif durObj and frame.cooldown._SetCooldown then
+            -- fallback: try the raw cooldown widget
+            frame.cooldown:Show()
+            if frame.border then frame.border:Hide() end
+        else
+            -- no duration - show without cooldown
+            if frame.cooldown then frame.cooldown:Hide() end
+            if frame.border then frame.border:Show(); frame.border:SetColorTexture(0, 0, 0) end
+        end
+    end
+    -- Set stack count using secret-safe API
+    if GetAuraApplicationDisplayCount and frame.stack then
+        local stackText = GetAuraApplicationDisplayCount(unit, auraInstanceID, 2, 999)
+        frame.stack:SetText(stackText or "")
+    elseif frame.stack then
+        frame.stack:SetText("")
+    end
+    -- Hide duration text (we can't do arithmetic for remaining time display)
+    if frame.duration then frame.duration:Hide() end
+    if frame._start then
+        frame._start = nil
+        frame._duration = nil
+        frame:SetScript("OnUpdate", nil)
+    end
+    frame:Show()
+    frame.auraInstanceID = auraInstanceID
+end
 
 local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     local unit = self.states.displayedUnit
@@ -1333,15 +1494,27 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             local auraInstanceID = self._debuffs_raid[i]
             if auraInstanceID then
                 local auraInfo = self._debuffs_cache[auraInstanceID]
-                self.indicators.raidDebuffs[i]:SetCooldown(
-                    (auraInfo.expirationTime or 0) - auraInfo.duration,
-                    auraInfo.duration,
-                    auraInfo.dispelName or "",
-                    auraInfo.icon,
-                    auraInfo.applications,
-                    auraInfo.refreshing,
-                    I.IsDebuffUseElapsedTime(auraInfo.name, auraInfo.spellId)
-                )
+                if Cell.isMidnight and auraInfo._hasSecrets then
+                    MidnightShowDebuff(self.indicators.raidDebuffs[i], unit, auraInstanceID, auraInfo)
+                else
+                    local dur = auraInfo._safeDuration or 0
+                    local expir = auraInfo._safeExpirationTime or 0
+                    local apps = auraInfo._safeApplications or 0
+                    local dispel = auraInfo._safeDispelName or ""
+                    local ic = auraInfo._safeIcon or auraInfo.icon
+                    local aName = auraInfo._safeName or auraInfo.name
+                    local aSpellId = auraInfo._safeSpellId or auraInfo.spellId
+                    local start = (dur > 0) and (expir - dur) or 0
+                    self.indicators.raidDebuffs[i]:SetCooldown(
+                        start,
+                        dur,
+                        dispel,
+                        ic,
+                        apps,
+                        auraInfo.refreshing,
+                        I.IsDebuffUseElapsedTime(aName, aSpellId)
+                    )
+                end
                 self.indicators.raidDebuffs[i].auraInstanceID = auraInstanceID -- NOTE: for tooltip
                 startIndex = startIndex + 1
                 -- remove from debuffs
@@ -1382,12 +1555,12 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             end
             wipe(self._debuffs_glow_current)
         else
+            local topAura = self._debuffs_cache[topAuraInstanceID]
+            local topName = topAura._safeName or topAura.name
+            local topSpellId = topAura._safeSpellId or topAura.spellId
+            local topApps = topAura._safeApplications or 0
             self.indicators.raidDebuffs:ShowGlow(
-                I.GetDebuffGlow(
-                    self._debuffs_cache[topAuraInstanceID]["name"],
-                    self._debuffs_cache[topAuraInstanceID]["spellId"],
-                    self._debuffs_cache[topAuraInstanceID]["applications"]
-                )
+                I.GetDebuffGlow(topName, topSpellId, topApps)
             )
         end
     else
@@ -1400,26 +1573,50 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
         -- bigDebuffs first
         for auraInstanceID in next, self._debuffs_big do
             local auraInfo = self._debuffs_cache[auraInstanceID]
-            if startIndex <= indicatorNums["debuffs"] then
-                -- start, duration, debuffType, texture, count
-                self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing, true)
-                self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
-                self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
+            if auraInfo and startIndex <= indicatorNums["debuffs"] then
+                if Cell.isMidnight and auraInfo._hasSecrets then
+                    MidnightShowDebuff(self.indicators.debuffs[startIndex], unit, auraInstanceID, auraInfo)
+                    self.indicators.debuffs[startIndex].spellId = auraInfo._safeSpellId
+                else
+                    local dur = auraInfo._safeDuration or auraInfo.duration or 0
+                    local expir = auraInfo._safeExpirationTime or auraInfo.expirationTime or 0
+                    local apps = auraInfo._safeApplications or auraInfo.applications or 0
+                    local dispel = auraInfo._safeDispelName or auraInfo.dispelName or ""
+                    local ic = auraInfo._safeIcon or auraInfo.icon
+                    local sid = auraInfo._safeSpellId or auraInfo.spellId
+                    local start = (dur > 0) and (expir - dur) or 0
+                    self.indicators.debuffs[startIndex]:SetCooldown(start, dur, dispel, ic, apps, auraInfo.refreshing, true)
+                    self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID
+                    self.indicators.debuffs[startIndex].spellId = sid
+                end
                 startIndex = startIndex + 1
             else
+                if not auraInfo then self._debuffs_big[auraInstanceID] = nil end
                 break
             end
         end
         -- then normal debuffs
         for auraInstanceID in next, self._debuffs_normal do
             local auraInfo = self._debuffs_cache[auraInstanceID]
-            if startIndex <= indicatorNums["debuffs"] then
-                -- start, duration, debuffType, texture, count
-                self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing)
-                self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
-                self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
+            if auraInfo and startIndex <= indicatorNums["debuffs"] then
+                if Cell.isMidnight and auraInfo._hasSecrets then
+                    MidnightShowDebuff(self.indicators.debuffs[startIndex], unit, auraInstanceID, auraInfo)
+                    self.indicators.debuffs[startIndex].spellId = auraInfo._safeSpellId
+                else
+                    local dur = auraInfo._safeDuration or auraInfo.duration or 0
+                    local expir = auraInfo._safeExpirationTime or auraInfo.expirationTime or 0
+                    local apps = auraInfo._safeApplications or auraInfo.applications or 0
+                    local dispel = auraInfo._safeDispelName or auraInfo.dispelName or ""
+                    local ic = auraInfo._safeIcon or auraInfo.icon
+                    local sid = auraInfo._safeSpellId or auraInfo.spellId
+                    local start = (dur > 0) and (expir - dur) or 0
+                    self.indicators.debuffs[startIndex]:SetCooldown(start, dur, dispel, ic, apps, auraInfo.refreshing)
+                    self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID
+                    self.indicators.debuffs[startIndex].spellId = sid
+                end
                 startIndex = startIndex + 1
             else
+                if not auraInfo then self._debuffs_normal[auraInstanceID] = nil end
                 break
             end
         end
@@ -1435,6 +1632,25 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     -- update dispels
     if F.UnitInGroup(unit) or SafeBoolTest(UnitIsFriend("player", unit)) then
         self.indicators.dispels:SetDispels(self._debuffs_dispel)
+        -- Midnight: use secret-safe dispel color to show highlight directly
+        -- Note: color.r/g/b are secret values; SetVertexColor (C-level) accepts them,
+        -- but CreateColor/SetGradient (Lua-level) cannot.
+        if Cell.isMidnight and self._debuffs_midnightDispelColor then
+            local color = self._debuffs_midnightDispelColor
+            local highlight = self.indicators.dispels.highlight
+            local highlightType = self.indicators.dispels.highlightType
+            if highlightType and highlightType ~= "none" and highlight then
+                -- Use "entire" overlay style for all types since gradient needs
+                -- CreateColor which can't handle secret values
+                highlight:SetTexture(Cell.vars.whiteTexture)
+                highlight:SetVertexColor(color.r, color.g, color.b, 0.5)
+                highlight:Show()
+                self._midnightDispelHighlightShown = true
+            end
+        elseif Cell.isMidnight and self._midnightDispelHighlightShown then
+            self._midnightDispelHighlightShown = nil
+            self.indicators.dispels.highlight:Hide()
+        end
     end
 
     -- update crowdControls
@@ -1466,16 +1682,34 @@ local function HandleBuff(self, auraInfo)
     local unit = self.states.displayedUnit
 
     local auraInstanceID = auraInfo.auraInstanceID
-    local name = auraInfo.name
-    local icon = auraInfo.icon
-    local count = auraInfo.applications
-    -- local debuffType = auraInfo.isHarmful and auraInfo.dispelName
-    local expirationTime = auraInfo.expirationTime or 0
-    local start = expirationTime - auraInfo.duration
-    local duration = auraInfo.duration
-    local source = auraInfo.sourceUnit
-    local spellId = auraInfo.spellId
-    -- local attribute = auraInfo.points[1] -- UnitAura:arg16
+    local name, icon, count, expirationTime, duration, source, spellId
+
+    if Cell.isMidnight then
+        local nameSecret = issecretvalue(auraInfo.name)
+        local spellIdSecret = issecretvalue(auraInfo.spellId)
+        local hasSecrets = nameSecret or spellIdSecret
+
+        name = nameSecret and nil or auraInfo.name
+        icon = auraInfo.icon -- keep raw for SetTexture
+        spellId = spellIdSecret and 0 or auraInfo.spellId
+        source = issecretvalue(auraInfo.sourceUnit) and nil or auraInfo.sourceUnit
+        count = issecretvalue(auraInfo.applications) and 0 or (auraInfo.applications or 0)
+        duration = issecretvalue(auraInfo.duration) and 0 or (auraInfo.duration or 0)
+        expirationTime = issecretvalue(auraInfo.expirationTime) and 0 or (auraInfo.expirationTime or 0)
+
+        auraInfo._hasSecrets = hasSecrets
+        auraInfo._unit = unit
+    else
+        name = auraInfo.name
+        icon = auraInfo.icon
+        count = auraInfo.applications
+        expirationTime = auraInfo.expirationTime or 0
+        duration = auraInfo.duration or 0
+        source = auraInfo.sourceUnit
+        spellId = auraInfo.spellId
+    end
+
+    local start = (duration > 0) and (expirationTime - duration) or 0
 
     auraInfo.refreshing = false
 
@@ -1483,44 +1717,47 @@ local function HandleBuff(self, auraInfo)
         UpdateAuraRefreshState(auraInfo)
         self._buffs_cache[auraInstanceID] = auraInfo
 
-        -- defensiveCooldowns
-        if enabledIndicators["defensiveCooldowns"] and I.IsDefensiveCooldown(name, spellId) and self._buffs.defensiveFound < indicatorNums["defensiveCooldowns"] then
-            self._buffs.defensiveFound = self._buffs.defensiveFound + 1
-            -- start, duration, debuffType, texture, count, refreshing
-            self.indicators.defensiveCooldowns[self._buffs.defensiveFound]:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
-        end
-
-        -- externalCooldowns
-        if enabledIndicators["externalCooldowns"] and I.IsExternalCooldown(name, spellId, source, unit) and self._buffs.externalFound < indicatorNums["externalCooldowns"] then
-            self._buffs.externalFound = self._buffs.externalFound + 1
-            -- start, duration, debuffType, texture, count, refreshing
-            self.indicators.externalCooldowns[self._buffs.externalFound]:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
-        end
-
-        -- allCooldowns
-        if enabledIndicators["allCooldowns"] and (I.IsExternalCooldown(name, spellId, source, unit) or I.IsDefensiveCooldown(name, spellId)) and self._buffs.allFound < indicatorNums["allCooldowns"] then
-            self._buffs.allFound = self._buffs.allFound + 1
-            -- start, duration, debuffType, texture, count, refreshing
-            self.indicators.allCooldowns[self._buffs.allFound]:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
-        end
-
-        -- tankActiveMitigation
-        if enabledIndicators["tankActiveMitigation"] and I.IsTankActiveMitigation(spellId) then
-            self.indicators.tankActiveMitigation:SetCooldown(start, duration)
-            self._buffs.tankActiveMitigationFound = true
-        end
-
-        -- drinking
-        if enabledIndicators["statusText"] and I.IsDrinking(name) then
-            if not self.indicators.statusText:GetStatus() then
-                self.indicators.statusText:SetStatus("DRINKING")
-                self.indicators.statusText:Show()
+        -- When fields are secret, skip name/spellId matching (can't identify auras)
+        if Cell.isMidnight and auraInfo._hasSecrets then
+            -- Skip defensiveCooldowns, externalCooldowns, etc. - can't match
+            -- Skip custom indicators - can't match auras
+        else
+            -- defensiveCooldowns
+            if enabledIndicators["defensiveCooldowns"] and I.IsDefensiveCooldown(name, spellId) and self._buffs.defensiveFound < indicatorNums["defensiveCooldowns"] then
+                self._buffs.defensiveFound = self._buffs.defensiveFound + 1
+                self.indicators.defensiveCooldowns[self._buffs.defensiveFound]:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
             end
-            self._buffs.drinkingFound = true
-        end
 
-        -- user created indicators
-        I.UpdateCustomIndicators(self, auraInfo)
+            -- externalCooldowns
+            if enabledIndicators["externalCooldowns"] and I.IsExternalCooldown(name, spellId, source, unit) and self._buffs.externalFound < indicatorNums["externalCooldowns"] then
+                self._buffs.externalFound = self._buffs.externalFound + 1
+                self.indicators.externalCooldowns[self._buffs.externalFound]:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
+            end
+
+            -- allCooldowns
+            if enabledIndicators["allCooldowns"] and (I.IsExternalCooldown(name, spellId, source, unit) or I.IsDefensiveCooldown(name, spellId)) and self._buffs.allFound < indicatorNums["allCooldowns"] then
+                self._buffs.allFound = self._buffs.allFound + 1
+                self.indicators.allCooldowns[self._buffs.allFound]:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
+            end
+
+            -- tankActiveMitigation
+            if enabledIndicators["tankActiveMitigation"] and I.IsTankActiveMitigation(spellId) then
+                self.indicators.tankActiveMitigation:SetCooldown(start, duration)
+                self._buffs.tankActiveMitigationFound = true
+            end
+
+            -- drinking
+            if enabledIndicators["statusText"] and I.IsDrinking(name) then
+                if not self.indicators.statusText:GetStatus() then
+                    self.indicators.statusText:SetStatus("DRINKING")
+                    self.indicators.statusText:Show()
+                end
+                self._buffs.drinkingFound = true
+            end
+
+            -- user created indicators
+            I.UpdateCustomIndicators(self, auraInfo)
+        end
 
         -- check BG flags for statusIcon
         if spellId == 156621 then
@@ -1753,8 +1990,14 @@ UnitButton_UpdateAuras = function(self, updateInfo)
         -- full update
         UnitButton_UpdateBuffs(self, true)
         UnitButton_UpdateDebuffs(self, true)
+    elseif Cell.isMidnight then
+        -- Midnight: secret booleans prevent determining isHelpful/isHarmful
+        -- in partial updates. Always do a full scan using server-side filtered
+        -- GetAuraSlots("HARMFUL"/"HELPFUL") which bypasses the secret boolean issue.
+        UnitButton_UpdateBuffs(self, true)
+        UnitButton_UpdateDebuffs(self, true)
     else
-        -- partial update
+        -- partial update (pre-Midnight)
         local buffsChanged, debuffsChanged
         wipe(self._missing_auras)
 
@@ -1781,16 +2024,16 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                     buffsChanged = true
                     aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                     if aura then
-                        aura.oldExpirationTime = self._buffs_cache[auraInstanceID].expirationTime or 0
-                        aura.oldApplications = self._buffs_cache[auraInstanceID].applications
+                        aura.oldExpirationTime = SafeVal(self._buffs_cache[auraInstanceID].expirationTime, 0)
+                        aura.oldApplications = SafeVal(self._buffs_cache[auraInstanceID].applications, 0)
                         self._buffs_cache[auraInstanceID] = aura
                     end
                 elseif self._debuffs_cache[auraInstanceID] then
                     debuffsChanged = true
                     aura = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                     if aura then
-                        aura.oldExpirationTime = self._debuffs_cache[auraInstanceID].expirationTime or 0
-                        aura.oldApplications = self._debuffs_cache[auraInstanceID].applications
+                        aura.oldExpirationTime = SafeVal(self._debuffs_cache[auraInstanceID].expirationTime, 0)
+                        aura.oldApplications = SafeVal(self._debuffs_cache[auraInstanceID].applications, 0)
                         self._debuffs_cache[auraInstanceID] = aura
                     end
                 else
@@ -4270,3 +4513,5 @@ function CellUnitButton_OnLoad(button)
     button:SetScript("OnEvent", UnitButton_OnEvent)
     button:RegisterForClicks("AnyDown")
 end
+
+print("[CellDBG] UnitButton.lua LOADED, isMidnight=" .. tostring(Cell.isMidnight))

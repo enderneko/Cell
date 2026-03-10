@@ -496,7 +496,11 @@ local function UpdatePreviewButton(which)
         previewButton.widgets.healthBarLoss:SetTexture(Cell.vars.texture)
         previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
         previewButton.widgets.powerBarLoss:SetTexture(Cell.vars.texture)
-        previewButton.widgets.incomingHeal:SetTexture(Cell.vars.texture)
+        if previewButton.widgets.incomingHeal.SetStatusBarTexture then
+            previewButton.widgets.incomingHeal:SetStatusBarTexture(Cell.vars.texture)
+        elseif previewButton.widgets.incomingHeal.SetTexture then
+            previewButton.widgets.incomingHeal:SetTexture(Cell.vars.texture)
+        end
         previewButton.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
 
         previewButton2.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
@@ -505,7 +509,11 @@ local function UpdatePreviewButton(which)
         previewButton2.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
         previewButton2.widgets.powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
         previewButton2.widgets.powerBarLoss:SetTexture(Cell.vars.texture)
-        previewButton2.widgets.incomingHeal:SetTexture(Cell.vars.texture)
+        if previewButton2.widgets.incomingHeal.SetStatusBarTexture then
+            previewButton2.widgets.incomingHeal:SetStatusBarTexture(Cell.vars.texture)
+        elseif previewButton2.widgets.incomingHeal.SetTexture then
+            previewButton2.widgets.incomingHeal:SetTexture(Cell.vars.texture)
+        end
         previewButton2.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
     end
 

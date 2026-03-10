@@ -792,10 +792,16 @@ local function CheckCondition(operator, checkedValue, currentValue)
     end
 end
 
+-- Midnight: expose tracked debuff names for reverse lookup when aura fields are secret
+function I.GetCurrentAreaDebuffs()
+    return currentAreaDebuffs
+end
+
 function I.GetDebuffOrder(spellName, spellId, count)
     if issecretvalue and issecretvalue(spellId) then spellId = nil end
+    if issecretvalue and issecretvalue(spellName) then spellName = nil end
     if issecretvalue and issecretvalue(count) then count = 0 end
-    local t = (spellId and currentAreaDebuffs[spellId]) or currentAreaDebuffs[spellName]
+    local t = (spellId and currentAreaDebuffs[spellId]) or (spellName and currentAreaDebuffs[spellName])
     if not t then return end
 
     -- check condition
@@ -811,8 +817,9 @@ end
 
 function I.GetDebuffGlow(spellName, spellId, count)
     if issecretvalue and issecretvalue(spellId) then spellId = nil end
+    if issecretvalue and issecretvalue(spellName) then spellName = nil end
     if issecretvalue and issecretvalue(count) then count = 0 end
-    local t = (spellId and currentAreaDebuffs[spellId]) or currentAreaDebuffs[spellName]
+    local t = (spellId and currentAreaDebuffs[spellId]) or (spellName and currentAreaDebuffs[spellName])
     if not t then return end
 
     local showGlow
@@ -833,7 +840,8 @@ end
 
 function I.IsDebuffUseElapsedTime(spellName, spellId)
     if issecretvalue and issecretvalue(spellId) then spellId = nil end
-    local t = (spellId and currentAreaDebuffs[spellId]) or currentAreaDebuffs[spellName]
+    if issecretvalue and issecretvalue(spellName) then spellName = nil end
+    local t = (spellId and currentAreaDebuffs[spellId]) or (spellName and currentAreaDebuffs[spellName])
     if not t then return end
 
     return t["useElapsedTime"]

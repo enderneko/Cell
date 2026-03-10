@@ -255,29 +255,51 @@ end
 function I.UpdateCustomIndicators(unitButton, auraInfo)
     local unit = unitButton.states.displayedUnit
 
-    local auraType = auraInfo.isHelpful and "buff" or "debuff"
-    local icon = auraInfo.icon
-    local debuffType = auraInfo.isHarmful and (auraInfo.dispelName or "") or nil
-    local count = auraInfo.applications
-    local duration = auraInfo.duration
-    local start = (auraInfo.expirationTime or 0) - auraInfo.duration
-    local castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"
+    local isHelpful = auraInfo.isHelpful
+    local isHarmful = auraInfo.isHarmful
+    if Cell.isMidnight then
+        if issecretvalue(isHelpful) then isHelpful = nil end
+        if issecretvalue(isHarmful) then isHarmful = nil end
+    end
+
+    local auraType = isHelpful and "buff" or "debuff"
+    local icon = auraInfo._safeIcon or auraInfo.icon
+    local debuffType = isHarmful and (auraInfo._safeDispelName or auraInfo.dispelName or "") or nil
+    local count = auraInfo._safeApplications or auraInfo.applications
+    local duration = auraInfo._safeDuration or auraInfo.duration or 0
+    local expirationTime = auraInfo._safeExpirationTime or auraInfo.expirationTime or 0
+    local source = auraInfo.sourceUnit
+    local name = auraInfo._safeName or auraInfo.name
+    local spellId = auraInfo._safeSpellId or auraInfo.spellId
+
+    if Cell.isMidnight then
+        if issecretvalue(count) then count = 0 end
+        if issecretvalue(duration) then duration = 0 end
+        if issecretvalue(expirationTime) then expirationTime = 0 end
+        if issecretvalue(source) then source = nil end
+        if issecretvalue(name) then name = nil end
+        if issecretvalue(spellId) then spellId = 0 end
+        if issecretvalue(debuffType) then debuffType = "" end
+    end
+
+    local start = (duration > 0) and (expirationTime - duration) or 0
+    local castByMe = source == "player" or source == "pet"
 
     -- check Bleed
-    if auraInfo.isHarmful then
-        debuffType = I.CheckDebuffType(debuffType, auraInfo.spellId)
+    if isHarmful then
+        debuffType = I.CheckDebuffType(debuffType, spellId)
     end
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             local spell  --* trackByName
             if indicatorTable["trackByName"] then
-                spell = auraInfo.name
+                spell = name
             else
-                spell = auraInfo.spellId
+                spell = spellId
             end
 
-            if indicatorTable["auras"][spell] or (indicatorTable["auras"][0] and duration ~= 0) then -- is in indicator spell list
+            if spell and (indicatorTable["auras"][spell] or (indicatorTable["auras"][0] and duration ~= 0)) then -- is in indicator spell list
                 -- check caster
                 if (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "others" and not castByMe) or (indicatorTable["castBy"] == "anyone") then
                     if auraType == "buff" then

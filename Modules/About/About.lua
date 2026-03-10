@@ -55,7 +55,7 @@ local function CreateAuthorPane()
     authorText.size = 12
     UpdateFont(authorText)
 
-    authorText:SetText("篠崎-影之哀伤 (CN)\nadorotheou (12.0 Fork)")
+    authorText:SetText("篠崎-影之哀伤 (CN)\n|cffb7b7b712.0 Fork co-author: adorotheou|r")
 end
 
 -------------------------------------------------

@@ -449,6 +449,7 @@ local debuffs = {
 
     [1309] = { -- The Blinding Vale
         ["general"] = {
+            1238084, -- Spore Spines
         },
         [2769] = { -- Lightblossom Trinity
             1234753, -- Bedrock Slam

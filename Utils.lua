@@ -28,7 +28,7 @@ Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 Cell.isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 Cell.isTWW = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WAR_WITHIN
-Cell.isMidnight = LE_EXPANSION_LEVEL_CURRENT == (LE_EXPANSION_MIDNIGHT or math.huge)
+-- NOTE: LE_EXPANSION_MIDNIGHT may not exist yet; keep the build number check from line 24
 
 -------------------------------------------------
 -- 12.0+ API compatibility shims
@@ -2022,7 +2022,7 @@ if Cell.isMidnight then
             local aura = C_UnitAuras.GetAuraDataByIndex(unit, i, filter)
             if not aura then break end
             local ok, sid = pcall(function() return aura.spellId end)
-            if ok and sid == spellId then
+            if ok and not issecretvalue(sid) and sid == spellId then
                 local dur = 0
                 local expir = 0
                 pcall(function() dur = aura.duration or 0 end)
