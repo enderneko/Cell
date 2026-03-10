@@ -4077,6 +4077,7 @@ local function UnitButton_OnEvent(self, event, unit, arg)
                         UnitButton_UpdateHealAbsorbs(btn)
                         UnitButton_UpdatePowerStates(btn)
                         UnitButton_UpdatePowerText(btn)
+                        UnitButton_UpdateAuras(btn)
                     end
                 end)
             end

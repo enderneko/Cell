@@ -21,7 +21,6 @@ Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 Cell.isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 Cell.isTWW = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WAR_WITHIN
-Cell.isMidnight = LE_EXPANSION_LEVEL_CURRENT == (LE_EXPANSION_MIDNIGHT or math.huge)
 
 -------------------------------------------------
 -- 12.0+ API compatibility shims
