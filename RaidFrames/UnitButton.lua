@@ -2778,7 +2778,7 @@ UnitButton_UpdatePowerText = function(self)
         local pct
         if unit and UnitPowerPercent then
             if CurveConstants and CurveConstants.ScaleTo100 then
-                pct = UnitPowerPercent(unit, true, CurveConstants.ScaleTo100)
+                pct = UnitPowerPercent(unit, nil, true, CurveConstants.ScaleTo100)
             else
                 pct = UnitPowerPercent(unit)
             end
