@@ -2434,10 +2434,14 @@ local function UnitButton_UpdateHealthStates(self, diff)
             -- Wrap in pcall: UnitHealthPercent may error for some unit types,
             -- and we must not crash UnitButton_UpdateHealthStates for the whole frame.
             -- 12.0+: check hideIfEmptyOrFull via UnitHealthPercent (C-level)
+            -- Both the API call and comparison must be in pcall since the return is secret
             local ht = self.indicators.healthText
             if ht._secretHideAtFull and UnitHealthPercent then
-                local okH, hpct = pcall(UnitHealthPercent, unit)
-                if okH and (hpct == 0 or hpct == 1) then
+                local okHide, shouldHide = pcall(function()
+                    local hpct = UnitHealthPercent(unit)
+                    return hpct == 0 or hpct == 1
+                end)
+                if okHide and shouldHide then
                     self.indicators.healthText:Hide()
                     return
                 end
@@ -2839,11 +2843,15 @@ UnitButton_UpdatePowerText = function(self)
         self.indicators.powerText:SetValue(power, powerMax)
     else
         -- 12.0+: check hideIfEmptyOrFull via UnitPowerPercent (C-level, safe with secrets)
+        -- Both the API call and the comparison must be in pcall since the return value is secret
         if self.indicators.powerText.hideIfEmptyOrFull and UnitPowerPercent then
             local unit = self.states.displayedUnit
             if unit then
-                local okP, pctVal = pcall(UnitPowerPercent, unit)
-                if okP and (pctVal == 0 or pctVal == 1) then
+                local okHide, shouldHide = pcall(function()
+                    local pctVal = UnitPowerPercent(unit)
+                    return pctVal == 0 or pctVal == 1
+                end)
+                if okHide and shouldHide then
                     self.indicators.powerText:Hide()
                     return
                 end
