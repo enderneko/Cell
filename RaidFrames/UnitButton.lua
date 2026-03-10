@@ -3276,11 +3276,16 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
 
         -- Update shield indicator (user-configurable indicator on top of health bar)
         if enabledIndicators["shieldBar"] then
-            -- On Midnight, pass secret absorb/healthMax to SetAbsorbs which uses
-            -- SetMinMaxValues(0, healthMax) + SetValue(absorbs) — all C-level, secret-safe.
+            -- Size indicator to match health bar, then use SetAbsorbs for proportional fill
+            local indBar = self.indicators.shieldBar
+            if self.orientation == "horizontal" then
+                indBar:SetWidth(self.widgets.healthBar:GetWidth())
+            else
+                indBar:SetHeight(self.widgets.healthBar:GetHeight())
+            end
             local healthMax = self.widgets.healthCalculator:GetMaximumHealth()
-            self.indicators.shieldBar:Show()
-            self.indicators.shieldBar:SetAbsorbs(absorbs, healthMax)
+            indBar:Show()
+            indBar:SetAbsorbs(absorbs, healthMax)
         else
             self.indicators.shieldBar:Hide()
         end
