@@ -1837,8 +1837,54 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             self.indicators.raidDebuffs[i].auraInstanceID = nil
         end
 
-        -- 12.0+: activate vertical statusbar animation for secret durations
-        _FixSecretCooldowns(self.indicators.raidDebuffs, startIndex - 1, self._debuffs_cache)
+        -- 12.0+: fix secret durations and dispel-type coloring for raid debuffs
+        for i = 1, startIndex - 1 do
+            local frame = self.indicators.raidDebuffs[i]
+            if frame then
+                local aid = frame.auraInstanceID
+                local auraInfo = aid and self._debuffs_cache[aid]
+                if auraInfo then
+                    -- fix border + spark color for secret dispel types via bracket curves
+                    if auraInfo._dispelNameIsSecret and _dispelCurvesReady and self.states.displayedUnit then
+                        local hlColor = _getCurveColor(self.states.displayedUnit, aid, _dispelHighlightCurve)
+                        if hlColor then
+                            local ok, r, g, b, a = pcall(hlColor.GetRGBA, hlColor)
+                            if ok then
+                                -- transparent = non-dispellable (Physical); use red
+                                if not issecretvalue(a) and a < 0.1 then
+                                    r, g, b = 1, 0, 0
+                                end
+                                if frame.border then
+                                    pcall(frame.border.SetColorTexture, frame.border, r, g, b)
+                                end
+                                if frame.cooldown then
+                                    if frame.cooldown.spark then
+                                        pcall(frame.cooldown.spark.SetColorTexture, frame.cooldown.spark, r, g, b)
+                                    end
+                                    if frame.cooldown.SetSwipeColor then
+                                        pcall(frame.cooldown.SetSwipeColor, frame.cooldown, r, g, b)
+                                    end
+                                end
+                            end
+                        end
+                    elseif auraInfo._hasSecrets and not auraInfo._dispelNameIsSecret then
+                        -- non-dispellable secret debuff (Physical): red border
+                        if frame.border then
+                            frame.border:SetColorTexture(1, 0, 0)
+                        end
+                        if frame.cooldown and frame.cooldown.spark then
+                            frame.cooldown.spark:SetColorTexture(1, 0, 0)
+                        end
+                    end
+                    -- fix cooldown animation for secret durations
+                    if auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration) then
+                        _ActivateSecretCooldown(frame, auraInfo)
+                    elseif frame._secretClockActive then
+                        _DeactivateSecretCooldown(frame)
+                    end
+                end
+            end
+        end
 
         -- update glow
         if not indicatorBooleans["raidDebuffs"] then
@@ -1934,15 +1980,22 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
         if frame and frame.auraInstanceID then
             local auraInfo = self._debuffs_cache[frame.auraInstanceID]
             if auraInfo then
-                -- fix backdrop color for secret dispellable debuffs
+                -- fix backdrop color for secret debuffs (dispel type via bracket curves)
                 if auraInfo._dispelNameIsSecret and _dispelCurvesReady and self.states.displayedUnit then
                     local hlColor = _getCurveColor(self.states.displayedUnit, frame.auraInstanceID, _dispelHighlightCurve)
                     if hlColor then
-                        local ok, r, g, b = pcall(hlColor.GetRGBA, hlColor)
+                        local ok, r, g, b, a = pcall(hlColor.GetRGBA, hlColor)
                         if ok then
+                            -- transparent = non-dispellable (Physical); use red
+                            if not issecretvalue(a) and a < 0.1 then
+                                r, g, b = 1, 0, 0
+                            end
                             pcall(frame.SetBackdropColor, frame, r, g, b)
                         end
                     end
+                elseif auraInfo._hasSecrets and not auraInfo._dispelNameIsSecret then
+                    -- non-dispellable secret debuff (Physical): red backdrop
+                    pcall(frame.SetBackdropColor, frame, 1, 0, 0)
                 end
                 -- fix cooldown animation for secret durations
                 if auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration) then
