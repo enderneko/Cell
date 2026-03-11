@@ -1496,9 +1496,17 @@ end
 -- invisible output with secret values).
 local function _ActivateSecretCooldown(frame, auraInfo)
     local approxStart = auraInfo._addedTime or GetTime()
+    local cd = frame.cooldown
 
-    if frame.showAnimation and frame.cooldown and frame.cooldown.SetMinMaxValues then
-        local cd = frame.cooldown
+    if cd and cd._SetCooldown then
+        -- BorderIcon: Blizzard CooldownFrame with clock swipe
+        -- _SetCooldown is the native C-level SetCooldown (accepts secret values)
+        -- secret - secret = secret result, safe for C-level methods
+        if frame.border then frame.border:Hide() end
+        pcall(cd._SetCooldown, cd, auraInfo._rawExpirationTime - auraInfo._rawDuration, auraInfo._rawDuration)
+        cd:Show()
+    elseif cd and cd.SetMinMaxValues then
+        -- BarIcon: StatusBar with vertical fill animation
         pcall(cd.SetMinMaxValues, cd, 0, auraInfo._rawDuration)
         local startTime = approxStart
         pcall(cd.SetValue, cd, GetTime() - startTime)
@@ -1531,7 +1539,11 @@ end
 
 local function _DeactivateSecretCooldown(frame)
     frame._secretClockActive = nil
-    -- Restore original OnUpdate for vertical cooldown bars
+    -- Restore border for BorderIcon (CooldownFrame path)
+    if frame.border then
+        frame.border:Show()
+    end
+    -- Restore original OnUpdate for vertical cooldown bars (StatusBar path)
     if frame.cooldown and frame.cooldown._origOnUpdate then
         frame.cooldown:SetScript("OnUpdate", frame.cooldown._origOnUpdate)
         frame.cooldown._origOnUpdate = nil
@@ -1868,12 +1880,17 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                             end
                         end
                     elseif auraInfo._hasSecrets and not auraInfo._dispelNameIsSecret then
-                        -- non-dispellable secret debuff (Physical): red border
+                        -- non-dispellable secret debuff (Physical): red
                         if frame.border then
                             frame.border:SetColorTexture(1, 0, 0)
                         end
-                        if frame.cooldown and frame.cooldown.spark then
-                            frame.cooldown.spark:SetColorTexture(1, 0, 0)
+                        if frame.cooldown then
+                            if frame.cooldown.spark then
+                                frame.cooldown.spark:SetColorTexture(1, 0, 0)
+                            end
+                            if frame.cooldown.SetSwipeColor then
+                                frame.cooldown:SetSwipeColor(1, 0, 0)
+                            end
                         end
                     end
                     -- fix cooldown animation for secret durations
