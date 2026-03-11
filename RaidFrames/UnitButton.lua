@@ -1488,37 +1488,42 @@ function F.PrintKnownDispels()
     print("  Total:", n, "entries")
 end
 
--- 12.0+: activate C-level cooldown overlay when duration is secret.
--- Uses a CooldownFrame for both animation and countdown text, since
--- SetFormattedText with secret values produces invisible output.
--- CooldownFrame:SetCooldown is C-level and handles secrets natively.
+-- 12.0+: activate vertical StatusBar cooldown animation for secret durations.
+-- SetMinMaxValues/SetValue are C-level and accept secrets.
+-- GetValue() returns tainted after SetMinMaxValues with secret max, so we
+-- use a custom OnUpdate that tracks elapsed with non-secret arithmetic only.
+-- Duration text is not supported for secret auras (SetFormattedText produces
+-- invisible output with secret values).
 local function _ActivateSecretCooldown(frame, auraInfo)
     local approxStart = auraInfo._addedTime or GetTime()
 
-    -- Always use a CooldownFrame overlay for secret durations.
-    -- VERTICAL style's StatusBar OnUpdate crashes with tainted GetValue(),
-    -- and custom duration text can't render secret values visibly.
-    if not frame._secretClockOverlay then
-        local cd = CreateFrame("Cooldown", nil, frame)
-        cd:SetAllPoints(frame.icon or frame)
-        cd:SetReverse(true)
-        cd:SetDrawEdge(false)
-        cd:SetSwipeTexture(Cell.vars.whiteTexture)
-        cd:SetSwipeColor(0, 0, 0, 0.77)
-        cd.noCooldownCount = true
-        cd._setCooldown = cd.SetCooldown
-        frame._secretClockOverlay = cd
+    if frame.showAnimation and frame.cooldown and frame.cooldown.SetMinMaxValues then
+        local cd = frame.cooldown
+        pcall(cd.SetMinMaxValues, cd, 0, auraInfo._rawDuration)
+        local startTime = approxStart
+        pcall(cd.SetValue, cd, GetTime() - startTime)
+        if cd.icon and auraInfo.icon then
+            pcall(cd.icon.SetTexture, cd.icon, auraInfo.icon)
+        end
+        if cd.spark then
+            cd.spark:SetColorTexture(0.5, 0.5, 0.5)
+        end
+        -- Save original OnUpdate so we can restore it on deactivation
+        if not cd._origOnUpdate then
+            cd._origOnUpdate = cd:GetScript("OnUpdate")
+        end
+        cd._secretStartTime = startTime
+        cd:SetScript("OnUpdate", function(self, elapsed)
+            self._secretElapsed = (self._secretElapsed or 0) + elapsed
+            if self._secretElapsed >= 0.1 then
+                pcall(self.SetValue, self, GetTime() - self._secretStartTime)
+                self._secretElapsed = 0
+            end
+        end)
+        cd:Show()
     end
-    local cd = frame._secretClockOverlay
 
-    -- Show/hide native countdown numbers based on duration setting
-    cd:SetHideCountdownNumbers(not frame.showDuration)
-
-    if frame.cooldown then frame.cooldown:Hide() end
-    pcall(cd._setCooldown, cd, approxStart, auraInfo._rawDuration)
-    cd:Show()
-
-    -- Hide Cell's own duration text (CooldownFrame provides its own countdown)
+    -- Hide duration text — secret values can't be rendered visibly
     frame.duration:Hide()
 
     frame._secretClockActive = true
@@ -1526,8 +1531,12 @@ end
 
 local function _DeactivateSecretCooldown(frame)
     frame._secretClockActive = nil
-    if frame._secretClockOverlay then
-        frame._secretClockOverlay:Hide()
+    -- Restore original OnUpdate for vertical cooldown bars
+    if frame.cooldown and frame.cooldown._origOnUpdate then
+        frame.cooldown:SetScript("OnUpdate", frame.cooldown._origOnUpdate)
+        frame.cooldown._origOnUpdate = nil
+        frame.cooldown._secretStartTime = nil
+        frame.cooldown._secretElapsed = nil
     end
 end
 
