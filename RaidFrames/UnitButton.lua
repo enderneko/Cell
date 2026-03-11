@@ -164,6 +164,7 @@ local function SanitizeAura(aura)
 
     -- replace secret fields with safe defaults in-place
     aura.icon       = aura.icon  -- raw; SetTexture() is C-level
+    aura._rawSpellId = aura.spellId -- keep secret spellId for C_Spell lookup
     aura.name       = nil
     aura.sourceUnit = nil
     aura.dispelName = nil
@@ -1438,7 +1439,7 @@ local function ResetDebuffVars(self)
 end
 
 -- 12.0+: fields to preserve from old cache when current read returns nil (secret)
-local _secretMergeFields = {"name", "icon", "sourceUnit", "spellId", "dispelName"}
+local _secretMergeFields = {"name", "icon", "sourceUnit", "spellId", "dispelName", "_rawSpellId"}
 
 local function _mergeSecretAura(auraInfo, oldCache)
     if not oldCache then return end
@@ -1499,7 +1500,19 @@ local function _ActivateSecretCooldown(frame, auraInfo)
         pcall(frame.cooldown.ShowCooldown, frame.cooldown,
             approxStart, auraInfo._rawDuration)
         frame.cooldown:Show()
+    elseif frame.cooldown and frame.cooldown.SetMinMaxValues then
+        -- VERTICAL style: StatusBar-based cooldown. SetMinMaxValues/SetValue are
+        -- C-level and accept secrets. OnUpdate uses GetValue() (non-secret) + elapsed.
+        local cd = frame.cooldown
+        pcall(cd.SetMinMaxValues, cd, 0, auraInfo._rawDuration)
+        pcall(cd.SetValue, cd, GetTime() - approxStart)
+        cd.elapsed = 0.1
+        if cd.icon and auraInfo.icon then
+            pcall(cd.icon.SetTexture, cd.icon, auraInfo.icon)
+        end
+        cd:Show()
     else
+        -- Fallback: circular clock overlay for frames without proper cooldown
         if not frame._secretClockOverlay then
             local cd = CreateFrame("Cooldown", nil, frame)
             cd:SetAllPoints(frame.icon or frame)
@@ -1559,6 +1572,21 @@ local function HandleDebuff(self, auraInfo)
     local debuffType = auraInfo.dispelName or ""
     local spellId = auraInfo.spellId
 
+    -- 12.0+: try to resolve spellId/name from raw secret via C_Spell (C-level API)
+    if not spellId and auraInfo._rawSpellId and C_Spell and C_Spell.GetSpellName then
+        local ok, resolvedName = pcall(C_Spell.GetSpellName, auraInfo._rawSpellId)
+        if ok and resolvedName and not issecretvalue(resolvedName) then
+            auraInfo.name = resolvedName
+            name = resolvedName
+            -- C_Spell.GetSpellInfo returns a table with spellID field
+            local ok2, info = pcall(C_Spell.GetSpellInfo, auraInfo._rawSpellId)
+            if ok2 and info and info.spellID and not issecretvalue(info.spellID) then
+                auraInfo.spellId = info.spellID
+                spellId = info.spellID
+            end
+        end
+    end
+
     -- 12.0+: resolve secret dispelName via multiple fallbacks
     if debuffType == "" and InCombatLockdown() then
         -- fallback 1: persistent spellId → dispelName cache
@@ -1615,10 +1643,11 @@ local function HandleDebuff(self, auraInfo)
         local isBig = false
         local isBlacklisted = false
         local isDispelBlacklisted = false
-        if F.IsAuraNonSecret(auraInfo) then
-            isBig = spellId and Cell.vars.bigDebuffs[spellId] or false
-            isBlacklisted = spellId and Cell.vars.debuffBlacklist[spellId] or false
-            isDispelBlacklisted = spellId and Cell.vars.dispelBlacklist[spellId] or false
+        -- spellId is nil for sanitized secrets, but may be restored by _mergeSecretAura
+        if spellId then
+            isBig = Cell.vars.bigDebuffs[spellId] or false
+            isBlacklisted = Cell.vars.debuffBlacklist[spellId] or false
+            isDispelBlacklisted = Cell.vars.dispelBlacklist[spellId] or false
         end
 
         if enabledIndicators["debuffs"] and not isBlacklisted then
@@ -1683,7 +1712,7 @@ local function HandleDebuff(self, auraInfo)
         end
 
         -- Per-aura check: only compare spellId if non-secret
-        if F.IsAuraNonSecret(auraInfo) then
+        if spellId then
             -- resurrections: å›¾è…¾å¤ç"Ÿ/å¤ç"Ÿ
             if spellId == 255234 or spellId == 225080 then
                 -- NOTE: this rez lasts longer than the debuff
@@ -2057,6 +2086,20 @@ local function HandleBuff(self, auraInfo)
     end
     local source = auraInfo.sourceUnit
     local spellId = auraInfo.spellId
+
+    -- 12.0+: try to resolve spellId/name from raw secret via C_Spell (C-level API)
+    if not spellId and auraInfo._rawSpellId and C_Spell and C_Spell.GetSpellName then
+        local ok, resolvedName = pcall(C_Spell.GetSpellName, auraInfo._rawSpellId)
+        if ok and resolvedName and not issecretvalue(resolvedName) then
+            auraInfo.name = resolvedName
+            name = resolvedName
+            local ok2, info = pcall(C_Spell.GetSpellInfo, auraInfo._rawSpellId)
+            if ok2 and info and info.spellID and not issecretvalue(info.spellID) then
+                auraInfo.spellId = info.spellID
+                spellId = info.spellID
+            end
+        end
+    end
     -- local attribute = auraInfo.points[1] -- UnitAura:arg16
 
     auraInfo.refreshing = false
@@ -2119,8 +2162,8 @@ local function HandleBuff(self, auraInfo)
         -- user created indicators
         I.UpdateCustomIndicators(self, auraInfo)
 
-        -- Per-aura check: only compare spellId if non-secret
-        if F.IsAuraNonSecret(auraInfo) then
+        -- Per-aura check: spellId may be restored by merge or C_Spell resolution
+        if spellId then
             -- check BG flags for statusIcon
             if spellId == 156621 then
                 self.states.BGFlag = "alliance"
