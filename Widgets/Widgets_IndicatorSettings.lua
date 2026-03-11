@@ -1043,14 +1043,12 @@ local function CreateSetting_HealthFormat(parent)
 
         local function UpdateWidgets()
             local health1Enabled = widget.format.health1.format ~= "none"
-            widget.health1HideIfEmptyOrFullCB:SetEnabled(health1Enabled)
             widget.health1ColorDropdown:SetEnabled(health1Enabled)
             widget.health1ColorPicker:SetEnabled(health1Enabled)
 
             local health2Enabled = widget.format.health2.format ~= "none"
             widget.health2DelimiterEB:SetEnabled(health2Enabled)
             widget.health2DelimiterEB.confirmBtn:Hide()
-            widget.health2HideIfEmptyOrFullCB:SetEnabled(health2Enabled)
             widget.health2ColorDropdown:SetEnabled(health2Enabled)
             widget.health2ColorPicker:SetEnabled(health2Enabled)
             if health2Enabled then
