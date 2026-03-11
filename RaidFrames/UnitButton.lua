@@ -1474,7 +1474,7 @@ local function _mergeSecretAura(auraInfo, oldCache)
 end
 
 -- upvalue set by UnitButton_UpdateDebuffs/UpdateBuffs during combat full updates
-local _oldDebuffsCache, _oldBuffsCache, _prescanRaidDebuffs
+local _oldDebuffsCache, _oldBuffsCache
 
 -- persistent spellId → dispelName cache; survives across auraInstanceID changes
 local _knownDispelTypes = {}
@@ -1524,7 +1524,7 @@ local function _ActivateSecretCooldown(frame, auraInfo)
     end
 
     -- Hide duration text — secret values can't be rendered visibly
-    frame.duration:Hide()
+    if frame.duration then frame.duration:Hide() end
 
     frame._secretClockActive = true
 end
@@ -1584,19 +1584,6 @@ local function HandleDebuff(self, auraInfo)
                 auraInfo.spellId = info.spellID
                 spellId = info.spellID
             end
-        end
-    end
-
-    -- 12.0+: fallback — match auraInstanceID against pre-scanned raid debuffs
-    -- Pre-scan uses C_UnitAuras.GetAuraDataBySpellName (C-level) to map
-    -- non-secret auraInstanceIDs to known raid debuff spellIds.
-    if not spellId and _prescanRaidDebuffs then
-        local match = _prescanRaidDebuffs[auraInstanceID]
-        if match then
-            spellId = match.spellId
-            name = name or match.name
-            auraInfo.spellId = spellId
-            auraInfo.name = auraInfo.name or match.name
         end
     end
 
@@ -1687,6 +1674,17 @@ local function HandleDebuff(self, auraInfo)
 
         -- prepare raidDebuffs
         local order = I.GetDebuffOrder(name, spellId, count)
+        -- 12.0+: when spellId/name are secret, fall back to server RAID flag
+        -- IsAuraFilteredOutByInstanceID accepts secret auraInstanceID and
+        -- returns non-secret bool (not SecretWhenUnitAuraRestricted)
+        if not order and auraInfo._hasSecrets and enabledIndicators["raidDebuffs"]
+            and _IsAuraFilteredOut and self.states.displayedUnit then
+            local isRaid = not _IsAuraFilteredOut(self.states.displayedUnit,
+                auraInstanceID, "HARMFUL|RAID")
+            if isRaid then
+                order = 100 -- default order for server-flagged raid debuffs
+            end
+        end
         if enabledIndicators["raidDebuffs"] and order then
             auraInfo.raidDebuffOrder = order
             tinsert(self._debuffs_raid, auraInstanceID)
@@ -1754,43 +1752,6 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
 
     ResetDebuffVars(self)
     I.ResetCustomIndicators(self, "debuff")
-
-    -- 12.0+: pre-scan known raid debuffs by spell name so HandleDebuff can
-    -- instantly match secret auras. C_UnitAuras.GetAuraDataBySpellName is
-    -- C-level: takes a non-secret spell name, returns aura data with a
-    -- non-secret auraInstanceID that we can map to the known spellId.
-    _prescanRaidDebuffs = nil
-    if Cell.isMidnight and enabledIndicators["raidDebuffs"]
-        and C_UnitAuras and C_UnitAuras.GetAuraDataBySpellName and C_Spell and unit then
-        local areaDebuffs = I.GetCurrentAreaDebuffs()
-        if areaDebuffs then
-            for key in pairs(areaDebuffs) do
-                if type(key) == "number" then
-                    local ok, sName = pcall(C_Spell.GetSpellName, key)
-                    if ok and sName then
-                        local ok2, aura = pcall(C_UnitAuras.GetAuraDataBySpellName, unit, sName, "HARMFUL")
-                        if ok2 and aura and aura.auraInstanceID
-                            and not issecretvalue(aura.auraInstanceID) then
-                            if not _prescanRaidDebuffs then _prescanRaidDebuffs = {} end
-                            _prescanRaidDebuffs[aura.auraInstanceID] = {
-                                spellId = key,
-                                name = sName,
-                            }
-                        end
-                    end
-                elseif type(key) == "string" then
-                    local ok, aura = pcall(C_UnitAuras.GetAuraDataBySpellName, unit, key, "HARMFUL")
-                    if ok and aura and aura.auraInstanceID
-                        and not issecretvalue(aura.auraInstanceID) then
-                        if not _prescanRaidDebuffs then _prescanRaidDebuffs = {} end
-                        _prescanRaidDebuffs[aura.auraInstanceID] = {
-                            name = key,
-                        }
-                    end
-                end
-            end
-        end
-    end
 
     if isFullUpdate then
         -- 12.0+: always save old cache so HandleDebuff can merge previously-known
@@ -1876,10 +1837,15 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             self.indicators.raidDebuffs[i].auraInstanceID = nil
         end
 
+        -- 12.0+: activate vertical statusbar animation for secret durations
+        _FixSecretCooldowns(self.indicators.raidDebuffs, startIndex - 1, self._debuffs_cache)
+
         -- update glow
         if not indicatorBooleans["raidDebuffs"] then
             -- to make sure top glow has highest priority
-            local topGlowType, topGlowOptions = self._debuffs_cache[topAuraInstanceID]["raidDebuffGlowType"], self._debuffs_cache[topAuraInstanceID]["raidDebuffGlowOptions"]
+            local topAura = topAuraInstanceID and self._debuffs_cache[topAuraInstanceID]
+            local topGlowType = topAura and topAura["raidDebuffGlowType"]
+            local topGlowOptions = topAura and topAura["raidDebuffGlowOptions"]
             if topGlowType and topGlowType ~= "None" then
                 self._debuffs_glow_current[topGlowType] = topGlowOptions
             end
@@ -1893,13 +1859,16 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             end
             wipe(self._debuffs_glow_current)
         else
-            self.indicators.raidDebuffs:ShowGlow(
-                I.GetDebuffGlow(
-                    self._debuffs_cache[topAuraInstanceID]["name"],
-                    self._debuffs_cache[topAuraInstanceID]["spellId"],
-                    self._debuffs_cache[topAuraInstanceID]["applications"]
+            local topAura = topAuraInstanceID and self._debuffs_cache[topAuraInstanceID]
+            if topAura then
+                self.indicators.raidDebuffs:ShowGlow(
+                    I.GetDebuffGlow(
+                        topAura["name"],
+                        topAura["spellId"],
+                        topAura["applications"]
+                    )
                 )
-            )
+            end
         end
     else
         self.indicators.raidDebuffs:Hide()
