@@ -1495,6 +1495,26 @@ function F.PrintKnownDispels()
     print("  Total:", n, "entries")
 end
 
+-- 12.0+: OnUpdate for duration text with secret durations.
+-- Secret arithmetic (secret - nonSecret) produces secret results without crashing.
+-- SetFormattedText is C-level and renders secret numbers.
+-- Threshold/color checks are skipped (they require boolean tests on secrets).
+local function _SecretDuration_OnUpdate(frame, elapsed)
+    frame._secretDurElapsed = frame._secretDurElapsed + elapsed
+    if frame._secretDurElapsed >= 0.1 then
+        frame._secretDurElapsed = 0
+        -- remain = rawDuration - (GetTime() - startTime)  →  secret result
+        local ok = pcall(function()
+            local remain = frame._secretRawDuration - (GetTime() - frame._secretStartTime)
+            frame.duration:SetFormattedText("%d", remain)
+        end)
+        if not ok then
+            frame.duration:SetText("")
+            frame:SetScript("OnUpdate", nil)
+        end
+    end
+end
+
 -- 12.0+: activate C-level cooldown overlay when duration is secret.
 -- Shared by debuff and buff indicator post-processing.
 -- CooldownFrame:SetCooldown is C-level and handles secrets internally.
@@ -1554,23 +1574,20 @@ local function _ActivateSecretCooldown(frame, auraInfo)
         pcall(cd._setCooldown, cd, approxStart, auraInfo._rawDuration)
         cd:Show()
     end
-    -- Duration text: Lua can't compute remaining time from secret duration.
-    -- Use a transparent CooldownFrame whose C-level countdown text handles it.
+    -- Duration text: secret arithmetic (secret - nonSecret) produces a secret
+    -- result without crashing. Only boolean tests on secrets crash.
+    -- SetFormattedText is C-level and accepts secret values.
     if frame.showDuration and auraInfo._rawDuration then
-        if not frame._secretDurationCD then
-            local cd = CreateFrame("Cooldown", nil, frame)
-            cd:SetAllPoints(frame.icon or frame)
-            cd:SetDrawSwipe(false) -- no swipe, just countdown text
-            cd:SetDrawEdge(false)
-            cd:SetHideCountdownNumbers(false)
-            cd._setCooldown = cd.SetCooldown
-            frame._secretDurationCD = cd
+        frame._secretRawDuration = auraInfo._rawDuration
+        frame._secretStartTime = approxStart
+        frame._secretDurElapsed = 0.1 -- update immediately
+        if frame.showAnimation and frame.cooldown then
+            frame.duration:SetParent(frame.cooldown)
+        else
+            frame.duration:SetParent(frame)
         end
-        local dcd = frame._secretDurationCD
-        pcall(dcd._setCooldown, dcd, approxStart, auraInfo._rawDuration)
-        -- Hide Cell's own duration text (WoW's countdown replaces it)
-        frame.duration:Hide()
-        dcd:Show()
+        frame.duration:Show()
+        frame:SetScript("OnUpdate", _SecretDuration_OnUpdate)
     end
     frame._secretClockActive = true
 end
@@ -1580,9 +1597,11 @@ local function _DeactivateSecretCooldown(frame)
     if frame._secretClockOverlay then
         frame._secretClockOverlay:Hide()
     end
-    if frame._secretDurationCD then
-        frame._secretDurationCD:Hide()
-    end
+    -- Clean up secret duration text
+    frame._secretRawDuration = nil
+    frame._secretStartTime = nil
+    frame._secretDurElapsed = nil
+    frame:SetScript("OnUpdate", nil)
     -- Restore original OnUpdate for vertical cooldown bars
     if frame.cooldown and frame.cooldown._origOnUpdate then
         frame.cooldown:SetScript("OnUpdate", frame.cooldown._origOnUpdate)
