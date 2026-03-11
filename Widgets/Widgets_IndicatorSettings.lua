@@ -1124,14 +1124,8 @@ local function CreateSetting_HealthFormat(parent)
         health1Text:SetPoint("BOTTOMLEFT", widget.health1FormatDropdown, "TOPLEFT", 0, 1)
         health1Text:SetText(L["Health"] .. " 1")
 
-        widget.health1HideIfEmptyOrFullCB = Cell.CreateCheckButton(widget, L["hideIfEmptyOrFull"], function(checked)
-            widget.format.health1.hideIfEmptyOrFull = checked
-            widget.func()
-        end)
-        widget.health1HideIfEmptyOrFullCB:SetPoint("TOPLEFT", widget.health1FormatDropdown, "BOTTOMLEFT", 0, -10)
-
         widget.health1ColorDropdown = Cell.CreateDropdown(widget, 127)
-        widget.health1ColorDropdown:SetPoint("TOPLEFT", widget.health1HideIfEmptyOrFullCB, "BOTTOMLEFT", 0, -10)
+        widget.health1ColorDropdown:SetPoint("TOPLEFT", widget.health1FormatDropdown, "BOTTOMLEFT", 0, -10)
         widget.health1ColorDropdown:SetItems({
             {
                 ["text"] = L["Class Color"],
@@ -1182,14 +1176,8 @@ local function CreateSetting_HealthFormat(parent)
         widget.health2DelimiterText:SetPoint("BOTTOMLEFT", widget.health2DelimiterEB, "TOPLEFT", 0, 1)
         widget.health2DelimiterText:SetText(L["Delimiter"])
 
-        widget.health2HideIfEmptyOrFullCB = Cell.CreateCheckButton(widget, L["hideIfEmptyOrFull"], function(checked)
-            widget.format.health2.hideIfEmptyOrFull = checked
-            widget.func()
-        end)
-        widget.health2HideIfEmptyOrFullCB:SetPoint("TOPLEFT", widget.health2FormatDropdown, "BOTTOMLEFT", 0, -10)
-
         widget.health2ColorDropdown = Cell.CreateDropdown(widget, 127)
-        widget.health2ColorDropdown:SetPoint("TOPLEFT", widget.health2HideIfEmptyOrFullCB, "BOTTOMLEFT", 0, -10)
+        widget.health2ColorDropdown:SetPoint("TOPLEFT", widget.health2FormatDropdown, "BOTTOMLEFT", 0, -10)
         widget.health2ColorDropdown:SetItems({
             {
             ["text"] = L["Class Color"],
@@ -1355,14 +1343,12 @@ local function CreateSetting_HealthFormat(parent)
 
             -- health1
             widget.health1FormatDropdown:SetSelectedValue(format.health1.format)
-            widget.health1HideIfEmptyOrFullCB:SetChecked(format.health1.hideIfEmptyOrFull)
             widget.health1ColorDropdown:SetSelectedValue(format.health1.color[1])
             widget.health1ColorPicker:SetColor(unpack(format.health1.color[2]))
 
             -- health2
             widget.health2FormatDropdown:SetSelectedValue(format.health2.format)
             widget.health2DelimiterEB:SetText(format.health2.delimiter)
-            widget.health2HideIfEmptyOrFullCB:SetChecked(format.health2.hideIfEmptyOrFull)
             widget.health2ColorDropdown:SetSelectedValue(format.health2.color[1])
             widget.health2ColorPicker:SetColor(unpack(format.health2.color[2]))
 
