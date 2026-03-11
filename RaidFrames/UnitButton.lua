@@ -1500,16 +1500,34 @@ local function _ActivateSecretCooldown(frame, auraInfo)
         pcall(frame.cooldown.ShowCooldown, frame.cooldown,
             approxStart, auraInfo._rawDuration)
         frame.cooldown:Show()
-    elseif frame.cooldown and frame.cooldown.SetMinMaxValues then
+    elseif frame.showAnimation and frame.cooldown and frame.cooldown.SetMinMaxValues then
         -- VERTICAL style: StatusBar-based cooldown. SetMinMaxValues/SetValue are
-        -- C-level and accept secrets. OnUpdate uses GetValue() (non-secret) + elapsed.
+        -- C-level and accept secrets. BUT GetValue() returns tainted after
+        -- SetMinMaxValues with secret max (clamping taints). So we use a custom
+        -- OnUpdate that tracks elapsed with non-secret arithmetic only.
         local cd = frame.cooldown
         pcall(cd.SetMinMaxValues, cd, 0, auraInfo._rawDuration)
-        pcall(cd.SetValue, cd, GetTime() - approxStart)
-        cd.elapsed = 0.1
+        local startTime = approxStart
+        pcall(cd.SetValue, cd, GetTime() - startTime)
         if cd.icon and auraInfo.icon then
             pcall(cd.icon.SetTexture, cd.icon, auraInfo.icon)
         end
+        if cd.spark then
+            cd.spark:SetColorTexture(0.5, 0.5, 0.5)
+        end
+        -- Save original OnUpdate so we can restore it on deactivation
+        if not cd._origOnUpdate then
+            cd._origOnUpdate = cd:GetScript("OnUpdate")
+        end
+        cd._secretStartTime = startTime
+        cd:SetScript("OnUpdate", function(self, elapsed)
+            self._secretElapsed = (self._secretElapsed or 0) + elapsed
+            if self._secretElapsed >= 0.1 then
+                -- All non-secret arithmetic: GetTime() and _secretStartTime are plain numbers
+                pcall(self.SetValue, self, GetTime() - self._secretStartTime)
+                self._secretElapsed = 0
+            end
+        end)
         cd:Show()
     else
         -- Fallback: circular clock overlay for frames without proper cooldown
@@ -1537,6 +1555,13 @@ local function _DeactivateSecretCooldown(frame)
     frame._secretClockActive = nil
     if frame._secretClockOverlay then
         frame._secretClockOverlay:Hide()
+    end
+    -- Restore original OnUpdate for vertical cooldown bars
+    if frame.cooldown and frame.cooldown._origOnUpdate then
+        frame.cooldown:SetScript("OnUpdate", frame.cooldown._origOnUpdate)
+        frame.cooldown._origOnUpdate = nil
+        frame.cooldown._secretStartTime = nil
+        frame.cooldown._secretElapsed = nil
     end
 end
 
