@@ -1440,9 +1440,6 @@ local function ResetDebuffVars(self)
     self.states.BGOrb = nil -- TODO: move to _debuffs
 end
 
--- 12.0+: set of auraInstanceIDs with the server RAID flag, populated before debuff processing
-local _raidFlaggedAuraIDs = {}
-
 -- 12.0+: fields to preserve from old cache when current read returns nil (secret)
 local _secretMergeFields = {"name", "icon", "sourceUnit", "spellId", "dispelName", "_rawSpellId"}
 
@@ -1753,11 +1750,20 @@ local function HandleDebuff(self, auraInfo)
 
         -- prepare raidDebuffs
         local order = I.GetDebuffOrder(name, spellId, count)
-        -- 12.0+: when spellId/name are secret, fall back to pre-scanned RAID flag set.
-        -- The set was built before HandleDebuff using GetAuraSlots("HARMFUL|RAID").
-        if not order and auraInfo._hasSecrets and enabledIndicators["raidDebuffs"] then
-            if _raidFlaggedAuraIDs[auraInstanceID] then
-                order = 100 -- default order for server-flagged raid debuffs
+        -- 12.0+: when spellId/name are secret, fall back to server RAID flag.
+        -- pcall guards against IsAuraFilteredOutByInstanceID returning secret booleans.
+        if not order and auraInfo._hasSecrets and enabledIndicators["raidDebuffs"]
+            and _IsAuraFilteredOut and self.states.displayedUnit then
+            local fOk, isFiltered = pcall(_IsAuraFilteredOut, self.states.displayedUnit,
+                auraInstanceID, "HARMFUL|RAID")
+            if fOk then
+                if not issecretvalue(isFiltered) and isFiltered == false then
+                    order = 100 -- server-flagged raid debuff
+                elseif issecretvalue(isFiltered) then
+                    -- Return value is secret — assume it's a raid debuff
+                    -- (if it weren't, the function would likely return non-secret true)
+                    order = 100
+                end
             end
         end
         if enabledIndicators["raidDebuffs"] and order then
@@ -1829,27 +1835,6 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     I.ResetCustomIndicators(self, "debuff")
 
     if isFullUpdate then
-        -- 12.0+: pre-scan for RAID-flagged aura IDs so HandleDebuff can identify
-        -- raid debuffs even when spellId/name are secret. GetAuraSlots with
-        -- "HARMFUL|RAID" returns only debuffs the server marks as important for raid frames.
-        wipe(_raidFlaggedAuraIDs)
-        if Cell.isMidnight and unit then
-            local raidResults = {pcall(GetAuraSlots, unit, "HARMFUL|RAID")}
-            if raidResults[1] then -- pcall ok
-                -- raidResults: [1]=ok, [2]=continuationToken, [3..n]=slots
-                for i = 3, #raidResults do
-                    local slot = raidResults[i]
-                    if slot then
-                        local rawOk, rawAura = pcall(_GetAuraDataBySlot, unit, slot)
-                        if rawOk and rawAura and rawAura.auraInstanceID
-                            and not issecretvalue(rawAura.auraInstanceID) then
-                            _raidFlaggedAuraIDs[rawAura.auraInstanceID] = true
-                        end
-                    end
-                end
-            end
-        end
-
         -- 12.0+: always save old cache so HandleDebuff can merge previously-known
         -- field values when current read returns secrets. InCombatLockdown() is
         -- unreliable during combat transitions — secrets can exist before it returns true.
