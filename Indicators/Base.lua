@@ -117,7 +117,11 @@ end
 local function VerticalCooldown_OnUpdate(self, elapsed)
     self.elapsed = (self.elapsed or 0) + elapsed
     if self.elapsed >= 0.1 then
-        self:SetValue(self:GetValue() + self.elapsed)
+        -- Track value in Lua variable instead of GetValue() — avoids permanent
+        -- taint from secret SetValue() calls (12.0+). GetValue() returns tainted
+        -- forever once any secret value is passed to SetValue/SetMinMaxValues.
+        self._currentValue = (self._currentValue or 0) + self.elapsed
+        self:SetValue(self._currentValue)
         self.elapsed = 0
     end
 end
@@ -140,7 +144,8 @@ local function VerticalCooldown_ShowCooldown(self, start, duration, _, icon, deb
 
     self.elapsed = 0.1 -- update immediately
     self:SetMinMaxValues(0, duration)
-    self:SetValue(GetTime() - start)
+    self._currentValue = GetTime() - start
+    self:SetValue(self._currentValue)
     self:Show()
 end
 

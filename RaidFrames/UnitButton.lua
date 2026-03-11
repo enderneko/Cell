@@ -1533,11 +1533,56 @@ local function _ActivateSecretCooldown(frame, auraInfo, unit)
         -- if all fail, border stays visible (static colored display)
     elseif cd and cd.SetMinMaxValues then
         -- BarIcon: StatusBar with vertical fill animation.
-        -- CRITICAL: Never pass ANY secret values to SetMinMaxValues or SetValue —
-        -- it permanently taints GetValue(), crashing VerticalCooldown_OnUpdate.
-        -- StatusBar has no SetCooldownFromDurationObject equivalent, so we cannot
-        -- safely animate it during secret periods. Skip animation entirely.
-        -- The debuff icon still shows; only the vertical fill animation is skipped.
+        -- SetValue(secret) permanently taints GetValue(), but VerticalCooldown_OnUpdate
+        -- now tracks _currentValue in Lua (never reads GetValue), so taint is harmless.
+        -- Use DurationObject:EvaluateElapsedPercent with a non-secret linear curve
+        -- to drive the bar as a 0→1 percentage fill.
+        local ok = false
+        if _GetAuraDuration and _secretLinearCurve and unit and auraInfo.auraInstanceID then
+            local dOk, d = pcall(_GetAuraDuration, unit, auraInfo.auraInstanceID)
+            if dOk and d then
+                cd:SetMinMaxValues(0, 1)
+                cd._currentValue = 0
+                local pOk, pct = pcall(d.EvaluateElapsedPercent, d, _secretLinearCurve)
+                if pOk and pct then
+                    cd._currentValue = pct
+                    cd:SetValue(pct)
+                    ok = true
+                end
+            end
+        end
+        if ok then
+            if cd.icon and auraInfo.icon then
+                pcall(cd.icon.SetTexture, cd.icon, auraInfo.icon)
+            end
+            if cd.spark then
+                cd.spark:SetColorTexture(0.5, 0.5, 0.5)
+            end
+            -- Replace OnUpdate to poll DurationObject percentage each tick.
+            -- This OnUpdate NEVER calls GetValue() — immune to taint.
+            if not cd._origOnUpdate then
+                cd._origOnUpdate = cd:GetScript("OnUpdate")
+            end
+            cd._secretUnit = unit
+            cd._secretAuraID = auraInfo.auraInstanceID
+            cd:SetScript("OnUpdate", function(self, elapsed)
+                self._secretElapsed = (self._secretElapsed or 0) + elapsed
+                if self._secretElapsed >= 0.1 then
+                    self._secretElapsed = 0
+                    if _GetAuraDuration and _secretLinearCurve and self._secretUnit and self._secretAuraID then
+                        local dOk2, dur = pcall(_GetAuraDuration, self._secretUnit, self._secretAuraID)
+                        if dOk2 and dur then
+                            local pOk2, pct2 = pcall(dur.EvaluateElapsedPercent, dur, _secretLinearCurve)
+                            if pOk2 and pct2 then
+                                self._currentValue = pct2
+                                self:SetValue(pct2)
+                            end
+                        end
+                    end
+                end
+            end)
+            cd:Show()
+        end
     end
 
     -- Hide duration text — secret values can't be rendered visibly
@@ -2650,6 +2695,14 @@ local function UnitButton_UpdateHealthStates(self, diff)
             local maxHealth = calc:GetMaximumHealth()
             local totalAbsorbs = calc:GetTotalDamageAbsorbs()
             local healAbsorbs = calc:GetTotalHealAbsorbs()
+            -- Fallback: if calculator wasn't populated (e.g. solo, no group),
+            -- use direct UnitHealth/UnitHealthMax for health text display.
+            if not issecretvalue(maxHealth) and maxHealth == 0 and unit then
+                health = UnitHealth(unit)
+                maxHealth = UnitHealthMax(unit)
+                totalAbsorbs = UnitGetTotalAbsorbs(unit) or 0
+                healAbsorbs = UnitGetTotalHealAbsorbs(unit) or 0
+            end
             -- SetValue accepts secret values; pass unit for UnitHealthPercent
             self.indicators.healthText:SetValue(health, maxHealth, totalAbsorbs, healAbsorbs, unit)
             self.indicators.healthText:Show()
