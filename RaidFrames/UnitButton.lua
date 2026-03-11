@@ -2698,31 +2698,30 @@ local function UnitButton_UpdateHealthStates(self, diff)
         self.states.isDeadOrGhost = UnitIsDeadOrGhost(unit) or false
 
         -- Health text: use calculator secret values
+        -- pcall: HealthText_SetValue with secrets must not abort UpdateAll
+        -- (which would prevent power text and other downstream init)
         if enabledIndicators["healthText"] then
-            local calc = self.widgets.healthCalculator
-            local health = calc:GetCurrentHealth()
-            local maxHealth = calc:GetMaximumHealth()
-            local totalAbsorbs = calc:GetTotalDamageAbsorbs()
-            local healAbsorbs = calc:GetTotalHealAbsorbs()
-            -- Fallback: if calculator wasn't populated (e.g. solo, no group),
-            -- use direct UnitHealth/UnitHealthMax for health text display.
-            if not issecretvalue(maxHealth) and maxHealth == 0 and unit then
-                health = UnitHealth(unit)
-                maxHealth = UnitHealthMax(unit)
-                totalAbsorbs = UnitGetTotalAbsorbs(unit) or 0
-                healAbsorbs = UnitGetTotalHealAbsorbs(unit) or 0
+            local htOk, htErr = pcall(function()
+                local calc = self.widgets.healthCalculator
+                local health = calc:GetCurrentHealth()
+                local maxHealth = calc:GetMaximumHealth()
+                local totalAbsorbs = calc:GetTotalDamageAbsorbs()
+                local healAbsorbs = calc:GetTotalHealAbsorbs()
+                -- Fallback: if calculator wasn't populated (e.g. solo, no group),
+                -- use direct UnitHealth/UnitHealthMax for health text display.
+                if not issecretvalue(maxHealth) and maxHealth == 0 and unit then
+                    health = UnitHealth(unit)
+                    maxHealth = UnitHealthMax(unit)
+                    totalAbsorbs = UnitGetTotalAbsorbs(unit) or 0
+                    healAbsorbs = UnitGetTotalHealAbsorbs(unit) or 0
+                end
+                -- SetValue accepts secret values; pass unit for UnitHealthPercent
+                self.indicators.healthText:SetValue(health, maxHealth, totalAbsorbs, healAbsorbs, unit)
+                self.indicators.healthText:Show()
+            end)
+            if not htOk then
+                F.Debug("HealthText error:", self:GetName(), htErr)
             end
-            -- DEBUG
-            if not self._dbgHealthOnce then
-                self._dbgHealthOnce = true
-                print("|cff00ff00[Cell Health Debug]|r", self:GetName(), "unit=", unit,
-                    "health=", issecretvalue(health) and "SECRET" or health,
-                    "max=", issecretvalue(maxHealth) and "SECRET" or maxHealth,
-                    "visible=", self.indicators.healthText:IsVisible())
-            end
-            -- SetValue accepts secret values; pass unit for UnitHealthPercent
-            self.indicators.healthText:SetValue(health, maxHealth, totalAbsorbs, healAbsorbs, unit)
-            self.indicators.healthText:Show()
         else
             self.indicators.healthText:Hide()
         end
@@ -3142,14 +3141,7 @@ local function UnitButton_FinishReadyCheck(self)
 end
 
 UnitButton_UpdatePowerText = function(self)
-    if not self._shouldShowPowerText then
-        -- DEBUG
-        if self.states.displayedUnit and not self._dbgPowerOnce then
-            self._dbgPowerOnce = true
-            print("|cffff00ff[Cell Power Debug]|r", self:GetName(), "shouldShow=false, enabled=", enabledIndicators["powerText"])
-        end
-        return
-    end
+    if not self._shouldShowPowerText then return end
 
     local power = self.states.power
     local powerMax = self.states.powerMax
