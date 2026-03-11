@@ -1548,6 +1548,24 @@ local function _ActivateSecretCooldown(frame, auraInfo)
         pcall(cd._setCooldown, cd, approxStart, auraInfo._rawDuration)
         cd:Show()
     end
+    -- Duration text: Lua can't compute remaining time from secret duration.
+    -- Use a transparent CooldownFrame whose C-level countdown text handles it.
+    if frame.showDuration and auraInfo._rawDuration then
+        if not frame._secretDurationCD then
+            local cd = CreateFrame("Cooldown", nil, frame)
+            cd:SetAllPoints(frame.icon or frame)
+            cd:SetDrawSwipe(false) -- no swipe, just countdown text
+            cd:SetDrawEdge(false)
+            cd:SetHideCountdownNumbers(false)
+            cd._setCooldown = cd.SetCooldown
+            frame._secretDurationCD = cd
+        end
+        local dcd = frame._secretDurationCD
+        pcall(dcd._setCooldown, dcd, approxStart, auraInfo._rawDuration)
+        -- Hide Cell's own duration text (WoW's countdown replaces it)
+        frame.duration:Hide()
+        dcd:Show()
+    end
     frame._secretClockActive = true
 end
 
@@ -1555,6 +1573,9 @@ local function _DeactivateSecretCooldown(frame)
     frame._secretClockActive = nil
     if frame._secretClockOverlay then
         frame._secretClockOverlay:Hide()
+    end
+    if frame._secretDurationCD then
+        frame._secretDurationCD:Hide()
     end
     -- Restore original OnUpdate for vertical cooldown bars
     if frame.cooldown and frame.cooldown._origOnUpdate then
