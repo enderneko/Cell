@@ -1500,11 +1500,16 @@ local function _ActivateSecretCooldown(frame, auraInfo)
 
     if cd and cd._SetCooldown then
         -- BorderIcon: Blizzard CooldownFrame with clock swipe
-        -- _SetCooldown is the native C-level SetCooldown (accepts secret values)
-        -- secret - secret = secret result, safe for C-level methods
-        if frame.border then frame.border:Hide() end
-        pcall(cd._SetCooldown, cd, auraInfo._rawExpirationTime - auraInfo._rawDuration, auraInfo._rawDuration)
-        cd:Show()
+        -- _SetCooldown is the native C-level SetCooldown.
+        -- Arithmetic on secrets is prohibited for addon code, so wrap in pcall.
+        local ok = pcall(function()
+            cd:_SetCooldown(auraInfo._rawExpirationTime - auraInfo._rawDuration, auraInfo._rawDuration)
+        end)
+        if ok then
+            if frame.border then frame.border:Hide() end
+            cd:Show()
+        end
+        -- if arithmetic fails, border stays visible (static colored display)
     elseif cd and cd.SetMinMaxValues then
         -- BarIcon: StatusBar with vertical fill animation
         pcall(cd.SetMinMaxValues, cd, 0, auraInfo._rawDuration)
@@ -1797,7 +1802,9 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
 
         -- sort indices
         sort(self._debuffs_raid, function(a, b)
-            return self._debuffs_cache[a]["raidDebuffOrder"] < self._debuffs_cache[b]["raidDebuffOrder"]
+            local ca, cb = self._debuffs_cache[a], self._debuffs_cache[b]
+            if not ca or not cb then return ca ~= nil end
+            return ca["raidDebuffOrder"] < cb["raidDebuffOrder"]
         end)
 
         -- show
