@@ -53,7 +53,7 @@ local UnitHasVehicleUI = UnitHasVehicleUI
 -- local UnitInVehicle = UnitInVehicle
 -- local UnitUsingVehicle = UnitUsingVehicle
 local UnitIsCharmed = UnitIsCharmed
-local UnitIsPlayer = UnitIsPlayer
+-- UnitIsPlayer already declared above
 local UnitInPartyIsAI = UnitInPartyIsAI
 local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 local UnitThreatSituation = UnitThreatSituation
@@ -1474,14 +1474,7 @@ local function _mergeSecretAura(auraInfo, oldCache)
 end
 
 -- upvalue set by UnitButton_UpdateDebuffs/UpdateBuffs during combat full updates
-local _oldDebuffsCache
-local _oldBuffsCache
-
--- 12.0+: pre-scanned raid debuff identities for secret auras
--- Maps auraInstanceID → {spellId=N, name=S} for known raid debuffs on the unit.
--- Built before HandleDebuff runs so instant detection works even on first encounter.
-local _prescanRaidDebuffs
-local _GetAuraDataBySpellName_raw = C_UnitAuras and C_UnitAuras.GetAuraDataBySpellName
+local _oldDebuffsCache, _oldBuffsCache, _prescanRaidDebuffs
 
 -- persistent spellId → dispelName cache; survives across auraInstanceID changes
 local _knownDispelTypes = {}
@@ -1830,14 +1823,14 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
     -- name, returns aura data with non-secret auraInstanceID.
     _prescanRaidDebuffs = nil
     if Cell.isMidnight and enabledIndicators["raidDebuffs"]
-        and _GetAuraDataBySpellName_raw and C_Spell and unit then
+        and C_UnitAuras.GetAuraDataBySpellName and C_Spell and unit then
         local areaDebuffs = I.GetCurrentAreaDebuffs()
         if areaDebuffs then
             for key in pairs(areaDebuffs) do
                 if type(key) == "number" then
                     local ok, sName = pcall(C_Spell.GetSpellName, key)
                     if ok and sName then
-                        local ok2, aura = pcall(_GetAuraDataBySpellName_raw, unit, sName, "HARMFUL")
+                        local ok2, aura = pcall(C_UnitAuras.GetAuraDataBySpellName, unit, sName, "HARMFUL")
                         if ok2 and aura and aura.auraInstanceID
                             and not issecretvalue(aura.auraInstanceID) then
                             if not _prescanRaidDebuffs then _prescanRaidDebuffs = {} end
@@ -1848,7 +1841,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                         end
                     end
                 elseif type(key) == "string" then
-                    local ok, aura = pcall(_GetAuraDataBySpellName_raw, unit, key, "HARMFUL")
+                    local ok, aura = pcall(C_UnitAuras.GetAuraDataBySpellName, unit, key, "HARMFUL")
                     if ok and aura and aura.auraInstanceID
                         and not issecretvalue(aura.auraInstanceID) then
                         if not _prescanRaidDebuffs then _prescanRaidDebuffs = {} end
@@ -4440,8 +4433,7 @@ local function UnitButton_OnLeave(self)
     GameTooltip:Hide()
 end
 
-local UNKNOWN = _G.UNKNOWN
-local UNKNOWNOBJECT = _G.UNKNOWNOBJECT
+local UNKNOWN, UNKNOWNOBJECT = _G.UNKNOWN, _G.UNKNOWNOBJECT
 local function UnitButton_OnTick(self)
     -- print(GetTime(), "OnTick", self._updateRequired, self:GetAttribute("refreshOnUpdate"), self:GetName())
     local e = (self.__tickCount or 0) + 1
