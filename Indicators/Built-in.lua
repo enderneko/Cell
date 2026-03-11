@@ -1462,42 +1462,33 @@ local formatter = {
     end,
 
     -- health
-    ["health"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+    ["health"] = function(pattern, _, health, maxHealth, absorbs, healAbsorbs)
         return pattern:format(health)
     end,
-    ["health_short"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+    ["health_short"] = function(pattern, _, health, maxHealth, absorbs, healAbsorbs)
         return pattern:format(F.FormatNumber(health))
     end,
-    ["health_percent"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+    ["health_percent"] = function(pattern, _, health, maxHealth, absorbs, healAbsorbs)
         return pattern:format(F.Round(health / maxHealth * 100))
     end,
-    ["deficit"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+    ["deficit"] = function(pattern, _, health, maxHealth, absorbs, healAbsorbs)
         return pattern:format(health - maxHealth)
     end,
-    ["deficit_short"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+    ["deficit_short"] = function(pattern, _, health, maxHealth, absorbs, healAbsorbs)
         return pattern:format(F.FormatNumber(health - maxHealth))
     end,
-    ["deficit_percent"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) then return "" end
+    ["deficit_percent"] = function(pattern, _, health, maxHealth, absorbs, healAbsorbs)
         return pattern:format(F.Round((health - maxHealth) / maxHealth * 100))
     end,
 
     -- effective health
-    ["effective"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
+    ["effective"] = function(pattern, _, health, maxHealth, absorbs, healAbsorbs)
         return pattern:format(health + absorbs - healAbsorbs)
     end,
-    ["effective_short"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
+    ["effective_short"] = function(pattern, _, health, maxHealth, absorbs, healAbsorbs)
         return pattern:format(F.FormatNumber(health + absorbs - healAbsorbs))
     end,
-    ["effective_percent"] = function(pattern, hideIfEmptyOrFull, health, maxHealth, absorbs, healAbsorbs)
-        if hideIfEmptyOrFull and (health == 0 or health == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
+    ["effective_percent"] = function(pattern, _, health, maxHealth, absorbs, healAbsorbs)
         return pattern:format(F.Round((health + absorbs - healAbsorbs) / maxHealth * 100))
     end,
 
@@ -1619,9 +1610,7 @@ local function HealthText_SetFormat(self, format)
     self.GetHealAbsorbs = formatter[format.healAbsorbs.format:gsub("_no_sign$", "")]
 
     self.health1 = BuildPattern(format.health1)
-    self.health1_hideIfEmptyOrFull = format.health1.hideIfEmptyOrFull
     self.health2 = BuildPattern(format.health2)
-    self.health2_hideIfEmptyOrFull = format.health2.hideIfEmptyOrFull
     self.shields = BuildPattern(format.shields)
     self.healAbsorbs = BuildPattern(format.healAbsorbs)
 
@@ -1645,17 +1634,6 @@ local function HealthText_SetFormat(self, format)
         self._secretArgKeys = nil
     end
 
-    -- Pre-compute flag: should the entire indicator hide when health is at full/empty?
-    -- True when all health components have hideIfEmptyOrFull and no absorb components are active.
-    local h1Active = format.health1.format ~= "none"
-    local h2Active = format.health2.format ~= "none"
-    local shieldsActive = format.shields.format ~= "none"
-    local healAbsorbsActive = format.healAbsorbs.format ~= "none"
-    local allHealthHide = true
-    if h1Active and not format.health1.hideIfEmptyOrFull then allHealthHide = false end
-    if h2Active and not format.health2.hideIfEmptyOrFull then allHealthHide = false end
-    if not h1Active and not h2Active then allHealthHide = false end -- no health components
-    self._secretHideAtFull = allHealthHide and not shieldsActive and not healAbsorbsActive
 end
 
 local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs, unit)
@@ -1665,16 +1643,6 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
     -- safety net for any remaining Lua arithmetic in the formatters below.
     if issecretvalue(health) or issecretvalue(maxHealth)
         or issecretvalue(shields) or issecretvalue(healAbsorbs) then
-        -- hideIfEmptyOrFull: use UnitHealthPercent (C-level, returns non-secret %)
-        -- to detect full/empty since direct comparison on secrets crashes Lua.
-        if self._secretHideAtFull and unit and UnitHealthPercent then
-            local ok, pctVal = pcall(UnitHealthPercent, unit, true,
-                CurveConstants and CurveConstants.ScaleTo100 or nil)
-            if ok and not issecretvalue(pctVal) and (pctVal == 0 or pctVal == 100) then
-                self.text:SetText("")
-                return
-            end
-        end
         -- Use pre-built secret segments (individual per component).
         -- Absorb components are skipped when their value is known to be 0.
         local segments = self._secretSegments
@@ -1739,8 +1707,8 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
     maxHealth = maxHealth == 0 and 1 or maxHealth
 
     self.text:SetFormattedText("%s%s%s%s",
-        self.GetHealth1(self.health1, self.health1_hideIfEmptyOrFull, health, maxHealth, shields, healAbsorbs),
-        self.GetHealth2(self.health2, self.health2_hideIfEmptyOrFull, health, maxHealth, shields, healAbsorbs),
+        self.GetHealth1(self.health1, false, health, maxHealth, shields, healAbsorbs),
+        self.GetHealth2(self.health2, false, health, maxHealth, shields, healAbsorbs),
         self.GetShields(self.shields, health, maxHealth, shields, healAbsorbs),
         self.GetHealAbsorbs(self.healAbsorbs, health, maxHealth, shields, healAbsorbs))
     self:SetWidth(self.text:GetStringWidth())
@@ -1826,20 +1794,14 @@ end
 local function SetPower_Percentage(self, current, max)
     -- 12.0+: UnitPower() may return secret values in combat.
     -- SetFormattedText is C-level (AllowedWhenTainted) and handles secrets.
-    -- Note: hideIfEmptyOrFull for secret values is handled in UnitButton_UpdatePowerText
-    -- using UnitPowerPercent before this function is called.
     if issecretvalue(current) or issecretvalue(max) then
         self.text:SetFormattedText("%d%%", current)
         self:Show()
         return
     end
-    if self.hideIfEmptyOrFull and (current == 0 or current == max) then
-        self:Hide()
-    else
-        self.text:SetFormattedText("%d%%", current/max*100)
-        self:SetWidth(self.text:GetStringWidth())
-        self:Show()
-    end
+    self.text:SetFormattedText("%d%%", current/max*100)
+    self:SetWidth(self.text:GetStringWidth())
+    self:Show()
 end
 
 local function SetPower_Number(self, current, max)
@@ -1848,13 +1810,9 @@ local function SetPower_Number(self, current, max)
         self:Show()
         return
     end
-    if self.hideIfEmptyOrFull and (current == 0 or current == max) then
-        self:Hide()
-    else
-        self.text:SetText(current)
-        self:SetWidth(self.text:GetStringWidth())
-        self:Show()
-    end
+    self.text:SetText(current)
+    self:SetWidth(self.text:GetStringWidth())
+    self:Show()
 end
 
 local function SetPower_Number_Short(self, current, max)
@@ -1867,13 +1825,9 @@ local function SetPower_Number_Short(self, current, max)
         self:Show()
         return
     end
-    if self.hideIfEmptyOrFull and (current == 0 or current == max) then
-        self:Hide()
-    else
-        self.text:SetText(F.FormatNumber(current))
-        self:SetWidth(self.text:GetStringWidth())
-        self:Show()
-    end
+    self.text:SetText(F.FormatNumber(current))
+    self:SetWidth(self.text:GetStringWidth())
+    self:Show()
 end
 
 local function PowerText_SetFont(self, font, size, outline, shadow)
@@ -1930,9 +1884,7 @@ local function PowerText_SetColor(self, r, g, b)
     self.text:SetTextColor(r, g, b)
 end
 
-local function PowerText_SetHideIfEmptyOrFull(self, hideIfEmptyOrFull)
-    self.hideIfEmptyOrFull = hideIfEmptyOrFull
-end
+-- hideIfEmptyOrFull removed: caused regressions with secret values in 12.0
 
 local function PowerText_UpdatePreviewColor(self, color)
     local r, g, b
@@ -1959,7 +1911,7 @@ function I.CreatePowerText(parent)
     powerText.SetPoint = PowerText_SetPoint
     powerText.SetFormat = PowerText_SetFormat
     powerText.SetColor = PowerText_SetColor
-    powerText.SetHideIfEmptyOrFull = PowerText_SetHideIfEmptyOrFull
+    powerText.SetHideIfEmptyOrFull = function() end -- no-op, feature removed
     powerText.UpdatePreviewColor = PowerText_UpdatePreviewColor
     powerText.SetValue = noop
 end

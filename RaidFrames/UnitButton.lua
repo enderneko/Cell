@@ -3149,17 +3149,7 @@ UnitButton_UpdatePowerText = function(self)
         self.indicators.powerText:SetValue(power, powerMax)
     else
         -- Pass secret values to C-level SetFormattedText directly.
-        -- hideIfEmptyOrFull: use UnitPowerPercent (C-level, returns non-secret %)
-        -- to detect full/empty since direct comparison on secrets crashes Lua.
         local unit = self.states.displayedUnit
-        if self.indicators.powerText.hideIfEmptyOrFull and unit and UnitPowerPercent then
-            local ok, pctVal = pcall(UnitPowerPercent, unit, nil, true,
-                CurveConstants and CurveConstants.ScaleTo100 or nil)
-            if ok and not issecretvalue(pctVal) and (pctVal == 0 or pctVal == 100) then
-                self.indicators.powerText:Hide()
-                return
-            end
-        end
         pcall(function()
             local fmt = self.indicators.powerText._format
             if fmt == "percentage" then
