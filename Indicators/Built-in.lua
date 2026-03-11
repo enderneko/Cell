@@ -1701,7 +1701,10 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
         else
             self.text:SetFormattedText("%d", health)
         end
-        -- skip SetWidth: GetStringWidth returns secret when text is tainted
+        -- GetStringWidth returns secret when text is tainted; use fallback width
+        -- so the frame isn't zero-width (which would clip the text entirely).
+        local sw = self.text:GetStringWidth()
+        self:SetWidth(issecretvalue(sw) and 50 or sw)
         return
     end
     maxHealth = maxHealth == 0 and 1 or maxHealth
