@@ -2722,6 +2722,18 @@ local function UnitButton_UpdateHealthStates(self, diff)
             if not htOk then
                 print("|cffff0000[Cell HT Error]|r", self:GetName(), unit, htErr)
             end
+            -- DEBUG: one-shot per frame
+            if not self._dbgHT then
+                self._dbgHT = true
+                local ht = self.indicators.healthText
+                local tw = ht and ht.text and pcall(ht.text.GetStringWidth, ht.text) and ht.text:GetStringWidth()
+                print("|cff00ff00[Cell HT]|r", self:GetName(), unit,
+                    "ok=", htOk,
+                    "shown=", ht and ht:IsShown(),
+                    "alpha=", ht and ht:GetAlpha(),
+                    "w=", ht and ht:GetWidth(),
+                    "txtSet=", ht and ht.text and (ht.text:GetText() ~= nil))
+            end
         else
             self.indicators.healthText:Hide()
         end
