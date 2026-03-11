@@ -1474,7 +1474,7 @@ local function _mergeSecretAura(auraInfo, oldCache)
 end
 
 -- upvalue set by UnitButton_UpdateDebuffs/UpdateBuffs during combat full updates
-local _oldDebuffsCache, _oldBuffsCache, _prescanRaidDebuffs
+local _oldDebuffsCache, _oldBuffsCache
 
 -- persistent spellId → dispelName cache; survives across auraInstanceID changes
 local _knownDispelTypes = {}
@@ -1590,11 +1590,13 @@ local function _DeactivateSecretCooldown(frame)
     if frame._secretClockOverlay then
         frame._secretClockOverlay:Hide()
     end
-    -- Clean up secret duration text
-    frame._secretRawDuration = nil
-    frame._secretStartTime = nil
-    frame._secretDurElapsed = nil
-    frame:SetScript("OnUpdate", nil)
+    -- Clean up secret duration text (only if it was active)
+    if frame._secretRawDuration then
+        frame._secretRawDuration = nil
+        frame._secretStartTime = nil
+        frame._secretDurElapsed = nil
+        frame:SetScript("OnUpdate", nil)
+    end
     -- Restore original OnUpdate for vertical cooldown bars
     if frame.cooldown and frame.cooldown._origOnUpdate then
         frame.cooldown:SetScript("OnUpdate", frame.cooldown._origOnUpdate)
@@ -1651,14 +1653,25 @@ local function HandleDebuff(self, auraInfo)
         end
     end
 
-    -- 12.0+: fallback to pre-scanned raid debuff identities
-    if not spellId and _prescanRaidDebuffs then
-        local match = _prescanRaidDebuffs[auraInstanceID]
-        if match then
-            spellId = match.spellId
-            name = name or match.name
-            auraInfo.spellId = spellId
-            auraInfo.name = auraInfo.name or match.name
+    -- 12.0+: fallback — match secret spellId against known raid debuffs via rawequal
+    -- rawequal() is safe on secret values and returns a non-secret boolean
+    if not spellId and auraInfo._rawSpellId and enabledIndicators["raidDebuffs"] then
+        local areaDebuffs = I.GetCurrentAreaDebuffs()
+        if areaDebuffs then
+            for key in pairs(areaDebuffs) do
+                if type(key) == "number" and rawequal(auraInfo._rawSpellId, key) then
+                    spellId = key
+                    auraInfo.spellId = key
+                    if C_Spell and C_Spell.GetSpellName then
+                        local ok, sName = pcall(C_Spell.GetSpellName, key)
+                        if ok and sName then
+                            name = sName
+                            auraInfo.name = sName
+                        end
+                    end
+                    break
+                end
+            end
         end
     end
 
@@ -1816,43 +1829,6 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
 
     ResetDebuffVars(self)
     I.ResetCustomIndicators(self, "debuff")
-
-    -- 12.0+: pre-scan known raid debuffs by spell name so HandleDebuff can
-    -- instantly match secret auras without waiting for cache merge.
-    -- C_UnitAuras.GetAuraDataBySpellName is C-level: takes non-secret spell
-    -- name, returns aura data with non-secret auraInstanceID.
-    _prescanRaidDebuffs = nil
-    if Cell.isMidnight and enabledIndicators["raidDebuffs"]
-        and C_UnitAuras.GetAuraDataBySpellName and C_Spell and unit then
-        local areaDebuffs = I.GetCurrentAreaDebuffs()
-        if areaDebuffs then
-            for key in pairs(areaDebuffs) do
-                if type(key) == "number" then
-                    local ok, sName = pcall(C_Spell.GetSpellName, key)
-                    if ok and sName then
-                        local ok2, aura = pcall(C_UnitAuras.GetAuraDataBySpellName, unit, sName, "HARMFUL")
-                        if ok2 and aura and aura.auraInstanceID
-                            and not issecretvalue(aura.auraInstanceID) then
-                            if not _prescanRaidDebuffs then _prescanRaidDebuffs = {} end
-                            _prescanRaidDebuffs[aura.auraInstanceID] = {
-                                spellId = key,
-                                name = sName,
-                            }
-                        end
-                    end
-                elseif type(key) == "string" then
-                    local ok, aura = pcall(C_UnitAuras.GetAuraDataBySpellName, unit, key, "HARMFUL")
-                    if ok and aura and aura.auraInstanceID
-                        and not issecretvalue(aura.auraInstanceID) then
-                        if not _prescanRaidDebuffs then _prescanRaidDebuffs = {} end
-                        _prescanRaidDebuffs[aura.auraInstanceID] = {
-                            name = key,
-                        }
-                    end
-                end
-            end
-        end
-    end
 
     if isFullUpdate then
         -- 12.0+: always save old cache so HandleDebuff can merge previously-known

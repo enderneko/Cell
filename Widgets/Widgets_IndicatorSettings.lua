@@ -1536,6 +1536,57 @@ local function CreateSetting_DurationVisibility(parent)
     return widget
 end
 
+local function CreateSetting_DurationVisibilitySimple(parent)
+    local widget
+
+    if not settingWidgets["durationVisibilitySimple"] then
+        widget = Cell.CreateFrame("CellIndicatorSettings_DurationVisibilitySimple", parent, 240, 50)
+        settingWidgets["durationVisibilitySimple"] = widget
+
+        widget.durationVisibility = Cell.CreateDropdown(widget, 245)
+        widget.durationVisibility:SetPoint("TOPLEFT", 5, -20)
+        widget.durationVisibility:SetItems({
+            {
+                ["text"] = L["Never"],
+                ["value"] = false,
+                ["onClick"] = function()
+                    widget.func(false)
+                end,
+            },
+            {
+                ["text"] = L["Always"],
+                ["value"] = true,
+                ["onClick"] = function()
+                    widget.func(true)
+                end,
+            },
+        })
+
+        widget.durationVisibilityText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.durationVisibilityText:SetText(L["showDuration"])
+        widget.durationVisibilityText:SetPoint("BOTTOMLEFT", widget.durationVisibility, "TOPLEFT", 0, 1)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(durationVisibility)
+            -- coerce threshold values to "Always" since they can't work with secrets
+            if durationVisibility and durationVisibility ~= false then
+                durationVisibility = true
+            end
+            widget.durationVisibility:SetSelectedValue(durationVisibility)
+        end
+    else
+        widget = settingWidgets["durationVisibilitySimple"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_Orientation(parent)
     local widget
 
@@ -6761,6 +6812,7 @@ local builders = {
     ["healthFormat"] = CreateSetting_HealthFormat,
     ["powerFormat"] = CreateSetting_PowerFormat,
     ["durationVisibility"] = CreateSetting_DurationVisibility,
+    ["durationVisibilitySimple"] = CreateSetting_DurationVisibilitySimple,
     ["orientation"] = CreateSetting_Orientation,
     ["barOrientation"] = CreateSetting_BarOrientation,
     ["font-noOffset"] = CreateSetting_FontNoOffset,
