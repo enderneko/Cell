@@ -1529,7 +1529,8 @@ local function _ActivateSecretCooldown(frame, auraInfo, unit)
         local durObj
         if _GetAuraDuration and unit and auraInfo.auraInstanceID then
             local dOk, d = pcall(_GetAuraDuration, unit, auraInfo.auraInstanceID)
-            if dOk and d and not d:IsZero() then
+            if dOk and d then
+                -- Skip IsZero() — it can return a secret boolean, crashing on boolean test
                 durObj = d
                 ok = pcall(function()
                     cd:SetMinMaxValues(0, d:GetTotalDuration())
@@ -1567,7 +1568,7 @@ local function _ActivateSecretCooldown(frame, auraInfo, unit)
                     if _GetAuraDuration and self._secretUnit and self._secretAuraID then
                         updated = pcall(function()
                             local dur = _GetAuraDuration(self._secretUnit, self._secretAuraID)
-                            if dur and not dur:IsZero() then
+                            if dur then
                                 self:SetMinMaxValues(0, dur:GetTotalDuration())
                                 self:SetValue(dur:GetElapsedDuration())
                             end
