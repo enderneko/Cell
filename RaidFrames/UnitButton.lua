@@ -1490,6 +1490,16 @@ function F.PrintKnownDispels()
     print("  Total:", n, "entries")
 end
 
+-- Linear curve for DurationObject:EvaluateElapsedPercent — maps 0→0, 1→1.
+-- With a non-secret curve, EvaluateElapsedPercent returns a NON-SECRET result
+-- (SecretWhenCurveSecret). This lets us drive StatusBars without tainting them.
+local _secretLinearCurve
+if C_CurveUtil and C_CurveUtil.CreateCurve then
+    _secretLinearCurve = C_CurveUtil.CreateCurve()
+    _secretLinearCurve:AddPoint(0, 0)
+    _secretLinearCurve:AddPoint(1, 1)
+end
+
 -- 12.0+: activate cooldown animation for secret durations.
 -- Uses SetCooldownFromDurationObject (CooldownFrame) or DurationObject-driven
 -- StatusBar updates. Duration text is hidden (SetFormattedText produces
@@ -1523,26 +1533,20 @@ local function _ActivateSecretCooldown(frame, auraInfo, unit)
         -- if all fail, border stays visible (static colored display)
     elseif cd and cd.SetMinMaxValues then
         -- BarIcon: StatusBar with vertical fill animation.
-        -- Use GetAuraDuration + DurationObject methods for SetMinMaxValues/SetValue.
-        -- Replace OnUpdate to poll DurationObject each tick (never call GetValue).
+        -- CRITICAL: Never pass secret values to SetMinMaxValues — it permanently
+        -- taints GetValue(), crashing VerticalCooldown_OnUpdate (Base.lua:120).
+        -- Instead use SetMinMaxValues(0, 1) with EvaluateElapsedPercent(linearCurve)
+        -- which returns NON-SECRET when the curve is non-secret.
         local ok = false
-        local durObj
-        if _GetAuraDuration and unit and auraInfo.auraInstanceID then
+        if _GetAuraDuration and _secretLinearCurve and unit and auraInfo.auraInstanceID then
             local dOk, d = pcall(_GetAuraDuration, unit, auraInfo.auraInstanceID)
             if dOk and d then
-                -- Skip IsZero() — it can return a secret boolean, crashing on boolean test
-                durObj = d
-                ok = pcall(function()
-                    cd:SetMinMaxValues(0, d:GetTotalDuration())
-                    cd:SetValue(d:GetElapsedDuration())
-                end)
-            end
-        end
-        -- Fallback: raw secret duration + approximate elapsed from _addedTime
-        if not ok and auraInfo._addedTime and auraInfo._rawDuration then
-            ok = pcall(cd.SetMinMaxValues, cd, 0, auraInfo._rawDuration)
-            if ok then
-                pcall(cd.SetValue, cd, GetTime() - auraInfo._addedTime)
+                cd:SetMinMaxValues(0, 1)
+                local pOk, pct = pcall(d.EvaluateElapsedPercent, d, _secretLinearCurve)
+                if pOk and pct then
+                    cd:SetValue(pct)
+                    ok = true
+                end
             end
         end
         if ok then
@@ -1552,31 +1556,26 @@ local function _ActivateSecretCooldown(frame, auraInfo, unit)
             if cd.spark then
                 cd.spark:SetColorTexture(0.5, 0.5, 0.5)
             end
-            -- Replace OnUpdate — never call GetValue() (tainted after secret SetMinMaxValues)
+            -- Replace OnUpdate to poll DurationObject percentage each tick
             if not cd._origOnUpdate then
                 cd._origOnUpdate = cd:GetScript("OnUpdate")
             end
             cd._secretUnit = unit
             cd._secretAuraID = auraInfo.auraInstanceID
-            cd._secretStartTime = auraInfo._addedTime or GetTime()
             cd:SetScript("OnUpdate", function(self, elapsed)
                 self._secretElapsed = (self._secretElapsed or 0) + elapsed
                 if self._secretElapsed >= 0.1 then
                     self._secretElapsed = 0
-                    -- Try GetAuraDuration for accurate elapsed
-                    local updated = false
                     if _GetAuraDuration and self._secretUnit and self._secretAuraID then
-                        updated = pcall(function()
+                        pcall(function()
                             local dur = _GetAuraDuration(self._secretUnit, self._secretAuraID)
                             if dur then
-                                self:SetMinMaxValues(0, dur:GetTotalDuration())
-                                self:SetValue(dur:GetElapsedDuration())
+                                local pOk2, pct2 = pcall(dur.EvaluateElapsedPercent, dur, _secretLinearCurve)
+                                if pOk2 and pct2 then
+                                    self:SetValue(pct2)
+                                end
                             end
                         end)
-                    end
-                    -- Fallback: approximate elapsed from _addedTime
-                    if not updated then
-                        pcall(self.SetValue, self, GetTime() - self._secretStartTime)
                     end
                 end
             end)
