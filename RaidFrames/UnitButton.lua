@@ -1649,14 +1649,14 @@ local function HandleDebuff(self, auraInfo)
     local spellId = auraInfo.spellId
 
     -- 12.0+: try to resolve spellId/name from raw secret via C_Spell (C-level API)
-    if not spellId and auraInfo._rawSpellId and C_Spell and C_Spell.GetSpellName then
+    if not spellId and auraInfo._rawSpellId ~= nil and C_Spell and C_Spell.GetSpellName then
         local ok, resolvedName = pcall(C_Spell.GetSpellName, auraInfo._rawSpellId)
-        if ok and resolvedName and not issecretvalue(resolvedName) then
+        if ok and resolvedName ~= nil and not issecretvalue(resolvedName) then
             auraInfo.name = resolvedName
             name = resolvedName
             -- C_Spell.GetSpellInfo returns a table with spellID field
             local ok2, info = pcall(C_Spell.GetSpellInfo, auraInfo._rawSpellId)
-            if ok2 and info and info.spellID and not issecretvalue(info.spellID) then
+            if ok2 and info and info.spellID ~= nil and not issecretvalue(info.spellID) then
                 auraInfo.spellId = info.spellID
                 spellId = info.spellID
             end
@@ -2243,13 +2243,13 @@ local function HandleBuff(self, auraInfo)
     local spellId = auraInfo.spellId
 
     -- 12.0+: try to resolve spellId/name from raw secret via C_Spell (C-level API)
-    if not spellId and auraInfo._rawSpellId and C_Spell and C_Spell.GetSpellName then
+    if not spellId and auraInfo._rawSpellId ~= nil and C_Spell and C_Spell.GetSpellName then
         local ok, resolvedName = pcall(C_Spell.GetSpellName, auraInfo._rawSpellId)
-        if ok and resolvedName and not issecretvalue(resolvedName) then
+        if ok and resolvedName ~= nil and not issecretvalue(resolvedName) then
             auraInfo.name = resolvedName
             name = resolvedName
             local ok2, info = pcall(C_Spell.GetSpellInfo, auraInfo._rawSpellId)
-            if ok2 and info and info.spellID and not issecretvalue(info.spellID) then
+            if ok2 and info and info.spellID ~= nil and not issecretvalue(info.spellID) then
                 auraInfo.spellId = info.spellID
                 spellId = info.spellID
             end
