@@ -2720,7 +2720,7 @@ local function UnitButton_UpdateHealthStates(self, diff)
                 self.indicators.healthText:Show()
             end)
             if not htOk then
-                F.Debug("HealthText error:", self:GetName(), htErr)
+                print("|cffff0000[Cell HT Error]|r", self:GetName(), unit, htErr)
             end
         else
             self.indicators.healthText:Hide()
