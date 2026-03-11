@@ -1751,27 +1751,24 @@ local function HandleDebuff(self, auraInfo)
         -- prepare raidDebuffs
         local order = I.GetDebuffOrder(name, spellId, count)
         -- 12.0+: when spellId/name are secret, fall back to server RAID flag.
-        -- pcall guards against IsAuraFilteredOutByInstanceID returning secret booleans.
         if not order and auraInfo._hasSecrets and enabledIndicators["raidDebuffs"]
             and _IsAuraFilteredOut and self.states.displayedUnit then
             local fOk, isFiltered = pcall(_IsAuraFilteredOut, self.states.displayedUnit,
                 auraInstanceID, "HARMFUL|RAID")
-            -- DEBUG: log what the RAID flag API returns for secret debuffs
-            print("|cffff00ff[Cell RAID Debug]|r auraID=",
-                issecretvalue(auraInstanceID) and "SECRET" or auraInstanceID,
-                "fOk=", fOk,
-                "isFiltered=", fOk and (issecretvalue(isFiltered) and "SECRET" or tostring(isFiltered)) or "N/A",
-                "name=", issecretvalue(name) and "SECRET" or name,
-                "spellId=", issecretvalue(spellId) and "SECRET" or spellId)
             if fOk then
                 if not issecretvalue(isFiltered) and isFiltered == false then
-                    order = 100 -- server-flagged raid debuff
+                    order = 100
                 elseif issecretvalue(isFiltered) then
-                    -- Return value is secret — assume it's a raid debuff
-                    -- (if it weren't, the function would likely return non-secret true)
                     order = 100
                 end
             end
+        end
+        -- 12.0+: during boss encounters, unidentified secret debuffs are likely
+        -- boss mechanics. Promote them as raid debuffs since spellId/name are
+        -- unavailable and the server RAID flag doesn't cover boss debuffs.
+        if not order and auraInfo._hasSecrets and enabledIndicators["raidDebuffs"]
+            and IsEncounterInProgress and IsEncounterInProgress() then
+            order = 100
         end
         if enabledIndicators["raidDebuffs"] and order then
             auraInfo.raidDebuffOrder = order
