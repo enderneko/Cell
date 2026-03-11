@@ -2712,6 +2712,14 @@ local function UnitButton_UpdateHealthStates(self, diff)
                 totalAbsorbs = UnitGetTotalAbsorbs(unit) or 0
                 healAbsorbs = UnitGetTotalHealAbsorbs(unit) or 0
             end
+            -- DEBUG
+            if not self._dbgHealthOnce then
+                self._dbgHealthOnce = true
+                print("|cff00ff00[Cell Health Debug]|r", self:GetName(), "unit=", unit,
+                    "health=", issecretvalue(health) and "SECRET" or health,
+                    "max=", issecretvalue(maxHealth) and "SECRET" or maxHealth,
+                    "visible=", self.indicators.healthText:IsVisible())
+            end
             -- SetValue accepts secret values; pass unit for UnitHealthPercent
             self.indicators.healthText:SetValue(health, maxHealth, totalAbsorbs, healAbsorbs, unit)
             self.indicators.healthText:Show()
@@ -3134,7 +3142,14 @@ local function UnitButton_FinishReadyCheck(self)
 end
 
 UnitButton_UpdatePowerText = function(self)
-    if not self._shouldShowPowerText then return end
+    if not self._shouldShowPowerText then
+        -- DEBUG
+        if self.states.displayedUnit and not self._dbgPowerOnce then
+            self._dbgPowerOnce = true
+            print("|cffff00ff[Cell Power Debug]|r", self:GetName(), "shouldShow=false, enabled=", enabledIndicators["powerText"])
+        end
+        return
+    end
 
     local power = self.states.power
     local powerMax = self.states.powerMax
