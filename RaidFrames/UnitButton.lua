@@ -1488,100 +1488,39 @@ function F.PrintKnownDispels()
     print("  Total:", n, "entries")
 end
 
--- 12.0+: OnUpdate for duration text with secret durations.
--- Secret arithmetic (secret - nonSecret) produces secret results without crashing.
--- SetFormattedText is C-level and renders secret numbers.
--- Threshold/color checks are skipped (they require boolean tests on secrets).
-local function _SecretDuration_OnUpdate(frame, elapsed)
-    frame._secretDurElapsed = frame._secretDurElapsed + elapsed
-    if frame._secretDurElapsed >= 0.1 then
-        frame._secretDurElapsed = 0
-        -- remain = rawDuration - (GetTime() - startTime)  →  secret result
-        local ok = pcall(function()
-            local remain = frame._secretRawDuration - (GetTime() - frame._secretStartTime)
-            frame.duration:SetFormattedText("%d", remain)
-        end)
-        if not ok then
-            frame.duration:SetText("")
-            frame:SetScript("OnUpdate", nil)
-        end
-    end
-end
-
 -- 12.0+: activate C-level cooldown overlay when duration is secret.
--- Shared by debuff and buff indicator post-processing.
--- CooldownFrame:SetCooldown is C-level and handles secrets internally.
--- VERTICAL style uses Lua arithmetic (OnUpdate) which crashes on secrets,
--- so we create a temporary CLOCK overlay for those frames.
+-- Uses a CooldownFrame for both animation and countdown text, since
+-- SetFormattedText with secret values produces invisible output.
+-- CooldownFrame:SetCooldown is C-level and handles secrets natively.
 local function _ActivateSecretCooldown(frame, auraInfo)
     local approxStart = auraInfo._addedTime or GetTime()
-    if frame.style == "CLOCK" and frame.cooldown then
-        pcall(frame.cooldown.ShowCooldown, frame.cooldown,
-            approxStart, auraInfo._rawDuration)
-        frame.cooldown:Show()
-    elseif frame.showAnimation and frame.cooldown and frame.cooldown.SetMinMaxValues then
-        -- VERTICAL style: StatusBar-based cooldown. SetMinMaxValues/SetValue are
-        -- C-level and accept secrets. BUT GetValue() returns tainted after
-        -- SetMinMaxValues with secret max (clamping taints). So we use a custom
-        -- OnUpdate that tracks elapsed with non-secret arithmetic only.
-        local cd = frame.cooldown
-        pcall(cd.SetMinMaxValues, cd, 0, auraInfo._rawDuration)
-        local startTime = approxStart
-        pcall(cd.SetValue, cd, GetTime() - startTime)
-        if cd.icon and auraInfo.icon then
-            pcall(cd.icon.SetTexture, cd.icon, auraInfo.icon)
-        end
-        if cd.spark then
-            cd.spark:SetColorTexture(0.5, 0.5, 0.5)
-        end
-        -- Save original OnUpdate so we can restore it on deactivation
-        if not cd._origOnUpdate then
-            cd._origOnUpdate = cd:GetScript("OnUpdate")
-        end
-        cd._secretStartTime = startTime
-        cd:SetScript("OnUpdate", function(self, elapsed)
-            self._secretElapsed = (self._secretElapsed or 0) + elapsed
-            if self._secretElapsed >= 0.1 then
-                -- All non-secret arithmetic: GetTime() and _secretStartTime are plain numbers
-                pcall(self.SetValue, self, GetTime() - self._secretStartTime)
-                self._secretElapsed = 0
-            end
-        end)
-        cd:Show()
-    else
-        -- Fallback: circular clock overlay for frames without proper cooldown
-        if not frame._secretClockOverlay then
-            local cd = CreateFrame("Cooldown", nil, frame)
-            cd:SetAllPoints(frame.icon or frame)
-            cd:SetReverse(true)
-            cd:SetDrawEdge(false)
-            cd:SetSwipeTexture(Cell.vars.whiteTexture)
-            cd:SetSwipeColor(0, 0, 0, 0.77)
-            cd:SetHideCountdownNumbers(true)
-            cd.noCooldownCount = true
-            cd._setCooldown = cd.SetCooldown
-            frame._secretClockOverlay = cd
-        end
-        local cd = frame._secretClockOverlay
-        if frame.cooldown then frame.cooldown:Hide() end
-        pcall(cd._setCooldown, cd, approxStart, auraInfo._rawDuration)
-        cd:Show()
+
+    -- Always use a CooldownFrame overlay for secret durations.
+    -- VERTICAL style's StatusBar OnUpdate crashes with tainted GetValue(),
+    -- and custom duration text can't render secret values visibly.
+    if not frame._secretClockOverlay then
+        local cd = CreateFrame("Cooldown", nil, frame)
+        cd:SetAllPoints(frame.icon or frame)
+        cd:SetReverse(true)
+        cd:SetDrawEdge(false)
+        cd:SetSwipeTexture(Cell.vars.whiteTexture)
+        cd:SetSwipeColor(0, 0, 0, 0.77)
+        cd.noCooldownCount = true
+        cd._setCooldown = cd.SetCooldown
+        frame._secretClockOverlay = cd
     end
-    -- Duration text: secret arithmetic (secret - nonSecret) produces a secret
-    -- result without crashing. Only boolean tests on secrets crash.
-    -- SetFormattedText is C-level and accepts secret values.
-    if frame.showDuration and auraInfo._rawDuration then
-        frame._secretRawDuration = auraInfo._rawDuration
-        frame._secretStartTime = approxStart
-        frame._secretDurElapsed = 0.1 -- update immediately
-        if frame.showAnimation and frame.cooldown then
-            frame.duration:SetParent(frame.cooldown)
-        else
-            frame.duration:SetParent(frame)
-        end
-        frame.duration:Show()
-        frame:SetScript("OnUpdate", _SecretDuration_OnUpdate)
-    end
+    local cd = frame._secretClockOverlay
+
+    -- Show/hide native countdown numbers based on duration setting
+    cd:SetHideCountdownNumbers(not frame.showDuration)
+
+    if frame.cooldown then frame.cooldown:Hide() end
+    pcall(cd._setCooldown, cd, approxStart, auraInfo._rawDuration)
+    cd:Show()
+
+    -- Hide Cell's own duration text (CooldownFrame provides its own countdown)
+    frame.duration:Hide()
+
     frame._secretClockActive = true
 end
 
@@ -1589,20 +1528,6 @@ local function _DeactivateSecretCooldown(frame)
     frame._secretClockActive = nil
     if frame._secretClockOverlay then
         frame._secretClockOverlay:Hide()
-    end
-    -- Clean up secret duration text (only if it was active)
-    if frame._secretRawDuration then
-        frame._secretRawDuration = nil
-        frame._secretStartTime = nil
-        frame._secretDurElapsed = nil
-        frame:SetScript("OnUpdate", nil)
-    end
-    -- Restore original OnUpdate for vertical cooldown bars
-    if frame.cooldown and frame.cooldown._origOnUpdate then
-        frame.cooldown:SetScript("OnUpdate", frame.cooldown._origOnUpdate)
-        frame.cooldown._origOnUpdate = nil
-        frame.cooldown._secretStartTime = nil
-        frame.cooldown._secretElapsed = nil
     end
 end
 
