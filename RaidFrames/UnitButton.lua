@@ -1756,6 +1756,13 @@ local function HandleDebuff(self, auraInfo)
             and _IsAuraFilteredOut and self.states.displayedUnit then
             local fOk, isFiltered = pcall(_IsAuraFilteredOut, self.states.displayedUnit,
                 auraInstanceID, "HARMFUL|RAID")
+            -- DEBUG: log what the RAID flag API returns for secret debuffs
+            print("|cffff00ff[Cell RAID Debug]|r auraID=",
+                issecretvalue(auraInstanceID) and "SECRET" or auraInstanceID,
+                "fOk=", fOk,
+                "isFiltered=", fOk and (issecretvalue(isFiltered) and "SECRET" or tostring(isFiltered)) or "N/A",
+                "name=", issecretvalue(name) and "SECRET" or name,
+                "spellId=", issecretvalue(spellId) and "SECRET" or spellId)
             if fOk then
                 if not issecretvalue(isFiltered) and isFiltered == false then
                     order = 100 -- server-flagged raid debuff
