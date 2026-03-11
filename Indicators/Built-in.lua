@@ -838,6 +838,11 @@ function I.GetDebuffGlow(spellName, spellId, count)
     end
 end
 
+-- 12.0+: return the currentAreaDebuffs table for pre-scanning secret auras
+function I.GetCurrentAreaDebuffs()
+    return currentAreaDebuffs
+end
+
 function I.IsDebuffUseElapsedTime(spellName, spellId)
     -- Midnight 12.0.0+: spellId/spellName may be secret; cannot use as table key
     if issecretvalue and (issecretvalue(spellId) or issecretvalue(spellName)) then return end
