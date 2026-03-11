@@ -162,6 +162,7 @@ local function SanitizeAura(aura)
     -- keep raw values for C-level CooldownFrame:SetCooldown
     aura._rawDuration       = aura.duration
     aura._rawExpirationTime = aura.expirationTime
+    aura._addedTime         = aura._addedTime or GetTime()
 
     -- replace secret fields with safe defaults in-place
     aura.icon       = aura.icon  -- raw; SetTexture() is C-level
@@ -1500,8 +1501,8 @@ local function _ActivateSecretCooldown(frame, auraInfo, unit)
 
     if cd and cd._SetCooldown then
         -- BorderIcon: Blizzard CooldownFrame with clock swipe.
-        -- Use GetAuraDuration (NOT restricted) to get a LuaDurationObject,
-        -- then read start/total via C-level methods — no Lua arithmetic on secrets.
+        -- Try GetAuraDuration first (12.0+), then fall back to passing
+        -- _addedTime + _rawDuration directly to SetCooldown (C-level, accepts secrets).
         local ok = false
         if _GetAuraDuration and unit and auraInfo.auraInstanceID then
             ok = pcall(function()
@@ -1511,17 +1512,22 @@ local function _ActivateSecretCooldown(frame, auraInfo, unit)
                 end
             end)
         end
+        -- Fallback: use _addedTime (our GetTime() snapshot) + raw secret duration.
+        -- SetCooldown is C-level and accepts secret duration values.
+        -- _addedTime is approximate but close enough for visual animation.
+        if not ok and auraInfo._addedTime and auraInfo._rawDuration then
+            ok = pcall(cd._SetCooldown, cd, auraInfo._addedTime, auraInfo._rawDuration)
+        end
         if ok then
             if frame.border then frame.border:Hide() end
             cd:Show()
         end
-        -- if GetAuraDuration fails, border stays visible (static colored display)
+        -- if both fail, border stays visible (static colored display)
     elseif cd and cd.SetMinMaxValues then
         -- BarIcon: StatusBar with vertical fill animation.
-        -- Use GetAuraDuration to get non-tainted start/duration values.
-        -- Do NOT pass secret values to SetMinMaxValues — it permanently
-        -- taints the StatusBar, causing GetValue() to return tainted values
-        -- that crash VerticalCooldown_OnUpdate.
+        -- SetMinMaxValues/SetValue are C-level and accept secrets, but passing
+        -- secret max permanently taints GetValue(), crashing VerticalCooldown_OnUpdate.
+        -- So we MUST replace OnUpdate with our own that never calls GetValue().
         local ok = false
         if _GetAuraDuration and unit and auraInfo.auraInstanceID then
             ok = pcall(function()
@@ -1532,6 +1538,14 @@ local function _ActivateSecretCooldown(frame, auraInfo, unit)
                 end
             end)
         end
+        -- Fallback: use _rawDuration for max, track elapsed from _addedTime.
+        -- SetMinMaxValues(0, secret) taints GetValue() but our OnUpdate avoids it.
+        if not ok and auraInfo._addedTime and auraInfo._rawDuration then
+            ok = pcall(cd.SetMinMaxValues, cd, 0, auraInfo._rawDuration)
+            if ok then
+                pcall(cd.SetValue, cd, GetTime() - auraInfo._addedTime)
+            end
+        end
         if ok then
             if cd.icon and auraInfo.icon then
                 pcall(cd.icon.SetTexture, cd.icon, auraInfo.icon)
@@ -1539,23 +1553,32 @@ local function _ActivateSecretCooldown(frame, auraInfo, unit)
             if cd.spark then
                 cd.spark:SetColorTexture(0.5, 0.5, 0.5)
             end
-            -- Save original OnUpdate so we can restore it on deactivation
+            -- Replace OnUpdate — never call GetValue() (tainted after secret SetMinMaxValues)
             if not cd._origOnUpdate then
                 cd._origOnUpdate = cd:GetScript("OnUpdate")
             end
             cd._secretUnit = unit
             cd._secretAuraID = auraInfo.auraInstanceID
+            cd._secretStartTime = auraInfo._addedTime or GetTime()
             cd:SetScript("OnUpdate", function(self, elapsed)
                 self._secretElapsed = (self._secretElapsed or 0) + elapsed
                 if self._secretElapsed >= 0.1 then
                     self._secretElapsed = 0
-                    pcall(function()
-                        local dur = _GetAuraDuration(self._secretUnit, self._secretAuraID)
-                        if dur and not dur:IsZero() then
-                            self:SetMinMaxValues(0, dur:GetTotalDuration())
-                            self:SetValue(dur:GetElapsedDuration())
-                        end
-                    end)
+                    -- Try GetAuraDuration for accurate elapsed
+                    local updated = false
+                    if _GetAuraDuration and self._secretUnit and self._secretAuraID then
+                        updated = pcall(function()
+                            local dur = _GetAuraDuration(self._secretUnit, self._secretAuraID)
+                            if dur and not dur:IsZero() then
+                                self:SetMinMaxValues(0, dur:GetTotalDuration())
+                                self:SetValue(dur:GetElapsedDuration())
+                            end
+                        end)
+                    end
+                    -- Fallback: approximate elapsed from _addedTime
+                    if not updated then
+                        pcall(self.SetValue, self, GetTime() - self._secretStartTime)
+                    end
                 end
             end)
             cd:Show()
