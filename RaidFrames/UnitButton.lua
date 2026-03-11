@@ -74,6 +74,7 @@ local GetAuraSlots = C_UnitAuras.GetAuraSlots
 local _GetAuraDataBySlot = C_UnitAuras.GetAuraDataBySlot
 local _GetAuraDispelTypeColor = C_UnitAuras.GetAuraDispelTypeColor
 local _IsAuraFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID
+local _GetAuraDuration = C_UnitAuras.GetAuraDuration -- 12.0+: NOT restricted, returns LuaDurationObject
 -- wrapped versions applied after SanitizeAura is defined (see below)
 local GetAuraDataByAuraInstanceID, GetAuraDataBySlot
 local IsDelveInProgress = C_PartyInfo.IsDelveInProgress
@@ -1494,46 +1495,71 @@ end
 -- use a custom OnUpdate that tracks elapsed with non-secret arithmetic only.
 -- Duration text is not supported for secret auras (SetFormattedText produces
 -- invisible output with secret values).
-local function _ActivateSecretCooldown(frame, auraInfo)
-    local approxStart = auraInfo._addedTime or GetTime()
+local function _ActivateSecretCooldown(frame, auraInfo, unit)
     local cd = frame.cooldown
 
     if cd and cd._SetCooldown then
-        -- BorderIcon: Blizzard CooldownFrame with clock swipe
-        -- _SetCooldown is the native C-level SetCooldown.
-        -- Arithmetic on secrets is prohibited for addon code, so wrap in pcall.
-        local ok = pcall(function()
-            cd:_SetCooldown(auraInfo._rawExpirationTime - auraInfo._rawDuration, auraInfo._rawDuration)
-        end)
+        -- BorderIcon: Blizzard CooldownFrame with clock swipe.
+        -- Use GetAuraDuration (NOT restricted) to get a LuaDurationObject,
+        -- then read start/total via C-level methods — no Lua arithmetic on secrets.
+        local ok = false
+        if _GetAuraDuration and unit and auraInfo.auraInstanceID then
+            ok = pcall(function()
+                local dur = _GetAuraDuration(unit, auraInfo.auraInstanceID)
+                if dur and not dur:IsZero() then
+                    cd:_SetCooldown(dur:GetStartTime(), dur:GetTotalDuration())
+                end
+            end)
+        end
         if ok then
             if frame.border then frame.border:Hide() end
             cd:Show()
         end
-        -- if arithmetic fails, border stays visible (static colored display)
+        -- if GetAuraDuration fails, border stays visible (static colored display)
     elseif cd and cd.SetMinMaxValues then
-        -- BarIcon: StatusBar with vertical fill animation
-        pcall(cd.SetMinMaxValues, cd, 0, auraInfo._rawDuration)
-        local startTime = approxStart
-        pcall(cd.SetValue, cd, GetTime() - startTime)
-        if cd.icon and auraInfo.icon then
-            pcall(cd.icon.SetTexture, cd.icon, auraInfo.icon)
+        -- BarIcon: StatusBar with vertical fill animation.
+        -- Use GetAuraDuration to get non-tainted start/duration values.
+        -- Do NOT pass secret values to SetMinMaxValues — it permanently
+        -- taints the StatusBar, causing GetValue() to return tainted values
+        -- that crash VerticalCooldown_OnUpdate.
+        local ok = false
+        if _GetAuraDuration and unit and auraInfo.auraInstanceID then
+            ok = pcall(function()
+                local dur = _GetAuraDuration(unit, auraInfo.auraInstanceID)
+                if dur and not dur:IsZero() then
+                    cd:SetMinMaxValues(0, dur:GetTotalDuration())
+                    cd:SetValue(dur:GetElapsedDuration())
+                end
+            end)
         end
-        if cd.spark then
-            cd.spark:SetColorTexture(0.5, 0.5, 0.5)
-        end
-        -- Save original OnUpdate so we can restore it on deactivation
-        if not cd._origOnUpdate then
-            cd._origOnUpdate = cd:GetScript("OnUpdate")
-        end
-        cd._secretStartTime = startTime
-        cd:SetScript("OnUpdate", function(self, elapsed)
-            self._secretElapsed = (self._secretElapsed or 0) + elapsed
-            if self._secretElapsed >= 0.1 then
-                pcall(self.SetValue, self, GetTime() - self._secretStartTime)
-                self._secretElapsed = 0
+        if ok then
+            if cd.icon and auraInfo.icon then
+                pcall(cd.icon.SetTexture, cd.icon, auraInfo.icon)
             end
-        end)
-        cd:Show()
+            if cd.spark then
+                cd.spark:SetColorTexture(0.5, 0.5, 0.5)
+            end
+            -- Save original OnUpdate so we can restore it on deactivation
+            if not cd._origOnUpdate then
+                cd._origOnUpdate = cd:GetScript("OnUpdate")
+            end
+            cd._secretUnit = unit
+            cd._secretAuraID = auraInfo.auraInstanceID
+            cd:SetScript("OnUpdate", function(self, elapsed)
+                self._secretElapsed = (self._secretElapsed or 0) + elapsed
+                if self._secretElapsed >= 0.1 then
+                    self._secretElapsed = 0
+                    pcall(function()
+                        local dur = _GetAuraDuration(self._secretUnit, self._secretAuraID)
+                        if dur and not dur:IsZero() then
+                            self:SetMinMaxValues(0, dur:GetTotalDuration())
+                            self:SetValue(dur:GetElapsedDuration())
+                        end
+                    end)
+                end
+            end)
+            cd:Show()
+        end
     end
 
     -- Hide duration text — secret values can't be rendered visibly
@@ -1549,23 +1575,33 @@ local function _DeactivateSecretCooldown(frame)
         frame.border:Show()
     end
     -- Restore original OnUpdate for vertical cooldown bars (StatusBar path)
-    if frame.cooldown and frame.cooldown._origOnUpdate then
-        frame.cooldown:SetScript("OnUpdate", frame.cooldown._origOnUpdate)
-        frame.cooldown._origOnUpdate = nil
+    if frame.cooldown then
+        if frame.cooldown._origOnUpdate then
+            frame.cooldown:SetScript("OnUpdate", frame.cooldown._origOnUpdate)
+            frame.cooldown._origOnUpdate = nil
+        end
         frame.cooldown._secretStartTime = nil
         frame.cooldown._secretElapsed = nil
+        frame.cooldown._secretUnit = nil
+        frame.cooldown._secretAuraID = nil
+        -- Reset StatusBar to untainted state if it was used for vertical cooldown
+        if frame.cooldown.SetMinMaxValues and not frame.cooldown._SetCooldown then
+            frame.cooldown:SetMinMaxValues(0, 1)
+            frame.cooldown:SetValue(0)
+            frame.cooldown:Hide()
+        end
     end
 end
 
 -- Post-process a set of indicator frames to fix secret-duration cooldowns
-local function _FixSecretCooldowns(indicators, count, cache)
+local function _FixSecretCooldowns(indicators, count, cache, unit)
     for i = 1, count do
         local frame = indicators[i]
         if frame then
             local aid = frame.auraInstanceID
             local auraInfo = aid and cache[aid]
             if auraInfo and auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration) then
-                _ActivateSecretCooldown(frame, auraInfo)
+                _ActivateSecretCooldown(frame, auraInfo, unit)
             elseif frame._secretClockActive then
                 _DeactivateSecretCooldown(frame)
             end
@@ -1902,7 +1938,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     end
                     -- fix cooldown animation for secret durations
                     if auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration) then
-                        _ActivateSecretCooldown(frame, auraInfo)
+                        _ActivateSecretCooldown(frame, auraInfo, self.states.displayedUnit)
                     elseif frame._secretClockActive then
                         _DeactivateSecretCooldown(frame)
                     end
@@ -2023,7 +2059,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                 end
                 -- fix cooldown animation for secret durations
                 if auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration) then
-                    _ActivateSecretCooldown(frame, auraInfo)
+                    _ActivateSecretCooldown(frame, auraInfo, self.states.displayedUnit)
                 elseif frame._secretClockActive then
                     _DeactivateSecretCooldown(frame)
                 end
@@ -2320,9 +2356,9 @@ local function UnitButton_UpdateBuffs(self, isFullUpdate)
     self.indicators.allCooldowns:UpdateSize(self._buffs.allFound)
 
     -- 12.0+: activate C-level cooldown animation for secret-duration buff indicators
-    _FixSecretCooldowns(self.indicators.defensiveCooldowns, self._buffs.defensiveFound, self._buffs_cache)
-    _FixSecretCooldowns(self.indicators.externalCooldowns, self._buffs.externalFound, self._buffs_cache)
-    _FixSecretCooldowns(self.indicators.allCooldowns, self._buffs.allFound, self._buffs_cache)
+    _FixSecretCooldowns(self.indicators.defensiveCooldowns, self._buffs.defensiveFound, self._buffs_cache, self.states.displayedUnit)
+    _FixSecretCooldowns(self.indicators.externalCooldowns, self._buffs.externalFound, self._buffs_cache, self.states.displayedUnit)
+    _FixSecretCooldowns(self.indicators.allCooldowns, self._buffs.allFound, self._buffs_cache, self.states.displayedUnit)
 
     -- hide tankActiveMitigation
     if not self._buffs.tankActiveMitigationFound then
