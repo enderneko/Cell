@@ -2264,7 +2264,7 @@ function F.GetDebuffList(instanceName)
                 local spellName = F.GetSpellInfo(t["id"])
                 if spellName then
                     -- list[spellName/spellId] = {order, glowType, glowOptions}
-                    list[t["trackByID"] and t["id"] or spellName] = {
+                    local entry = {
                         ["order"] = t["order"],
                         ["condition"] = t["condition"],
                         ["glowType"] = t["glowType"],
@@ -2272,6 +2272,12 @@ function F.GetDebuffList(instanceName)
                         ["glowCondition"] = t["glowCondition"],
                         ["useElapsedTime"] = t["useElapsedTime"],
                     }
+                    list[t["trackByID"] and t["id"] or spellName] = entry
+                    -- 12.0+: also index by name for trackByID entries so
+                    -- GetDebuffOrder can match by resolved name when spellId is secret
+                    if t["trackByID"] and spellName and not list[spellName] then
+                        list[spellName] = entry
+                    end
                 end
             end
         end
@@ -2281,7 +2287,7 @@ function F.GetDebuffList(instanceName)
                 for _, t in pairs(bTable["enabled"]) do
                     local spellName = F.GetSpellInfo(t["id"])
                     if spellName then -- check again
-                        list[t["trackByID"] and t["id"] or spellName] = {
+                        local entry = {
                             ["order"] = t["order"]+n,
                             ["condition"] = t["condition"],
                             ["glowType"] = t["glowType"],
@@ -2289,6 +2295,11 @@ function F.GetDebuffList(instanceName)
                             ["glowCondition"] = t["glowCondition"],
                             ["useElapsedTime"] = t["useElapsedTime"],
                         }
+                        list[t["trackByID"] and t["id"] or spellName] = entry
+                        -- 12.0+: also index by name for trackByID entries
+                        if t["trackByID"] and spellName and not list[spellName] then
+                            list[spellName] = entry
+                        end
                     end
                 end
             end
