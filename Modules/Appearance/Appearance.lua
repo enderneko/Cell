@@ -385,18 +385,7 @@ local function CreatePreviewButtons()
             healthPercent = health / 100
             previewButton.perc = healthPercent
 
-            if CellDB["appearance"]["barAnimation"] == "Flash" then
-                previewButton.widgets.healthBar:SetValue(health)
-
-                local diff = healthPercent - (healthPercentOld or healthPercent)
-                if diff >= 0 then
-                    B.HideFlash(previewButton)
-                    -- previewButton.widgets.damageFlashTex:Hide()
-                elseif diff <= -0.05 and diff >= -1 then
-                    B.ShowFlash(previewButton, abs(diff))
-                    -- print(abs(diff))
-                end
-            elseif CellDB["appearance"]["barAnimation"] == "Smooth" then
+            if CellDB["appearance"]["barAnimation"] == "Smooth" then
                 previewButton.widgets.healthBar:SetSmoothedValue(health)
             else
                 previewButton.widgets.healthBar:SetValue(health)
@@ -1338,13 +1327,6 @@ local function CreateUnitButtonStylePane()
     barAnimationDropdown = Cell.CreateDropdown(unitButtonPane, 141)
     barAnimationDropdown:SetPoint("TOPLEFT", powerColorDropdown, "BOTTOMLEFT", 0, -30)
     barAnimationDropdown:SetItems({
-        {
-            ["text"] = L["Flash"],
-            ["onClick"] = function()
-                CellDB["appearance"]["barAnimation"] = "Flash"
-                Cell.Fire("UpdateAppearance", "animation")
-            end,
-        },
         {
             ["text"] = L["Smooth"],
             ["onClick"] = function()

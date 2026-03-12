@@ -3311,20 +3311,6 @@ local function UnitButton_UpdateHealth(self, diff, skipStateUpdates)
         local health = calc:GetCurrentHealth()
         local smoothEnum = (barAnimationType == "Smooth" and SBI_ExponentialEaseOut) or SBI_Immediate
         self.widgets.healthBar:SetValue(health, smoothEnum)
-        if barAnimationType == "Flash" then
-            -- Flash requires computing damage diff — only possible with non-secret values
-            if not issecretvalue(health) then
-                local healthPercent = self.states.healthPercent
-                local diff = healthPercent - (self.states.healthPercentOld or healthPercent)
-                if diff >= 0 or self.states.healthMax == 0 then
-                    B.HideFlash(self)
-                elseif diff <= -0.05 and diff >= -1 then
-                    B.ShowFlash(self, abs(diff))
-                end
-            else
-                B.HideFlash(self)
-            end
-        end
 
         if Cell.vars.useThresholdColor or Cell.vars.useFullColor then
             UnitButton_UpdateHealthColor(self)
@@ -3353,17 +3339,7 @@ local function UnitButton_UpdateHealth(self, diff, skipStateUpdates)
         -- CLASSIC/PRE-MIDNIGHT PATH: original logic
         local healthPercent = self.states.healthPercent
 
-        if barAnimationType == "Flash" then
-            self.widgets.healthBar:SetValue(self.states.health)
-            local diff = healthPercent - (self.states.healthPercentOld or healthPercent)
-            if diff >= 0 or self.states.healthMax == 0 then
-                B.HideFlash(self)
-            elseif diff <= -0.05 and diff >= -1 then --! player (just joined) UnitHealthMax(unit) may be 1 ====> diff == -maxHealth
-                B.ShowFlash(self, abs(diff))
-            end
-        else
-            self.widgets.healthBar:SetBarValue(self.states.health)
-        end
+        self.widgets.healthBar:SetBarValue(self.states.health)
 
         if Cell.vars.useThresholdColor or Cell.vars.useFullColor then
             UnitButton_UpdateHealthColor(self)
@@ -5194,18 +5170,6 @@ function B.UpdateAnimation(button)
         button.widgets.powerBar.SetBarValue = button.widgets.powerBar.SetValue
     end
 
-    if barAnimationType ~= "Flash" then
-        button.widgets.damageFlashAG:Finish()
-    end
-end
-
--- damageFlash
-function B.ShowFlash(button, lostPercent)
-    button.widgets.damageFlashTex:SetValue(lostPercent)
-    button.widgets.damageFlashAG:Play()
-end
-
-function B.HideFlash(button)
     button.widgets.damageFlashAG:Finish()
 end
 

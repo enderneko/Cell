@@ -583,7 +583,7 @@ function F.Revise()
     -- r49-release
     if CellDB["revise"] and dbRevision < 49 then
         if type(CellDB["appearance"]["barAnimation"]) ~= "string" then
-            CellDB["appearance"]["barAnimation"] = "Flash"
+            CellDB["appearance"]["barAnimation"] = "Smooth"
         end
     end
 
@@ -3418,6 +3418,10 @@ function F.Revise()
         -- Remove useCleuHealthUpdater setting (CLEU-based health updater removed in 12.0.0)
         if CellDB["general"] then
             CellDB["general"]["useCleuHealthUpdater"] = nil
+        end
+        -- Migrate "Flash" bar animation to "Smooth" (Flash removed in 12.0.0)
+        if CellDB["appearance"] and CellDB["appearance"]["barAnimation"] == "Flash" then
+            CellDB["appearance"]["barAnimation"] = "Smooth"
         end
         -- Note: profile import compatibility warning added elsewhere.
         -- Saved variable secrets: any secrets stored before this version will be nil'd by WoW.
