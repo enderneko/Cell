@@ -31,6 +31,9 @@ local AbbreviateNumbers = AbbreviateNumbers
 local UnitHealthPercent = UnitHealthPercent
 local CreateUnitHealPredictionCalculator = CreateUnitHealPredictionCalculator
 local UnitGetDetailedHealPrediction = UnitGetDetailedHealPrediction
+-- StatusBarInterpolation enum for native C-level smooth animation (secret-safe)
+local SBI_ExponentialEaseOut = StatusBarInterpolation and StatusBarInterpolation.ExponentialEaseOut
+local SBI_Immediate = StatusBarInterpolation and StatusBarInterpolation.Immediate
 local UnitIsFriend = UnitIsFriend
 local UnitIsUnit = UnitIsUnit
 local UnitIsPlayer = UnitIsPlayer
@@ -2680,13 +2683,15 @@ local function UnitButton_UpdateHealthStates(self, diff)
         -- MIDNIGHT PATH: use calculator â€" no arithmetic on secrets
         UnitButton_UpdateCalculator(self)
         -- Store healthPercent for color logic.
-        -- GetCurrentHealthPercent() returns a secret value inside PvP instances —
-        -- Lua comparisons on secrets throw errors. Use it only when non-secret.
-        local hpPct = self.widgets.healthCalculator:GetCurrentHealthPercent()
-        if F.IsValueNonSecret(hpPct) then
-            self.states.healthPercent = hpPct
+        -- Calculator's GetCurrentHealthPercent() always returns secret (even out of combat).
+        -- Fall back to UnitHealth/UnitHealthMax which are non-secret outside PvP instances.
+        local h = UnitHealth(unit)
+        local hm = UnitHealthMax(unit)
+        if not issecretvalue(h) and not issecretvalue(hm) and hm > 0 then
+            self.states.healthPercent = h / hm
+            self.states.healthMax = hm
         else
-            -- Secret: default to 0 so F.GetHealthBarColor won't trigger fullColor (which checks == 1).
+            -- In-combat secret: default to 0 so F.GetHealthBarColor won't trigger fullColor (which checks == 1).
             -- class_color / class_color_dark modes don't use percent, so they still work.
             self.states.healthPercent = 0
         end
@@ -3221,11 +3226,11 @@ UnitButton_UpdatePower = function(self)
     if not self._shouldShowPowerBar then return end
     if self.states.power == nil then return end
 
-    -- self.states.power may be a secret value on Midnight 12.0.0+
-    -- SetBarValue maps to SetSmoothedValue in Smooth mode, which does Lua Clamp and fails on secrets.
-    -- Use native SetValue on Midnight when power is secret.
-    if Cell.isMidnight and not F.IsValueNonSecret(self.states.power) then
-        self.widgets.powerBar:SetValue(self.states.power)
+    -- On Midnight, use native StatusBarInterpolation for smooth animation (secret-safe).
+    -- Pre-Midnight uses SetBarValue which maps to SetSmoothedValue in Smooth mode.
+    if Cell.isMidnight and SBI_ExponentialEaseOut then
+        local smoothEnum = (barAnimationType == "Smooth" and SBI_ExponentialEaseOut) or SBI_Immediate
+        self.widgets.powerBar:SetValue(self.states.power, smoothEnum)
     else
         self.widgets.powerBar:SetBarValue(self.states.power)
     end
@@ -3299,15 +3304,26 @@ local function UnitButton_UpdateHealth(self, diff, skipStateUpdates)
     end
 
     if Cell.isMidnight and self.widgets.healthCalculator then
-        -- MIDNIGHT PATH: pass secret values directly to status bar
+        -- MIDNIGHT PATH: pass health to status bar
+        -- Use native StatusBarInterpolation enum for smooth animation — C-level,
+        -- handles secret values without Lua arithmetic (like ElvUI's approach).
         local calc = self.widgets.healthCalculator
         local health = calc:GetCurrentHealth()
-        -- Always use native SetValue on Midnight — SetSmoothedValue (SetBarValue in Smooth mode)
-        -- is a Lua mixin that does Clamp() arithmetic, which fails on secret values.
-        self.widgets.healthBar:SetValue(health)
+        local smoothEnum = (barAnimationType == "Smooth" and SBI_ExponentialEaseOut) or SBI_Immediate
+        self.widgets.healthBar:SetValue(health, smoothEnum)
         if barAnimationType == "Flash" then
-            -- Flash: we can't compute exact diff without arithmetic on secrets, so skip precise flash
-            B.HideFlash(self)
+            -- Flash requires computing damage diff — only possible with non-secret values
+            if not issecretvalue(health) then
+                local healthPercent = self.states.healthPercent
+                local diff = healthPercent - (self.states.healthPercentOld or healthPercent)
+                if diff >= 0 or self.states.healthMax == 0 then
+                    B.HideFlash(self)
+                elseif diff <= -0.05 and diff >= -1 then
+                    B.ShowFlash(self, abs(diff))
+                end
+            else
+                B.HideFlash(self)
+            end
         end
 
         if Cell.vars.useThresholdColor or Cell.vars.useFullColor then
@@ -3466,16 +3482,13 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
         UnitButton_UpdateCalculator(self)
         local absorbs = self.widgets.healthCalculator:GetTotalDamageAbsorbs()
         local healthMax = self.widgets.healthCalculator:GetMaximumHealth()
-        -- Update the widget shield bar (needs min/max for correct proportioning)
-        self.widgets.shieldBar:SetMinMaxValues(0, healthMax)
-        self.widgets.shieldBar:SetValue(absorbs)
-        self.widgets.shieldBar:Show()
-
         -- Overshield glow and reverse-fill bar
-        -- NOTE: absorbs is a secret value on Midnight â€" we can't compare it to health to detect overshield.
+        -- NOTE: absorbs is a secret value on Midnight — we can't compare it to health to detect overshield.
         -- Show the glow whenever shields are present and overshieldEnabled is on.
         -- TODO: Use a Curve to map (absorbs + health - maxHealth) to glow visibility for precise overshield detection.
         if overshieldReverseFillEnabled then
+            -- Reverse fill: only show shieldBarR (fills from opposite end), hide normal shieldBar
+            self.widgets.shieldBar:Hide()
             self.widgets.shieldBarR:SetMinMaxValues(0, healthMax)
             self.widgets.shieldBarR:SetValue(absorbs)
             self.widgets.shieldBarR:Show()
@@ -3486,6 +3499,10 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
             end
             self.widgets.overShieldGlow:Hide()
         else
+            -- Normal fill: show shieldBar, hide shieldBarR
+            self.widgets.shieldBar:SetMinMaxValues(0, healthMax)
+            self.widgets.shieldBar:SetValue(absorbs)
+            self.widgets.shieldBar:Show()
             if overshieldEnabled then
                 self.widgets.overShieldGlow:Show()
             else
