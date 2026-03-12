@@ -74,8 +74,8 @@ local UnitGetDetailedHealPrediction = UnitGetDetailedHealPrediction
 local CreateUnitHealPredictionCalculator = CreateUnitHealPredictionCalculator
 local UnitHealthPercent = UnitHealthPercent
 local AbbreviateNumbers = AbbreviateNumbers
-local SBI_ExponentialEaseOut = StatusBarInterpolation and StatusBarInterpolation.ExponentialEaseOut
-local SBI_Immediate = StatusBarInterpolation and StatusBarInterpolation.Immediate
+local SBI_ExponentialEaseOut = Enum and Enum.StatusBarInterpolation and Enum.StatusBarInterpolation.ExponentialEaseOut
+local SBI_Immediate = Enum and Enum.StatusBarInterpolation and Enum.StatusBarInterpolation.Immediate
 
 --! for AI followers, UnitClassBase is buggy
 local UnitClassBase = function(unit)
