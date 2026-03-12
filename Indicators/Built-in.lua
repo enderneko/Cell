@@ -1799,22 +1799,28 @@ local function SetPower_Percentage(self, current, max)
     -- SetFormattedText is C-level (AllowedWhenTainted) and handles secrets.
     if issecretvalue(current) or issecretvalue(max) then
         self.text:SetFormattedText("%d%%", current)
+        local w = self.text:GetStringWidth()
+        self:SetWidth(issecretvalue(w) and 50 or w)
         self:Show()
         return
     end
     self.text:SetFormattedText("%d%%", current/max*100)
-    self:SetWidth(self.text:GetStringWidth())
+    local w = self.text:GetStringWidth()
+    self:SetWidth(issecretvalue(w) and 50 or w)
     self:Show()
 end
 
 local function SetPower_Number(self, current, max)
     if issecretvalue(current) or issecretvalue(max) then
         self.text:SetText(current)
+        local w = self.text:GetStringWidth()
+        self:SetWidth(issecretvalue(w) and 50 or w)
         self:Show()
         return
     end
     self.text:SetText(current)
-    self:SetWidth(self.text:GetStringWidth())
+    local w = self.text:GetStringWidth()
+    self:SetWidth(issecretvalue(w) and 50 or w)
     self:Show()
 end
 
@@ -1825,11 +1831,14 @@ local function SetPower_Number_Short(self, current, max)
         else
             self.text:SetText(current)
         end
+        local w = self.text:GetStringWidth()
+        self:SetWidth(issecretvalue(w) and 50 or w)
         self:Show()
         return
     end
     self.text:SetText(F.FormatNumber(current))
-    self:SetWidth(self.text:GetStringWidth())
+    local w = self.text:GetStringWidth()
+    self:SetWidth(issecretvalue(w) and 50 or w)
     self:Show()
 end
 
