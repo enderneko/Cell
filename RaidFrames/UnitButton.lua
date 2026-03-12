@@ -5296,7 +5296,14 @@ end
 function B.UpdateAnimation(button)
     barAnimationType = CellDB["appearance"]["barAnimation"]
 
-    if barAnimationType == "Smooth" then
+    if Cell.isMidnight then
+        -- Midnight: smooth animation handled via StatusBarInterpolation enum in SetValue().
+        -- Never use SetSmoothedValue mixin (does Lua Clamp arithmetic, crashes on secrets).
+        button.widgets.healthBar:ResetSmoothedValue()
+        button.widgets.healthBar.SetBarValue = button.widgets.healthBar.SetValue
+        button.widgets.powerBar:ResetSmoothedValue()
+        button.widgets.powerBar.SetBarValue = button.widgets.powerBar.SetValue
+    elseif barAnimationType == "Smooth" then
         button.widgets.healthBar.SetBarValue = button.widgets.healthBar.SetSmoothedValue
         button.widgets.powerBar.SetBarValue = button.widgets.powerBar.SetSmoothedValue
     else
