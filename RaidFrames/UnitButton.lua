@@ -27,13 +27,6 @@ local UnitGetTotalAbsorbs = UnitGetTotalAbsorbs
 local UnitGetTotalHealAbsorbs = UnitGetTotalHealAbsorbs
 -- 12.0+ APIs for secret value support
 local issecretvalue = issecretvalue or function() return false end
-local AbbreviateNumbers = AbbreviateNumbers
-local UnitHealthPercent = UnitHealthPercent
-local CreateUnitHealPredictionCalculator = CreateUnitHealPredictionCalculator
-local UnitGetDetailedHealPrediction = UnitGetDetailedHealPrediction
--- StatusBarInterpolation enum for native C-level smooth animation (secret-safe)
-local SBI_ExponentialEaseOut = StatusBarInterpolation and StatusBarInterpolation.ExponentialEaseOut
-local SBI_Immediate = StatusBarInterpolation and StatusBarInterpolation.Immediate
 local UnitIsFriend = UnitIsFriend
 local UnitIsUnit = UnitIsUnit
 local UnitIsPlayer = UnitIsPlayer
@@ -53,10 +46,7 @@ local GetReadyCheckStatus = GetReadyCheckStatus
 local GetSpecialization = GetSpecialization
 local GetSpecializationRole = GetSpecializationRole
 local UnitHasVehicleUI = UnitHasVehicleUI
--- local UnitInVehicle = UnitInVehicle
--- local UnitUsingVehicle = UnitUsingVehicle
 local UnitIsCharmed = UnitIsCharmed
--- UnitIsPlayer already declared above
 local UnitInPartyIsAI = UnitInPartyIsAI
 local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 local UnitThreatSituation = UnitThreatSituation
@@ -67,8 +57,6 @@ local UnitIsGroupAssistant = UnitIsGroupAssistant
 local InCombatLockdown = InCombatLockdown
 local UnitAffectingCombat = UnitAffectingCombat
 local UnitPhaseReason = UnitPhaseReason
--- local UnitBuff = UnitBuff
--- local UnitDebuff = UnitDebuff
 local IsInRaid = IsInRaid
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo -- nil in 12.0+
@@ -81,8 +69,13 @@ local _GetAuraDuration = C_UnitAuras.GetAuraDuration -- 12.0+: NOT restricted, r
 -- wrapped versions applied after SanitizeAura is defined (see below)
 local GetAuraDataByAuraInstanceID, GetAuraDataBySlot
 local IsDelveInProgress = C_PartyInfo.IsDelveInProgress
-local UnitGetDetailedHealPrediction = UnitGetDetailedHealPrediction  -- nil pre-12.0
-local CreateUnitHealPredictionCalculator = CreateUnitHealPredictionCalculator  -- nil pre-12.0
+-- 12.0+ heal prediction and interpolation APIs (nil pre-12.0)
+local UnitGetDetailedHealPrediction = UnitGetDetailedHealPrediction
+local CreateUnitHealPredictionCalculator = CreateUnitHealPredictionCalculator
+local UnitHealthPercent = UnitHealthPercent
+local AbbreviateNumbers = AbbreviateNumbers
+local SBI_ExponentialEaseOut = StatusBarInterpolation and StatusBarInterpolation.ExponentialEaseOut
+local SBI_Immediate = StatusBarInterpolation and StatusBarInterpolation.Immediate
 
 --! for AI followers, UnitClassBase is buggy
 local UnitClassBase = function(unit)
@@ -4074,111 +4067,105 @@ UnitButton_UpdateHealthColor = function(self)
     end
 end
 
--- Builds a color curve from 3 color points + boundary settings.
--- If useGradient is true, uses linear interpolation; otherwise uses step transitions.
--- c1 = low color, c2 = mid color, c3 = high color (each {r,g,b})
--- lowBound/highBound define the transition boundaries (0-1 range)
-local function BuildThresholdCurve(curve, c1, c2, c3, lowBound, highBound, useGradient)
-    curve:ClearPoints()
-    lowBound = lowBound or 0.05
-    highBound = highBound or 0.95
+-- Curve-based health color system (Midnight 12.0.0+)
+-- Wrapped in do...end to avoid contributing to the file's top-level local variable count.
+do
+    -- Builds a color curve from 3 color points + boundary settings.
+    local function BuildThresholdCurve(curve, c1, c2, c3, lowBound, highBound, useGradient)
+        curve:ClearPoints()
+        lowBound = lowBound or 0.05
+        highBound = highBound or 0.95
 
-    local col1 = CreateColor(c1[1], c1[2], c1[3], 1)
-    local col2 = CreateColor(c2[1], c2[2], c2[3], 1)
-    local col3 = CreateColor(c3[1], c3[2], c3[3], 1)
+        local col1 = CreateColor(c1[1], c1[2], c1[3], 1)
+        local col2 = CreateColor(c2[1], c2[2], c2[3], 1)
+        local col3 = CreateColor(c3[1], c3[2], c3[3], 1)
 
-    if useGradient then
-        -- Smooth linear gradient: c1 at lowBound, c2 at midpoint, c3 at highBound
-        curve:SetType(Enum.LuaCurveType.Linear)
-        curve:AddPoint(0.0, col1)
-        curve:AddPoint(lowBound, col1)
-        local mid = (lowBound + highBound) / 2
-        curve:AddPoint(mid, col2)
-        curve:AddPoint(highBound, col3)
-        curve:AddPoint(1.0, col3)
-    else
-        -- Stepped: c1 below lowBound, c2 between bounds, c3 above highBound
-        -- Use tight epsilon for sharp transitions
-        curve:SetType(Enum.LuaCurveType.Linear)
-        local eps = 0.001
-        curve:AddPoint(0.0, col1)
-        if lowBound > eps then
-            curve:AddPoint(lowBound - eps, col1)
+        if useGradient then
+            curve:SetType(Enum.LuaCurveType.Linear)
+            curve:AddPoint(0.0, col1)
+            curve:AddPoint(lowBound, col1)
+            local mid = (lowBound + highBound) / 2
+            curve:AddPoint(mid, col2)
+            curve:AddPoint(highBound, col3)
+            curve:AddPoint(1.0, col3)
+        else
+            curve:SetType(Enum.LuaCurveType.Linear)
+            local eps = 0.001
+            curve:AddPoint(0.0, col1)
+            if lowBound > eps then
+                curve:AddPoint(lowBound - eps, col1)
+            end
+            curve:AddPoint(lowBound + eps, col2)
+            if highBound - lowBound > 2 * eps then
+                curve:AddPoint(highBound - eps, col2)
+            end
+            curve:AddPoint(highBound + eps, col3)
+            curve:AddPoint(1.0, col3)
         end
-        curve:AddPoint(lowBound + eps, col2)
-        if highBound - lowBound > 2 * eps then
-            curve:AddPoint(highBound - eps, col2)
-        end
-        curve:AddPoint(highBound + eps, col3)
-        curve:AddPoint(1.0, col3)
-    end
-end
-
--- Builds a flat (single color) curve — used for non-threshold modes on Midnight
-local function BuildFlatCurve(curve, r, g, b)
-    curve:ClearPoints()
-    curve:SetType(Enum.LuaCurveType.Linear)
-    local col = CreateColor(r, g, b, 1)
-    curve:AddPoint(0.0, col)
-    curve:AddPoint(1.0, col)
-end
-
--- Configures the health color curves for a button (Midnight 12.0.0+)
--- Called when color settings change. Builds curves from user settings so that
--- UnitHealthPercent(unit, true, curve) can evaluate gradient colors at the C level.
-function B.UpdateHealthColorCurve(button)
-    if not Cell.isMidnight then return end
-    if not button.widgets.healthBarColorCurve then return end
-    if not Cell.loaded then return end
-
-    local unit = button.states.displayedUnit or button.states.unit
-    local barCurve = button.widgets.healthBarColorCurve
-    local lossCurve = button.widgets.healthLossColorCurve
-
-    -- Get class color for this unit
-    local class = button.states.class or (unit and UnitClassBase(unit)) or Cell.vars.playerClass
-    local cr, cg, cb = F.GetClassColor(class)
-
-    -- Build bar color curve
-    local barMode = CellDB["appearance"]["barColor"][1]
-    if barMode == "threshold1" then
-        local c = CellDB["appearance"]["colorThresholds"]
-        BuildThresholdCurve(barCurve, c[1], c[2], c[3], c[4], c[5], c[6])
-    elseif barMode == "threshold2" then
-        local c = CellDB["appearance"]["colorThresholds"]
-        BuildThresholdCurve(barCurve, c[1], c[2], {cr, cg, cb}, c[4], c[5], c[6])
-    elseif barMode == "threshold3" then
-        local c = CellDB["appearance"]["colorThresholds"]
-        BuildThresholdCurve(barCurve, c[1], c[2], {cr*0.2, cg*0.2, cb*0.2}, c[4], c[5], c[6])
-    elseif barMode == "class_color" then
-        BuildFlatCurve(barCurve, cr, cg, cb)
-    elseif barMode == "class_color_dark" then
-        BuildFlatCurve(barCurve, cr*0.2, cg*0.2, cb*0.2)
-    else
-        -- custom color
-        local cc = CellDB["appearance"]["barColor"][2]
-        BuildFlatCurve(barCurve, cc[1], cc[2], cc[3])
     end
 
-    -- Build loss color curve
-    local lossMode = CellDB["appearance"]["lossColor"][1]
-    if lossMode == "threshold1" then
-        local c = CellDB["appearance"]["colorThresholdsLoss"]
-        BuildThresholdCurve(lossCurve, c[1], c[2], c[3], c[4], c[5], c[6])
-    elseif lossMode == "threshold2" then
-        local c = CellDB["appearance"]["colorThresholdsLoss"]
-        BuildThresholdCurve(lossCurve, {cr, cg, cb}, c[2], c[3], c[4], c[5], c[6])
-    elseif lossMode == "threshold3" then
-        local c = CellDB["appearance"]["colorThresholdsLoss"]
-        BuildThresholdCurve(lossCurve, {cr*0.2, cg*0.2, cb*0.2}, c[2], c[3], c[4], c[5], c[6])
-    elseif lossMode == "class_color" then
-        BuildFlatCurve(lossCurve, cr, cg, cb)
-    elseif lossMode == "class_color_dark" then
-        BuildFlatCurve(lossCurve, cr*0.2, cg*0.2, cb*0.2)
-    else
-        -- custom color
-        local cc = CellDB["appearance"]["lossColor"][2]
-        BuildFlatCurve(lossCurve, cc[1], cc[2], cc[3])
+    local function BuildFlatCurve(curve, r, g, b)
+        curve:ClearPoints()
+        curve:SetType(Enum.LuaCurveType.Linear)
+        local col = CreateColor(r, g, b, 1)
+        curve:AddPoint(0.0, col)
+        curve:AddPoint(1.0, col)
+    end
+
+    -- Configures the health color curves for a button (Midnight 12.0.0+)
+    -- Builds curves from user settings so UnitHealthPercent(unit, true, curve)
+    -- can evaluate gradient colors at the C level.
+    function B.UpdateHealthColorCurve(button)
+        if not Cell.isMidnight then return end
+        if not button.widgets.healthBarColorCurve then return end
+        if not Cell.loaded then return end
+
+        local unit = button.states.displayedUnit or button.states.unit
+        local barCurve = button.widgets.healthBarColorCurve
+        local lossCurve = button.widgets.healthLossColorCurve
+
+        local class = button.states.class or (unit and UnitClassBase(unit)) or Cell.vars.playerClass
+        local cr, cg, cb = F.GetClassColor(class)
+
+        -- Build bar color curve
+        local barMode = CellDB["appearance"]["barColor"][1]
+        if barMode == "threshold1" then
+            local c = CellDB["appearance"]["colorThresholds"]
+            BuildThresholdCurve(barCurve, c[1], c[2], c[3], c[4], c[5], c[6])
+        elseif barMode == "threshold2" then
+            local c = CellDB["appearance"]["colorThresholds"]
+            BuildThresholdCurve(barCurve, c[1], c[2], {cr, cg, cb}, c[4], c[5], c[6])
+        elseif barMode == "threshold3" then
+            local c = CellDB["appearance"]["colorThresholds"]
+            BuildThresholdCurve(barCurve, c[1], c[2], {cr*0.2, cg*0.2, cb*0.2}, c[4], c[5], c[6])
+        elseif barMode == "class_color" then
+            BuildFlatCurve(barCurve, cr, cg, cb)
+        elseif barMode == "class_color_dark" then
+            BuildFlatCurve(barCurve, cr*0.2, cg*0.2, cb*0.2)
+        else
+            local cc = CellDB["appearance"]["barColor"][2]
+            BuildFlatCurve(barCurve, cc[1], cc[2], cc[3])
+        end
+
+        -- Build loss color curve
+        local lossMode = CellDB["appearance"]["lossColor"][1]
+        if lossMode == "threshold1" then
+            local c = CellDB["appearance"]["colorThresholdsLoss"]
+            BuildThresholdCurve(lossCurve, c[1], c[2], c[3], c[4], c[5], c[6])
+        elseif lossMode == "threshold2" then
+            local c = CellDB["appearance"]["colorThresholdsLoss"]
+            BuildThresholdCurve(lossCurve, {cr, cg, cb}, c[2], c[3], c[4], c[5], c[6])
+        elseif lossMode == "threshold3" then
+            local c = CellDB["appearance"]["colorThresholdsLoss"]
+            BuildThresholdCurve(lossCurve, {cr*0.2, cg*0.2, cb*0.2}, c[2], c[3], c[4], c[5], c[6])
+        elseif lossMode == "class_color" then
+            BuildFlatCurve(lossCurve, cr, cg, cb)
+        elseif lossMode == "class_color_dark" then
+            BuildFlatCurve(lossCurve, cr*0.2, cg*0.2, cb*0.2)
+        else
+            local cc = CellDB["appearance"]["lossColor"][2]
+            BuildFlatCurve(lossCurve, cc[1], cc[2], cc[3])
+        end
     end
 end
 
