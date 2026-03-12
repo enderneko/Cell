@@ -420,25 +420,43 @@ local function CreatePreviewButtons()
 end
 
 local function UpdatePreviewShields(r, g, b)
+    -- Preview 3 shows heal prediction, heal absorb, shield, and overshield.
+    -- On Midnight, these widgets are StatusBars (not Textures), so use StatusBar API.
+
+    -- Heal prediction
     if CellDB["appearance"]["healPrediction"][1] then
-        previewButton2.widgets.incomingHeal:SetValue(0.2, 0.6)
-        if CellDB["appearance"]["healPrediction"][2] then
-            previewButton2.widgets.incomingHeal:SetStatusBarColor(CellDB["appearance"]["healPrediction"][3][1], CellDB["appearance"]["healPrediction"][3][2], CellDB["appearance"]["healPrediction"][3][3], CellDB["appearance"]["healPrediction"][3][4])
+        if Cell.isMidnight then
+            -- StatusBar: set range to match health bar, show 20% incoming heal
+            previewButton2.widgets.incomingHeal:SetMinMaxValues(0, 100)
+            previewButton2.widgets.incomingHeal:SetValue(20)
+            previewButton2.widgets.incomingHeal:Show()
         else
-            previewButton2.widgets.incomingHeal:SetStatusBarColor(r, g, b, 0.4)
+            previewButton2.widgets.incomingHeal:SetValue(0.2, 0.6)
+        end
+        if CellDB["appearance"]["healPrediction"][2] then
+            previewButton2.widgets.incomingHeal:SetVertexColor(CellDB["appearance"]["healPrediction"][3][1], CellDB["appearance"]["healPrediction"][3][2], CellDB["appearance"]["healPrediction"][3][3], CellDB["appearance"]["healPrediction"][3][4])
+        else
+            previewButton2.widgets.incomingHeal:SetVertexColor(r, g, b, 0.4)
         end
     else
         previewButton2.widgets.incomingHeal:Hide()
     end
 
+    -- Heal absorb
     if Cell.isRetail or Cell.isMists then
         if CellDB["appearance"]["healAbsorb"][1] then
-            previewButton2.widgets.absorbsBar:SetValue(0.8, 0.6)
+            if Cell.isMidnight then
+                previewButton2.widgets.absorbsBar:SetMinMaxValues(0, 100)
+                previewButton2.widgets.absorbsBar:SetValue(20)
+                previewButton2.widgets.absorbsBar:Show()
+            else
+                previewButton2.widgets.absorbsBar:SetValue(0.8, 0.6)
+            end
             if CellDB["appearance"]["healAbsorbInvertColor"] then
-                previewButton2.widgets.absorbsBar:SetStatusBarColor(F.InvertColor(previewButton2.widgets.healthBar:GetStatusBarColor()))
+                previewButton2.widgets.absorbsBar:SetVertexColor(F.InvertColor(previewButton2.widgets.healthBar:GetStatusBarColor()))
                 previewButton2.widgets.overAbsorbGlow:SetVertexColor(F.InvertColor(previewButton2.widgets.healthBar:GetStatusBarColor()))
             else
-                previewButton2.widgets.absorbsBar:SetStatusBarColor(unpack(CellDB["appearance"]["healAbsorb"][2]))
+                previewButton2.widgets.absorbsBar:SetVertexColor(unpack(CellDB["appearance"]["healAbsorb"][2]))
                 previewButton2.widgets.overAbsorbGlow:SetVertexColor(unpack(CellDB["appearance"]["healAbsorb"][2]))
             end
         else
@@ -447,16 +465,38 @@ local function UpdatePreviewShields(r, g, b)
         end
     end
 
+    -- Shield texture
     if Cell.isRetail or Cell.isMists or Cell.isWrath or Cell.isCata then
-        if CellDB["appearance"]["shield"][1] then
-            previewButton2.widgets.shieldBar:SetValue(0.6, 0.6)
-            previewButton2.widgets.shieldBar:SetStatusBarColor(unpack(CellDB["appearance"]["shield"][2]))
-        else
-            previewButton2.widgets.shieldBar:Hide()
-        end
-
         local reverseFilling = CellDB["appearance"]["shield"][1] and CellDB["appearance"]["overshieldReverseFill"]
 
+        if CellDB["appearance"]["shield"][1] then
+            if reverseFilling then
+                -- Reverse fill: only show shieldBarR, hide shieldBar
+                previewButton2.widgets.shieldBar:Hide()
+                if Cell.isMidnight then
+                    previewButton2.widgets.shieldBarR:SetMinMaxValues(0, 100)
+                    previewButton2.widgets.shieldBarR:SetValue(30)
+                end
+                previewButton2.widgets.shieldBarR:SetVertexColor(unpack(CellDB["appearance"]["shield"][2]))
+                previewButton2.widgets.shieldBarR:Show()
+            else
+                -- Normal fill: show shieldBar, hide shieldBarR
+                if Cell.isMidnight then
+                    previewButton2.widgets.shieldBar:SetMinMaxValues(0, 100)
+                    previewButton2.widgets.shieldBar:SetValue(30)
+                else
+                    previewButton2.widgets.shieldBar:SetValue(0.6, 0.6)
+                end
+                previewButton2.widgets.shieldBar:SetVertexColor(unpack(CellDB["appearance"]["shield"][2]))
+                previewButton2.widgets.shieldBar:Show()
+                previewButton2.widgets.shieldBarR:Hide()
+            end
+        else
+            previewButton2.widgets.shieldBar:Hide()
+            previewButton2.widgets.shieldBarR:Hide()
+        end
+
+        -- Overshield glow
         if CellDB["appearance"]["overshield"][1] and not reverseFilling then
             previewButton2.widgets.overShieldGlow:SetVertexColor(unpack(CellDB["appearance"]["overshield"][2]))
             previewButton2.widgets.overShieldGlow:Show()
@@ -465,9 +505,6 @@ local function UpdatePreviewShields(r, g, b)
         end
 
         if reverseFilling then
-            previewButton2.widgets.shieldBarR:SetVertexColor(unpack(CellDB["appearance"]["shield"][2]))
-            previewButton2.widgets.shieldBarR:Show()
-
             if CellDB["appearance"]["overshield"][1] then
                 previewButton2.widgets.overShieldGlowR:SetVertexColor(unpack(CellDB["appearance"]["overshield"][2]))
                 previewButton2.widgets.overShieldGlowR:Show()
@@ -475,7 +512,6 @@ local function UpdatePreviewShields(r, g, b)
                 previewButton2.widgets.overShieldGlowR:Hide()
             end
         else
-            previewButton2.widgets.shieldBarR:Hide()
             previewButton2.widgets.overShieldGlowR:Hide()
         end
     end
