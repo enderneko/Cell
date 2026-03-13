@@ -343,7 +343,7 @@ end)
 -- events
 -------------------------------------------------
 eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
-    if event == "ENCOUNTER_END" then
+    if event == "ENCOUNTER_END" or event == "PLAYER_REGEN_ENABLED" then
         Reset()
         F.IterateAllUnitButtons(HideCasts, true)
         return
@@ -529,6 +529,7 @@ function I.EnableTargetedSpells(enabled)
         eventFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 
         eventFrame:RegisterEvent("ENCOUNTER_END")
+        eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 
         Cell.RegisterCallback("EnterInstance", "TargetedSpells_EnterInstance", EnterLeaveInstance)
         Cell.RegisterCallback("LeaveInstance", "TargetedSpells_LeaveInstance", EnterLeaveInstance)
