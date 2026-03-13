@@ -204,7 +204,11 @@ local function CheckUnitCast(sourceUnit, isRecheck)
         -- Use C_Spell.IsSpellImportant as a proxy for "dangerous/boss spell"
         if C_Spell and C_Spell.IsSpellImportant then
             local ok, important = pcall(C_Spell.IsSpellImportant, spellId)
-            if ok and important then
+            if ok and not issecretvalue(important) and important then
+                inList = true
+                shouldTrack = true
+            elseif ok and issecretvalue(important) then
+                -- Secret boolean — treat as important (safe assumption for enemy casts)
                 inList = true
                 shouldTrack = true
             end
