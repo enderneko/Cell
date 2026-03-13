@@ -25,26 +25,24 @@ local displayMode = "Both" -- "Icons", "Border", "Both"
 local eventFrame = CreateFrame("Frame")
 
 -- Secret-safe version of F.GetTargetUnitID
--- UnitIsUnit can return secret booleans on Midnight — wrap each call in pcall
+-- UnitIsUnit can return secret booleans on Midnight — check with issecretvalue before boolean test
+local function SafeUnitIsUnit(a, b)
+    local ok, result = pcall(UnitIsUnit, a, b)
+    if not ok then return false end
+    if issecretvalue(result) then return false end
+    return result
+end
+
 local function GetTargetUnitID_Safe(target)
-    local ok, result
+    if SafeUnitIsUnit(target, "player") then return "player" end
+    if SafeUnitIsUnit(target, "pet") then return "pet" end
 
-    ok, result = pcall(UnitIsUnit, target, "player")
-    if ok and result then return "player" end
-
-    ok, result = pcall(UnitIsUnit, target, "pet")
-    if ok and result then return "pet" end
-
-    -- Check group members
     for unit in F.IterateGroupMembers() do
-        ok, result = pcall(UnitIsUnit, target, unit)
-        if ok and result then return unit end
+        if SafeUnitIsUnit(target, unit) then return unit end
     end
 
-    -- Check group pets
     for unit in F.IterateGroupPets() do
-        ok, result = pcall(UnitIsUnit, target, unit)
-        if ok and result then return unit end
+        if SafeUnitIsUnit(target, unit) then return unit end
     end
 end
 
@@ -321,8 +319,7 @@ eventFrame:SetScript("OnUpdate", function(self, elapsed)
                     if not casts[sourceKey]["targetUnit"] then
                         recheckRequired = UnitExists(unit.."target")
                     else
-                        local okU, sameUnit = pcall(UnitIsUnit, unit.."target", casts[sourceKey]["targetUnit"])
-                        recheckRequired = okU and not sameUnit
+                        recheckRequired = not SafeUnitIsUnit(unit.."target", casts[sourceKey]["targetUnit"])
                     end
                     if recheckRequired then
                         CheckUnitCast(unit, true)
