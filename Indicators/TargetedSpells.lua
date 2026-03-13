@@ -128,13 +128,13 @@ local function ShowCastsSecret(b, activeCasts, numCasts)
     local unit = b.states.displayedUnit or b.states.unit
     if not unit then return end
 
-    -- Icons: set up each icon slot, let SetShown control per-cast visibility
+    -- Icons: set up each icon slot, use SetAlphaFromBoolean for secret-safe visibility
+    -- SetAlphaFromBoolean is AllowedWhenTainted (works from addon code)
     if displayMode ~= "Border" then
         local num = min(maxIcons, numCasts)
         for i = 1, num do
             local cast = activeCasts[i]
             ts[i].cooldown:SetReverse(not cast.isChanneling)
-            -- Set cooldown data (always — SetShown will hide if not targeted)
             ts[i].duration:Hide()
             if cast.count and cast.count ~= 1 then
                 ts[i].stack:Show()
@@ -147,8 +147,9 @@ local function ShowCastsSecret(b, activeCasts, numCasts)
             ts[i].cooldown:SetSwipeColor(unpack(Cell.vars.targetedSpellsGlow[2]))
             ts[i].cooldown:SetCooldown(cast.startTime, cast.endTime - cast.startTime)
             ts[i].icon:SetTexture(cast.icon)
-            -- C-level SetShown with secret boolean — only shows on the correct target's frame
-            ts[i]:SetShown(UnitIsUnit(cast.sourceUnit .. "target", unit))
+            ts[i]:Show()
+            -- SetAlphaFromBoolean: alpha 1 if targeted, alpha 0 if not (C-level, accepts secrets)
+            ts[i]:SetAlphaFromBoolean(UnitIsUnit(cast.sourceUnit .. "target", unit))
         end
         -- Hide unused slots
         for i = numCasts + 1, #ts do
@@ -157,11 +158,10 @@ local function ShowCastsSecret(b, activeCasts, numCasts)
         ts:UpdateSize(num)
     end
 
-    -- Glow: start the glow effect, use SetShown on tsGlowFrame with the first cast's result
+    -- Glow: start the glow effect, use SetAlphaFromBoolean on tsGlowFrame
     if displayMode ~= "Icons" and numCasts > 0 then
         ts:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
-        -- Use the first/most important cast to control glow visibility via C-level API
-        ts.tsGlowFrame:SetShown(UnitIsUnit(activeCasts[1].sourceUnit .. "target", unit))
+        ts.tsGlowFrame:SetAlphaFromBoolean(UnitIsUnit(activeCasts[1].sourceUnit .. "target", unit))
     else
         ts:HideGlow()
     end
