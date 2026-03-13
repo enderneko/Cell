@@ -444,6 +444,7 @@ local function ResetIndicators()
         elseif t["indicatorName"] == "targetedSpells" then
             I.UpdateTargetedSpellsNum(t["num"])
             I.ShowAllTargetedSpells(t["showAllSpells"])
+            I.UpdateTargetedSpellsDisplayMode(t["displayMode"] or "Both")
             I.EnableTargetedSpells(t["enabled"])
 
         -- update actions

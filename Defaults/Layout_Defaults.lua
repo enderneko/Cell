@@ -479,6 +479,7 @@ Cell.defaults.layout = {
             ["type"] = "built-in",
             ["enabled"] = true,
             ["showAllSpells"] = false,
+            ["displayMode"] = "Both",
             ["position"] = {"TOPLEFT", "button", "TOPLEFT", -4, 4},
             ["frameLevel"] = 50,
             ["size"] = {20, 20},

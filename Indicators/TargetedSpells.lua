@@ -21,6 +21,7 @@ local casts = {}
 local castsOnUnit, sortedCastsOnUnit = {}, {}
 local recheck = {}
 local maxIcons, showAllSpells
+local displayMode = "Both" -- "Icons", "Border", "Both"
 local eventFrame = CreateFrame("Frame")
 
 local function Reset()
@@ -34,23 +35,37 @@ end
 -- show / hide
 -------------------------------------------------
 local function HideCasts(b)
-    b.indicators.targetedSpells:UpdateSize(0)
-    b.indicators.targetedSpells:HideGlow()
+    local ts = b.indicators.targetedSpells
+    if displayMode ~= "Border" then
+        ts:UpdateSize(0)
+    end
+    ts:HideGlow()
 end
 
 local function ShowCasts(b, showGlow, sortedCasts, num)
-    num = min(maxIcons, num)
-    for i = 1, num do
-        local cast = sortedCasts[i]
-        b.indicators.targetedSpells[i].cooldown:SetReverse(not cast.isChanneling)
-        b.indicators.targetedSpells[i]:SetCooldown(cast.startTime, cast.endTime-cast.startTime, cast.icon, cast.count)
-    end
-    b.indicators.targetedSpells:UpdateSize(num)
+    local ts = b.indicators.targetedSpells
 
-    if showGlow then
-        b.indicators.targetedSpells:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
+    -- Show icons in Icons and Both modes
+    if displayMode ~= "Border" then
+        num = min(maxIcons, num)
+        for i = 1, num do
+            local cast = sortedCasts[i]
+            ts[i].cooldown:SetReverse(not cast.isChanneling)
+            ts[i]:SetCooldown(cast.startTime, cast.endTime-cast.startTime, cast.icon, cast.count)
+        end
+        ts:UpdateSize(num)
+    end
+
+    -- Show glow in Border and Both modes (Icons mode: only on listed spells)
+    if displayMode == "Icons" then
+        if showGlow then
+            ts:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
+        else
+            ts:HideGlow()
+        end
     else
-        b.indicators.targetedSpells:HideGlow()
+        -- Border or Both: always show glow when any cast is targeting this unit
+        ts:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
     end
 end
 
@@ -198,6 +213,12 @@ local function CheckUnitCast(sourceUnit, isRecheck)
         if showAllSpells then
             shouldTrack = true
         end
+    end
+
+    -- In Border or Both mode, track all enemy casts targeting group members
+    -- (glow always shows regardless of spell list)
+    if not shouldTrack and displayMode ~= "Icons" then
+        shouldTrack = true
     end
 
     if not shouldTrack then return end
@@ -482,4 +503,8 @@ end
 
 function I.UpdateTargetedSpellsNum(num)
     maxIcons = num
+end
+
+function I.UpdateTargetedSpellsDisplayMode(mode)
+    displayMode = mode or "Both"
 end

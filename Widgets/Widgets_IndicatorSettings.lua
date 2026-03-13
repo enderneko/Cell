@@ -6522,6 +6522,58 @@ local function CreateSetting_IconStyle(parent)
     return widget
 end
 
+local function CreateSetting_TargetedSpellsDisplayMode(parent)
+    local widget
+
+    if not settingWidgets["targetedSpellsDisplayMode"] then
+        widget = Cell.CreateFrame("CellIndicatorSettings_TargetedSpellsDisplayMode", parent, 240, 50)
+        settingWidgets["targetedSpellsDisplayMode"] = widget
+
+        widget.dropdown = Cell.CreateDropdown(widget, 245)
+        widget.dropdown:SetPoint("TOPLEFT", 5, -20)
+        widget.dropdown:SetItems({
+            {
+                ["text"] = L["Icons"],
+                ["value"] = "Icons",
+                ["onClick"] = function()
+                    widget.func("Icons")
+                end,
+            },
+            {
+                ["text"] = L["Border"],
+                ["value"] = "Border",
+                ["onClick"] = function()
+                    widget.func("Border")
+                end,
+            },
+            {
+                ["text"] = L["Both"],
+                ["value"] = "Both",
+                ["onClick"] = function()
+                    widget.func("Both")
+                end,
+            },
+        })
+
+        widget.label = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.label:SetText(L["Display Mode"])
+        widget.label:SetPoint("BOTTOMLEFT", widget.dropdown, "TOPLEFT", 0, 1)
+
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        function widget:SetDBValue(value)
+            widget.dropdown:SetSelectedValue(value or "Both")
+        end
+    else
+        widget = settingWidgets["targetedSpellsDisplayMode"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local CLASS_ROLES = {
     ["DEATHKNIGHT"] = {"TANK", "DAMAGER"},
     ["DEMONHUNTER"] = {"TANK", "DAMAGER"},
@@ -6832,6 +6884,7 @@ local builders = {
     -- ["showOn"] = CreateSetting_ShowOn,
     ["maxValue"] = CreateSetting_MaxValue,
     ["iconStyle"] = CreateSetting_IconStyle,
+    ["targetedSpellsDisplayMode"] = CreateSetting_TargetedSpellsDisplayMode,
     ["powerTextFilters"] = CreateSetting_RoleFilters,
 }
 
