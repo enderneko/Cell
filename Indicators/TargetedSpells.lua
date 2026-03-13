@@ -24,6 +24,30 @@ local maxIcons, showAllSpells
 local displayMode = "Both" -- "Icons", "Border", "Both"
 local eventFrame = CreateFrame("Frame")
 
+-- Secret-safe version of F.GetTargetUnitID
+-- UnitIsUnit can return secret booleans on Midnight — wrap each call in pcall
+local function GetTargetUnitID_Safe(target)
+    local ok, result
+
+    ok, result = pcall(UnitIsUnit, target, "player")
+    if ok and result then return "player" end
+
+    ok, result = pcall(UnitIsUnit, target, "pet")
+    if ok and result then return "pet" end
+
+    -- Check group members
+    for unit in F.IterateGroupMembers() do
+        ok, result = pcall(UnitIsUnit, target, unit)
+        if ok and result then return unit end
+    end
+
+    -- Check group pets
+    for unit in F.IterateGroupPets() do
+        ok, result = pcall(UnitIsUnit, target, unit)
+        if ok and result then return unit end
+    end
+end
+
 local function Reset()
     wipe(recheck)
     wipe(casts)
@@ -253,11 +277,9 @@ local function CheckUnitCast(sourceUnit, isRecheck)
         }
     end
 
-    -- Find which group member is the target using UnitIsUnit
-    -- On Midnight, UnitIsUnit may return secret booleans for nameplate targets — pcall to be safe
-    local targetUnit = sourceUnit.."target"
-    local ok, resolved = pcall(F.GetTargetUnitID, targetUnit)
-    targetUnit = ok and resolved or nil
+    -- Find which group member is the target
+    -- UnitIsUnit returns secret booleans on Midnight — use our safe resolver
+    local targetUnit = GetTargetUnitID_Safe(sourceUnit.."target")
 
     -- update spell target
     casts[sourceKey]["targetUnit"] = targetUnit
@@ -295,7 +317,13 @@ eventFrame:SetScript("OnUpdate", function(self, elapsed)
                     recheck[sourceKey] = nil
                 else
                     empty = false
-                    local recheckRequired = (not casts[sourceKey]["targetUnit"] and UnitExists(unit.."target")) or (casts[sourceKey]["targetUnit"] and not UnitIsUnit(unit.."target", casts[sourceKey]["targetUnit"]))
+                    local recheckRequired
+                    if not casts[sourceKey]["targetUnit"] then
+                        recheckRequired = UnitExists(unit.."target")
+                    else
+                        local okU, sameUnit = pcall(UnitIsUnit, unit.."target", casts[sourceKey]["targetUnit"])
+                        recheckRequired = okU and not sameUnit
+                    end
                     if recheckRequired then
                         CheckUnitCast(unit, true)
                     end
