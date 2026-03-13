@@ -397,8 +397,12 @@ local function ShowGlowPreview(frame)
         frame:UpdateSize(num)
     end
 
-    -- Show glow in Border and Both modes; in Icons mode show glow too for preview
-    frame:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
+    -- Show glow in Border and Both modes; hide in Icons mode
+    if displayMode == "Icons" then
+        frame:HideGlow()
+    else
+        frame:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
+    end
 end
 
 local function ShowGlow(frame, glowType, color, arg1, arg2, arg3, arg4)
