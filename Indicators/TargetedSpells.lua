@@ -389,13 +389,9 @@ local function ShowGlowPreview(frame)
         end
         frame:UpdateSize(0)
     else
-        -- Icons or Both: show preview icons
+        -- Icons or Both: show preview icons (OnShow hooks handle icon/cooldown)
         local num = min(maxIcons or 1, #frame)
         for i = 1, num do
-            frame[i].icon:SetTexture(134400) -- question mark icon
-            frame[i].border:Show()
-            frame[i].cooldown:Hide()
-            frame[i].stack:Hide()
             frame[i]:Show()
         end
         frame:UpdateSize(num)
