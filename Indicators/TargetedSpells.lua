@@ -13,6 +13,9 @@ local UnitIsUnit = UnitIsUnit
 local UnitIsEnemy = UnitIsEnemy
 local UnitCastingInfo = UnitCastingInfo
 local UnitChannelInfo = UnitChannelInfo
+local issecretvalue = issecretvalue or function() return false end
+local C_Spell = C_Spell
+local PlayerIsSpellTarget = PlayerIsSpellTarget
 
 local casts = {}
 local castsOnUnit, sortedCastsOnUnit = {}, {}
@@ -52,43 +55,48 @@ local function ShowCasts(b, showGlow, sortedCasts, num)
 end
 
 -------------------------------------------------
--- update casts for guid
+-- update casts for unit
 -------------------------------------------------
-local function GetCastsOnUnit(guid)
-    if castsOnUnit[guid] then
-        wipe(castsOnUnit[guid])
-        wipe(sortedCastsOnUnit[guid])
+local function GetCastsOnUnit(targetUnit)
+    if castsOnUnit[targetUnit] then
+        wipe(castsOnUnit[targetUnit])
+        wipe(sortedCastsOnUnit[targetUnit])
     else
-        castsOnUnit[guid] = {}
-        sortedCastsOnUnit[guid] = {}
+        castsOnUnit[targetUnit] = {}
+        sortedCastsOnUnit[targetUnit] = {}
     end
 
     local inListFound
-    for sourceGUID, castInfo in pairs(casts) do
-        if guid == castInfo["targetGUID"] then
+    local castIndex = 0
+    for sourceKey, castInfo in pairs(casts) do
+        if targetUnit == castInfo["targetUnit"] then
             if castInfo["endTime"] > GetTime() then -- not expired
-                local spellId = castInfo["spellId"]
-                if not castsOnUnit[guid][spellId] then
-                    castsOnUnit[guid][spellId] = {["count"] = 0}
+                -- On Midnight, spellId may be secret — can't use as table key.
+                -- Use a numeric index instead to group casts.
+                castIndex = castIndex + 1
+                local key = castInfo["nonSecretSpellId"] or castIndex
+                if not castsOnUnit[targetUnit][key] then
+                    castsOnUnit[targetUnit][key] = {["count"] = 0}
                 end
-                if not castsOnUnit[guid][spellId]["endTime"] or castsOnUnit[guid][spellId]["endTime"] > castInfo["endTime"] then --! shorter duration
-                    castsOnUnit[guid][spellId]["startTime"] = castInfo["startTime"]
-                    castsOnUnit[guid][spellId]["endTime"] = castInfo["endTime"]
-                    castsOnUnit[guid][spellId]["icon"] = castInfo["icon"]
+                if not castsOnUnit[targetUnit][key]["endTime"] or castsOnUnit[targetUnit][key]["endTime"] > castInfo["endTime"] then --! shorter duration
+                    castsOnUnit[targetUnit][key]["startTime"] = castInfo["startTime"]
+                    castsOnUnit[targetUnit][key]["endTime"] = castInfo["endTime"]
+                    castsOnUnit[targetUnit][key]["icon"] = castInfo["icon"]
+                    castsOnUnit[targetUnit][key]["isChanneling"] = castInfo["isChanneling"]
                 end
-                castsOnUnit[guid][spellId]["count"] = castsOnUnit[guid][spellId]["count"] + 1
+                castsOnUnit[targetUnit][key]["count"] = castsOnUnit[targetUnit][key]["count"] + 1
 
-                if Cell.vars.targetedSpellsList[spellId] then
-                    castsOnUnit[guid][spellId]["inList"] = true
+                if castInfo["inList"] then
+                    castsOnUnit[targetUnit][key]["inList"] = true
                     inListFound = true
                 end
             else
-                casts[sourceGUID] = nil
+                casts[sourceKey] = nil
             end
         end
     end
 
-    return castsOnUnit[guid], inListFound
+    return castsOnUnit[targetUnit], inListFound
 end
 
 local function Comparator(a, b)
@@ -98,40 +106,22 @@ local function Comparator(a, b)
     return a.startTime < b.startTime
 end
 
-local function UpdateCastsOnUnit(guid)
-    if not guid then return end
+local function UpdateCastsOnUnit(targetUnit)
+    if not targetUnit then return end
 
-    -- local startTime, endTime, spellId, icon, isChanneling
-    local t, showGlow = GetCastsOnUnit(guid)
+    local t, showGlow = GetCastsOnUnit(targetUnit)
 
-    for spellId, castInfo in pairs(t) do
-        tinsert(sortedCastsOnUnit[guid], castInfo)
-
-        -- if not endTime then --! init
-        --     startTime, endTime, spellId, icon, isChanneling = castInfo["startTime"], castInfo["endTime"], castInfo["spellId"], castInfo["icon"], castInfo["isChanneling"]
-        -- else
-        --     spellId = castInfo["spellId"]
-        --     if Cell.vars.targetedSpellsList[spellId] then --! [IN LIST]
-        --         if not inListFound or endTime > castInfo["endTime"] then --! NOT FOUND BEFORE or SHORTER DURATION
-        --             startTime, endTime, icon, isChanneling = castInfo["startTime"], castInfo["endTime"], castInfo["icon"], castInfo["isChanneling"]
-        --         end
-        --     elseif not inListFound and endTime > castInfo["endTime"] then --! [NOT IN LIST] NOT FOUND BEFORE and SHORTER DURATION
-        --         startTime, endTime, icon, isChanneling = castInfo["startTime"], castInfo["endTime"], castInfo["icon"], castInfo["isChanneling"]
-        --     end
-        -- end
-
-        -- if Cell.vars.targetedSpellsList[spellId] then
-        --     inListFound = true
-        -- end
+    for key, castInfo in pairs(t) do
+        tinsert(sortedCastsOnUnit[targetUnit], castInfo)
     end
 
-    local n = #sortedCastsOnUnit[guid]
+    local n = #sortedCastsOnUnit[targetUnit]
 
     if n == 0 then
-        F.HandleUnitButton("guid", guid, HideCasts)
+        F.HandleUnitButton("unit", targetUnit, HideCasts)
     else
-        table.sort(sortedCastsOnUnit[guid], Comparator)
-        F.HandleUnitButton("guid", guid, ShowCasts, showGlow, sortedCastsOnUnit[guid], n)
+        table.sort(sortedCastsOnUnit[targetUnit], Comparator)
+        F.HandleUnitButton("unit", targetUnit, ShowCasts, showGlow, sortedCastsOnUnit[targetUnit], n)
     end
 end
 
@@ -141,27 +131,16 @@ end
 local function CheckUnitCast(sourceUnit, isRecheck)
     if not UnitIsEnemy("player", sourceUnit) then return end
 
-    -- On Midnight 12.0.0+, enemy spellcast info is secret in instances
-    -- Player's own casts (and pets) are always non-secret
-    if Cell.isMidnight then
-        local isPlayerCast = (sourceUnit == "player" or sourceUnit == "pet" or sourceUnit == "vehicle")
-        if not isPlayerCast and F.IsAuraRestricted and F.IsAuraRestricted() then
-            return -- skip enemy spell tracking during restricted periods
-        end
-    end
-
-    local sourceGUID = UnitGUID(sourceUnit)
-    -- Midnight 12.0.0+: UnitGUID for nameplates may return secret strings
-    if issecretvalue and issecretvalue(sourceGUID) then return end
-    if not sourceGUID then return end
-    local targetGUID
+    -- Use sourceUnit as tracking key (e.g., "nameplate1", "target").
+    -- UnitGUID can be secret on Midnight — sourceUnit strings are always safe.
+    local sourceKey = sourceUnit
     local previousTarget, isChanneling
 
-    if casts[sourceGUID] then
-        previousTarget = casts[sourceGUID]["targetGUID"]
-        if casts[sourceGUID]["endTime"] <= GetTime() then
+    if casts[sourceKey] then
+        previousTarget = casts[sourceKey]["targetUnit"]
+        if casts[sourceKey]["endTime"] <= GetTime() then
             --! expired
-            casts[sourceGUID] = nil
+            casts[sourceKey] = nil
             UpdateCastsOnUnit(previousTarget)
             previousTarget = nil
         end
@@ -175,59 +154,103 @@ local function CheckUnitCast(sourceUnit, isRecheck)
         isChanneling = true
     end
 
-    -- print(sourceUnit, name, spellId)
+    if not spellId then return end
 
-    -- spellId may be secret in 12.0+
-    local okSp
-    okSp, spellId = pcall(function() return spellId + 0 end)
-    if not okSp then spellId = nil end
+    -- Determine if spellId is secret
+    local spellIdIsSecret = issecretvalue(spellId)
+    local nonSecretSpellId -- used for grouping and list lookup when available
 
-    if spellId and (Cell.vars.targetedSpellsList[spellId] or showAllSpells) then
-        if casts[sourceGUID] then
-            casts[sourceGUID]["startTime"] = startTimeMS/1000
-            casts[sourceGUID]["endTime"] = endTimeMS/1000
-            casts[sourceGUID]["spellId"] = spellId
-            casts[sourceGUID]["icon"] = texture
-        else
-            casts[sourceGUID] = {
-                ["startTime"] = startTimeMS/1000,
-                ["endTime"] = endTimeMS/1000,
-                ["spellId"] = spellId,
-                ["icon"] = texture,
-                ["isChanneling"] = isChanneling,
-                -- ["targetGUID"] = targetGUID,
-                -- ["sourceUnit"] = sourceUnit,
-                -- ["targetUnit"] = targetUnit,
-                ["recheck"] = 0,
-            }
-        end
+    if not spellIdIsSecret then
+        nonSecretSpellId = spellId
+    end
 
-        local targetUnit = sourceUnit.."target"
-        targetUnit = F.GetTargetUnitID(targetUnit) -- units in group (players/pets), no npcs
-        if targetUnit then
-            targetGUID = UnitGUID(targetUnit)
-            if targetGUID then
-                local okTG = pcall(function() local _ = ({[targetGUID]=true})[targetGUID] end)
-                if not okTG then targetGUID = nil end
-            end
-        end
-
-        -- update spell target
-        casts[sourceGUID]["targetUnit"] = targetUnit
-        casts[sourceGUID]["targetGUID"] = targetGUID
-        casts[sourceGUID]["nonNameplate"] = not strfind(sourceUnit, "^nameplate")
-
-        UpdateCastsOnUnit(targetGUID)
-
-        if not isRecheck then
-            if not recheck[sourceGUID] or not (strfind(sourceUnit, "target$") or strfind(sourceUnit, "^nameplate")) then
-                recheck[sourceGUID] = sourceUnit
-            end
-            eventFrame:Show()
+    -- Get icon: C_Spell.GetSpellTexture accepts secret spellId (C-level API)
+    if Cell.isMidnight and C_Spell and C_Spell.GetSpellTexture then
+        local ok, tex = pcall(C_Spell.GetSpellTexture, spellId)
+        if ok and tex then
+            texture = tex
         end
     end
 
-    if previousTarget and previousTarget ~= targetGUID then
+    -- Determine if this spell should be tracked
+    local inList = false
+    local shouldTrack = false
+
+    if nonSecretSpellId then
+        -- Non-secret: use normal list lookup
+        if Cell.vars.targetedSpellsList[nonSecretSpellId] then
+            inList = true
+            shouldTrack = true
+        elseif showAllSpells then
+            shouldTrack = true
+        end
+    else
+        -- Secret spellId: can't look up in list.
+        -- Use C_Spell.IsSpellImportant as a proxy for "dangerous/boss spell"
+        if C_Spell and C_Spell.IsSpellImportant then
+            local ok, important = pcall(C_Spell.IsSpellImportant, spellId)
+            if ok and important then
+                inList = true
+                shouldTrack = true
+            end
+        end
+        -- In showAllSpells mode, show all enemy casts even if secret
+        if showAllSpells then
+            shouldTrack = true
+        end
+    end
+
+    if not shouldTrack then return end
+
+    -- Time values may be secret on Midnight — use pcall to safely convert
+    local startTime, endTime
+    if not issecretvalue(startTimeMS) and not issecretvalue(endTimeMS) then
+        startTime = startTimeMS / 1000
+        endTime = endTimeMS / 1000
+    else
+        -- Fallback: use current time + reasonable estimate
+        startTime = GetTime()
+        endTime = GetTime() + 3
+    end
+
+    if casts[sourceKey] then
+        casts[sourceKey]["startTime"] = startTime
+        casts[sourceKey]["endTime"] = endTime
+        casts[sourceKey]["spellId"] = spellId
+        casts[sourceKey]["nonSecretSpellId"] = nonSecretSpellId
+        casts[sourceKey]["icon"] = texture
+        casts[sourceKey]["inList"] = inList
+    else
+        casts[sourceKey] = {
+            ["startTime"] = startTime,
+            ["endTime"] = endTime,
+            ["spellId"] = spellId,
+            ["nonSecretSpellId"] = nonSecretSpellId,
+            ["icon"] = texture,
+            ["isChanneling"] = isChanneling,
+            ["inList"] = inList,
+            ["recheck"] = 0,
+        }
+    end
+
+    -- Find which group member is the target using UnitIsUnit (secret-safe)
+    local targetUnit = sourceUnit.."target"
+    targetUnit = F.GetTargetUnitID(targetUnit) -- resolves to group unit via UnitIsUnit
+
+    -- update spell target
+    casts[sourceKey]["targetUnit"] = targetUnit
+    casts[sourceKey]["nonNameplate"] = not strfind(sourceUnit, "^nameplate")
+
+    UpdateCastsOnUnit(targetUnit)
+
+    if not isRecheck then
+        if not recheck[sourceKey] or not (strfind(sourceUnit, "target$") or strfind(sourceUnit, "^nameplate")) then
+            recheck[sourceKey] = sourceUnit
+        end
+        eventFrame:Show()
+    end
+
+    if previousTarget and previousTarget ~= targetUnit then
         UpdateCastsOnUnit(previousTarget)
     end
 end
@@ -243,21 +266,20 @@ eventFrame:SetScript("OnUpdate", function(self, elapsed)
 
         local empty = true
 
-        for guid, unit in pairs(recheck) do
-            if casts[guid] then
-                casts[guid]["recheck"] = casts[guid]["recheck"] + 1
-                if casts[guid]["recheck"] >= 6 then
-                    recheck[guid] = nil
+        for sourceKey, unit in pairs(recheck) do
+            if casts[sourceKey] then
+                casts[sourceKey]["recheck"] = casts[sourceKey]["recheck"] + 1
+                if casts[sourceKey]["recheck"] >= 6 then
+                    recheck[sourceKey] = nil
                 else
                     empty = false
-                    local recheckRequired = (not casts[guid]["targetUnit"] and UnitExists(unit.."target")) or (casts[guid]["targetUnit"] and not UnitIsUnit(unit.."target", casts[guid]["targetUnit"]))
+                    local recheckRequired = (not casts[sourceKey]["targetUnit"] and UnitExists(unit.."target")) or (casts[sourceKey]["targetUnit"] and not UnitIsUnit(unit.."target", casts[sourceKey]["targetUnit"]))
                     if recheckRequired then
-                        -- print(unit, casts[guid]["recheck"], recheckRequired)
                         CheckUnitCast(unit, true)
                     end
                 end
             else
-                recheck[guid] = nil
+                recheck[sourceKey] = nil
             end
         end
 
@@ -286,24 +308,19 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
         CheckUnitCast(sourceUnit)
 
     elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
-        local sourceGUID = UnitGUID(sourceUnit)
-        -- Midnight 12.0.0+: UnitGUID may return secret strings — can't use as table key
-        if issecretvalue and issecretvalue(sourceGUID) then return end
-        if not sourceGUID then return end
-        if casts[sourceGUID] then
-            previousTarget = casts[sourceGUID]["targetGUID"]
-            casts[sourceGUID] = nil
+        -- Use sourceUnit as key (secret-safe, unlike UnitGUID)
+        local sourceKey = sourceUnit
+        if casts[sourceKey] then
+            local previousTarget = casts[sourceKey]["targetUnit"]
+            casts[sourceKey] = nil
             UpdateCastsOnUnit(previousTarget)
         end
 
     elseif event == "NAME_PLATE_UNIT_REMOVED" then
-        local sourceGUID = UnitGUID(sourceUnit)
-        -- Midnight 12.0.0+: UnitGUID may return secret strings — can't use as table key
-        if issecretvalue and issecretvalue(sourceGUID) then return end
-        if not sourceGUID then return end
-        if casts[sourceGUID] and not casts[sourceGUID]["nonNameplate"] then
-            previousTarget = casts[sourceGUID]["targetGUID"]
-            casts[sourceGUID] = nil
+        local sourceKey = sourceUnit
+        if casts[sourceKey] and not casts[sourceKey]["nonNameplate"] then
+            local previousTarget = casts[sourceKey]["targetUnit"]
+            casts[sourceKey] = nil
             UpdateCastsOnUnit(previousTarget)
         end
     end
