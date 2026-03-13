@@ -33,7 +33,8 @@ local function SafeUnitIsUnit(a, b)
     return result
 end
 
-local function GetTargetUnitID_Safe(target)
+local function GetTargetUnitID_Safe(target, sourceUnit)
+    -- Try UnitIsUnit first (works outside instances)
     if SafeUnitIsUnit(target, "player") then return "player" end
     if SafeUnitIsUnit(target, "pet") then return "pet" end
 
@@ -43,6 +44,20 @@ local function GetTargetUnitID_Safe(target)
 
     for unit in F.IterateGroupPets() do
         if SafeUnitIsUnit(target, unit) then return unit end
+    end
+
+    -- Fallback: PlayerIsSpellTarget (Midnight API, returns non-secret boolean)
+    if PlayerIsSpellTarget and sourceUnit then
+        if PlayerIsSpellTarget(sourceUnit, "player") then return "player" end
+        if PlayerIsSpellTarget(sourceUnit, "pet") then return "pet" end
+
+        for unit in F.IterateGroupMembers() do
+            if PlayerIsSpellTarget(sourceUnit, unit) then return unit end
+        end
+
+        for unit in F.IterateGroupPets() do
+            if PlayerIsSpellTarget(sourceUnit, unit) then return unit end
+        end
     end
 end
 
@@ -276,8 +291,8 @@ local function CheckUnitCast(sourceUnit, isRecheck)
     end
 
     -- Find which group member is the target
-    -- UnitIsUnit returns secret booleans on Midnight — use our safe resolver
-    local targetUnit = GetTargetUnitID_Safe(sourceUnit.."target")
+    -- UnitIsUnit returns secret booleans on Midnight — falls back to PlayerIsSpellTarget
+    local targetUnit = GetTargetUnitID_Safe(sourceUnit.."target", sourceUnit)
 
     -- update spell target
     casts[sourceKey]["targetUnit"] = targetUnit
