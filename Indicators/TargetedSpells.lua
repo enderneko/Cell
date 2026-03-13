@@ -258,9 +258,11 @@ local function CheckUnitCast(sourceUnit, isRecheck)
         }
     end
 
-    -- Find which group member is the target using UnitIsUnit (secret-safe)
+    -- Find which group member is the target using UnitIsUnit
+    -- On Midnight, UnitIsUnit may return secret booleans for nameplate targets — pcall to be safe
     local targetUnit = sourceUnit.."target"
-    targetUnit = F.GetTargetUnitID(targetUnit) -- resolves to group unit via UnitIsUnit
+    local ok, resolved = pcall(F.GetTargetUnitID, targetUnit)
+    targetUnit = ok and resolved or nil
 
     -- update spell target
     casts[sourceKey]["targetUnit"] = targetUnit
