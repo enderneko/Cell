@@ -381,6 +381,27 @@ local function SetFont(frame, ...)
 end
 
 local function ShowGlowPreview(frame)
+    -- Show/hide icon previews based on display mode
+    if displayMode == "Border" then
+        -- Border only: hide icons, show glow
+        for i = 1, #frame do
+            frame[i]:Hide()
+        end
+        frame:UpdateSize(0)
+    else
+        -- Icons or Both: show preview icons
+        local num = min(maxIcons or 1, #frame)
+        for i = 1, num do
+            frame[i].icon:SetTexture(134400) -- question mark icon
+            frame[i].border:Show()
+            frame[i].cooldown:Hide()
+            frame[i].stack:Hide()
+            frame[i]:Show()
+        end
+        frame:UpdateSize(num)
+    end
+
+    -- Show glow in Border and Both modes; in Icons mode show glow too for preview
     frame:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
 end
 
