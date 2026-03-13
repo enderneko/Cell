@@ -1754,10 +1754,8 @@ local function HandleDebuff(self, auraInfo)
             if fOk then
                 if not issecretvalue(isFiltered) and isFiltered == false then
                     order = 100
-                    print("|cff00ff00[Cell DEBUG]|r RAID flag promoted debuff (non-secret result) auraID=" .. tostring(auraInstanceID) .. " unit=" .. tostring(self.states.displayedUnit))
                 elseif issecretvalue(isFiltered) then
                     order = 100
-                    print("|cffff9900[Cell DEBUG]|r RAID flag promoted debuff (secret result) auraID=" .. tostring(auraInstanceID) .. " unit=" .. tostring(self.states.displayedUnit))
                 end
             end
         end
@@ -1767,7 +1765,6 @@ local function HandleDebuff(self, auraInfo)
         if not order and auraInfo._hasSecrets and enabledIndicators["raidDebuffs"]
             and IsEncounterInProgress and IsEncounterInProgress() then
             order = 100
-            print("|cffff0000[Cell DEBUG]|r Encounter fallback promoted debuff auraID=" .. tostring(auraInstanceID) .. " unit=" .. tostring(self.states.displayedUnit))
         end
         if enabledIndicators["raidDebuffs"] and order then
             auraInfo.raidDebuffOrder = order
