@@ -46,17 +46,24 @@ local function GetTargetUnitID_Safe(target, sourceUnit)
         if SafeUnitIsUnit(target, unit) then return unit end
     end
 
-    -- Fallback: PlayerIsSpellTarget (Midnight API, returns non-secret boolean)
+    -- Fallback: PlayerIsSpellTarget (Midnight API)
     if PlayerIsSpellTarget and sourceUnit then
-        if PlayerIsSpellTarget(sourceUnit, "player") then return "player" end
-        if PlayerIsSpellTarget(sourceUnit, "pet") then return "pet" end
+        local ok, pst
+
+        ok, pst = pcall(PlayerIsSpellTarget, sourceUnit, "player")
+        if ok and not issecretvalue(pst) and pst then return "player" end
+
+        ok, pst = pcall(PlayerIsSpellTarget, sourceUnit, "pet")
+        if ok and not issecretvalue(pst) and pst then return "pet" end
 
         for unit in F.IterateGroupMembers() do
-            if PlayerIsSpellTarget(sourceUnit, unit) then return unit end
+            ok, pst = pcall(PlayerIsSpellTarget, sourceUnit, unit)
+            if ok and not issecretvalue(pst) and pst then return unit end
         end
 
         for unit in F.IterateGroupPets() do
-            if PlayerIsSpellTarget(sourceUnit, unit) then return unit end
+            ok, pst = pcall(PlayerIsSpellTarget, sourceUnit, unit)
+            if ok and not issecretvalue(pst) and pst then return unit end
         end
     end
 end
