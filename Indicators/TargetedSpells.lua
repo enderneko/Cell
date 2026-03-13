@@ -56,16 +56,11 @@ local function ShowCasts(b, showGlow, sortedCasts, num)
         ts:UpdateSize(num)
     end
 
-    -- Show glow in Border and Both modes (Icons mode: only on listed spells)
-    if displayMode == "Icons" then
-        if showGlow then
-            ts:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
-        else
-            ts:HideGlow()
-        end
-    else
-        -- Border or Both: always show glow when any cast is targeting this unit
+    -- Show glow in Border and Both modes only
+    if displayMode ~= "Icons" then
         ts:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
+    else
+        ts:HideGlow()
     end
 end
 
