@@ -35,20 +35,17 @@ eventFrame:SetScript("OnEvent", function(self, event, unit, castGUID, spellID)
     -- filter out players not in your group
     if not (UnitInRaid(unit) or UnitInParty(unit) or unit == "player" or unit == "pet") then return end
 
-    -- spellID may be a secret value in 12.0+
-    local ok, id = pcall(function() return spellID + 0 end)
-    if not ok then return end
+    -- Midnight 12.0.0+: spellID from UNIT_SPELLCAST_SUCCEEDED may be secret
+    -- during restricted contexts; skip if so since we can't use it as a table key
+    if not F.IsValueNonSecret(spellID) then return end
 
     if Cell.vars.actionsDebugModeEnabled then
-        local name = F.GetSpellInfo(id)
-        print("|cFFFF3030[Cell]|r |cFFB2B2B2" .. event .. ":|r", unit, "|cFF00FF00" .. (id or "nil") .. "|r", name)
+        local name = F.GetSpellInfo(spellID)
+        print("|cFFFF3030[Cell]|r |cFFB2B2B2" .. event .. ":|r", unit, "|cFF00FF00" .. (spellID or "nil") .. "|r", name)
     end
 
-    -- Midnight 12.0.0+: spellID from UNIT_SPELLCAST_SUCCEEDED is secret during restricted contexts
-    if Cell.isMidnight and issecretvalue and issecretvalue(spellID) then return end
-
-    if Cell.vars.actions[id] then
-        F.HandleUnitButton("unit", unit, Display, unpack(Cell.vars.actions[id]))
+    if Cell.vars.actions[spellID] then
+        F.HandleUnitButton("unit", unit, Display, unpack(Cell.vars.actions[spellID]))
     end
 end)
 

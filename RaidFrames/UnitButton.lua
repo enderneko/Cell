@@ -27,6 +27,7 @@ local UnitGetTotalAbsorbs = UnitGetTotalAbsorbs
 local UnitGetTotalHealAbsorbs = UnitGetTotalHealAbsorbs
 -- 12.0+ APIs for secret value support
 local issecretvalue = issecretvalue or function() return false end
+local hasanysecretvalues = hasanysecretvalues or function() return false end
 local UnitIsFriend = UnitIsFriend
 local UnitIsUnit = UnitIsUnit
 local UnitIsPlayer = UnitIsPlayer
@@ -87,14 +88,14 @@ local shieldEnabled, overshieldEnabled, overshieldReverseFillEnabled
 local absorbEnabled, absorbInvertColor
 
 -- Midnight: Curve for CELL_FADE_OUT_HEALTH_PERCENT feature
--- Maps health percent â†' alpha so we can evaluate secret health% without comparisons
+-- Maps health percent -> alpha so we can evaluate secret health% without comparisons
 local fadeOutHealthCurve
 local fadeOutHealthCurve_threshold -- track last threshold to know when to rebuild
 local fadeOutHealthCurve_alpha -- track last outOfRangeAlpha to know when to rebuild
 
 -- Builds/rebuilds the fade-out health curve when threshold or alpha changes.
--- health% < threshold â†' alpha 1.0 (fully visible, needs healing)
--- health% >= threshold â†' outOfRangeAlpha (faded out, healthy enough)
+-- health% < threshold -> alpha 1.0 (fully visible, needs healing)
+-- health% >= threshold -> outOfRangeAlpha (faded out, healthy enough)
 local function RebuildFadeOutHealthCurve()
     if not Cell.isMidnight or not C_CurveUtil then return end
     local threshold = CELL_FADE_OUT_HEALTH_PERCENT
@@ -124,23 +125,16 @@ local CheckCLEURequired
 -------------------------------------------------
 -- 12.0+ secret value sanitizer for aura data
 -------------------------------------------------
-local function _notSecret(v)
-    -- issecretvalue() is the only safe operation on secret values;
-    -- must check it BEFORE any comparison (even ~= nil) to avoid
-    -- producing a secret boolean that crashes on and/or
-    if issecretvalue(v) then return false end
-    return v ~= nil
-end
-
 local function SanitizeAura(aura)
     if not aura then return nil end
 
     -- auraInstanceID is the cache key — if secret, drop the aura
-    if not _notSecret(aura.auraInstanceID) then return nil end
+    if not F.IsValueNonSecret(aura.auraInstanceID) then return nil end
 
-    -- Fast path: if name is not secret, no fields are secret.
-    -- Probe once to skip all sanitization outside combat.
-    if not issecretvalue(aura.name) then
+    -- Fast path: if spellId is readable, use C_Secrets.ShouldSpellAuraBeSecret
+    -- (via F.IsSpellAuraNonSecret) to determine if this aura's data is secret.
+    -- If spellId itself is secret, the aura is definitely secret — fall through.
+    if F.IsValueNonSecret(aura.spellId) and F.IsSpellAuraNonSecret(aura.spellId) then
         aura._hasSecrets = false
         aura._dispelNameIsSecret = false
         return aura
@@ -160,9 +154,12 @@ local function SanitizeAura(aura)
     aura._rawExpirationTime = aura.expirationTime
     aura._addedTime         = aura._addedTime or GetTime()
 
-    -- replace secret fields with safe defaults in-place
+    -- Replace secret fields with safe defaults in-place.
+    -- Fields passed to C-level APIs (SetTexture, SetFormattedText) keep their
+    -- raw secret values so the engine can still render them.
     aura.icon       = aura.icon  -- raw; SetTexture() is C-level
     aura._rawSpellId = aura.spellId -- keep secret spellId for C_Spell lookup
+    aura._rawApplications = aura.applications -- keep for C-level SetFormattedText
     aura.name       = nil
     aura.sourceUnit = nil
     aura.dispelName = nil
@@ -226,6 +223,8 @@ local _dispelTypes = {
     {name = "Bleed",   idx = 11, nextIdx = nil, r = 1.00, g = 0.20, b = 0.60},
 }
 
+-- pcall: gracefully handle missing curve APIs on older clients or non-Midnight builds.
+-- CreateColorCurve/SetType may not exist; pcall avoids a hard error at load time.
 do
     local ok = pcall(function()
         if not C_CurveUtil or not C_CurveUtil.CreateColorCurve then return end
@@ -266,12 +265,15 @@ do
     end
 end
 
--- Get a ColorMixin from a curve for a specific aura (returns nil on failure)
+-- Get a ColorMixin from a curve for a specific aura (returns nil on failure).
+-- pcall: _GetAuraDispelTypeColor may error if the aura expired between the
+-- aura iteration and this call, or if the curve/unit combination is invalid.
 local function _getCurveColor(unit, auraInstanceID, curve)
     if not curve then return nil end
     local ok, color = pcall(_GetAuraDispelTypeColor, unit, auraInstanceID, curve)
     if not ok then return nil end
-    if issecretvalue(color) then return nil end
+    -- Secret color objects can't be used with GetRGBA; only non-secret ColorMixins are useful
+    if not F.IsValueNonSecret(color) then return nil end
     return color
 end
 
@@ -344,6 +346,7 @@ function F.TestBracketCurves(unit)
                 local hlColor = _getCurveColor(unit, id, _dispelHighlightCurve)
                 local hlInfo = "nil"
                 if hlColor then
+                    -- pcall: ColorMixin:GetRGBA may crash on secret internal fields
                     local ok, r, g, b, a = pcall(hlColor.GetRGBA, hlColor)
                     if ok then
                         local rS = issecretvalue(r) and "S" or string.format("%.2f", r)
@@ -359,6 +362,7 @@ function F.TestBracketCurves(unit)
                 for _, t in ipairs(_dispelTypes) do
                     local color = _getCurveColor(unit, id, _bracketCurves[t.name])
                     if color then
+                        -- pcall: ColorMixin:GetRGBA may crash on secret internal fields
                         local ok, _, _, _, a = pcall(color.GetRGBA, color)
                         local aStr = (ok and (issecretvalue(a) and "S" or string.format("%.1f", a))) or "ERR"
                         bracketResults[#bracketResults+1] = t.name .. "=" .. aStr
@@ -901,15 +905,50 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     end
                 end, true)
             elseif indicatorName == "powerText" then
-                F.IterateAllUnitButtons(function(b)
+                -- Ensure SetFormat has been called (SetValue is noop until then).
+                local fmt
+                for _, t in next, Cell.vars.currentLayoutTable["indicators"] do
+                    if t["indicatorName"] == "powerText" then
+                        fmt = t["format"]
+                        break
+                    end
+                end
+
+                -- IterateAllUnitButtons doesn't reach active party header
+                -- children. Use the .units sub-table which maps unit tokens
+                -- to the actual visible buttons assigned by the secure header.
+                local function UpdatePowerForButton(b)
+                    local indicator = b.indicators[indicatorName]
+                    if indicator and fmt then
+                        indicator:SetFormat(fmt)
+                    end
                     b._shouldShowPowerText = ShouldShowPowerText(b)
                     CheckPowerEventRegistration(b)
                     if b._shouldShowPowerText then
                         B.UpdatePowerText(b)
                     else
-                        b.indicators[indicatorName]:Hide()
+                        if indicator then indicator:Hide() end
                     end
-                end, true)
+                end
+
+                -- Standard iterator (covers solo, raid, pet, npc, spotlight)
+                F.IterateAllUnitButtons(UpdatePowerForButton, true)
+
+                -- Also reach active party/raid buttons via .units tables
+                if Cell.unitButtons.party and Cell.unitButtons.party.units then
+                    for _, b in pairs(Cell.unitButtons.party.units) do
+                        UpdatePowerForButton(b)
+                    end
+                end
+                if Cell.unitButtons.raid then
+                    for header, buttons in pairs(Cell.unitButtons.raid) do
+                        if type(buttons) == "table" and buttons.units then
+                            for _, b in pairs(buttons.units) do
+                                UpdatePowerForButton(b)
+                            end
+                        end
+                    end
+                end
             elseif indicatorName == "shieldBar" then
                 F.IterateAllUnitButtons(function(b)
                     B.UpdateShield(b)
@@ -1501,6 +1540,10 @@ end
 -- Uses SetCooldownFromDurationObject (CooldownFrame) or DurationObject-driven
 -- StatusBar updates. Duration text is hidden (SetFormattedText produces
 -- invisible output with secret values).
+-- Drives cooldown animations for secret auras using DurationObject APIs.
+-- pcall is required throughout: the aura may expire between the iteration
+-- that found it and these calls, causing GetAuraDuration/SetCooldownFromDurationObject/
+-- EvaluateElapsedPercent to error. Pattern matches ElvUI and Plater.
 local function _ActivateSecretCooldown(frame, auraInfo, unit)
     local cd = frame.cooldown
 
@@ -1550,7 +1593,7 @@ local function _ActivateSecretCooldown(frame, auraInfo, unit)
         end
         if ok then
             if cd.icon and auraInfo.icon then
-                pcall(cd.icon.SetTexture, cd.icon, auraInfo.icon)
+                cd.icon:SetTexture(auraInfo.icon)
             end
             if cd.spark then
                 cd.spark:SetColorTexture(0.5, 0.5, 0.5)
@@ -1620,7 +1663,7 @@ local function _FixSecretCooldowns(indicators, count, cache, unit)
         if frame then
             local aid = frame.auraInstanceID
             local auraInfo = aid and cache[aid]
-            if auraInfo and auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration) then
+            if auraInfo and auraInfo.duration == 0 and not F.IsValueNonSecret(auraInfo._rawDuration) then
                 _ActivateSecretCooldown(frame, auraInfo, unit)
             elseif frame._secretClockActive then
                 _DeactivateSecretCooldown(frame)
@@ -1642,20 +1685,25 @@ local function HandleDebuff(self, auraInfo)
     -- SetTexture() accepts secret numbers, so this works as-is
     local icon = auraInfo.icon
     local count = auraInfo.applications
+    -- Raw count for C-level rendering (SetText); may be secret. Sanitized
+    -- count (always 0 for secret auras) is used for Lua logic above.
+    local rawCount = rawequal(auraInfo._rawApplications, nil) and count or auraInfo._rawApplications
     local debuffType = auraInfo.dispelName or ""
     local spellId = auraInfo.spellId
 
     -- 12.0+: try to resolve spellId/name from raw secret via C_Spell (C-level API)
     if not spellId and auraInfo._rawSpellId ~= nil and C_Spell and C_Spell.GetSpellName then
-        local ok, resolvedName = pcall(C_Spell.GetSpellName, auraInfo._rawSpellId)
-        if ok and resolvedName ~= nil and not issecretvalue(resolvedName) then
-            auraInfo.name = resolvedName
-            name = resolvedName
-            -- C_Spell.GetSpellInfo returns a table with spellID field
-            local ok2, info = pcall(C_Spell.GetSpellInfo, auraInfo._rawSpellId)
-            if ok2 and info and info.spellID ~= nil and not issecretvalue(info.spellID) then
-                auraInfo.spellId = info.spellID
-                spellId = info.spellID
+        if F.IsValueNonSecret(auraInfo._rawSpellId) then
+            local resolvedName = C_Spell.GetSpellName(auraInfo._rawSpellId)
+            if resolvedName ~= nil and F.IsValueNonSecret(resolvedName) then
+                auraInfo.name = resolvedName
+                name = resolvedName
+                -- C_Spell.GetSpellInfo returns a table with spellID field
+                local info = C_Spell.GetSpellInfo(auraInfo._rawSpellId)
+                if info and info.spellID ~= nil and F.IsValueNonSecret(info.spellID) then
+                    auraInfo.spellId = info.spellID
+                    spellId = info.spellID
+                end
             end
         end
     end
@@ -1750,14 +1798,11 @@ local function HandleDebuff(self, auraInfo)
         -- 12.0+: when spellId/name are secret, fall back to server RAID flag.
         if not order and auraInfo._hasSecrets and enabledIndicators["raidDebuffs"]
             and _IsAuraFilteredOut and self.states.displayedUnit then
-            local fOk, isFiltered = pcall(_IsAuraFilteredOut, self.states.displayedUnit,
+            local isFiltered = _IsAuraFilteredOut(self.states.displayedUnit,
                 auraInstanceID, "HARMFUL|RAID")
-            if fOk then
-                if not issecretvalue(isFiltered) and isFiltered == false then
-                    order = 100
-                elseif issecretvalue(isFiltered) then
-                    order = 100
-                end
+            -- Not filtered (false) or secret result (assume raid debuff) → show as raid debuff
+            if not F.IsValueNonSecret(isFiltered) or isFiltered == false then
+                order = 100
             end
         end
         -- 12.0+: during boss encounters, unidentified secret debuffs are likely
@@ -1798,7 +1843,7 @@ local function HandleDebuff(self, auraInfo)
         -- crowdControls
         if enabledIndicators["crowdControls"] and I.IsCrowdControls(name, spellId) and self._debuffs.crowdControlsFound < indicatorNums["crowdControls"] then
             self._debuffs.crowdControlsFound = self._debuffs.crowdControlsFound + 1
-            self.indicators.crowdControls[self._debuffs.crowdControlsFound]:SetCooldown(start, duration, debuffType, icon, count, auraInfo.refreshing)
+            self.indicators.crowdControls[self._debuffs.crowdControlsFound]:SetCooldown(start, duration, debuffType, icon, rawCount, auraInfo.refreshing)
             -- remove from debuffs
             self._debuffs_big[auraInstanceID] = nil
             self._debuffs_normal[auraInstanceID] = nil
@@ -1891,9 +1936,9 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     self.indicators.raidDebuffs[i]:SetCooldown(
                         rdStart,
                         rdDur,
-                        (auraInfo.dispelName and (not issecretvalue or not issecretvalue(auraInfo.dispelName))) and auraInfo.dispelName or "",
+                        (auraInfo.dispelName and F.IsValueNonSecret(auraInfo.dispelName)) and auraInfo.dispelName or "",
                         auraInfo.icon,
-                        auraInfo.applications,
+                        rawequal(auraInfo._rawApplications, nil) and auraInfo.applications or auraInfo._rawApplications,
                         auraInfo.refreshing,
                         I.IsDebuffUseElapsedTime(auraInfo.name, auraInfo.spellId)
                     )
@@ -1932,21 +1977,23 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     if auraInfo._dispelNameIsSecret and _dispelCurvesReady and self.states.displayedUnit then
                         local hlColor = _getCurveColor(self.states.displayedUnit, aid, _dispelHighlightCurve)
                         if hlColor then
+                            -- pcall: GetRGBA is Lua-level on a ColorMixin from curve evaluation;
+                            -- internal color fields may be secret, causing metamethod crashes
                             local ok, r, g, b, a = pcall(hlColor.GetRGBA, hlColor)
                             if ok then
                                 -- transparent = non-dispellable (Physical); use red
-                                if not issecretvalue(a) and a < 0.1 then
+                                if F.IsValueNonSecret(a) and a < 0.1 then
                                     r, g, b = 1, 0, 0
                                 end
                                 if frame.border then
-                                    pcall(frame.border.SetColorTexture, frame.border, r, g, b)
+                                    frame.border:SetColorTexture(r, g, b)
                                 end
                                 if frame.cooldown then
                                     if frame.cooldown.spark then
-                                        pcall(frame.cooldown.spark.SetColorTexture, frame.cooldown.spark, r, g, b)
+                                        frame.cooldown.spark:SetColorTexture(r, g, b)
                                     end
                                     if frame.cooldown.SetSwipeColor then
-                                        pcall(frame.cooldown.SetSwipeColor, frame.cooldown, r, g, b)
+                                        frame.cooldown:SetSwipeColor(r, g, b)
                                     end
                                 end
                             end
@@ -1966,7 +2013,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                         end
                     end
                     -- fix cooldown animation for secret durations
-                    if auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration) then
+                    if auraInfo.duration == 0 and not F.IsValueNonSecret(auraInfo._rawDuration) then
                         _ActivateSecretCooldown(frame, auraInfo, self.states.displayedUnit)
                     elseif frame._secretClockActive then
                         _DeactivateSecretCooldown(frame)
@@ -2025,7 +2072,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     bStart = 0
                     bDur = 0
                 end
-                self.indicators.debuffs[startIndex]:SetCooldown(bStart, bDur, (auraInfo.dispelName and (not issecretvalue or not issecretvalue(auraInfo.dispelName))) and auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing, true)
+                self.indicators.debuffs[startIndex]:SetCooldown(bStart, bDur, (auraInfo.dispelName and F.IsValueNonSecret(auraInfo.dispelName)) and auraInfo.dispelName or "", auraInfo.icon, rawequal(auraInfo._rawApplications, nil) and auraInfo.applications or auraInfo._rawApplications, auraInfo.refreshing, true)
                 self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
                 self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
@@ -2046,7 +2093,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     nStart = 0
                     nDur = 0
                 end
-                self.indicators.debuffs[startIndex]:SetCooldown(nStart, nDur, (auraInfo.dispelName and (not issecretvalue or not issecretvalue(auraInfo.dispelName))) and auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, auraInfo.refreshing)
+                self.indicators.debuffs[startIndex]:SetCooldown(nStart, nDur, (auraInfo.dispelName and F.IsValueNonSecret(auraInfo.dispelName)) and auraInfo.dispelName or "", auraInfo.icon, rawequal(auraInfo._rawApplications, nil) and auraInfo.applications or auraInfo._rawApplications, auraInfo.refreshing)
                 self.indicators.debuffs[startIndex].auraInstanceID = auraInstanceID -- NOTE: for tooltip
                 self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
@@ -2073,21 +2120,22 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                 if auraInfo._dispelNameIsSecret and _dispelCurvesReady and self.states.displayedUnit then
                     local hlColor = _getCurveColor(self.states.displayedUnit, frame.auraInstanceID, _dispelHighlightCurve)
                     if hlColor then
+                        -- pcall: ColorMixin:GetRGBA may crash on secret internal fields
                         local ok, r, g, b, a = pcall(hlColor.GetRGBA, hlColor)
                         if ok then
                             -- transparent = non-dispellable (Physical); use red
-                            if not issecretvalue(a) and a < 0.1 then
+                            if F.IsValueNonSecret(a) and a < 0.1 then
                                 r, g, b = 1, 0, 0
                             end
-                            pcall(frame.SetBackdropColor, frame, r, g, b)
+                            frame:SetBackdropColor(r, g, b)
                         end
                     end
                 elseif auraInfo._hasSecrets and not auraInfo._dispelNameIsSecret then
                     -- non-dispellable secret debuff (Physical): red backdrop
-                    pcall(frame.SetBackdropColor, frame, 1, 0, 0)
+                    frame:SetBackdropColor(1, 0, 0)
                 end
                 -- fix cooldown animation for secret durations
-                if auraInfo.duration == 0 and issecretvalue(auraInfo._rawDuration) then
+                if auraInfo.duration == 0 and not F.IsValueNonSecret(auraInfo._rawDuration) then
                     _ActivateSecretCooldown(frame, auraInfo, self.states.displayedUnit)
                 elseif frame._secretClockActive then
                     _DeactivateSecretCooldown(frame)
@@ -2130,6 +2178,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
             -- get type color from highlight curve (secret but usable via C-level functions)
             local hlColor = _getCurveColor(sUnit, sAuraID, _dispelHighlightCurve)
             if hlColor then
+                -- pcall: ColorMixin:GetRGBA may crash on secret internal fields
                 local colorOk, cr, cg, cb, ca = pcall(hlColor.GetRGBA, hlColor)
                 if colorOk then
                     -- highlight: match the user's highlight type setting
@@ -2137,11 +2186,11 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                     if ht and ht ~= "none" then
                         if ht == "entire" then
                             dispels.highlight:SetTexture(Cell.vars.whiteTexture)
-                            pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 0.5)
+                            dispels.highlight:SetVertexColor(cr, cg, cb, 0.5)
                             dispels.highlight:Show()
                         elseif ht == "current" or ht == "current+" then
                             dispels.highlight:SetTexture(Cell.vars.texture)
-                            pcall(dispels.highlight.SetVertexColor, dispels.highlight, cr, cg, cb, 1)
+                            dispels.highlight:SetVertexColor(cr, cg, cb, 1)
                             dispels.highlight:Show()
                         elseif ht == "gradient" or ht == "gradient-half" then
                             -- SetGradient crashes with secret colors. Instead, use a
@@ -2150,7 +2199,7 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                             local overlay = _ensureGradientOverlay(dispels)
                             overlay:ClearAllPoints()
                             overlay:SetAllPoints(dispels.highlight)
-                            pcall(overlay.SetVertexColor, overlay, cr, cg, cb, 1)
+                            overlay:SetVertexColor(cr, cg, cb, 1)
                             overlay:Show()
                             dispels._secretGradientShown = true
                         end
@@ -2172,9 +2221,10 @@ local function UnitButton_UpdateDebuffs(self, isFullUpdate)
                                 -- SetAlpha is C-level and handles secret values
                                 local bColor = _getCurveColor(sUnit, sAuraID, _bracketCurves[t.name])
                                 if bColor then
+                                    -- pcall: ColorMixin:GetRGBA may crash on secret internal fields
                                     local bOk, _, _, _, ba = pcall(bColor.GetRGBA, bColor)
                                     if bOk then
-                                        pcall(icon.SetAlpha, icon, ba)
+                                        icon:SetAlpha(ba)
                                     end
                                 end
                                 -- stack at icon 1's position
@@ -2233,6 +2283,8 @@ local function HandleBuff(self, auraInfo)
     -- SetTexture() accepts secret numbers, so this works as-is
     local icon = auraInfo.icon
     local count = auraInfo.applications
+    -- Raw count for C-level rendering (SetText); may be secret
+    local rawCount = rawequal(auraInfo._rawApplications, nil) and count or auraInfo._rawApplications
     -- local debuffType = auraInfo.isHarmful and auraInfo.dispelName
     local expirationTime = auraInfo.expirationTime or 0
     local duration = auraInfo.duration
@@ -2250,14 +2302,16 @@ local function HandleBuff(self, auraInfo)
 
     -- 12.0+: try to resolve spellId/name from raw secret via C_Spell (C-level API)
     if not spellId and auraInfo._rawSpellId ~= nil and C_Spell and C_Spell.GetSpellName then
-        local ok, resolvedName = pcall(C_Spell.GetSpellName, auraInfo._rawSpellId)
-        if ok and resolvedName ~= nil and not issecretvalue(resolvedName) then
-            auraInfo.name = resolvedName
-            name = resolvedName
-            local ok2, info = pcall(C_Spell.GetSpellInfo, auraInfo._rawSpellId)
-            if ok2 and info and info.spellID ~= nil and not issecretvalue(info.spellID) then
-                auraInfo.spellId = info.spellID
-                spellId = info.spellID
+        if F.IsValueNonSecret(auraInfo._rawSpellId) then
+            local resolvedName = C_Spell.GetSpellName(auraInfo._rawSpellId)
+            if resolvedName ~= nil and F.IsValueNonSecret(resolvedName) then
+                auraInfo.name = resolvedName
+                name = resolvedName
+                local info = C_Spell.GetSpellInfo(auraInfo._rawSpellId)
+                if info and info.spellID ~= nil and F.IsValueNonSecret(info.spellID) then
+                    auraInfo.spellId = info.spellID
+                    spellId = info.spellID
+                end
             end
         end
     end
@@ -2287,21 +2341,21 @@ local function HandleBuff(self, auraInfo)
         if enabledIndicators["defensiveCooldowns"] and isDefensive and self._buffs.defensiveFound < indicatorNums["defensiveCooldowns"] then
             self._buffs.defensiveFound = self._buffs.defensiveFound + 1
             local frame = self.indicators.defensiveCooldowns[self._buffs.defensiveFound]
-            frame:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
+            frame:SetCooldown(start, duration, nil, icon, rawCount, auraInfo.refreshing)
             frame.auraInstanceID = auraInstanceID
         end
 
         if enabledIndicators["externalCooldowns"] and isExternal and self._buffs.externalFound < indicatorNums["externalCooldowns"] then
             self._buffs.externalFound = self._buffs.externalFound + 1
             local frame = self.indicators.externalCooldowns[self._buffs.externalFound]
-            frame:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
+            frame:SetCooldown(start, duration, nil, icon, rawCount, auraInfo.refreshing)
             frame.auraInstanceID = auraInstanceID
         end
 
         if enabledIndicators["allCooldowns"] and (isDefensive or isExternal) and self._buffs.allFound < indicatorNums["allCooldowns"] then
             self._buffs.allFound = self._buffs.allFound + 1
             local frame = self.indicators.allCooldowns[self._buffs.allFound]
-            frame:SetCooldown(start, duration, nil, icon, count, auraInfo.refreshing)
+            frame:SetCooldown(start, duration, nil, icon, rawCount, auraInfo.refreshing)
             frame.auraInstanceID = auraInstanceID
         end
 
@@ -2548,7 +2602,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
     else
         -- Midnight 12.0.0+: some aura fields may still be secret. Per-aura checks in
         -- HandleBuff/HandleDebuff handle this. We no longer force full update for ALL
-        -- Midnight aura events â€" only fall back to full update if we encounter secret
+        -- Midnight aura events  -- only fall back to full update if we encounter secret
         -- isHelpful/isHarmful fields in addedAuras that prevent classification.
         local buffsChanged, debuffsChanged
         wipe(self._missing_auras)
@@ -2648,7 +2702,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                         self._debuffs_cache[aura.auraInstanceID] = aura
                     end
                 end
-                -- Secret missing auras are silently dropped â€" they'll be
+                -- Secret missing auras are silently dropped  -- they'll be
                 -- picked up on the next full update if needed
             end
         end
@@ -2666,24 +2720,26 @@ local function UnitButton_UpdateCalculator(self)
     if not unit then return end
     local calc = self.widgets.healthCalculator
     if not calc then return end
-    -- pcall: UnitGetDetailedHealPrediction may fail for AI followers or unavailable units
-    pcall(UnitGetDetailedHealPrediction, unit, "player", calc)
+    -- UnitGetDetailedHealPrediction is C-level; guard with UnitExists for AI followers/unavailable units
+    if UnitExists(unit) then
+        UnitGetDetailedHealPrediction(unit, "player", calc)
+    end
 end
 
 local function UnitButton_UpdateHealthStates(self, diff)
     local unit = self.states.displayedUnit
 
     if Cell.isMidnight and self.widgets.healthCalculator then
-        -- MIDNIGHT PATH: use calculator â€" no arithmetic on secrets
+        -- MIDNIGHT PATH: use calculator  -- no arithmetic on secrets
         UnitButton_UpdateCalculator(self)
         -- Store healthPercent for color logic.
         -- Calculator's GetCurrentHealthPercent() always returns secret (even out of combat).
         -- Fall back to UnitHealth/UnitHealthMax which are non-secret outside PvP instances.
-        local h = UnitHealth(unit)
-        local hm = UnitHealthMax(unit)
-        if not issecretvalue(h) and not issecretvalue(hm) and hm > 0 then
-            self.states.healthPercent = h / hm
-            self.states.healthMax = hm
+        local health = UnitHealth(unit)
+        local healthMax = UnitHealthMax(unit)
+        if not hasanysecretvalues(health, healthMax) and healthMax > 0 then
+            self.states.healthPercent = health / healthMax
+            self.states.healthMax = healthMax
         else
             -- In-combat secret: default to 0 so F.GetHealthBarColor won't trigger fullColor (which checks == 1).
             -- class_color / class_color_dark modes don't use percent, so they still work.
@@ -2697,8 +2753,9 @@ local function UnitButton_UpdateHealthStates(self, diff)
         self.states.isDeadOrGhost = UnitIsDeadOrGhost(unit) or false
 
         -- Health text: use calculator secret values
-        -- pcall: HealthText_SetValue with secrets must not abort UpdateAll
-        -- (which would prevent power text and other downstream init)
+        -- pcall: HealthText:SetValue may perform Lua arithmetic on secret values
+        -- internally; wrapping prevents one button's health text error from aborting
+        -- the entire UpdateAll cycle for this unit frame.
         if enabledIndicators["healthText"] then
             local htOk, htErr = pcall(function()
                 local calc = self.widgets.healthCalculator
@@ -2708,7 +2765,7 @@ local function UnitButton_UpdateHealthStates(self, diff)
                 local healAbsorbs = calc:GetTotalHealAbsorbs()
                 -- Fallback: if calculator wasn't populated (e.g. solo, no group),
                 -- use direct UnitHealth/UnitHealthMax for health text display.
-                if not issecretvalue(maxHealth) and maxHealth == 0 and unit then
+                if F.IsValueNonSecret(maxHealth) and maxHealth == 0 and unit then
                     health = UnitHealth(unit)
                     maxHealth = UnitHealthMax(unit)
                     totalAbsorbs = UnitGetTotalAbsorbs(unit) or 0
@@ -2805,8 +2862,11 @@ local function GetRole(b)
 
     -- For the player's own unit, get role from current spec directly
     -- (UnitGroupRolesAssigned returns "NONE" when solo or in non-LFG groups)
+    -- UnitIsUnit may return a secret boolean; check before boolean test.
+    -- For player identity check, treat secret as false (safe fallback).
+    local isPlayer = b.states.unit and UnitIsUnit(b.states.unit, "player")
     if GetSpecialization and GetSpecializationRole
-        and b.states.unit and UnitIsUnit(b.states.unit, "player") then
+        and b.states.unit and F.IsValueNonSecret(isPlayer) and isPlayer then
         local spec = GetSpecialization()
         if spec then
             local specRole = GetSpecializationRole(spec)
@@ -2851,7 +2911,7 @@ local function GetClassAndRole(b)
     local class, role
     local guid = b.states.guid
     -- 12.0+: guid may be secret for NPC units — can't use string.find on secrets
-    if guid and issecretvalue and issecretvalue(guid) then
+    if guid and not F.IsValueNonSecret(guid) then
         -- Fallback: use UnitInPartyIsAI to detect AI followers without needing guid
         if b.states.unit and UnitInPartyIsAI(b.states.unit) then
             class = b.states.class
@@ -2883,7 +2943,9 @@ ShouldShowPowerText = function(b)
     if not enabledIndicators["powerText"] then return end
     if not (b:IsVisible() or b.isPreview) then return end
 
-    if not b.states.guid then
+    -- guid may be secret for NPC/follower units; `not secret` crashes.
+    -- Use rawequal to safely check nil without boolean test on secrets.
+    if rawequal(b.states.guid, nil) then
         return true
     end
 
@@ -2911,7 +2973,8 @@ ShouldShowPowerBar = function(b)
     if not (b:IsVisible() or b.isPreview) then return end
     if not b.powerSize or b.powerSize == 0 then return end
 
-    if not b.states.guid then
+    -- guid may be secret for NPC/follower units; `not secret` crashes.
+    if rawequal(b.states.guid, nil) then
         return true
     end
 
@@ -2996,7 +3059,10 @@ local function UnitButton_UpdateTarget(self)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    if UnitIsUnit(unit, "target") then
+    -- UnitIsUnit may return a secret boolean in combat; check before boolean test.
+    -- Treat secret as true (better to show highlight than miss the player's target).
+    local isTarget = UnitIsUnit(unit, "target")
+    if not F.IsValueNonSecret(isTarget) or isTarget then
         if highlightEnabled then self.widgets.targetHighlight:Show() end
     else
         self.widgets.targetHighlight:Hide()
@@ -3038,7 +3104,7 @@ UnitButton_UpdateRole = function(self)
 
         --! check vehicle root
         -- Midnight 12.0.0+: guid may be secret for NPC/boss units
-        if self.states.guid and not (issecretvalue and issecretvalue(self.states.guid)) and strfind(self.states.guid, "^Vehicle") and not UnitInPartyIsAI(unit) then
+        if self.states.guid and F.IsValueNonSecret(self.states.guid) and strfind(self.states.guid, "^Vehicle") and not UnitInPartyIsAI(unit) then
             CheckVehicleRoot(self, unit)
         end
     else
@@ -3151,37 +3217,33 @@ UnitButton_UpdatePowerText = function(self)
         return
     end
 
-    if not issecretvalue(power) and (rawequal(powerMax, nil) or not issecretvalue(powerMax)) then
+    if not hasanysecretvalues(power, powerMax) then
         self.indicators.powerText:SetValue(power, powerMax)
     else
         -- Pass secret values to C-level SetFormattedText directly.
         local unit = self.states.displayedUnit
-        pcall(function()
-            local fmt = self.indicators.powerText._format
-            if fmt == "percentage" then
-                -- UnitPowerPercent returns 0-1 by default; use ScaleTo100 curve for 0-100
-                local pct
-                if unit and UnitPowerPercent then
-                    if CurveConstants and CurveConstants.ScaleTo100 then
-                        local ok, val = pcall(UnitPowerPercent, unit, nil, true, CurveConstants.ScaleTo100)
-                        pct = ok and val or nil
-                    else
-                        local ok, val = pcall(UnitPowerPercent, unit)
-                        pct = ok and val or nil
-                    end
-                end
-                if pct then
-                    self.indicators.powerText.text:SetFormattedText("%d%%", pct)
+        local fmt = self.indicators.powerText._format
+        if fmt == "percentage" then
+            -- UnitPowerPercent returns 0-1 by default; use ScaleTo100 curve for 0-100
+            local pct
+            if unit and UnitPowerPercent then
+                if CurveConstants and CurveConstants.ScaleTo100 then
+                    pct = UnitPowerPercent(unit, nil, true, CurveConstants.ScaleTo100)
                 else
-                    self.indicators.powerText.text:SetFormattedText("%d", power)
+                    pct = UnitPowerPercent(unit)
                 end
-            elseif fmt == "number-short" and AbbreviateNumbers then
-                self.indicators.powerText.text:SetFormattedText("%s", AbbreviateNumbers(power))
+            end
+            if pct then
+                self.indicators.powerText.text:SetFormattedText("%d%%", pct)
             else
-                -- "number" or "number-short" without AbbreviateNumbers: raw number
                 self.indicators.powerText.text:SetFormattedText("%d", power)
             end
-        end)
+        elseif fmt == "number-short" and AbbreviateNumbers then
+            self.indicators.powerText.text:SetFormattedText("%s", AbbreviateNumbers(power))
+        else
+            -- "number" or "number-short" without AbbreviateNumbers: raw number
+            self.indicators.powerText.text:SetFormattedText("%d", power)
+        end
         -- GetStringWidth returns secret when text is tainted; skip SetWidth
         self.indicators.powerText:Show()
     end
@@ -3207,7 +3269,7 @@ UnitButton_UpdatePowerMax = function(self)
     if self.states.powerMax == nil then return end
 
     -- powerMax may be secret on Midnight 12.0.0+ for some units.
-    -- SetMinMaxSmoothedValue is a Lua mixin that does arithmetic (Clamp) â€" fails on secrets.
+    -- SetMinMaxSmoothedValue is a Lua mixin that does arithmetic (Clamp)  -- fails on secrets.
     -- SetMinMaxValues is native C API that accepts secrets. Use it as fallback on Midnight.
     if barAnimationType == "Smooth" and F.IsValueNonSecret(self.states.powerMax) then
         self.widgets.powerBar:SetMinMaxSmoothedValue(0, self.states.powerMax)
@@ -3258,7 +3320,7 @@ local function UnitButton_UpdateHealthMax(self)
 
     if Cell.isMidnight and self.widgets.healthCalculator then
         -- MIDNIGHT PATH: pass secret maxHealth directly
-        -- SetMinMaxSmoothedValue is a Lua mixin that does arithmetic (Clamp) â€" fails on secrets.
+        -- SetMinMaxSmoothedValue is a Lua mixin that does arithmetic (Clamp)  -- fails on secrets.
         -- Always use native SetMinMaxValues on Midnight since maxHealth may be secret.
         local maxHealth = self.widgets.healthCalculator:GetMaximumHealth()
         self.widgets.healthBar:SetMinMaxValues(0, maxHealth)
@@ -3325,7 +3387,7 @@ local function UnitButton_UpdateHealth(self, diff, skipStateUpdates)
                 -- EvaluateCurrentHealthPercent feeds secret health% into the curve
                 -- Curve output: 1.0 if below threshold (needs healing), outOfRangeAlpha if above
                 local targetAlpha = self.widgets.healthCalculator:EvaluateCurrentHealthPercent(fadeOutHealthCurve)
-                -- targetAlpha is a secret value â€" SetAlpha accepts secrets on Midnight
+                -- targetAlpha is a secret value  -- SetAlpha accepts secrets on Midnight
                 self:SetAlpha(targetAlpha)
             end
         end
@@ -3412,25 +3474,25 @@ local function UnitButton_UpdateHealPrediction(self, skipStateUpdates)
         incomingHeal:SetHeight(self.widgets.healthBar:GetHeight())
     end
 
-    -- Use 12.0 calculator API if available (handles secret values via C)
+    -- 12.0+: UnitGetDetailedHealPrediction populates a calculator object whose
+    -- getter methods return potentially secret values. These are passed directly
+    -- to SetMinMaxValues/SetValue (C-level APIs that accept secrets).
     local calc = self._healPredCalc
     if calc and UnitGetDetailedHealPrediction then
-        pcall(function() UnitGetDetailedHealPrediction(unit, nil, calc) end)
+        if UnitExists(unit) then
+            UnitGetDetailedHealPrediction(unit, nil, calc)
+        end
         local allHeal
         if calc.GetIncomingHeals then
             allHeal = select(1, calc:GetIncomingHeals())
         end
-        pcall(function()
-            incomingHeal:SetMinMaxValues(0, self.states.healthMax)
-            incomingHeal:SetValue(allHeal or 0)
-        end)
+        incomingHeal:SetMinMaxValues(0, self.states.healthMax)
+        incomingHeal:SetValue(rawequal(allHeal, nil) and 0 or allHeal)
     else
         -- Fallback for pre-12.0
         local value = UnitGetIncomingHeals(unit) or 0
-        pcall(function()
-            incomingHeal:SetMinMaxValues(0, self.states.healthMax)
-            incomingHeal:SetValue(value)
-        end)
+        incomingHeal:SetMinMaxValues(0, self.states.healthMax)
+        incomingHeal:SetValue(value)
     end
     incomingHeal:Show()
 end
@@ -3515,7 +3577,7 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
     local health = self.states.health
 
     -- Check if values are secret (12.0+ combat)
-    local isSecret = issecretvalue(totalAbsorbs) or issecretvalue(healthMax) or issecretvalue(health)
+    local isSecret = hasanysecretvalues(totalAbsorbs, healthMax, health)
 
     if isSecret then
         -- Secret path: use StatusBar min/max approach (C-level handles secrets)
@@ -3526,11 +3588,13 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
             shieldBar:SetHeight(self.widgets.healthBar:GetHeight())
         end
 
-        -- Use 12.0 calculator API if available
+        -- 12.0+: calculator returns potentially secret values, passed to C-level StatusBar APIs
         local calc = self._healPredCalc
         local absorbAmt, isClamped
         if calc and UnitGetDetailedHealPrediction then
-            pcall(function() UnitGetDetailedHealPrediction(unit, nil, calc) end)
+            if UnitExists(unit) then
+                UnitGetDetailedHealPrediction(unit, nil, calc)
+            end
             if calc.GetDamageAbsorbs then
                 absorbAmt, isClamped = calc:GetDamageAbsorbs()
             end
@@ -3538,10 +3602,8 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
         local displayAbsorbs = rawequal(absorbAmt, nil) and totalAbsorbs or absorbAmt
 
         if shieldEnabled then
-            pcall(function()
-                shieldBar:SetMinMaxValues(0, healthMax)
-                shieldBar:SetValue(displayAbsorbs)
-            end)
+            shieldBar:SetMinMaxValues(0, healthMax)
+            shieldBar:SetValue(displayAbsorbs)
             shieldBar:Show()
         else
             shieldBar:Hide()
@@ -3554,8 +3616,11 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
                 glow:Show()
                 glow:SetAlphaFromBoolean(isClamped, 1, 0)
             else
-                local okOver, isOver = pcall(function() return isClamped == true end)
-                if okOver and isOver then glow:Show() else glow:Hide() end
+                if F.IsValueNonSecret(isClamped) and isClamped then
+                    glow:Show()
+                else
+                    glow:Hide()
+                end
             end
         else
             self.widgets.overShieldGlow:Hide()
@@ -3572,7 +3637,7 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
             else
                 indBar:SetHeight(self.widgets.healthBar:GetHeight())
             end
-            pcall(indBar.SetAbsorbs, indBar, displayAbsorbs, healthMax)
+            indBar:SetAbsorbs(displayAbsorbs, healthMax)
             indBar:Show()
         else
             self.indicators.shieldBar:Hide()
@@ -3701,11 +3766,13 @@ local function UnitButton_UpdateHealAbsorbs(self, skipStateUpdates)
         absorbsBar.overAbsorbGlow:SetVertexColor(r, g, b)
     end
 
-    -- Use calculator API for heal absorbs
+    -- 12.0+: calculator returns potentially secret values, passed to C-level StatusBar APIs
     local calc = self._healPredCalc
     local healAbsorbAmt, isClamped
     if calc and UnitGetDetailedHealPrediction then
-        pcall(function() UnitGetDetailedHealPrediction(unit, nil, calc) end)
+        if UnitExists(unit) then
+            UnitGetDetailedHealPrediction(unit, nil, calc)
+        end
         if calc.GetHealAbsorbs then
             healAbsorbAmt, isClamped = calc:GetHealAbsorbs()
         end
@@ -3714,10 +3781,8 @@ local function UnitButton_UpdateHealAbsorbs(self, skipStateUpdates)
     -- Use rawequal for nil check: `or` crashes on secret values (boolean test)
     local _healAbs = rawequal(healAbsorbAmt, nil) and self.states.healAbsorbs or healAbsorbAmt
     local displayAbsorbs = rawequal(_healAbs, nil) and 0 or _healAbs
-    pcall(function()
-        absorbsBar:SetMinMaxValues(0, self.states.health)
-        absorbsBar:SetValue(displayAbsorbs)
-    end)
+    absorbsBar:SetMinMaxValues(0, self.states.health)
+    absorbsBar:SetValue(displayAbsorbs)
     absorbsBar:Show()
 
     -- Over-absorb glow using SetAlphaFromBoolean for secret bool support
@@ -3727,15 +3792,16 @@ local function UnitButton_UpdateHealAbsorbs(self, skipStateUpdates)
             glow:Show()
             SetAlphaFromBoolean(glow, isClamped, 1, 0)
         else
-            local okOver, isOver = pcall(function() return isClamped == true end)
-            if okOver and isOver then glow:Show() else glow:Hide() end
+            if F.IsValueNonSecret(isClamped) and isClamped then
+                glow:Show()
+            else
+                glow:Hide()
+            end
         end
     else
-        -- Fallback: try comparison with pcall
-        local okGlow, showGlow = pcall(function()
-            return displayAbsorbs and displayAbsorbs > self.states.health
-        end)
-        if okGlow and showGlow then
+        -- No isClamped available: compare displayAbsorbs to health when non-secret
+        local showGlow = F.IsValueNonSecret(displayAbsorbs) and displayAbsorbs and displayAbsorbs > self.states.health
+        if showGlow then
             glow:Show()
         else
             glow:Hide()
@@ -3875,7 +3941,7 @@ UnitButton_UpdateStatusText = function(self)
         statusText:Show()
         statusText:SetStatus("OFFLINE")
         statusText:ShowTimer()
-    -- Midnight 12.0.0+: UnitIsAFK may return a secret boolean â€" skip on Midnight
+    -- Midnight 12.0.0+: UnitIsAFK may return a secret boolean  -- skip on Midnight
     elseif not Cell.isMidnight and UnitIsAFK(unit) then
         statusText:Show()
         statusText:SetStatus("AFK")
@@ -4006,9 +4072,9 @@ UnitButton_UpdateHealthColor = function(self)
             end
             -- fullColor override: check if at full health (non-secret path)
             if Cell.vars.useFullColor then
-                local h = UnitHealth(unit)
-                local hm = UnitHealthMax(unit)
-                if not issecretvalue(h) and not issecretvalue(hm) and hm > 0 and h == hm then
+                local health = UnitHealth(unit)
+                local healthMax = UnitHealthMax(unit)
+                if not hasanysecretvalues(health, healthMax) and healthMax > 0 and health == healthMax then
                     barR = CellDB["appearance"]["fullColor"][2][1]
                     barG = CellDB["appearance"]["fullColor"][2][2]
                     barB = CellDB["appearance"]["fullColor"][2][3]
@@ -4069,7 +4135,8 @@ UnitButton_UpdateHealthColor = function(self)
 end
 
 -- Curve-based health color system (Midnight 12.0.0+)
--- Wrapped in do...end to avoid contributing to the file's top-level local variable count.
+-- do...end scopes the helper functions (BuildThresholdCurve, BuildFlatCurve)
+-- so they don't leak into the file's top-level scope.
 do
     -- Builds a color curve from 3 color points + boundary settings.
     local function BuildThresholdCurve(curve, c1, c2, c3, lowBound, highBound, useGradient)
@@ -4310,7 +4377,10 @@ local function UnitButton_RegisterEvents(self)
     -- self:RegisterEvent("UNIT_PET")
     self:RegisterEvent("UNIT_PORTRAIT_UPDATE") -- pet summoned far away
 
-    --! OnShowæ—¶ç«‹å³æ‰§è¡Œï¼Œä½†UpdateIndicatorså¯èƒ½å¹¶æœªæ‰§è¡Œå®Œæ¯•ï¼Œå¯¼è‡´åœ¨ResetCustomIndicatorsè¿‡ç¨‹ä¸­æŒ‡ç¤ºå™¨å'ç"Ÿå˜åŒ–ï¼Œè¿›è€ŒæŠ¥é"™
+    --! OnShow时立即执行，但UpdateIndicators可能并未执行完毕，导致在ResetCustomIndicators过程中指示器发生变化，进而报错
+    -- OnShow fires immediately but UpdateIndicators may not have completed yet,
+    -- so indicators can change during ResetCustomIndicators and cause errors.
+    -- pcall prevents one frame's error from breaking all other frames.
     local success, result = pcall(UnitButton_UpdateAll, self)
     if not success then
         F.Debug("UnitButton_UpdateAll |cffff0000FAILED:|r", self:GetName(), result)
@@ -4646,7 +4716,7 @@ local function UnitButton_OnTick(self)
                 -- update Cell.vars.guids
                 self.__unitGuid = guid
                 -- On Midnight 12.0.0+, GUIDs for non-player units in instances are secret
-                -- Can't use a secret as a table key â€" only store non-secret GUIDs
+                -- Can't use a secret as a table key  -- only store non-secret GUIDs
                 if not self.isSpotlight then
                     if not (Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(guid)) then
                         Cell.vars.guids[guid] = self.states.unit
@@ -4663,7 +4733,7 @@ local function UnitButton_OnTick(self)
                         self.__nameRetries = nil
                     else
                         -- NOTE: update on next tick
-                        -- å›½æœå¯ä»¥èµ·åä¸ºâ€œæœªçŸ¥ç›®æ ‡â€ï¼Œå¹²ï¼å°±åªå¤šé‡è¯•4æ¬¡å¥½äº†
+                        -- 国服可以起名为"未知目标"，干！就只多重试4次好了
                         self.__nameRetries = (self.__nameRetries or 0) + 1
                         self.__unitGuid = nil
                     end
@@ -5276,6 +5346,19 @@ end
 
 -- powerText
 function B.UpdatePowerText(button)
+    -- displayedUnit is set by UnitButton_UpdateAll (OnShow/vehicle check).
+    -- When enabling the indicator at runtime, buttons may not have gone
+    -- through UpdateAll yet. Fall back to states.unit so power APIs work.
+    if not button.states.displayedUnit and button.states.unit then
+        button.states.displayedUnit = button.states.unit
+    end
+    -- If still no unit, try GetAttribute (secure header always sets this)
+    if not button.states.displayedUnit then
+        local attrUnit = button:GetAttribute("unit")
+        if attrUnit then
+            button.states.displayedUnit = attrUnit
+        end
+    end
     if button.states.displayedUnit then
         UnitButton_UpdatePowerStates(button)
         UnitButton_UpdatePowerText(button)

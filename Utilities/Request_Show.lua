@@ -265,10 +265,7 @@ end
 SR:SetScript("OnEvent", function(self, event, ...)
     if event == "COMBAT_LOG_EVENT_UNFILTERED" then
         if CombatLogGetCurrentEventInfo then
-            local ok, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11 = pcall(CombatLogGetCurrentEventInfo)
-            if ok then
-                self:COMBAT_LOG_EVENT_UNFILTERED(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
-            end
+            self:COMBAT_LOG_EVENT_UNFILTERED(CombatLogGetCurrentEventInfo())
         end
     else
         self[event](self, ...)
@@ -359,8 +356,7 @@ end
 DR:SetScript("OnEvent", function(self, event)
     if event == "COMBAT_LOG_EVENT_UNFILTERED" then
         if not CombatLogGetCurrentEventInfo then return end
-        local ok, timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellID = pcall(CombatLogGetCurrentEventInfo)
-        if not ok then return end
+        local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellID = CombatLogGetCurrentEventInfo()
         if subEvent == "SPELL_AURA_REMOVED" then
             local unit = Cell.vars.guids[destGUID]
             if unit and drUnits[unit] and drUnits[unit][spellID] then

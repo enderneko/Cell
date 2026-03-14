@@ -11,7 +11,6 @@ local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
-local issecretvalue = issecretvalue or function() return false end
 local AbbreviateNumbers = AbbreviateNumbers
 local UnitHealthPercent = UnitHealthPercent
 local CurveConstants = CurveConstants
@@ -783,7 +782,7 @@ end)
 local function CheckCondition(operator, checkedValue, currentValue)
     -- Midnight 12.0.0+: applications (count) may be secret even when spellId is not;
     -- comparisons on secret values throw errors
-    if issecretvalue and (issecretvalue(currentValue) or issecretvalue(checkedValue)) then return end
+    if not F.IsValueNonSecret(currentValue) or not F.IsValueNonSecret(checkedValue) then return end
     if operator == "=" then
         if currentValue == checkedValue then return true end
     elseif operator == ">" then
@@ -801,7 +800,7 @@ end
 
 function I.GetDebuffOrder(spellName, spellId, count)
     -- Midnight 12.0.0+: spellId/spellName may be secret; cannot use as table key
-    if issecretvalue and (issecretvalue(spellId) or issecretvalue(spellName)) then return end
+    if not F.IsValueNonSecret(spellId) or not F.IsValueNonSecret(spellName) then return end
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 
@@ -818,7 +817,7 @@ end
 
 function I.GetDebuffGlow(spellName, spellId, count)
     -- Midnight 12.0.0+: spellId/spellName may be secret; cannot use as table key
-    if issecretvalue and (issecretvalue(spellId) or issecretvalue(spellName)) then return end
+    if not F.IsValueNonSecret(spellId) or not F.IsValueNonSecret(spellName) then return end
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 
@@ -845,7 +844,7 @@ end
 
 function I.IsDebuffUseElapsedTime(spellName, spellId)
     -- Midnight 12.0.0+: spellId/spellName may be secret; cannot use as table key
-    if issecretvalue and (issecretvalue(spellId) or issecretvalue(spellName)) then return end
+    if not F.IsValueNonSecret(spellId) or not F.IsValueNonSecret(spellName) then return end
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 
@@ -1387,7 +1386,7 @@ local function StatusText_ShowTimer(self)
 
     -- Midnight 12.0.0+: guid may be secret for NPC/boss units
     local showGuid = self.parent.states.guid
-    if not (issecretvalue and issecretvalue(showGuid)) then
+    if F.IsValueNonSecret(showGuid) then
         if showGuid and not startTimeCache[showGuid] then startTimeCache[showGuid] = GetTime() end
     end
 
@@ -1396,7 +1395,7 @@ local function StatusText_ShowTimer(self)
             self.parent.states.guid = UnitGUID(self.parent.states.unit)
         end
         local tickGuid = self.parent.states.guid
-        if tickGuid and not (issecretvalue and issecretvalue(tickGuid)) and startTimeCache[tickGuid] then
+        if tickGuid and F.IsValueNonSecret(tickGuid) and startTimeCache[tickGuid] then
             self.timer:SetFormattedText(F.FormatTime(GetTime() - startTimeCache[tickGuid]))
         else
             self.timer:SetText("")
@@ -1411,7 +1410,7 @@ local function StatusText_HideTimer(self, reset)
         if self.ticker then self.ticker:Cancel() end
         -- Midnight 12.0.0+: guid may be secret for NPC/boss units
         local guid = self.parent.states.guid
-        if guid and not (issecretvalue and issecretvalue(guid)) then
+        if guid and F.IsValueNonSecret(guid) then
             startTimeCache[guid] = nil
         end
     end
@@ -1641,8 +1640,8 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
     -- C-level SetFormattedText/SetText (AllowedWhenTainted) handles secrets for display.
     -- The caller in UnitButton passes secrets to C-level directly; this guard is a
     -- safety net for any remaining Lua arithmetic in the formatters below.
-    if issecretvalue(health) or issecretvalue(maxHealth)
-        or issecretvalue(shields) or issecretvalue(healAbsorbs) then
+    if not F.IsValueNonSecret(health) or not F.IsValueNonSecret(maxHealth)
+        or not F.IsValueNonSecret(shields) or not F.IsValueNonSecret(healAbsorbs) then
         -- Use pre-built secret segments (individual per component).
         -- Absorb components are skipped when their value is known to be 0.
         local segments = self._secretSegments
@@ -1678,7 +1677,7 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
                     raw = 0
                 end
                 -- Skip absorb components that are known to be 0 (non-secret)
-                if isAbsorbKey and not issecretvalue(raw) and raw == 0 then
+                if isAbsorbKey and F.IsValueNonSecret(raw) and raw == 0 then
                     -- skip this component
                 else
                     fmtParts[#fmtParts + 1] = segments[i]
@@ -1704,7 +1703,7 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
         -- GetStringWidth returns secret when text is tainted; use fallback width
         -- so the frame isn't zero-width (which would clip the text entirely).
         local sw = self.text:GetStringWidth()
-        self:SetWidth(issecretvalue(sw) and 50 or sw)
+        self:SetWidth(F.IsValueNonSecret(sw) and sw or 50)
         return
     end
     maxHealth = maxHealth == 0 and 1 or maxHealth
@@ -1741,7 +1740,7 @@ local function HealthText_SetFont(self, font, size, outline, shadow)
 
     -- 12.0+: GetStringWidth returns secret when text is tainted; use fallback
     local w = self.text:GetStringWidth()
-    self:SetSize(issecretvalue(w) and 50 or w, size)
+    self:SetSize((F.IsValueNonSecret(w) and w > 0) and w or 50, size)
 end
 
 local function HealthText_SetPoint(self, point, relativeTo, relativePoint, x, y)
@@ -1797,48 +1796,48 @@ end
 local function SetPower_Percentage(self, current, max)
     -- 12.0+: UnitPower() may return secret values in combat.
     -- SetFormattedText is C-level (AllowedWhenTainted) and handles secrets.
-    if issecretvalue(current) or issecretvalue(max) then
+    if not F.IsValueNonSecret(current) or not F.IsValueNonSecret(max) then
         self.text:SetFormattedText("%d%%", current)
         local w = self.text:GetStringWidth()
-        self:SetWidth(issecretvalue(w) and 50 or w)
+        self:SetWidth((F.IsValueNonSecret(w) and w > 0) and w or 50)
         self:Show()
         return
     end
     self.text:SetFormattedText("%d%%", current/max*100)
     local w = self.text:GetStringWidth()
-    self:SetWidth(issecretvalue(w) and 50 or w)
+    self:SetWidth(F.IsValueNonSecret(w) and w or 50)
     self:Show()
 end
 
 local function SetPower_Number(self, current, max)
-    if issecretvalue(current) or issecretvalue(max) then
+    if not F.IsValueNonSecret(current) or not F.IsValueNonSecret(max) then
         self.text:SetText(current)
         local w = self.text:GetStringWidth()
-        self:SetWidth(issecretvalue(w) and 50 or w)
+        self:SetWidth((F.IsValueNonSecret(w) and w > 0) and w or 50)
         self:Show()
         return
     end
     self.text:SetText(current)
     local w = self.text:GetStringWidth()
-    self:SetWidth(issecretvalue(w) and 50 or w)
+    self:SetWidth(F.IsValueNonSecret(w) and w or 50)
     self:Show()
 end
 
 local function SetPower_Number_Short(self, current, max)
-    if issecretvalue(current) or issecretvalue(max) then
+    if not F.IsValueNonSecret(current) or not F.IsValueNonSecret(max) then
         if AbbreviateNumbers then
             self.text:SetFormattedText("%s", AbbreviateNumbers(current))
         else
             self.text:SetText(current)
         end
         local w = self.text:GetStringWidth()
-        self:SetWidth(issecretvalue(w) and 50 or w)
+        self:SetWidth((F.IsValueNonSecret(w) and w > 0) and w or 50)
         self:Show()
         return
     end
     self.text:SetText(F.FormatNumber(current))
     local w = self.text:GetStringWidth()
-    self:SetWidth(issecretvalue(w) and 50 or w)
+    self:SetWidth(F.IsValueNonSecret(w) and w or 50)
     self:Show()
 end
 
@@ -1866,7 +1865,7 @@ local function PowerText_SetFont(self, font, size, outline, shadow)
 
     -- 12.0+: GetStringWidth returns secret when text is tainted; use fallback
     local w = self.text:GetStringWidth()
-    self:SetSize(issecretvalue(w) and 50 or w, size)
+    self:SetSize((F.IsValueNonSecret(w) and w > 0) and w or 50, size)
 end
 
 local function PowerText_SetPoint(self, point, relativeTo, relativePoint, x, y)

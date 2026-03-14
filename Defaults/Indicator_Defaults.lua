@@ -268,7 +268,7 @@ end
 -------------------------------------------------
 function I.GetDebuffTypeColor(debuffType)
     -- Midnight 12.0.0+: debuffType may be secret; cannot use as table key
-    if issecretvalue and issecretvalue(debuffType) then return 0, 0, 0 end
+    if F.IsSecretValue(debuffType) then return 0, 0, 0 end
     if debuffType and CellDB["debuffTypeColor"][debuffType] then
         return CellDB["debuffTypeColor"][debuffType]["r"], CellDB["debuffTypeColor"][debuffType]["g"],
             CellDB["debuffTypeColor"][debuffType]["b"]

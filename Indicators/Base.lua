@@ -13,15 +13,13 @@ local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")
 
--- Midnight 12.0.0+: aura count (applications) may be secret; sanitize for safe comparisons/table-key use
-local function _SanitizeCount(count)
-    if issecretvalue and issecretvalue(count) then return 0 end
-    return count or 0
-end
-
 -- Midnight 12.0.0+: helper for stack text display (most common pattern)
+-- Secret stack counts are passed through directly; SetText is C-level and
+-- renders secret values safely. We cannot test == 0/1, so secret stacks
+-- always display (may show "1" for single-stack auras, which is acceptable).
 local function _StackText(count)
-    count = _SanitizeCount(count)
+    if not F.IsValueNonSecret(count) then return count end
+    count = count or 0
     return (count == 0 or count == 1) and "" or count
 end
 
@@ -1055,12 +1053,20 @@ end
 
 local circled = {"①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪","⑫","⑬","⑭","⑮","⑯","⑰","⑱","⑲","⑳","㉑","㉒","㉓","㉔","㉕","㉖","㉗","㉘","㉙","㉚","㉛","㉜","㉝","㉞","㉟","㊱","㊲","㊳","㊴","㊵","㊶","㊷","㊸","㊹","㊺","㊻","㊼","㊽","㊾","㊿"}
 local function Text_SetCooldown(frame, start, duration, debuffType, texture, count)
+    -- Secret stack count: can't compare or index circled[], pass directly to
+    -- SetText (C-level, renders secret values safely)
+    local isSecretCount = not F.IsValueNonSecret(count)
+
     if duration == 0 then
         -- always show stack
-        count = _SanitizeCount(count)
-        count = count == 0 and 1 or count
-        count = frame.circledStackNums and circled[count] or count
-        frame.text:SetText(count)
+        if isSecretCount then
+            frame.text:SetText(count)
+        else
+            count = count or 0
+            count = count == 0 and 1 or count
+            count = frame.circledStackNums and circled[count] or count
+            frame.text:SetText(count)
+        end
         frame.text:SetTextColor(frame.colors[1][1], frame.colors[1][2], frame.colors[1][3], frame.colors[1][4])
         frame:SetScript("OnUpdate", nil)
         frame._count = nil
@@ -1073,27 +1079,36 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
         frame._duration = duration
 
         if frame.durationTbl[1] then
-            count = _SanitizeCount(count)
-            if frame.showStack and count ~= 0 then
-                if frame.circledStackNums then
-                    frame._count = circled[count].." "
-                else
-                    frame._count = count.." "
-                end
-            else
+            if isSecretCount then
+                -- Can't concatenate secret with " "; skip stack prefix for duration text
                 frame._count = ""
+            else
+                count = count or 0
+                if frame.showStack and count ~= 0 then
+                    if frame.circledStackNums then
+                        frame._count = circled[count].." "
+                    else
+                        frame._count = count.." "
+                    end
+                else
+                    frame._count = ""
+                end
             end
 
             frame._elapsed = 0.1 -- update immediately
             frame:SetScript("OnUpdate", Text_OnUpdateDuration)
         else
             -- always show stack
-            count = _SanitizeCount(count)
-            count = count == 0 and 1 or count
-            if frame.circledStackNums then
-                frame.text:SetText(circled[count])
-            else
+            if isSecretCount then
                 frame.text:SetText(count)
+            else
+                count = count or 0
+                count = count == 0 and 1 or count
+                if frame.circledStackNums then
+                    frame.text:SetText(circled[count])
+                else
+                    frame.text:SetText(count)
+                end
             end
 
             frame._elapsed = 0.1 -- update immediately

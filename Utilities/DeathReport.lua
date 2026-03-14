@@ -178,9 +178,14 @@ else
 
     local function OnUnitHealth(unit)
         if not unit then return end
+        -- UnitGUID can return a secret value in 12.0+; secret values can't be
+        -- used as table keys, so skip units whose GUID is secret.
+        local guid = UnitGUID(unit)
+        if not F.IsValueNonSecret(guid) then return end
+        if not guid then return end
+
         if UnitIsDeadOrGhost(unit) and not UnitIsFeignDeath(unit) then
-            local guid = UnitGUID(unit)
-            if guid and not reportedDead[guid] then
+            if not reportedDead[guid] then
                 reportedDead[guid] = true
                 if not CheckSendLimit() then return end
                 local name = UnitName(unit) or unit
@@ -188,10 +193,7 @@ else
             end
         else
             -- unit is alive again; allow future death reports
-            local guid = UnitGUID(unit)
-            if guid then
-                reportedDead[guid] = nil
-            end
+            reportedDead[guid] = nil
         end
     end
 
@@ -247,7 +249,7 @@ function frame:GROUP_ROSTER_UPDATE()
     if not CombatLogGetCurrentEventInfo then return end
     if IsInGroup() then
         if IsEncounterInProgress() then
-            pcall(frame.RegisterEvent, frame, "ENCOUNTER_END")
+            frame:RegisterEvent("ENCOUNTER_END")
         else
             if timer then timer:Cancel() end
             timer = C_Timer.NewTimer(7, function()
@@ -263,7 +265,7 @@ function frame:GROUP_ROSTER_UPDATE()
 end
 
 function frame:ENCOUNTER_END()
-    pcall(frame.UnregisterEvent, frame, "ENCOUNTER_END")
+    frame:UnregisterEvent("ENCOUNTER_END")
     frame:GROUP_ROSTER_UPDATE()
 end
 
@@ -281,9 +283,9 @@ local function UpdatePriority(hasHighestPriority)
         return
     end
     if hasHighestPriority and CellDB["tools"]["deathReport"][1] then
-        pcall(frame.RegisterEvent, frame, "COMBAT_LOG_EVENT_UNFILTERED")
+        frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     else
-        pcall(frame.UnregisterEvent, frame, "COMBAT_LOG_EVENT_UNFILTERED")
+        frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     end
 end
 Cell.RegisterCallback("UpdatePriority", "DeathReport_UpdatePriority", UpdatePriority)

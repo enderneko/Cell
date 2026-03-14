@@ -349,7 +349,7 @@ local enabled
 local myUnit = ""
 local hasBuffProvider
 
-local fl function Reset(which)
+local function Reset(which)
     if not which or which == "available" then
         for k, v in pairs(available) do
             available[k] = false
@@ -691,8 +691,6 @@ end, unpack(fadeOuts))
 -- find aura
 ---------------------------------------------------------------------
 local GetAuraDataBySpellName = C_UnitAuras.GetAuraDataBySpellName
-
-local issecretvalue = issecretvalue or function() return false end
 
 local function UnitBuffExists(unit, buff)
     local names = buffs[buff]["names"]
