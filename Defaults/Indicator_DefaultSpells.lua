@@ -125,14 +125,14 @@ local aoeHealings = {
     },
 
     ["PRIEST"] = {
-        [120517] = true,   -- 光晕 - Halo
+        [120517] = true,   -- 光晕 - Halo (moved to Archon hero talent in 12.0)
         [34861]  = true,   -- 圣言术：灵 - Holy Word: Sanctify
         [596]    = true,   -- 治疗祷言 - Prayer of Healing
         [64843]  = true,   -- 神圣赞美诗 - Divine Hymn
-        [110744] = true,   -- 神圣之星 - Divine Star
+        -- [110744] = true,   -- 神圣之星 - Divine Star (removed in 12.0)
         [204883] = true,   -- 治疗之环 - Circle of Healing
         [281265] = true,   -- 神圣新星 - Holy Nova
-        [314867] = true,   -- 暗影盟约 - Shadow Covenant
+        -- [314867] = true,   -- 暗影盟约 - Shadow Covenant (removed in 12.0)
         [15290]  = true,   -- 吸血鬼的拥抱 - Vampiric Embrace
         [372787] = true,   -- 神言术：佑 - Divine Word: Sanctuary
     },
@@ -143,7 +143,7 @@ local aoeHealings = {
         [108280] = true,   -- 治疗之潮图腾 (SUMMON) - Healing Tide Totem
         [52042]  = true,   -- 治疗之泉图腾 (SUMMON) - Healing Stream Totem
         [197995] = true,   -- 奔涌之流 - Wellspring
-        [157503] = true,   -- 暴雨图腾 - Cloudburst
+        -- [157503] = true,   -- 暴雨图腾 - Cloudburst (removed in 12.0)
         [114911] = true,   -- 先祖指引 - Ancestral Guidance
         [382311] = true,   -- 先祖复苏 - Ancestral Awakening
         [207778] = true,   -- 倾盆大雨 - Downpour
@@ -184,6 +184,7 @@ function I.UpdateAoEHealings(t)
 end
 
 function I.IsAoEHealing(name, id)
+    if issecretvalue and (issecretvalue(name) or issecretvalue(id)) then return end
     return builtInAoEHealings[name] or builtInAoEHealings[id] or customAoEHealings[id]
 end
 
@@ -338,6 +339,7 @@ end
 local UnitIsUnit = UnitIsUnit
 local bos = F.GetSpellInfo(6940) -- 牺牲祝福
 function I.IsExternalCooldown(name, id, source, target)
+    if issecretvalue and (issecretvalue(name) or issecretvalue(id)) then return end
     if name == bos then
         if source and target then
             -- NOTE: hide bos on caster
@@ -488,6 +490,7 @@ function I.UpdateDefensives(t)
 end
 
 function I.IsDefensiveCooldown(name, id)
+    if issecretvalue and (issecretvalue(name) or issecretvalue(id)) then return end
     return builtInDefensives[name] or builtInDefensives[id] or customDefensives[id]
 end
 
@@ -546,6 +549,7 @@ do
 end
 
 function I.IsTankActiveMitigation(spellId)
+    if issecretvalue and issecretvalue(spellId) then return end
     return tankActiveMitigations[spellId]
 end
 
@@ -622,11 +626,11 @@ local dispelNodeIDs = {
 
     -- SHAMAN ---------------
         -- 262 - Elemental
-        [262] = {["Curse"] = 103608, ["Poison"] = 103609},
+        [262] = {["Curse"] = 103608, ["Poison"] = 103599},
         -- 263 - Enhancement
-        [263] = {["Curse"] = 103608, ["Poison"] = 103609},
+        [263] = {["Curse"] = 103608, ["Poison"] = 103599},
         -- 264 - Restoration
-        [264] = {["Curse"] = 81073, ["Magic"] = true, ["Poison"] = 103609},
+        [264] = {["Curse"] = 81073, ["Magic"] = true, ["Poison"] = 103599},
     -------------------------
 
     -- WARLOCK --------------
@@ -733,6 +737,7 @@ do
 end
 
 function I.IsDrinking(name)
+    if issecretvalue and issecretvalue(name) then return end
     return drinks[name]
 end
 
@@ -753,7 +758,7 @@ local spells =  {
     145205, -- 百花齐放 - Efflorescence
     383193, -- 林地护理 - Grove Tending
     439530, -- 共生绽华 - Symbiotic Blooms
-    429224, -- 次级塞纳里奥结界 - Minor Cenarion Ward
+    -- 429224, -- 次级塞纳里奥结界 - Minor Cenarion Ward (removed in 12.0, Durability of Nature redesigned)
 
     -- evoker
     363502, -- 梦境飞行 - Dream Flight
@@ -774,6 +779,9 @@ local spells =  {
     406789, -- 空间悖论 - Spatial Paradox
     445740, -- 纵焰 - Enkindle
     409895, -- 精神之花 - Spiritbloom (Reverberations, Chronowarden Hero Talent)
+    410263, -- 炼狱祝福 - Inferno's Blessing
+    410686, -- 共生绽放 - Symbiotic Bloom
+    413984, -- 流沙 - Shifting Sands
 
     -- monk
     119611, -- 复苏之雾 - Renewing Mist
@@ -784,6 +792,7 @@ local spells =  {
     450769, -- 和谐化身 - Aspect of Harmony
     450805, -- 净化之魂 - Purified Spirit
     467281, -- 金创药 - Healing Elixir
+    115175, -- 抚慰之雾 - Soothing Mist
 
     -- paladin
     53563, -- 圣光道标 - Beacon of Light
@@ -799,15 +808,18 @@ local spells =  {
     388010, -- 暮秋祝福 - Blessing of Autumn
     388011, -- 凛冬祝福 - Blessing of Winter
     200654, -- 提尔的拯救 - Tyr's Deliverance
+    1244893, -- 救世主道标 - Beacon of the Savior
 
     -- priest
     139, -- 恢复 - Renew
+    200829, -- 恳求 - Plea (added in 12.0, Disc)
     41635, -- 愈合祷言 - Prayer of Mending
     17, -- 真言术：盾 - Power Word: Shield
     194384, -- 救赎 - Atonement
     77489, -- 圣光回响 - Echo of Light
     372847, -- 光明之泉恢复 - Blessed Bolt
-    443526, -- 慰藉预兆 - Premonition of Solace
+    -- 443526, -- 慰藉预兆 - Premonition of Solace (removed in 12.0)
+    1253593, -- 虚空之盾 - Void Shield
 
     -- shaman
     974, -- 大地之盾 - Earth Shield
@@ -1305,5 +1317,6 @@ function I.UpdateCrowdControls(t)
 end
 
 function I.IsCrowdControls(name, id)
+    if issecretvalue and (issecretvalue(name) or issecretvalue(id)) then return end
     return builtInCrowdControls[name] or builtInCrowdControls[id] or customCrowdControls[name]
 end

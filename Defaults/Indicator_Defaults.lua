@@ -267,6 +267,8 @@ end
 -- dispels: custom debuff type color
 -------------------------------------------------
 function I.GetDebuffTypeColor(debuffType)
+    -- Midnight 12.0.0+: debuffType may be secret; cannot use as table key
+    if issecretvalue and issecretvalue(debuffType) then return 0, 0, 0 end
     if debuffType and CellDB["debuffTypeColor"][debuffType] then
         return CellDB["debuffTypeColor"][debuffType]["r"], CellDB["debuffTypeColor"][debuffType]["g"],
             CellDB["debuffTypeColor"][debuffType]["b"]
@@ -283,9 +285,21 @@ function I.SetDebuffTypeColor(debuffType, r, g, b)
     end
 end
 
+-- Midnight 12.0.0 removed the DebuffTypeColor global; provide a local fallback
+-- with the standard Blizzard debuff type colors
+local CellDebuffTypeColorFallback = {
+    ["none"]    = {r = 0.80, g = 0.00, b = 0.00},
+    ["Magic"]   = {r = 0.20, g = 0.60, b = 1.00},
+    ["Curse"]   = {r = 0.60, g = 0.00, b = 1.00},
+    ["Disease"] = {r = 0.60, g = 0.40, b = 0.00},
+    ["Poison"]  = {r = 0.00, g = 0.60, b = 0.00},
+    [""]        = {r = 0.80, g = 0.00, b = 0.00},
+}
+
 function I.ResetDebuffTypeColor()
-    -- copy
-    CellDB["debuffTypeColor"] = F.Copy(DebuffTypeColor)
+    -- copy from WoW global if available, otherwise use local fallback
+    local source = DebuffTypeColor or CellDebuffTypeColorFallback
+    CellDB["debuffTypeColor"] = F.Copy(source)
     -- add Bleed
     CellDB["debuffTypeColor"]["Bleed"] = {r = 1, g = 0.2, b = 0.6}
     -- add cleu

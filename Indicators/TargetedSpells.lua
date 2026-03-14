@@ -141,7 +141,18 @@ end
 local function CheckUnitCast(sourceUnit, isRecheck)
     if not UnitIsEnemy("player", sourceUnit) then return end
 
+    -- On Midnight 12.0.0+, enemy spellcast info is secret in instances
+    -- Player's own casts (and pets) are always non-secret
+    if Cell.isMidnight then
+        local isPlayerCast = (sourceUnit == "player" or sourceUnit == "pet" or sourceUnit == "vehicle")
+        if not isPlayerCast and F.IsAuraRestricted and F.IsAuraRestricted() then
+            return -- skip enemy spell tracking during restricted periods
+        end
+    end
+
     local sourceGUID = UnitGUID(sourceUnit)
+    -- Midnight 12.0.0+: UnitGUID for nameplates may return secret strings
+    if Cell.isMidnight and issecretvalue and issecretvalue(sourceGUID) then return end
     local targetGUID
     local previousTarget, isChanneling
 
@@ -264,6 +275,8 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
 
     elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
         local sourceGUID = UnitGUID(sourceUnit)
+        -- Midnight 12.0.0+: UnitGUID may return secret strings — can't use as table key
+        if issecretvalue and issecretvalue(sourceGUID) then return end
         if casts[sourceGUID] then
             previousTarget = casts[sourceGUID]["targetGUID"]
             casts[sourceGUID] = nil
@@ -272,6 +285,8 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
 
     elseif event == "NAME_PLATE_UNIT_REMOVED" then
         local sourceGUID = UnitGUID(sourceUnit)
+        -- Midnight 12.0.0+: UnitGUID may return secret strings — can't use as table key
+        if issecretvalue and issecretvalue(sourceGUID) then return end
         if casts[sourceGUID] and not casts[sourceGUID]["nonNameplate"] then
             previousTarget = casts[sourceGUID]["targetGUID"]
             casts[sourceGUID] = nil

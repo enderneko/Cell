@@ -79,7 +79,7 @@ local defaultSpells = {
             "406732C", -- Spatial Paradox - 空间悖论
             "378441P", -- Time Stop - 时间停止
             -- "374348C", -- Renewing Blaze - 新生光焰
-            "443328H", -- Engulf -- 焚身
+            -- "443328H", -- Engulf -- 焚身 (removed in 12.0)
         },
         -- 1467 - Devastation
         [1467] = {
@@ -214,22 +214,22 @@ local defaultSpells = {
             17, -- Power Word: Shield - 真言术：盾
             2061, -- Flash Heal - 快速治疗
             2096, -- Mind Vision - 心灵视界
-            "139C", -- Renew - 恢复
-            "33076C", -- Prayer of Mending - 愈合祷言
+            -- "139C", -- Renew - 恢复 (removed in 12.0)
             "73325C", -- Leap of Faith - 信仰飞跃
             "10060C", -- Power Infusion - 能量灌注
-            "373481C", -- Power Word: Life - 真言术：命
-            "108968C", -- Void Shift - 虚空转移
+            -- "373481C", -- Power Word: Life - 真言术：命 (removed in 12.0)
+            -- "108968C", -- Void Shift - 虚空转移 (removed in 12.0)
         },
         -- 256 - Discipline
         [256] = {
             212036, -- Mass Resurrection - 群体复活
             527, -- Purify - 纯净术
             47540, -- Penance - 苦修
+            "200829S", -- Plea - 恳求 (added in 12.0)
             "194509S", -- Power Word: Radiance - 真言术：耀
             "33206S", -- Pain Suppression - 痛苦压制
             "47536S", -- Rapture - 全神贯注
-            "314867S", -- Shadow Covenant - 暗影盟约
+            -- "314867S", -- Shadow Covenant - 暗影盟约 (removed in 12.0)
             -- "421453S", -- Ultimate Penitence - 终极苦修
         },
         -- 257 - Holy
@@ -237,6 +237,7 @@ local defaultSpells = {
             212036, -- Mass Resurrection - 群体复活
             527, -- Purify - 纯净术
             2060, -- Heal - 治疗术
+            "33076S", -- Prayer of Mending - 愈合祷言 (moved from class to Holy in 12.0)
             "2050S", -- Holy Word: Serenity - 圣言术：静
             "596S", -- Prayer of Healing - 治疗祷言
             "47788S", -- Guardian Spirit - 守护之魂

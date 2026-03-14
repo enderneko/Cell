@@ -13,7 +13,7 @@ local selectedLayout, selectedLayoutTable
 -- power filter
 -----------------------------------------
 local CLASS_ROLES
-if Cell.isVanilla then
+if Cell.isTBC or Cell.isVanilla then
     CLASS_ROLES = {
         ["DRUID"] = {"TANK", "HEALER", "DAMAGER"},
         ["HUNTER"] = {"TANK", "HEALER", "DAMAGER"},
@@ -207,7 +207,7 @@ local function CreateFilters()
         vehicleF:SetPoint("TOPLEFT", warriorF, "BOTTOMLEFT", 0, -5)
         npcF:SetPoint("TOPLEFT", petF, "BOTTOMLEFT", 0, -5)
 
-    elseif Cell.isVanilla then
+    elseif Cell.isTBC or Cell.isVanilla then
         P.Height(powerFilters, 155)
 
         druidF:SetPoint("TOPLEFT", 5, -5)

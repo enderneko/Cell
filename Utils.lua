@@ -14,9 +14,9 @@ Cell.vars.playerFaction = UnitFactionGroup("player")
 Cell.isAsian = LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR
 
 Cell.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+Cell.isMidnight = Cell.isRetail and (select(4, GetBuildInfo()) >= 120000)
 Cell.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
--- Cell.isBCC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
--- Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+Cell.isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 Cell.isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
@@ -30,6 +30,8 @@ elseif Cell.isCata then
     Cell.flavor = "cata"
 elseif Cell.isWrath then
     Cell.flavor = "wrath"
+elseif Cell.isTBC then
+    Cell.flavor = "tbc"
 elseif Cell.isVanilla then
     Cell.flavor = "vanilla"
 end
@@ -113,7 +115,7 @@ if Cell.isCata then
         return which, Cell.vars.playerSpecIcon, Cell.vars.playerSpecName
     end
 
-elseif Cell.isWrath or Cell.isVanilla then
+elseif Cell.isWrath or Cell.isTBC or Cell.isVanilla then
     function F.GetActiveTalentInfo()
         local which = GetActiveTalentGroup() == 1 and L["Primary Talents"] or L["Secondary Talents"]
 
@@ -1858,7 +1860,7 @@ else
     end
 end
 
-if Cell.isWrath or Cell.isVanilla then
+if Cell.isWrath or Cell.isTBC or Cell.isVanilla then
     local GetSpellInfo = GetSpellInfo
     local GetNumSpellTabs = GetNumSpellTabs
     local GetSpellTabInfo = GetSpellTabInfo
@@ -2011,6 +2013,8 @@ end
 
 if Cell.isRetail then
     function F.FindDebuffByIds(unit, spellIds)
+        -- Midnight 12.0.0+: aura fields are secret during restricted contexts
+        if Cell.isMidnight and F.IsAuraRestricted() then return {} end
         local debuffs = {}
         AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if spellIds[spellId] then
@@ -2021,6 +2025,8 @@ if Cell.isRetail then
     end
 
     function F.FindAuraByDebuffTypes(unit, types)
+        -- Midnight 12.0.0+: aura fields are secret during restricted contexts
+        if Cell.isMidnight and F.IsAuraRestricted() then return {} end
         local debuffs = {}
         AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if types == "all" or types[debuffType] then
@@ -2157,8 +2163,8 @@ local UnitInRange = UnitInRange
 local UnitCanAssist = UnitCanAssist
 local UnitCanAttack = UnitCanAttack
 local UnitCanCooperate = UnitCanCooperate
-local IsSpellInRange = (C_Spell and C_Spell.IsSpellInRange) and C_Spell.IsSpellInRange or IsSpellInRange
-local IsItemInRange = (C_Spell and C_Item.IsItemInRange) and C_Item.IsItemInRange or IsItemInRange
+local IsSpellInRange = C_Spell.IsSpellInRange
+local IsItemInRange = C_Item.IsItemInRange
 local CheckInteractDistance = CheckInteractDistance
 local UnitIsDead = UnitIsDead
 local IsSpellKnownOrOverridesKnown = IsSpellKnownOrOverridesKnown
@@ -2166,6 +2172,11 @@ local IsSpellKnownOrOverridesKnown = IsSpellKnownOrOverridesKnown
 -- local GetNumSpellTabs = GetNumSpellTabs
 -- local GetSpellBookItemName = GetSpellBookItemName
 -- local BOOKTYPE_SPELL = BOOKTYPE_SPELL
+local IsSpellBookKnown = C_SpellBook.IsSpellKnown
+
+local function IsSpellKnown(spellId)
+    return IsSpellKnownOrOverridesKnown(spellId) or IsSpellBookKnown(spellId)
+end
 
 local UnitInSamePhase
 if Cell.isRetail then
@@ -2181,7 +2192,7 @@ local playerClass = UnitClassBase("player")
 local friendSpells = {
     -- ["DEATHKNIGHT"] = 47541,
     -- ["DEMONHUNTER"] = ,
-    ["DRUID"] = (Cell.isWrath or Cell.isVanilla) and 5185 or 8936, -- 治疗之触 / 愈合
+    ["DRUID"] = (Cell.isWrath or Cell.isTBC or Cell.isVanilla) and 5185 or 8936, -- 治疗之触 / 愈合
     -- FIXME: [361469 活化烈焰] 会被英雄天赋 [431443 时序烈焰] 替代，但它而且有问题
     -- IsSpellInRange 始终返回 nil
     ["EVOKER"] = 355913, -- 翡翠之花
@@ -2189,11 +2200,11 @@ local friendSpells = {
     ["MAGE"] = 1459, -- 奥术智慧 / 奥术光辉
     ["MONK"] = 116670, -- 活血术
     ["PALADIN"] = Cell.isRetail and 19750 or 635, -- 圣光闪现 / 圣光术
-    ["PRIEST"] = (Cell.isWrath or Cell.isVanilla) and 2050 or 2061, -- 次级治疗术 / 快速治疗
+    ["PRIEST"] = (Cell.isWrath or Cell.isTBC or Cell.isVanilla) and 2050 or 2061, -- 次级治疗术 / 快速治疗
     -- ["ROGUE"] = Cell.isWrath and 57934,
     ["SHAMAN"] = Cell.isRetail and 8004 or 331, -- 治疗之涌 / 治疗波
     ["WARLOCK"] = 5697, -- 无尽呼吸
-    -- ["WARRIOR"] = 3411,
+    -- ["WARRIOR"] = 3411, -- 援护
 }
 
 local deadSpells = {
@@ -2297,32 +2308,28 @@ CELL_RANGE_CHECK_HOSTILE = {}
 CELL_RANGE_CHECK_DEAD = {}
 CELL_RANGE_CHECK_PET = {}
 
-local function SPELLS_CHANGED()
-    spell_friend = CELL_RANGE_CHECK_FRIENDLY[playerClass] or friendSpells[playerClass]
-    spell_harm = CELL_RANGE_CHECK_HOSTILE[playerClass] or harmSpells[playerClass]
-    spell_dead = CELL_RANGE_CHECK_DEAD[playerClass] or deadSpells[playerClass]
-    spell_pet = CELL_RANGE_CHECK_PET[playerClass] or petSpells[playerClass]
+local function LoadSpellName(spellID, callback)
+    if spellID and IsSpellKnown(spellID) then
+        local spell = Spell:CreateFromSpellID(spellID)
+        spell:ContinueOnSpellLoad(function()
+            callback(spell:GetSpellName())
+            -- print("Loaded spell for range check:", spellID, spell:GetSpellName())
+        end)
+    else
+        callback(nil)
+    end
+end
 
-    if spell_friend and IsSpellKnownOrOverridesKnown(spell_friend) then
-        spell_friend = F.GetSpellInfo(spell_friend)
-    else
-        spell_friend = nil
-    end
-    if spell_harm and IsSpellKnownOrOverridesKnown(spell_harm) then
-        spell_harm = F.GetSpellInfo(spell_harm)
-    else
-        spell_harm = nil
-    end
-    if spell_dead and IsSpellKnownOrOverridesKnown(spell_dead) then
-        spell_dead = F.GetSpellInfo(spell_dead)
-    else
-        spell_dead = nil
-    end
-    if spell_pet and IsSpellKnownOrOverridesKnown(spell_pet) then
-        spell_pet = F.GetSpellInfo(spell_pet)
-    else
-        spell_pet = nil
-    end
+local function SPELLS_CHANGED()
+    local friend_id = CELL_RANGE_CHECK_FRIENDLY[playerClass] or friendSpells[playerClass]
+    local harm_id = CELL_RANGE_CHECK_HOSTILE[playerClass] or harmSpells[playerClass]
+    local dead_id = CELL_RANGE_CHECK_DEAD[playerClass] or deadSpells[playerClass]
+    local pet_id = CELL_RANGE_CHECK_PET[playerClass] or petSpells[playerClass]
+
+    LoadSpellName(friend_id, function(name) spell_friend = name end)
+    LoadSpellName(harm_id, function(name) spell_harm = name end)
+    LoadSpellName(dead_id, function(name) spell_dead = name end)
+    LoadSpellName(pet_id, function(name) spell_pet = name end)
 
     -- F.Debug(
     --     "[RANGE CHECK]",
@@ -2353,6 +2360,10 @@ function F.IsInRange(unit, check)
         -- NOTE: UnitInRange only works with group players/pets
         --! but not available for PLAYER PET when SOLO
         local inRange, checked = UnitInRange(unit)
+        -- Midnight 12.0.0+: UnitInRange returns secret booleans during restricted contexts
+        if Cell.isMidnight and issecretvalue and issecretvalue(checked) then
+            return F.IsInRange(unit, true)
+        end
         if not checked then
             return F.IsInRange(unit, true)
         end
@@ -2373,7 +2384,10 @@ function F.IsInRange(unit, check)
             end
 
             local inRange, checked = UnitInRange(unit)
-            if checked then
+            -- Midnight 12.0.0+: UnitInRange returns secret booleans during restricted contexts
+            if Cell.isMidnight and issecretvalue and issecretvalue(checked) then
+                -- Skip, fall through to pet/interact checks below
+            elseif checked then
                 return inRange
             end
 
@@ -2490,4 +2504,63 @@ end
 ---------------------------------------------------------------------
 if Cell.isMists then
 
+end
+
+-------------------------------------------------
+-- Secret value utilities (Patch 12.0.0+)
+-------------------------------------------------
+-- issecretvalue() is a native WoW API available in 12.0.0+
+function F.IsSecretValue(val)
+    if issecretvalue then
+        return issecretvalue(val)
+    end
+    return false
+end
+
+-- GetRestrictedActionStatus() returns non-secret boolean
+-- Enum.RestrictedActionType.SecretAuras = 0
+-- Enum.RestrictedActionType.SecretCooldowns = 1
+function F.IsAuraRestricted()
+    if GetRestrictedActionStatus and Enum and Enum.RestrictedActionType then
+        local isRestricted = GetRestrictedActionStatus(Enum.RestrictedActionType.SecretAuras)
+        return isRestricted == true
+    end
+    return false
+end
+
+function F.IsCooldownRestricted()
+    if GetRestrictedActionStatus and Enum and Enum.RestrictedActionType then
+        local isRestricted = GetRestrictedActionStatus(Enum.RestrictedActionType.SecretCooldowns)
+        return isRestricted == true
+    end
+    return false
+end
+
+-- Per-aura non-secret check: returns true if the aura's fields are real (non-secret) values.
+-- On Midnight 12.0.0+, Blizzard flags certain spells as non-secret; their auraInfo fields
+-- (spellId, expirationTime, duration, etc.) return real values instead of secrets.
+-- If spellId is readable (non-secret), ALL fields for this aura are non-secret.
+function F.IsAuraNonSecret(auraInfo)
+    if not Cell.isMidnight then return true end
+    if not issecretvalue then return true end
+    return not issecretvalue(auraInfo.spellId)
+end
+
+-- Proactive check: queries whether a spell ID will produce secret aura values.
+-- Uses C_Secrets.ShouldSpellAuraBeSecret() if available (Midnight 12.0.0+).
+-- Returns true if the spell's aura data will be non-secret (readable).
+function F.IsSpellAuraNonSecret(spellId)
+    if not Cell.isMidnight then return true end
+    if C_Secrets and C_Secrets.ShouldSpellAuraBeSecret then
+        return not C_Secrets.ShouldSpellAuraBeSecret(spellId)
+    end
+    return false -- assume secret if API unavailable
+end
+
+-- Generic check: returns true if a given value is NOT a secret value.
+-- Works for any return value from WoW APIs that may produce secrets on Midnight 12.0.0+.
+function F.IsValueNonSecret(val)
+    if not Cell.isMidnight then return true end
+    if not issecretvalue then return true end
+    return not issecretvalue(val)
 end

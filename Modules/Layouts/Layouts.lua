@@ -1636,7 +1636,7 @@ local raid10Text, raid25Text -- wrath
 local bgText -- vanilla
 
 local raidOutdoor = L["Raid"].." "..L["Outdoor"]
-local raidInstance = L["Raid"].." ".._G.INSTANCE
+local raidInstance = L["Raid"].." ".._G.BATTLEGROUND_INSTANCE
 local raidMythic = L["Raid"].." ".._G.PLAYER_DIFFICULTY6
 
 local function CreateAutoSwitchPane()
@@ -1758,7 +1758,7 @@ local function CreateAutoSwitchPane()
         raid25Text:SetPoint("BOTTOMLEFT", raid25Dropdown, "TOPLEFT", 0, 1)
         raid25Text.text = L["Raid"].." 25"
 
-    elseif Cell.isVanilla then
+    elseif Cell.isTBC or Cell.isVanilla then
         -- instance
         raidInstanceDropdown = Cell.CreateDropdown(autoSwitchPane, 140)
         raidInstanceDropdown:SetPoint("TOPLEFT", raidOutdoorDropdown, "BOTTOMLEFT", 0, -30)
@@ -1774,7 +1774,7 @@ local function CreateAutoSwitchPane()
         arenaDropdown:SetPoint("TOPLEFT", raidMythicDropdown, "BOTTOMLEFT", 0, -30)
     elseif Cell.isMists or Cell.isCata or Cell.isWrath then
         arenaDropdown:SetPoint("TOPLEFT", raid25Dropdown, "BOTTOMLEFT", 0, -30)
-    elseif Cell.isVanilla then
+    elseif Cell.isTBC or Cell.isVanilla then
         arenaDropdown:SetPoint("TOPLEFT", raidInstanceDropdown, "BOTTOMLEFT", 0, -30)
     end
 
@@ -1782,7 +1782,7 @@ local function CreateAutoSwitchPane()
     arenaText:SetPoint("BOTTOMLEFT", arenaDropdown, "TOPLEFT", 0, 1)
     arenaText.text = L["Arena"]
 
-    if Cell.isVanilla then
+    if Cell.isTBC or Cell.isVanilla then
         -- battleground (vanilla)
         bgDropdown = Cell.CreateDropdown(autoSwitchPane, 140)
         bgDropdown:SetPoint("TOPLEFT", arenaDropdown, "BOTTOMLEFT", 0, -30)
@@ -1868,7 +1868,7 @@ LoadAutoSwitchDropdowns = function()
         -- raid25Dropdown
         raid25Dropdown:SetItems(GetDropdownItems(indices, "raid25"))
 
-    elseif Cell.isVanilla then
+    elseif Cell.isTBC or Cell.isVanilla then
         -- raidInstanceDropdown
         raidInstanceDropdown:SetItems(GetDropdownItems(indices, "raid_instance"))
     end
@@ -1876,7 +1876,7 @@ LoadAutoSwitchDropdowns = function()
     -- arenaDropdown
     arenaDropdown:SetItems(GetDropdownItems(indices, "arena"))
 
-    if Cell.isVanilla then
+    if Cell.isTBC or Cell.isVanilla then
         -- bgDropdown
         bgDropdown:SetItems(GetDropdownItems(indices, "battleground"))
     else
@@ -2845,7 +2845,7 @@ LoadLayoutAutoSwitchDB = function()
         bg15Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["battleground15"])
         bg40Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["battleground40"])
 
-    elseif Cell.isVanilla then
+    elseif Cell.isTBC or Cell.isVanilla then
         P.Height(autoSwitchFrame, 378)
         if Cell.vars.activeTalentGroup == 1 then
             currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Icons\\1:13|t "..L["Primary Talents"])
@@ -2914,7 +2914,7 @@ local function UpdateLayoutAutoSwitch(layout, which)
                     else
                         raid25Text:SetText(Cell.GetAccentColorString()..raid25Text.text.."*")
                     end
-                elseif Cell.isVanilla then
+                elseif Cell.isTBC or Cell.isVanilla then
                     raidInstanceText:SetText(Cell.GetAccentColorString()..raidInstanceText.text.."*")
                 end
             else

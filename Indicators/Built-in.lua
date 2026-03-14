@@ -777,6 +777,9 @@ eventFrame:SetScript("OnEvent", function()
 end)
 
 local function CheckCondition(operator, checkedValue, currentValue)
+    -- Midnight 12.0.0+: applications (count) may be secret even when spellId is not;
+    -- comparisons on secret values throw errors
+    if issecretvalue and (issecretvalue(currentValue) or issecretvalue(checkedValue)) then return end
     if operator == "=" then
         if currentValue == checkedValue then return true end
     elseif operator == ">" then
@@ -793,6 +796,8 @@ local function CheckCondition(operator, checkedValue, currentValue)
 end
 
 function I.GetDebuffOrder(spellName, spellId, count)
+    -- Midnight 12.0.0+: spellId/spellName may be secret; cannot use as table key
+    if issecretvalue and (issecretvalue(spellId) or issecretvalue(spellName)) then return end
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 
@@ -808,6 +813,8 @@ function I.GetDebuffOrder(spellName, spellId, count)
 end
 
 function I.GetDebuffGlow(spellName, spellId, count)
+    -- Midnight 12.0.0+: spellId/spellName may be secret; cannot use as table key
+    if issecretvalue and (issecretvalue(spellId) or issecretvalue(spellName)) then return end
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 
@@ -828,6 +835,8 @@ function I.GetDebuffGlow(spellName, spellId, count)
 end
 
 function I.IsDebuffUseElapsedTime(spellName, spellId)
+    -- Midnight 12.0.0+: spellId/spellName may be secret; cannot use as table key
+    if issecretvalue and (issecretvalue(spellId) or issecretvalue(spellName)) then return end
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 
@@ -1367,14 +1376,19 @@ local function StatusText_ShowTimer(self)
 
     self.timer:Show()
 
-    if not startTimeCache[self.parent.states.guid] then startTimeCache[self.parent.states.guid] = GetTime() end
+    -- Midnight 12.0.0+: guid may be secret for NPC/boss units
+    local showGuid = self.parent.states.guid
+    if not (issecretvalue and issecretvalue(showGuid)) then
+        if showGuid and not startTimeCache[showGuid] then startTimeCache[showGuid] = GetTime() end
+    end
 
     self.ticker = C_Timer.NewTicker(1, function()
         if not self.parent.states.guid and self.parent.states.unit then -- ElvUI AFK mode
             self.parent.states.guid = UnitGUID(self.parent.states.unit)
         end
-        if self.parent.states.guid and startTimeCache[self.parent.states.guid] then
-            self.timer:SetFormattedText(F.FormatTime(GetTime() - startTimeCache[self.parent.states.guid]))
+        local tickGuid = self.parent.states.guid
+        if tickGuid and not (issecretvalue and issecretvalue(tickGuid)) and startTimeCache[tickGuid] then
+            self.timer:SetFormattedText(F.FormatTime(GetTime() - startTimeCache[tickGuid]))
         else
             self.timer:SetText("")
         end
@@ -1386,7 +1400,11 @@ local function StatusText_HideTimer(self, reset)
     self.timer:SetText("")
     if reset then
         if self.ticker then self.ticker:Cancel() end
-        startTimeCache[self.parent.states.guid] = nil
+        -- Midnight 12.0.0+: guid may be secret for NPC/boss units
+        local guid = self.parent.states.guid
+        if guid and not (issecretvalue and issecretvalue(guid)) then
+            startTimeCache[guid] = nil
+        end
     end
 end
 
@@ -1539,6 +1557,17 @@ local function HealthText_SetFormat(self, format)
 end
 
 local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
+    -- On Midnight 12.0.0+, health/maxHealth may be secret values in restricted contexts.
+    -- Arithmetic (/, *, -, comparison) on secret values causes errors.
+    -- AbbreviateNumbers() and FontString:SetText() accept secret values safely.
+    -- DO NOT divide, multiply, or compare secret values.
+    if Cell.isMidnight and F.IsAuraRestricted and F.IsAuraRestricted() then
+        local healthStr = AbbreviateNumbers and AbbreviateNumbers(health) or tostring(health)
+        self.text:SetText(healthStr)
+        self:SetWidth(self.text:GetStringWidth())
+        return
+    end
+
     maxHealth = maxHealth == 0 and 1 or maxHealth
 
     self.text:SetFormattedText("%s%s%s%s",

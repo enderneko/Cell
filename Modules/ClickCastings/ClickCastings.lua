@@ -1152,12 +1152,22 @@ local function ShowActionsMenu(index, b)
             end,
         })
 
-        if (Cell.isVanilla or Cell.isWrath or Cell.isCata) and Cell.vars.playerClass == "WARLOCK" then
+        if (Cell.isVanilla or Cell.isTBC or Cell.isWrath or Cell.isCata) and Cell.vars.playerClass == "WARLOCK" then
+            local soulstoneID
+            if Cell.isVanilla then
+                soulstoneID = 16896
+            elseif Cell.isTBC then
+                soulstoneID = 22116
+            else -- wrath & cata
+                soulstoneID = 36895
+            end
+
             tinsert(items, {
                 ["text"] = F.GetSpellInfo(20707),
                 ["onClick"] = function()
                     changed[index] = changed[index] or {b}
-                    local macrotext = "/stopcasting\n/target mouseover\n/use item:36895\n/targetlasttarget"
+
+                    local macrotext = "/stopcasting\n/target mouseover\n/use item:"..soulstoneID.."\n/targetlasttarget"
                     if b.bindAction ~= macrotext then
                         changed[index]["bindAction"] = macrotext
                         b.actionGrid:SetText(macrotext)
@@ -1394,7 +1404,7 @@ local function UpdateCurrentText(isCommon)
     else
         if Cell.isRetail or Cell.isMists then
             listPane:SetTitle(L["Current Profile"]..": ".."|T"..Cell.vars.playerSpecIcon..":12:12:0:1:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
-        elseif Cell.isCata or Cell.isWrath or Cell.isVanilla then
+        elseif Cell.isCata or Cell.isWrath or Cell.isTBC or Cell.isVanilla then
             local name, icon = F.GetActiveTalentInfo()
             listPane:SetTitle(L["Current Profile"]..": ".."|T"..icon..":12:12:0:1:12:12:1:11:1:11|t "..name)
         end

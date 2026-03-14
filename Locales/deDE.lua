@@ -21,8 +21,7 @@ L["About"] = "Über"
 L["ABOUT"] = "Cell ist ein schönes Raid-Frame-Addon, dass von mehreren großartigen Addons wie CompactRaid, Grid2, Aptechka und VuhDo inspiriert wurde.\nMit einer menschenfreundlicheren Oberfläche kann Cell eine bessere Benutzererfahrung bieten, besser als je zuvor."
 L["ACCEPTED"] = "AKZEPTIERT"
 L["Action"] = "Aktion"
---[[Translation missing --]]
---[[ L["Actions"] = ""--]]
+L["Actions"] = "Aktionen"
 L["Add"] = "Hinzufügen"
 L["Add new spell"] = "Neuen Zauber hinzufügen"
 L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."] = "|T%d:0|t|cFFFF3030%s(%d)|r zur Blockliste der Debuffs hinzugefügt."
@@ -231,8 +230,7 @@ L["Fade out menu buttons on mouseout"] = "Menüschaltflächen beim Ausblenden de
 L["Fade Out These Buttons"] = "Diese Tasten ausblenden"
 L["fadeOut"] = "Mit der Zeit ausblenden"
 L["Faster Health Updates"] = "Schnellere HP-Aktualisierungsrate"
---[[Translation missing --]]
---[[ L["FEIGN"] = ""--]]
+L["FEIGN"] = "TOTSTELLEN"
 L["Filter Auto Switch"] = "Filter Auto Switch"
 L["first %d"] = "erste(r) %d"
 L["Flash"] = "Flash"
@@ -687,8 +685,7 @@ L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid enc
 L["Use CLEU events to increase health update rate"] = "Verwende CLEU-Ereignisse, um die Aktualisierungsrate des Gesundheitszustands zu erhöhen"
 L["Use common profile"] = "Benutze gemeinsames Profil"
 L["Use Elapsed Time"] = "Verstrichene Zeit verwenden"
---[[Translation missing --]]
---[[ L["Use Game Font"] = ""--]]
+L["Use Game Font"] = "Spielschrift verwenden"
 L["Use Same Arrangement As Main"] = "Benutze die gleiche Anordnung wie im Hauptprofil"
 L["Use Same Size As Main"] = "Benutze die gleiche Größe wie im Hauptprofil"
 L["use separate profile for current spec"] = "separates Profil für die aktuelle Spezialisierung verwenden"

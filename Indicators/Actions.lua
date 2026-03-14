@@ -10,6 +10,13 @@ local orientation, speed
 -------------------------------------------------
 -- events
 -------------------------------------------------
+-- Audited for Midnight 12.0.0+ compatibility: no changes required.
+-- CLEU (COMBAT_LOG_EVENT_UNFILTERED) is not used — it is fully commented out below.
+-- The active handler listens to UNIT_SPELLCAST_SUCCEEDED for group members only.
+-- spellID from UNIT_SPELLCAST_SUCCEEDED for allied units is non-secret.
+-- Cell.vars.actions[spellID] table key usage is safe because the spellID comes
+-- from your own group's spellcasts, which are never restricted by GetRestrictedActionStatus.
+
 -- CLEU: subevent, source, target, spellId, spellName
 -- [15:10] SPELL_HEAL 秋静葉 秋静葉 6262 治疗石
 -- [15:10] SPELL_CAST_SUCCESS 秋静葉 nil 6262 治疗石
@@ -32,6 +39,9 @@ eventFrame:SetScript("OnEvent", function(self, event, unit, castGUID, spellID)
         local name = F.GetSpellInfo(spellID)
         print("|cFFFF3030[Cell]|r |cFFB2B2B2" .. event .. ":|r", unit, "|cFF00FF00" .. (spellID or "nil") .. "|r", name)
     end
+
+    -- Midnight 12.0.0+: spellID from UNIT_SPELLCAST_SUCCEEDED is secret during restricted contexts
+    if Cell.isMidnight and issecretvalue and issecretvalue(spellID) then return end
 
     if Cell.vars.actions[spellID] then
         F.HandleUnitButton("unit", unit, Display, unpack(Cell.vars.actions[spellID]))

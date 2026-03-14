@@ -113,6 +113,7 @@ local supporters1 = { -- wowIDs
         "|cfffb6f92露露緹婭丶-迅捷微风 (CN)|r",
         "|cfffb6f92露露缇娅丶-霜语 (CN)|r",
         "|cfffb6f92露露缇娅灬-霜语 (CN)|r",
+        "|cfffb6f92露露缇娅-时光III (CN)|r",
     }, -- 露露缇娅 (爱发电)
     {
         "|cfffb6f92Rëat-Silvermoon (EU)|r",
@@ -122,7 +123,7 @@ local supporters1 = { -- wowIDs
     {"Daydream-Dalaran (EU)"}, -- luana11
     {"|cffff8000Aschgewitter-Eredar (EU)|r"}, -- Aschgewitter - Eredar
     {"三号-熊猫酒仙 (CN)"}, -- 爱发电用户_sUE4
-    {"远古列王守卫-回音山 (CN)"}, -- PPQ
+    {"远古列王守卫-回音山 (CN)"}, -- 牌牌骑
     {"Huf-ArgentDawn (EU)"}, -- Huf
     {"吕小美-震地者 (CN)"}, -- 假寐的死神 (爱发电)
     {
@@ -138,6 +139,9 @@ local supporters1 = { -- wowIDs
         "|cfffb6f92Floofe-Nightslayer (US)|r",
         "|cfffb6f92Mommie-Nightslayer (US)|r",
         "|cfffb6f92Flewf-Nightslayer (US)|r",
+        "|cfffb6f92Twoofe-Nightslayer (US)|r",
+        "|cfffb6f92Sloofe-Nightslayer (US)|r",
+        "|cfffb6f92Ploofe-Nightslayer (US)|r",
     }, -- Floofe (Ko-fi)
     {"无语了捏-回音山 (CN)"}, -- 我有脂肪肝 (爱发电)
     {"月弥-神圣之歌 (CN)"}, -- 爱发电用户_bb967 (爱发电)
@@ -147,6 +151,32 @@ local supporters1 = { -- wowIDs
         "Ekkles-比斯巨兽 (CN)",
         "Ekkles-国王之谷 (CN)",
     }, -- 爱发电用户_ygpT
+    {"小凌宝-霜语 (CN)"}, -- 凌宝 (爱发电)
+    {
+        "無穷丶-霜语 (CN)",
+        "无窮丿-霜语 (CN)",
+        "無窮丿-霜语 (CN)",
+        "无窮灬-霜语 (CN)",
+        "无穷丿-霜语 (CN)",
+        "无穷灬-霜语 (CN)",
+        "无穷丶-霜语 (CN)",
+        "无窮丨-霜语 (CN)",
+        "無穷灬-霜语 (CN)",
+        "無穷丿-霜语 (CN)",
+        "無窮丨-霜语 (CN)",
+        "觜火猴-霜语 (CN)",
+        "壁水貐-霜语 (CN)",
+        "张月鹿丶-霜语 (CN)",
+        "炫若琉璃-霜语 (CN)",
+    }, -- 无穷 (爱发电)
+    {"安格籤牛扒-日落沼澤 (TW)"}, -- 安格籤牛扒 @TW 日落沼澤 (Ko-fi)
+    {
+        "Clarine-霜语 (CN)",
+        "Clariest-霜语 (CN)",
+        "Claramists-霜语 (CN)",
+        "Whitecat-霜语 (CN)",
+        "Claramints-霜语 (CN)",
+    } -- 爱发电用户_9Yqv (爱发电)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -257,7 +287,7 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Huf", "Ko-fi"}, -- 2025-03-04
     {"假寐的死神", "爱发电"}, -- 2025-03-05
     {"Tdps-Ragnaros", "Ko-fi"}, -- 2025-03-08
-    {"PPQ", "爱发电"}, -- 2025-03-08
+    {"牌牌骑", "爱发电"}, -- 2025-03-08
     {"Daanior-Draenor", "Ko-fi"}, -- 2025-03-23
     {"爱发电用户_1e94c", "爱发电"}, -- 2025-03-31
     {"Kaymi", "Ko-fi"}, -- 2025-04-19
@@ -276,6 +306,13 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"施然", "爱发电"}, -- 2025-10-06
     {"|cfffb6f92Quinn|r", "Ko-fi"}, -- 2025-10-28
     {"爱发电用户_ygpT", "爱发电"}, -- 2025-11-06
+    {"Sc千寻", "爱发电"}, -- 2026-01-08
+    {"凌宝", "爱发电"}, -- 2026-01-18
+    {"无穷", "爱发电"}, -- 2026-01-18
+    {"安格籤牛扒 @TW 日落沼澤", "Ko-fi"}, -- 2026-01-22
+    {"爱发电用户_78176", "爱发电"}, -- 2026-03-03
+    {"Yijx", "爱发电"}, -- 2026-03-04
+    {"爱发电用户_9Yqv", "爱发电"}, -- 2026-03-05
 }
 
 -------------------------------------------------

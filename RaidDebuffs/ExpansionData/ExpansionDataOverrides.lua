@@ -2,7 +2,7 @@
 -- File: ExpansionDataOverrides.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2025-03-31 16:35 +08:00
--- Modified: 2025-03-31 17:17 +08:00
+-- Modified: 2025-12-26 12:19 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -34,7 +34,7 @@ Cell_ExpansionDataOverrides = {
     -- }
 }
 
-if Cell.isVanilla then
+if Cell.isTBC or Cell.isVanilla then
     Cell_ExpansionDataOverrides[559] = {from = "Warlords of Draenor", to = "Classic"} -- UBRS
     Cell_ExpansionDataOverrides[229] = {from = "Classic", to = "Classic"} -- LBRS
 end

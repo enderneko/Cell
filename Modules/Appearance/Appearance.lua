@@ -421,8 +421,10 @@ local function CreatePreviewButtons()
 
     previewButton:SetScript("OnHide", function()
         previewButton.perc = 100
-        ticker:Cancel()
-        ticker = nil
+        if ticker then
+            ticker:Cancel()
+            ticker = nil
+        end
     end)
 
     Cell.Fire("CreatePreview", previewButton, previewButton2)
@@ -496,7 +498,11 @@ local function UpdatePreviewButton(which)
         previewButton.widgets.healthBarLoss:SetTexture(Cell.vars.texture)
         previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
         previewButton.widgets.powerBarLoss:SetTexture(Cell.vars.texture)
-        previewButton.widgets.incomingHeal:SetTexture(Cell.vars.texture)
+        if Cell.isMidnight then
+            previewButton.widgets.incomingHeal:SetStatusBarTexture(Cell.vars.texture)
+        else
+            previewButton.widgets.incomingHeal:SetTexture(Cell.vars.texture)
+        end
         previewButton.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
 
         previewButton2.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
@@ -505,7 +511,11 @@ local function UpdatePreviewButton(which)
         previewButton2.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
         previewButton2.widgets.powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
         previewButton2.widgets.powerBarLoss:SetTexture(Cell.vars.texture)
-        previewButton2.widgets.incomingHeal:SetTexture(Cell.vars.texture)
+        if Cell.isMidnight then
+            previewButton2.widgets.incomingHeal:SetStatusBarTexture(Cell.vars.texture)
+        else
+            previewButton2.widgets.incomingHeal:SetTexture(Cell.vars.texture)
+        end
         previewButton2.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
     end
 
@@ -1488,7 +1498,7 @@ local function CreateUnitButtonStylePane()
         Cell.Fire("UpdateAppearance", "shields")
     end)
     shieldCB:SetPoint("TOPLEFT", absorbCB, "BOTTOMLEFT", 0, -28)
-    shieldCB:SetEnabled(not Cell.isVanilla)
+    shieldCB:SetEnabled(not (Cell.isVanilla or Cell.isTBC))
 
     shieldColorPicker = Cell.CreateColorPicker(unitButtonPane, L["Shield Texture"], true, function(r, g, b, a)
         CellDB["appearance"]["shield"][2][1] = r
@@ -1513,7 +1523,7 @@ local function CreateUnitButtonStylePane()
         Cell.Fire("UpdateAppearance", "shields")
     end)
     oversCB:SetPoint("TOPLEFT", shieldCB, "BOTTOMLEFT", 0, -28)
-    oversCB:SetEnabled(not Cell.isVanilla)
+    oversCB:SetEnabled(not (Cell.isVanilla or Cell.isTBC))
 
     oversColorPicker = Cell.CreateColorPicker(unitButtonPane, L["Overshield Texture"], true, function(r, g, b, a)
         CellDB["appearance"]["overshield"][2][1] = r

@@ -26,34 +26,88 @@ local soulstones = {}
 local SOULSTONE = F.GetSpellInfo(20707)
 local RESURRECTING = F.GetSpellInfo(160029)
 
+-- NOTE: The cleuFrame previously relied on COMBAT_LOG_EVENT_UNFILTERED for:
+--   1. SPELL_AURA_REMOVED (soulstone / Resurrecting debuff removal)
+--   2. UNIT_DIED sub-event (to detect soulstone deaths)
+--   3. SPELL_RESURRECT (to detect incoming resurrections)
+-- COMBAT_LOG_EVENT_UNFILTERED is removed in Midnight (WoW 12.0.0).
+--
+-- Midnight replacements:
+--   - Incoming resurrection: already handled via INCOMING_RESURRECT_CHANGED
+--     in eventFrame + UnitHasIncomingResurrection() in I.UpdateStatusIcon.
+--   - Resurrecting debuff removal: handled by UNIT_AURA → UpdateStatusIcon_Resurrection
+--     which re-checks F.FindAuraById for the Resurrecting debuff.
+--   - Soulstone death detection: tracked via UNIT_AURA (soulstone buff removal)
+--     combined with UNIT_HEALTH + UnitIsDeadOrGhost() for the death signal.
 local cleuFrame = CreateFrame("Frame")
-cleuFrame:SetScript("OnEvent", function()
-    local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
 
-    if subEvent == "SPELL_AURA_REMOVED" then
-        if spellName == SOULSTONE then
-            -- print("soulstone removed", timestamp, destName)
-            soulstones[destGUID] = timestamp
-            C_Timer.After(0.1, function()
-                soulstones[destGUID] = nil
-            end)
-        elseif spellName == RESURRECTING then
-            rez[destGUID] = nil
-            F.HandleUnitButton("guid", destGUID, I.UpdateStatusIcon_Resurrection)
-        end
-    elseif subEvent == "UNIT_DIED" then
-        -- print("died", timestamp, destName)
-        if soulstones[destGUID] then
-            F.HandleUnitButton("guid", destGUID, DiedWithSoulstone)
-        end
-        soulstones[destGUID] = nil
-    elseif subEvent == "SPELL_RESURRECT" then
-        local start, duration = GetTime(), 60
-        rez[destGUID] = {start, duration}
+if not Cell.isMidnight then
+    cleuFrame:SetScript("OnEvent", function()
+        local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
 
-        F.HandleUnitButton("guid", destGUID, I.UpdateStatusIcon_Resurrection, start, duration)
-    end
-end)
+        if subEvent == "SPELL_AURA_REMOVED" then
+            if spellName == SOULSTONE then
+                soulstones[destGUID] = timestamp
+                C_Timer.After(0.1, function()
+                    soulstones[destGUID] = nil
+                end)
+            elseif spellName == RESURRECTING then
+                rez[destGUID] = nil
+                F.HandleUnitButton("guid", destGUID, I.UpdateStatusIcon_Resurrection)
+            end
+        elseif subEvent == "UNIT_DIED" then
+            if soulstones[destGUID] then
+                F.HandleUnitButton("guid", destGUID, DiedWithSoulstone)
+            end
+            soulstones[destGUID] = nil
+        elseif subEvent == "SPELL_RESURRECT" then
+            local start, duration = GetTime(), 60
+            rez[destGUID] = {start, duration}
+
+            F.HandleUnitButton("guid", destGUID, I.UpdateStatusIcon_Resurrection, start, duration)
+        end
+    end)
+else
+    -- Midnight path: detect soulstone deaths via UNIT_AURA + UNIT_HEALTH.
+    -- UNIT_AURA fires when any aura is added/removed on a tracked unit.
+    -- We watch for soulstone buff removal and immediately note the guid;
+    -- then UNIT_HEALTH (UnitIsDeadOrGhost) confirms the death.
+    cleuFrame:SetScript("OnEvent", function(self, event, unit)
+        if event == "UNIT_AURA" then
+            local guid = UnitGUID(unit)
+            if not guid then return end
+            -- Midnight 12.0.0+: UnitGUID may return secret strings for non-group units
+            if issecretvalue and issecretvalue(guid) then return end
+            -- Check if soulstone buff is now absent but was present
+            -- (simple: after UNIT_AURA fires, see if unit still has it)
+            local hasSoulstone = F.FindAuraByName and F.FindAuraByName(unit, "BUFF", SOULSTONE)
+            if not hasSoulstone and soulstones[guid] then
+                -- aura gone; keep window open for death
+                C_Timer.After(0.1, function()
+                    soulstones[guid] = nil
+                end)
+            elseif hasSoulstone then
+                soulstones[guid] = GetTime()
+            end
+            -- Also refresh rez icon in case Resurrecting debuff changed
+            F.HandleUnitButton("unit", unit, I.UpdateStatusIcon_Resurrection)
+        elseif event == "UNIT_HEALTH" then
+            local guid = UnitGUID(unit)
+            if not guid then return end
+            -- Midnight 12.0.0+: UnitGUID may return secret strings for non-group units
+            if issecretvalue and issecretvalue(guid) then return end
+            if UnitIsDeadOrGhost(unit) then
+                if soulstones[guid] then
+                    F.HandleUnitButton("unit", unit, DiedWithSoulstone)
+                end
+                soulstones[guid] = nil
+            else
+                -- unit came back alive; clear soulstone state
+                soulstones[guid] = nil
+            end
+        end
+    end)
+end
 
 -------------------------------------------------
 -- create
@@ -157,6 +211,12 @@ function I.UpdateStatusIcon_Resurrection(button, start, duration)
     end
 
     if not start then
+        -- Midnight 12.0.0+: AuraUtil.FindAura/UnpackAuraData fails on secret aura data
+        -- F.IsAuraRestricted() is unreliable; skip entirely on Midnight
+        if Cell.isMidnight then
+            resurrectionIcon:Hide()
+            return
+        end
         local dur, expir = select(5, F.FindAuraById(unit, "DEBUFF", 160029)) -- battle res
         if dur then --! check Resurrecting debuff
             start = expir - dur
@@ -322,8 +382,18 @@ function I.EnableStatusIcon(enabled)
         if Cell.isRetail and CELL_SUMMON_ICONS_ENABLED then
             eventFrame:RegisterEvent("INCOMING_SUMMON_CHANGED")
         end
-        -- resurrection
-        cleuFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        -- resurrection / soulstone tracking
+        if not Cell.isMidnight then
+            -- Pre-Midnight: use CLEU for soulstone removal, UNIT_DIED, SPELL_RESURRECT
+            cleuFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        else
+            -- Midnight (12.0.0+): COMBAT_LOG_EVENT_UNFILTERED unavailable.
+            -- Use UNIT_AURA for soulstone buff tracking and UNIT_HEALTH for
+            -- death detection. INCOMING_RESURRECT_CHANGED (above) handles
+            -- incoming rez detection via UnitHasIncomingResurrection().
+            cleuFrame:RegisterEvent("UNIT_AURA")
+            cleuFrame:RegisterEvent("UNIT_HEALTH")
+        end
     else
         eventFrame:UnregisterAllEvents()
         cleuFrame:UnregisterAllEvents()

@@ -47,23 +47,30 @@ end
 function F.HideBlizzardParty()
     _G.UIParent:UnregisterEvent("GROUP_ROSTER_UPDATE")
 
+    -- Midnight 12.0.0+ may have different party frame structure
     if _G.CompactPartyFrame then
         _G.CompactPartyFrame:UnregisterAllEvents()
+        _G.CompactPartyFrame:SetParent(hiddenParent)
     end
 
     if _G.PartyFrame then
         _G.PartyFrame:UnregisterAllEvents()
         _G.PartyFrame:SetScript("OnShow", nil)
-        for frame in _G.PartyFrame.PartyMemberFramePool:EnumerateActive() do
-            HideFrame(frame)
+        if _G.PartyFrame.PartyMemberFramePool then
+            for frame in _G.PartyFrame.PartyMemberFramePool:EnumerateActive() do
+                HideFrame(frame)
+            end
         end
         HideFrame(_G.PartyFrame)
     else
+        -- Legacy party frame fallback
         for i = 1, 4 do
             HideFrame(_G["PartyMemberFrame"..i])
             HideFrame(_G["CompactPartyMemberFrame"..i])
         end
-        HideFrame(_G.PartyMemberBackground)
+        if _G.PartyMemberBackground then
+            HideFrame(_G.PartyMemberBackground)
+        end
     end
 end
 
