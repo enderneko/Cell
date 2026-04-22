@@ -1576,9 +1576,10 @@ local midnightFormatter = {
 
     health = function(pattern, calc) return pattern:format(calc:GetCurrentHealth()) end,
     health_short = function(pattern, calc) return pattern:format(AbbreviateNumbers(calc:GetCurrentHealth())) end,
+    -- Percent formatters round via %.0f since F.Round would do arithmetic on a secret.
     health_percent = function(pattern, calc)
         local pos = GetMidnightCurves()
-        return pattern:format(calc:EvaluateCurrentHealthPercent(pos))
+        return pattern:format(string.format("%.0f", calc:EvaluateCurrentHealthPercent(pos)))
     end,
 
     -- Sign is embedded in the string (can't negate a secret).
@@ -1586,7 +1587,7 @@ local midnightFormatter = {
     deficit_short = function(pattern, calc) return pattern:format("-"..AbbreviateNumbers(calc:GetMissingHealth())) end,
     deficit_percent = function(pattern, calc)
         local _, neg = GetMidnightCurves()
-        return pattern:format(calc:EvaluateMissingHealthPercent(neg))
+        return pattern:format(string.format("%.0f", calc:EvaluateMissingHealthPercent(neg)))
     end,
 
     -- effective_* degrades to health_* (no calc method for effective health).
@@ -1594,7 +1595,7 @@ local midnightFormatter = {
     effective_short = function(pattern, calc) return pattern:format(AbbreviateNumbers(calc:GetCurrentHealth())) end,
     effective_percent = function(pattern, calc)
         local pos = GetMidnightCurves()
-        return pattern:format(calc:EvaluateCurrentHealthPercent(pos))
+        return pattern:format(string.format("%.0f", calc:EvaluateCurrentHealthPercent(pos)))
     end,
 
     shields = function(pattern, calc) return pattern:format(calc:GetTotalDamageAbsorbs()) end,
