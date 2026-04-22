@@ -2269,10 +2269,9 @@ UnitButton_UpdatePowerText = function(self)
     if not self._shouldShowPowerText then return end
 
     if self.states.powerMax and self.states.power and not self.states.isDeadOrGhost then
-        -- On Midnight, power and powerMax may be secret values (Midnight 12.0.0+)
-        -- SetValue uses string.format/AbbreviateNumbers which accept secrets â†’ FontString:SetText accepts secrets
-        -- Secret handling is in the powerText indicator's SetValue method (Indicators/Base.lua) â€” Phase 8 follow-up
-        self.indicators.powerText:SetValue(self.states.power, self.states.powerMax)
+        -- Pass the unit so the percent formatter can use UnitPowerPercent(unit, nil, true, curve)
+        -- which returns a plain 0-100 value in contexts where raw UnitPower would be secret.
+        self.indicators.powerText:SetValue(self.states.power, self.states.powerMax, self.states.displayedUnit)
     else
         self.indicators.powerText:Hide()
     end
@@ -2296,10 +2295,10 @@ end
 UnitButton_UpdatePowerMax = function(self)
     if not (self._shouldShowPowerBar and self.states.powerMax) then return end
 
-    -- powerMax may be secret on Midnight 12.0.0+ for some units.
-    -- SetMinMaxSmoothedValue is a Lua mixin that does arithmetic (Clamp) â€" fails on secrets.
-    -- SetMinMaxValues is native C API that accepts secrets. Use it as fallback on Midnight.
-    if barAnimationType == "Smooth" and F.IsValueNonSecret(self.states.powerMax) then
+    -- Force native SetMinMaxValues on Midnight. SmoothStatusBarMixin caches min/max
+    -- internally and its per-frame Clamp() throws if either value was ever secret,
+    -- so the Smooth path is unsafe even when the current powerMax happens to be plain.
+    if barAnimationType == "Smooth" and not Cell.isMidnight then
         self.widgets.powerBar:SetMinMaxSmoothedValue(0, self.states.powerMax)
     else
         self.widgets.powerBar:SetMinMaxValues(0, self.states.powerMax)
@@ -2309,10 +2308,9 @@ end
 UnitButton_UpdatePower = function(self)
     if not (self._shouldShowPowerBar and self.states.power) then return end
 
-    -- self.states.power may be a secret value on Midnight 12.0.0+
-    -- SetBarValue maps to SetSmoothedValue in Smooth mode, which does Lua Clamp and fails on secrets.
-    -- Use native SetValue on Midnight when power is secret.
-    if Cell.isMidnight and not F.IsValueNonSecret(self.states.power) then
+    -- Same reason as UpdatePowerMax: always use native SetValue on Midnight to stay
+    -- off the SmoothStatusBar tick, mirroring what the health bar does at line 2395.
+    if Cell.isMidnight then
         self.widgets.powerBar:SetValue(self.states.power)
     else
         self.widgets.powerBar:SetBarValue(self.states.power)

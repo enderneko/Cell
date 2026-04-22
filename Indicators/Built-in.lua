@@ -1746,9 +1746,34 @@ local function SetPower_SecretWidth(self)
     self:Show()
 end
 
--- Power percentage removed in 12.0.5: no power calculator / curve to derive a percentage
--- on a secret. If Blizzard adds one, restore `SetPower_Percentage` and the dropdown entry
--- in Widgets_IndicatorSettings.lua.
+local function SetPower_Percentage(self, current, max, unit)
+    -- Preferred path on Midnight: UnitPowerPercent(unit, powerType, useCurve, curve) returns
+    -- a plain 0-100 number directly from the C layer, bypassing the secret-value restriction
+    -- on UnitPower. pcall because the API can throw in some restricted contexts.
+    if unit and Cell.isMidnight and UnitPowerPercent and CurveConstants and CurveConstants.ScaleTo100 then
+        local ok, pct = pcall(UnitPowerPercent, unit, nil, true, CurveConstants.ScaleTo100)
+        if ok and type(pct) == "number" then
+            local _, fontSize = self.text:GetFont()
+            self.text:SetFormattedText("%d%%", pct)
+            self:SetWidth(SafeTextWidth(self.text, fontSize))
+            self:Show()
+            return
+        end
+    end
+    -- Fallback when the UnitPowerPercent path isn't available or fails: abbreviated if secret, else arithmetic.
+    if Cell.isMidnight and F.IsSecretValue and (F.IsSecretValue(current) or F.IsSecretValue(max)) then
+        self.text:SetText(AbbreviateNumbers and AbbreviateNumbers(current) or tostring(current))
+        return SetPower_SecretWidth(self)
+    end
+    if self.hideIfEmptyOrFull and (current == 0 or current == max) then
+        self:Hide()
+    else
+        local _, fontSize = self.text:GetFont()
+        self.text:SetFormattedText("%d%%", current/max*100)
+        self:SetWidth(SafeTextWidth(self.text, fontSize))
+        self:Show()
+    end
+end
 
 local function SetPower_Number(self, current, max)
     if Cell.isMidnight and F.IsSecretValue and (F.IsSecretValue(current) or F.IsSecretValue(max)) then
@@ -1819,8 +1844,9 @@ local function PowerText_SetPoint(self, point, relativeTo, relativePoint, x, y)
 end
 
 local function PowerText_SetFormat(self, format)
-    -- Stale "percentage" configs fall through to number-short.
-    if format == "number" then
+    if format == "percentage" then
+        self.SetValue = SetPower_Percentage
+    elseif format == "number" then
         self.SetValue = SetPower_Number
     else
         self.SetValue = SetPower_Number_Short
