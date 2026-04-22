@@ -973,6 +973,7 @@ local function PrivateAuras_UpdatePrivateAuraAnchor(self, unit)
             unitToken = unit,
             auraIndex = 1,
             parent = self,
+            isContainer = false,
             showCountdownFrame = _showCountdownFrame,
             showCountdownNumbers = _showCountdownNumbers,
             iconInfo = {

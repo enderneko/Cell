@@ -255,10 +255,7 @@ end
 function I.UpdateCustomIndicators(unitButton, auraInfo)
     local unit = unitButton.states.displayedUnit
 
-    -- Midnight 12.0.0+: bail only if aura type (isHelpful) is secret — we need it to classify buff/debuff.
-    -- spellId may still be secret for some auras even with hotfix; don't bail on spellId.
-    if issecretvalue and issecretvalue(auraInfo.isHelpful) then return end
-
+    -- 12.0.5+: isHelpful/isHarmful are no longer secret, so classification is always safe.
     local auraType = auraInfo.isHelpful and "buff" or "debuff"
     local icon = auraInfo.icon
     -- Midnight 12.0.0+: dispelName may be secret; sanitize to avoid table-key/comparison crashes downstream
@@ -274,7 +271,12 @@ function I.UpdateCustomIndicators(unitButton, auraInfo)
         start = 0
         duration = 0
     end
-    local castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"
+    -- sourceUnit remains secret on restricted auras in 12.0.5; comparing it would taint execution.
+    -- When secret, default to false (the filter treats the aura as not-cast-by-me).
+    local castByMe = false
+    if F.IsValueNonSecret(auraInfo.sourceUnit) then
+        castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"
+    end
 
     -- check Bleed
     if auraInfo.isHarmful then

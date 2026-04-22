@@ -1755,30 +1755,21 @@ UnitButton_UpdateAuras = function(self, updateInfo)
         UnitButton_UpdateBuffs(self, true)
         UnitButton_UpdateDebuffs(self, true)
     else
-        -- Midnight 12.0.0+: some aura fields may still be secret. Per-aura checks in
-        -- HandleBuff/HandleDebuff handle this. We no longer force full update for ALL
-        -- Midnight aura events â€” only fall back to full update if we encounter secret
-        -- isHelpful/isHarmful fields in addedAuras that prevent classification.
+        -- 12.0.5+: isHelpful/isHarmful are guaranteed non-secret, so classification is always safe.
+        -- Temporal fields (expirationTime, duration, applications, sourceUnit) may still be secret;
+        -- per-aura F.IsAuraNonSecret / F.IsValueNonSecret guards below handle those on read.
         local buffsChanged, debuffsChanged
         wipe(self._missing_auras)
 
         if updateInfo.addedAuras then
             for _, aura in next, updateInfo.addedAuras do
-                if F.IsAuraNonSecret(aura) then
-                    if aura.isHelpful then
-                        buffsChanged = true
-                        self._buffs_cache[aura.auraInstanceID] = aura
-                    end
-                    if aura.isHarmful then
-                        debuffsChanged = true
-                        self._debuffs_cache[aura.auraInstanceID] = aura
-                    end
-                else
-                    -- Secret aura: can't classify as buff/debuff; force full update
-                    UnitButton_UpdateBuffs(self, true)
-                    UnitButton_UpdateDebuffs(self, true)
-                    I.UpdateStatusIcon(self)
-                    return
+                if aura.isHelpful then
+                    buffsChanged = true
+                    self._buffs_cache[aura.auraInstanceID] = aura
+                end
+                if aura.isHarmful then
+                    debuffsChanged = true
+                    self._debuffs_cache[aura.auraInstanceID] = aura
                 end
             end
         end
@@ -1969,8 +1960,9 @@ local function UnitButton_UpdatePowerStates(self)
 
     self.states.power = UnitPower(unit)
     self.states.powerMax = UnitPowerMax(unit)
-    -- Midnight 12.0.0+: UnitPowerMax may return a secret number during restricted contexts
-    if not (Cell.isMidnight and F.IsAuraRestricted()) then
+    -- 12.0.5+: UnitPower/UnitPowerMax can return secrets in restricted contexts (arena pets,
+    -- enemy PvP units). Guard per-value — IsAuraRestricted is aura-scoped and misses these.
+    if not (Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(self.states.powerMax)) then
         if self.states.powerMax <= 0 then self.states.powerMax = 1 end
     end
 end
@@ -3377,7 +3369,11 @@ local function UnitButton_OnTick(self)
 
         if self.states.unit and self.states.displayedUnit then
             local displayedGuid = UnitGUID(self.states.displayedUnit)
-            if displayedGuid ~= self.__displayedGuid then
+            -- 12.0.5+: UnitGUID can return a secret in restricted contexts. Comparing a secret
+            -- against a plaintext cached GUID taints; skip the change-detection this tick.
+            -- The secure header still drives real unit-change events, so this is safe.
+            local displayedGuidReadable = not (Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(displayedGuid))
+            if displayedGuidReadable and displayedGuid ~= self.__displayedGuid then
                 -- NOTE: displayed unit entity changed
                 F.RemoveElementsExceptKeys(self.states, "unit", "displayedUnit")
                 self.__displayedGuid = displayedGuid
@@ -3388,7 +3384,8 @@ local function UnitButton_OnTick(self)
             end
 
             local guid = UnitGUID(self.states.unit)
-            if guid and guid ~= self.__unitGuid then
+            local guidReadable = not (Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(guid))
+            if guidReadable and guid and guid ~= self.__unitGuid then
                 -- print("guidChanged:", self:GetName(), self.states.unit, guid)
                 -- NOTE: unit entity changed
                 -- update Cell.vars.guids
