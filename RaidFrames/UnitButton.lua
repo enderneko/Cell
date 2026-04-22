@@ -2683,7 +2683,13 @@ local function UnitButton_UpdateThreatBar(self)
     local _, status, scaledPercentage, rawPercentage = UnitDetailedThreatSituation(unit, "target")
     if status then
         self.indicators.aggroBar:Show()
-        self.indicators.aggroBar:SetSmoothedValue(scaledPercentage)
+        -- SetSmoothedValue is a Lua mixin whose Clamp() would throw every tick on a secret percentage.
+        -- Fall back to native SetValue when the threat percent is secret.
+        if Cell.isMidnight and F.IsValueNonSecret and not F.IsValueNonSecret(scaledPercentage) then
+            self.indicators.aggroBar:SetValue(scaledPercentage)
+        else
+            self.indicators.aggroBar:SetSmoothedValue(scaledPercentage)
+        end
         self.indicators.aggroBar:SetStatusBarColor(GetThreatStatusColor(status))
     else
         self.indicators.aggroBar:Hide()
