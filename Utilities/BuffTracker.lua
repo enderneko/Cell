@@ -754,7 +754,7 @@ local function CheckUnit(unit, updateBtn)
 
     if UnitIsConnected(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) then
         local guid = UnitGUID(unit)
-        -- 12.0.5+: secret GUIDs can't be used as table keys; LGI indexes its cache by GUID.
+        -- LGI indexes its cache by GUID; a secret GUID would throw on the table lookup.
         if Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(guid) then return end
         local info = LGI:GetCachedInfo(guid)
         local spec = info and info.specId

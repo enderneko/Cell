@@ -255,7 +255,6 @@ end
 function I.UpdateCustomIndicators(unitButton, auraInfo)
     local unit = unitButton.states.displayedUnit
 
-    -- 12.0.5+: isHelpful/isHarmful are no longer secret, so classification is always safe.
     local auraType = auraInfo.isHelpful and "buff" or "debuff"
     local icon = auraInfo.icon
     -- Midnight 12.0.0+: dispelName may be secret; sanitize to avoid table-key/comparison crashes downstream
@@ -271,8 +270,7 @@ function I.UpdateCustomIndicators(unitButton, auraInfo)
         start = 0
         duration = 0
     end
-    -- sourceUnit remains secret on restricted auras in 12.0.5; comparing it would taint execution.
-    -- When secret, default to false (the filter treats the aura as not-cast-by-me).
+    -- sourceUnit is secret on restricted auras; castByMe defaults to false when unreadable.
     local castByMe = false
     if F.IsValueNonSecret(auraInfo.sourceUnit) then
         castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"

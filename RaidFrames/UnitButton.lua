@@ -1755,9 +1755,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
         UnitButton_UpdateBuffs(self, true)
         UnitButton_UpdateDebuffs(self, true)
     else
-        -- 12.0.5+: isHelpful/isHarmful are guaranteed non-secret, so classification is always safe.
-        -- Temporal fields (expirationTime, duration, applications, sourceUnit) may still be secret;
-        -- per-aura F.IsAuraNonSecret / F.IsValueNonSecret guards below handle those on read.
+        -- Classification via isHelpful/isHarmful is always safe; temporal fields are guarded at read sites.
         local buffsChanged, debuffsChanged
         wipe(self._missing_auras)
 
@@ -1890,8 +1888,8 @@ local function UnitButton_UpdateHealthStates(self, diff)
             local maxHealth = calc:GetMaximumHealth()
             local totalAbsorbs = calc:GetTotalDamageAbsorbs()
             local healAbsorbs = calc:GetTotalHealAbsorbs()
-            -- SetValue accepts secret values
-            self.indicators.healthText:SetValue(health, maxHealth, totalAbsorbs, healAbsorbs)
+            -- Pass calc so SetValue can route through Midnight curve/format methods when values are secret.
+            self.indicators.healthText:SetValue(health, maxHealth, totalAbsorbs, healAbsorbs, calc)
             self.indicators.healthText:Show()
         else
             self.indicators.healthText:Hide()
@@ -1960,8 +1958,7 @@ local function UnitButton_UpdatePowerStates(self)
 
     self.states.power = UnitPower(unit)
     self.states.powerMax = UnitPowerMax(unit)
-    -- 12.0.5+: UnitPower/UnitPowerMax can return secrets in restricted contexts (arena pets,
-    -- enemy PvP units). Guard per-value — IsAuraRestricted is aura-scoped and misses these.
+    -- powerMax can be secret on arena pets / enemy PvP; IsAuraRestricted misses this.
     if not (Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(self.states.powerMax)) then
         if self.states.powerMax <= 0 then self.states.powerMax = 1 end
     end
@@ -3369,9 +3366,8 @@ local function UnitButton_OnTick(self)
 
         if self.states.unit and self.states.displayedUnit then
             local displayedGuid = UnitGUID(self.states.displayedUnit)
-            -- 12.0.5+: UnitGUID can return a secret in restricted contexts. Comparing a secret
-            -- against a plaintext cached GUID taints; skip the change-detection this tick.
-            -- The secure header still drives real unit-change events, so this is safe.
+            -- Secret GUID can't be compared against the cached plaintext; skip change detection this tick.
+            -- Real unit changes still come through the secure header.
             local displayedGuidReadable = not (Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(displayedGuid))
             if displayedGuidReadable and displayedGuid ~= self.__displayedGuid then
                 -- NOTE: displayed unit entity changed

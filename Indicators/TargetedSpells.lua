@@ -176,9 +176,8 @@ local function CheckUnitCast(sourceUnit, isRecheck)
 
     -- print(sourceUnit, name, spellId)
 
-    -- 12.0.5+: enemy UnitCastingInfo fields can be secret even outside aura-restricted contexts
-    -- (IsAuraRestricted covers auras, not casts). A secret spellId cannot be used as a table key,
-    -- and secret timestamps cannot be arithmeticked. Bail if any critical field is secret.
+    -- Enemy UnitCastingInfo fields can be secret independently of IsAuraRestricted.
+    -- Bail before we use any as a table key or in arithmetic.
     if Cell.isMidnight and issecretvalue then
         if issecretvalue(spellId) or issecretvalue(startTimeMS) or issecretvalue(endTimeMS) or issecretvalue(texture) then
             return

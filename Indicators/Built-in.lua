@@ -1543,11 +1543,86 @@ local function BuildPattern(config)
     end
 end
 
+-- Fallback width when GetStringWidth returns a secret-tainted value (rejected by SetWidth).
+local function SafeTextWidth(fontString, fontSize)
+    local w = fontString:GetStringWidth()
+    if Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(w) then
+        return fontSize and fontSize * 4 or 60
+    end
+    return w
+end
+
+-- 12.0.5 secret-safe formatters. HealPredictionCalculator returns secret numbers even
+-- in normal gameplay; Lua arithmetic and comparisons throw. Values go through calculator
+-- methods and C-implemented pass-throughs (string.format, AbbreviateNumbers,
+-- BreakUpLargeNumbers). effective_* and *_percent variants without a calc method fall
+-- back to the closest supported format.
+
+local _pct01to100, _pct01toNeg100
+local function GetMidnightCurves()
+    if _pct01to100 then return _pct01to100, _pct01toNeg100 end
+    if not C_CurveUtil then return nil, nil end
+    _pct01to100 = C_CurveUtil.CreateCurve()
+    _pct01to100:AddPoint(0.0, 0.0)
+    _pct01to100:AddPoint(1.0, 100.0)
+    _pct01toNeg100 = C_CurveUtil.CreateCurve()
+    _pct01toNeg100:AddPoint(0.0, 0.0)
+    _pct01toNeg100:AddPoint(1.0, -100.0)
+    return _pct01to100, _pct01toNeg100
+end
+
+local midnightFormatter = {
+    none = function() return "" end,
+
+    health = function(pattern, calc) return pattern:format(calc:GetCurrentHealth()) end,
+    health_short = function(pattern, calc) return pattern:format(AbbreviateNumbers(calc:GetCurrentHealth())) end,
+    health_percent = function(pattern, calc)
+        local pos = GetMidnightCurves()
+        return pattern:format(calc:EvaluateCurrentHealthPercent(pos))
+    end,
+
+    -- Sign is embedded in the string (can't negate a secret).
+    deficit = function(pattern, calc) return pattern:format("-"..BreakUpLargeNumbers(calc:GetMissingHealth())) end,
+    deficit_short = function(pattern, calc) return pattern:format("-"..AbbreviateNumbers(calc:GetMissingHealth())) end,
+    deficit_percent = function(pattern, calc)
+        local _, neg = GetMidnightCurves()
+        return pattern:format(calc:EvaluateMissingHealthPercent(neg))
+    end,
+
+    -- effective_* degrades to health_* (no calc method for effective health).
+    effective = function(pattern, calc) return pattern:format(calc:GetCurrentHealth()) end,
+    effective_short = function(pattern, calc) return pattern:format(AbbreviateNumbers(calc:GetCurrentHealth())) end,
+    effective_percent = function(pattern, calc)
+        local pos = GetMidnightCurves()
+        return pattern:format(calc:EvaluateCurrentHealthPercent(pos))
+    end,
+
+    shields = function(pattern, calc) return pattern:format(calc:GetTotalDamageAbsorbs()) end,
+    shields_short = function(pattern, calc) return pattern:format(AbbreviateNumbers(calc:GetTotalDamageAbsorbs())) end,
+    -- *_percent variants degrade to short absolute (no calc method for absorbs percent).
+    shields_percent = function(pattern, calc) return pattern:format(AbbreviateNumbers(calc:GetTotalDamageAbsorbs())) end,
+
+    healabsorbs = function(pattern, calc) return pattern:format(calc:GetTotalHealAbsorbs()) end,
+    healabsorbs_short = function(pattern, calc) return pattern:format(AbbreviateNumbers(calc:GetTotalHealAbsorbs())) end,
+    healabsorbs_percent = function(pattern, calc) return pattern:format(AbbreviateNumbers(calc:GetTotalHealAbsorbs())) end,
+}
+
 local function HealthText_SetFormat(self, format)
-    self.GetHealth1 = formatter[format.health1.format:gsub("_no_sign$", "")]
-    self.GetHealth2 = formatter[format.health2.format:gsub("_no_sign$", "")]
-    self.GetShields = formatter[format.shields.format:gsub("_no_sign$", "")]
-    self.GetHealAbsorbs = formatter[format.healAbsorbs.format:gsub("_no_sign$", "")]
+    local h1 = format.health1.format:gsub("_no_sign$", "")
+    local h2 = format.health2.format:gsub("_no_sign$", "")
+    local sh = format.shields.format:gsub("_no_sign$", "")
+    local ha = format.healAbsorbs.format:gsub("_no_sign$", "")
+
+    self.GetHealth1 = formatter[h1]
+    self.GetHealth2 = formatter[h2]
+    self.GetShields = formatter[sh]
+    self.GetHealAbsorbs = formatter[ha]
+
+    -- Names kept for the Midnight secret path to look up a different formatter table.
+    self._health1_format = h1
+    self._health2_format = h2
+    self._shields_format = sh
+    self._healAbsorbs_format = ha
 
     self.health1 = BuildPattern(format.health1)
     self.health1_hideIfEmptyOrFull = format.health1.hideIfEmptyOrFull
@@ -1557,21 +1632,20 @@ local function HealthText_SetFormat(self, format)
     self.healAbsorbs = BuildPattern(format.healAbsorbs)
 end
 
-local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
-    -- 12.0.5+: health/maxHealth can be secret in restricted contexts (pets, arena units)
-    -- independently of IsAuraRestricted. Guard per-value. AbbreviateNumbers and SetText
-    -- are the only operations that accept secrets safely — no arithmetic, no comparison.
-    if Cell.isMidnight and F.IsSecretValue and (F.IsSecretValue(health) or F.IsSecretValue(maxHealth)) then
-        -- Midnight's HealPredictionCalculator returns secret-wrapped values even in normal
-        -- gameplay. AbbreviateNumbers and SetText accept secrets and render the string
-        -- correctly at the C++ layer (e.g. "430K"). What we can't do is query GetStringWidth()
-        -- and feed it back to SetWidth — that returns a secret-tainted width which SetWidth
-        -- rejects. Fall back to a font-size-proportional width so the parent frame has
-        -- nonzero width for layout; the FontString itself renders at its natural pixel size.
-        local healthStr = AbbreviateNumbers and AbbreviateNumbers(health) or tostring(health)
-        self.text:SetText(healthStr)
+local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs, calc)
+    -- Secret path routes the user's format through calculator methods; calc is the unit's HealPredictionCalculator.
+    if Cell.isMidnight and calc and F.IsSecretValue and (F.IsSecretValue(health) or F.IsSecretValue(maxHealth)) then
+        local f1 = midnightFormatter[self._health1_format or "none"] or midnightFormatter.none
+        local f2 = midnightFormatter[self._health2_format or "none"] or midnightFormatter.none
+        local fs = midnightFormatter[self._shields_format or "none"] or midnightFormatter.none
+        local fh = midnightFormatter[self._healAbsorbs_format or "none"] or midnightFormatter.none
+        self.text:SetFormattedText("%s%s%s%s",
+            f1(self.health1, calc),
+            f2(self.health2, calc),
+            fs(self.shields, calc),
+            fh(self.healAbsorbs, calc))
         local _, fontSize = self.text:GetFont()
-        self:SetWidth(fontSize and fontSize * 4 or 60)
+        self:SetWidth(SafeTextWidth(self.text, fontSize))
         return
     end
 
@@ -1583,17 +1657,6 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
         self.GetShields(self.shields, health, maxHealth, shields, healAbsorbs),
         self.GetHealAbsorbs(self.healAbsorbs, health, maxHealth, shields, healAbsorbs))
     self:SetWidth(self.text:GetStringWidth())
-end
-
--- Shared helper: compute a safe width for a FontString that may currently hold
--- secret-derived text. GetStringWidth taints when text is secret, which would be
--- rejected by SetWidth/SetSize. Returns a font-size-proportional fallback in that case.
-local function SafeTextWidth(fontString, fontSize)
-    local w = fontString:GetStringWidth()
-    if Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(w) then
-        return fontSize and fontSize * 4 or 60
-    end
-    return w
 end
 
 local function HealthText_SetFont(self, font, size, outline, shadow)
@@ -1671,54 +1734,48 @@ end
 -------------------------------------------------
 -- power text
 -------------------------------------------------
--- 12.0.5+: power can be a secret-wrapped number on restricted units (arena pets etc.).
--- When secret, we can't compare (`== 0`, `== max`), arithmetic (`current/max*100`), or
--- measure the rendered string (`GetStringWidth` returns a tainted width). Route to
--- AbbreviateNumbers + SetText (both C++-implemented, accept secrets) and set a
--- font-proportional width so the parent frame participates in layout.
-local function SetPower_Secret(self, current)
-    local text = AbbreviateNumbers and AbbreviateNumbers(current) or tostring(current)
-    self.text:SetText(text)
+-- Power values come back secret from within Cell's tainted execution context (no
+-- power-side calculator exists). hideIfEmptyOrFull is a no-op in the secret path
+-- because it needs comparisons. The non-secret paths use SafeTextWidth because a
+-- FontString that ever held secret text returns a secret GetStringWidth thereafter.
+
+local function SetPower_SecretWidth(self)
     local _, fontSize = self.text:GetFont()
     self:SetWidth(fontSize and fontSize * 4 or 60)
     self:Show()
 end
 
-local function SetPower_Percentage(self, current, max)
-    if Cell.isMidnight and F.IsSecretValue and (F.IsSecretValue(current) or F.IsSecretValue(max)) then
-        return SetPower_Secret(self, current)
-    end
-    if self.hideIfEmptyOrFull and (current == 0 or current == max) then
-        self:Hide()
-    else
-        self.text:SetFormattedText("%d%%", current/max*100)
-        self:SetWidth(self.text:GetStringWidth())
-        self:Show()
-    end
-end
+-- Power percentage removed in 12.0.5: no power calculator / curve to derive a percentage
+-- on a secret. If Blizzard adds one, restore `SetPower_Percentage` and the dropdown entry
+-- in Widgets_IndicatorSettings.lua.
 
 local function SetPower_Number(self, current, max)
     if Cell.isMidnight and F.IsSecretValue and (F.IsSecretValue(current) or F.IsSecretValue(max)) then
-        return SetPower_Secret(self, current)
+        self.text:SetText(string.format("%d", current))
+        return SetPower_SecretWidth(self)
     end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else
+        local _, fontSize = self.text:GetFont()
         self.text:SetText(current)
-        self:SetWidth(self.text:GetStringWidth())
+        self:SetWidth(SafeTextWidth(self.text, fontSize))
         self:Show()
     end
 end
 
 local function SetPower_Number_Short(self, current, max)
     if Cell.isMidnight and F.IsSecretValue and (F.IsSecretValue(current) or F.IsSecretValue(max)) then
-        return SetPower_Secret(self, current)
+        -- F.FormatNumber does comparisons that would throw on secrets.
+        self.text:SetText(AbbreviateNumbers and AbbreviateNumbers(current) or tostring(current))
+        return SetPower_SecretWidth(self)
     end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else
+        local _, fontSize = self.text:GetFont()
         self.text:SetText(F.FormatNumber(current))
-        self:SetWidth(self.text:GetStringWidth())
+        self:SetWidth(SafeTextWidth(self.text, fontSize))
         self:Show()
     end
 end
@@ -1761,11 +1818,10 @@ local function PowerText_SetPoint(self, point, relativeTo, relativePoint, x, y)
 end
 
 local function PowerText_SetFormat(self, format)
-    if format == "percentage" then
-        self.SetValue = SetPower_Percentage
-    elseif format == "number" then
+    -- Stale "percentage" configs fall through to number-short.
+    if format == "number" then
         self.SetValue = SetPower_Number
-    elseif format == "number-short" then
+    else
         self.SetValue = SetPower_Number_Short
     end
 end

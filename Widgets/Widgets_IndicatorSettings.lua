@@ -1395,14 +1395,8 @@ local function CreateSetting_PowerFormat(parent)
 
         widget.format = Cell.CreateDropdown(widget, 127)
         widget.format:SetPoint("TOPLEFT", 5, -20)
+        -- Percentage removed in 12.0.5: no power calc/curve API to derive percent on a secret.
         widget.format:SetItems({
-            {
-                ["text"] = "50%",
-                ["value"] = "percentage",
-                ["onClick"] = function()
-                    widget.func("percentage")
-                end,
-            },
             {
                 ["text"] = "25000",
                 ["value"] = "number",

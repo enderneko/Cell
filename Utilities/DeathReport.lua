@@ -179,7 +179,7 @@ else
     local function OnUnitHealth(unit)
         if not unit then return end
         local guid = UnitGUID(unit)
-        -- 12.0.5+: GUIDs can be secret in restricted contexts; can't be used as table keys.
+        -- Secret GUIDs can't be used as table keys.
         if Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(guid) then return end
         if UnitIsDeadOrGhost(unit) and not UnitIsFeignDeath(unit) then
             if guid and not reportedDead[guid] then
