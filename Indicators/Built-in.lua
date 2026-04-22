@@ -1585,6 +1585,17 @@ local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs
     self:SetWidth(self.text:GetStringWidth())
 end
 
+-- Shared helper: compute a safe width for a FontString that may currently hold
+-- secret-derived text. GetStringWidth taints when text is secret, which would be
+-- rejected by SetWidth/SetSize. Returns a font-size-proportional fallback in that case.
+local function SafeTextWidth(fontString, fontSize)
+    local w = fontString:GetStringWidth()
+    if Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(w) then
+        return fontSize and fontSize * 4 or 60
+    end
+    return w
+end
+
 local function HealthText_SetFont(self, font, size, outline, shadow)
     font = F.GetFont(font)
 
@@ -1607,7 +1618,7 @@ local function HealthText_SetFont(self, font, size, outline, shadow)
         self.text:SetShadowColor(0, 0, 0, 0)
     end
 
-    self:SetSize(self.text:GetStringWidth(), size)
+    self:SetSize(SafeTextWidth(self.text, size), size)
 end
 
 local function HealthText_SetPoint(self, point, relativeTo, relativePoint, x, y)
@@ -1734,7 +1745,7 @@ local function PowerText_SetFont(self, font, size, outline, shadow)
         self.text:SetShadowColor(0, 0, 0, 0)
     end
 
-    self:SetSize(self.text:GetStringWidth(), size)
+    self:SetSize(SafeTextWidth(self.text, size), size)
 end
 
 local function PowerText_SetPoint(self, point, relativeTo, relativePoint, x, y)
