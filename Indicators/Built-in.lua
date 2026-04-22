@@ -1558,14 +1558,20 @@ local function HealthText_SetFormat(self, format)
 end
 
 local function HealthText_SetValue(self, health, maxHealth, shields, healAbsorbs)
-    -- On Midnight 12.0.0+, health/maxHealth may be secret values in restricted contexts.
-    -- Arithmetic (/, *, -, comparison) on secret values causes errors.
-    -- AbbreviateNumbers() and FontString:SetText() accept secret values safely.
-    -- DO NOT divide, multiply, or compare secret values.
-    if Cell.isMidnight and F.IsAuraRestricted and F.IsAuraRestricted() then
+    -- 12.0.5+: health/maxHealth can be secret in restricted contexts (pets, arena units)
+    -- independently of IsAuraRestricted. Guard per-value. AbbreviateNumbers and SetText
+    -- are the only operations that accept secrets safely — no arithmetic, no comparison.
+    if Cell.isMidnight and F.IsSecretValue and (F.IsSecretValue(health) or F.IsSecretValue(maxHealth)) then
+        -- Midnight's HealPredictionCalculator returns secret-wrapped values even in normal
+        -- gameplay. AbbreviateNumbers and SetText accept secrets and render the string
+        -- correctly at the C++ layer (e.g. "430K"). What we can't do is query GetStringWidth()
+        -- and feed it back to SetWidth — that returns a secret-tainted width which SetWidth
+        -- rejects. Fall back to a font-size-proportional width so the parent frame has
+        -- nonzero width for layout; the FontString itself renders at its natural pixel size.
         local healthStr = AbbreviateNumbers and AbbreviateNumbers(health) or tostring(health)
         self.text:SetText(healthStr)
-        self:SetWidth(self.text:GetStringWidth())
+        local _, fontSize = self.text:GetFont()
+        self:SetWidth(fontSize and fontSize * 4 or 60)
         return
     end
 
@@ -1654,7 +1660,23 @@ end
 -------------------------------------------------
 -- power text
 -------------------------------------------------
+-- 12.0.5+: power can be a secret-wrapped number on restricted units (arena pets etc.).
+-- When secret, we can't compare (`== 0`, `== max`), arithmetic (`current/max*100`), or
+-- measure the rendered string (`GetStringWidth` returns a tainted width). Route to
+-- AbbreviateNumbers + SetText (both C++-implemented, accept secrets) and set a
+-- font-proportional width so the parent frame participates in layout.
+local function SetPower_Secret(self, current)
+    local text = AbbreviateNumbers and AbbreviateNumbers(current) or tostring(current)
+    self.text:SetText(text)
+    local _, fontSize = self.text:GetFont()
+    self:SetWidth(fontSize and fontSize * 4 or 60)
+    self:Show()
+end
+
 local function SetPower_Percentage(self, current, max)
+    if Cell.isMidnight and F.IsSecretValue and (F.IsSecretValue(current) or F.IsSecretValue(max)) then
+        return SetPower_Secret(self, current)
+    end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else
@@ -1665,6 +1687,9 @@ local function SetPower_Percentage(self, current, max)
 end
 
 local function SetPower_Number(self, current, max)
+    if Cell.isMidnight and F.IsSecretValue and (F.IsSecretValue(current) or F.IsSecretValue(max)) then
+        return SetPower_Secret(self, current)
+    end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else
@@ -1675,6 +1700,9 @@ local function SetPower_Number(self, current, max)
 end
 
 local function SetPower_Number_Short(self, current, max)
+    if Cell.isMidnight and F.IsSecretValue and (F.IsSecretValue(current) or F.IsSecretValue(max)) then
+        return SetPower_Secret(self, current)
+    end
     if self.hideIfEmptyOrFull and (current == 0 or current == max) then
         self:Hide()
     else

@@ -753,7 +753,10 @@ local function CheckUnit(unit, updateBtn)
     hasBuffFromMe[unit] = nil
 
     if UnitIsConnected(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) then
-        local info = LGI:GetCachedInfo(UnitGUID(unit))
+        local guid = UnitGUID(unit)
+        -- 12.0.5+: secret GUIDs can't be used as table keys; LGI indexes its cache by GUID.
+        if Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(guid) then return end
+        local info = LGI:GetCachedInfo(guid)
         local spec = info and info.specId
         local required = spec and requiredBuffs[spec]
 
