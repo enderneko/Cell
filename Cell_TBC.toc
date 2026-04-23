@@ -2,7 +2,7 @@
 ## Title: Cell
 ## Version: r275-beta
 ## Author: enderneko
-## X-Flavor: Vanilla
+## X-Flavor: TBC
 ## SavedVariables: CellDB, CellDBBackup
 ## SavedVariablesPerCharacter: CellCharacterDB
 

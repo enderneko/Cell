@@ -178,8 +178,10 @@ else
 
     local function OnUnitHealth(unit)
         if not unit then return end
+        local guid = UnitGUID(unit)
+        -- Secret GUIDs can't be used as table keys.
+        if Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(guid) then return end
         if UnitIsDeadOrGhost(unit) and not UnitIsFeignDeath(unit) then
-            local guid = UnitGUID(unit)
             if guid and not reportedDead[guid] then
                 reportedDead[guid] = true
                 if not CheckSendLimit() then return end
@@ -188,7 +190,6 @@ else
             end
         else
             -- unit is alive again; allow future death reports
-            local guid = UnitGUID(unit)
             if guid then
                 reportedDead[guid] = nil
             end
