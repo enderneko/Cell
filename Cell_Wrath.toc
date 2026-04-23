@@ -1,10 +1,11 @@
-## Interface: 30405
+## Interface: 38001
 ## Title: Cell
-## Version: r275-beta
+## Version: r276-beta
 ## Author: enderneko
 ## X-Flavor: Wrath
 ## SavedVariables: CellDB, CellDBBackup
 ## SavedVariablesPerCharacter: CellCharacterDB
+## IconTexture: Interface\AddOns\Cell\Media\icon.tga
 
 ## X-Curse-Project-ID: 409666
 ## X-Wago-ID: qv63LLKb
