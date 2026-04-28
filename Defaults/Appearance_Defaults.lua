@@ -33,8 +33,8 @@ Cell.defaults.appearance = {
     ["healPrediction"] = {true, false, {1, 1, 1, 0.4}},
     ["healAbsorb"] = {Cell.isRetail or Cell.isMists, {1, 0.1, 0.1, 1}},
     ["healAbsorbInvertColor"] = false,
-    ["shield"] = {not (Cell.isTBC or Cell.isVanilla), {1, 1, 1, 0.4}},
-    ["overshield"] = {not (Cell.isTBC or Cell.isVanilla), {1, 1, 1, 1}},
+    ["shield"] = {{1, 1, 1, 0.4}},
+    ["overshield"] = {{1, 1, 1, 1}},
     ["overshieldReverseFill"] = false,
 }
 
