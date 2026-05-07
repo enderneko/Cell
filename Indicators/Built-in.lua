@@ -2211,6 +2211,20 @@ local function ShieldBar_SetVerticalValue(bar, percent)
     bar:SetHeight(max(barHeight, 3))
 end
 
+local function ShieldBar_UpdateStatusBarInset(bar)
+    if not bar.statusBar then return end
+    local inset = P.Scale(1)
+    bar.statusBar:ClearAllPoints()
+    bar.statusBar:SetPoint("TOPLEFT", inset, -inset)
+    bar.statusBar:SetPoint("BOTTOMRIGHT", -inset, inset)
+end
+
+local function ShieldBar_SetStatusBarValue(bar, value)
+    -- Midnight: value can be secret, so the indicator must not compare or scale it in Lua.
+    bar:SetWidth(max(bar.parentHealthBar:GetWidth(), 3))
+    bar.statusBar:SetValue(value or 0)
+end
+
 local function ShieldBar_SetPoint(bar, point, anchorTo, anchorPoint, x, y)
     -- if point == "HEALTH_BAR_HORIZONTAL" then
     --     bar:_SetPoint("TOPLEFT", b.widgets.healthBar)
@@ -2221,39 +2235,80 @@ local function ShieldBar_SetPoint(bar, point, anchorTo, anchorPoint, x, y)
     --     bar:_SetPoint("BOTTOMLEFT", b.widgets.healthBar)
     --     bar.SetValue = ShieldBar_SetVerticalValue
     if point == "HEALTH_BAR" then
-        bar:_SetPoint("TOPLEFT", bar.parentHealthBar, P.Scale(-1), P.Scale(1))
-        bar:_SetPoint("BOTTOMLEFT", bar.parentHealthBar, P.Scale(-1), P.Scale(-1))
-        bar.SetValue = ShieldBar_SetHorizontalValue
+        bar:_SetPoint("TOPLEFT", bar.parentHealthBar)
+        bar:_SetPoint("BOTTOMLEFT", bar.parentHealthBar)
     else
         bar:_SetPoint(point, anchorTo, anchorPoint, x, y)
+    end
+
+    if Cell.isMidnight then
+        bar.SetValue = ShieldBar_SetStatusBarValue
+    else
         bar.SetValue = ShieldBar_SetHorizontalValue
     end
 end
 
 function I.CreateShieldBar(parent)
-    local shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widgets.indicatorFrame, "BackdropTemplate")
+    local shieldBar
+    if Cell.isMidnight then
+        shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widgets.indicatorFrame, "BackdropTemplate")
+
+        local statusBar = CreateFrame("StatusBar", nil, shieldBar)
+        shieldBar.statusBar = statusBar
+        statusBar:SetStatusBarTexture(Cell.vars.whiteTexture)
+        statusBar:GetStatusBarTexture():SetDrawLayer("BORDER", -7)
+        statusBar:SetMinMaxValues(0, 1)
+        statusBar:SetOrientation("horizontal")
+        ShieldBar_UpdateStatusBarInset(shieldBar)
+
+        shieldBar.SetValue = ShieldBar_SetStatusBarValue
+
+        function shieldBar:SetMinMaxValues(minValue, maxValue)
+            statusBar:SetMinMaxValues(minValue, maxValue)
+        end
+
+        function shieldBar:SetOrientation(orientation)
+            statusBar:SetOrientation(orientation)
+        end
+    else
+        shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widgets.indicatorFrame, "BackdropTemplate")
+        local tex = shieldBar:CreateTexture(nil, "BORDER", nil, -7)
+        tex:SetAllPoints()
+
+        function shieldBar:SetColor(r, g, b, a)
+            tex:SetColorTexture(r, g, b, a)
+        end
+    end
+
     parent.indicators.shieldBar = shieldBar
     -- shieldBar:SetSize(4, 4)
     shieldBar:Hide()
     shieldBar:SetBackdrop({edgeFile=Cell.vars.whiteTexture, edgeSize=P.Scale(1)})
-    shieldBar:SetBackdropBorderColor(0, 0, 0, 1)
-
-    local tex = shieldBar:CreateTexture(nil, "BORDER", nil, -7)
-    tex:SetAllPoints()
+    if Cell.isMidnight then
+        shieldBar:SetBackdropBorderColor(0, 0, 0, 0)
+    else
+        shieldBar:SetBackdropBorderColor(0, 0, 0, 1)
+    end
 
     shieldBar._SetPoint = shieldBar.SetPoint
     shieldBar.SetPoint = ShieldBar_SetPoint
-    shieldBar.SetValue = ShieldBar_SetHorizontalValue
+    if not Cell.isMidnight then
+        shieldBar.SetValue = ShieldBar_SetHorizontalValue
+    end
 
     shieldBar.parentHealthBar = parent.widgets.healthBar
+    shieldBar.unitButton = parent
 
-    function shieldBar:SetColor(r, g, b, a)
-        tex:SetColorTexture(r, g, b, a)
+    if Cell.isMidnight then
+        function shieldBar:SetColor(r, g, b, a)
+            shieldBar.statusBar:SetStatusBarColor(r, g, b, a)
+        end
     end
 
     function shieldBar:UpdatePixelPerfect()
         P.Resize(shieldBar)
         P.Repoint(shieldBar)
+        ShieldBar_UpdateStatusBarInset(shieldBar)
         P.Reborder(shieldBar)
     end
 end

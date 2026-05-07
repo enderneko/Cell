@@ -2362,6 +2362,9 @@ local function UnitButton_UpdateHealthMax(self)
         if self.widgets.absorbsBar then
             self.widgets.absorbsBar:SetMinMaxValues(0, maxHealth)
         end
+        if self.indicators.shieldBar and self.indicators.shieldBar.SetMinMaxValues then
+            self.indicators.shieldBar:SetMinMaxValues(0, maxHealth)
+        end
     else
         -- CLASSIC/PRE-MIDNIGHT PATH: original logic
         if barAnimationType == "Smooth" then
@@ -2516,7 +2519,8 @@ end
 UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
     if Cell.isMidnight and self.widgets.healthCalculator then
         -- MIDNIGHT PATH: use calculator secret values
-        if not shieldEnabled then
+        local indicatorEnabled = enabledIndicators["shieldBar"]
+        if not shieldEnabled and not indicatorEnabled then
             self.widgets.shieldBar:Hide()
             self.widgets.shieldBarR:Hide()
             self.widgets.overShieldGlow:Hide()
@@ -2528,42 +2532,84 @@ UnitButton_UpdateShieldAbsorbs = function(self, skipStateUpdates)
         if not unit then return end
         -- Refresh calculator so we have current data (critical for standalone UNIT_ABSORB_AMOUNT_CHANGED events)
         UnitButton_UpdateCalculator(self)
-        local absorbs = self.widgets.healthCalculator:GetDamageAbsorbs()
-        -- Update the shield widget bars
-        self.widgets.shieldBar:SetValue(absorbs)
-        self.widgets.shieldBar:Show()
+        local calc = self.widgets.healthCalculator
+        -- Use total absorbs for display; GetDamageAbsorbs() is not the current shield pool.
+        local absorbs = calc:GetTotalDamageAbsorbs()
+        local maxHealth = calc:GetMaximumHealth() or 1
 
-        -- Overshield glow and reverse-fill bar
-        -- NOTE: absorbs is a secret value on Midnight â€” we can't compare it to health to detect overshield.
-        -- Show the glow whenever shields are present and overshieldEnabled is on.
-        -- TODO: Use a Curve to map (absorbs + health - maxHealth) to glow visibility for precise overshield detection.
-        if overshieldReverseFillEnabled then
-            self.widgets.shieldBarR:SetValue(absorbs)
-            self.widgets.shieldBarR:Show()
-            if overshieldEnabled then
-                self.widgets.overShieldGlowR:Show()
+        self.widgets.shieldBar:SetMinMaxValues(0, maxHealth)
+        self.widgets.shieldBarR:SetMinMaxValues(0, maxHealth)
+        if self.indicators.shieldBar and self.indicators.shieldBar.SetMinMaxValues then
+            self.indicators.shieldBar:SetMinMaxValues(0, maxHealth)
+        end
+
+        if not absorbs or (F.IsValueNonSecret(absorbs) and absorbs <= 0) then
+            self.widgets.shieldBar:Hide()
+            self.widgets.shieldBarR:Hide()
+            self.widgets.overShieldGlow:Hide()
+            self.widgets.overShieldGlowR:Hide()
+            self.indicators.shieldBar:Hide()
+            return
+        end
+
+        if shieldEnabled then
+            -- Update the shield widget bars
+            self.widgets.shieldBar:SetValue(absorbs)
+            self.widgets.shieldBar:Show()
+
+            -- Overshield glow and reverse-fill bar
+            -- NOTE: absorbs is a secret value on Midnight; we can't compare it to health to detect overshield.
+            -- Show the glow whenever shields are present and overshieldEnabled is on.
+            -- TODO: Use a Curve to map (absorbs + health - maxHealth) to glow visibility for precise overshield detection.
+            if overshieldReverseFillEnabled then
+                self.widgets.shieldBarR:SetValue(absorbs)
+                self.widgets.shieldBarR:Show()
+                if overshieldEnabled then
+                    self.widgets.overShieldGlowR:Show()
+                else
+                    self.widgets.overShieldGlowR:Hide()
+                end
+                self.widgets.overShieldGlow:Hide()
             else
+                if overshieldEnabled then
+                    self.widgets.overShieldGlow:Show()
+                else
+                    self.widgets.overShieldGlow:Hide()
+                end
+                self.widgets.shieldBarR:Hide()
                 self.widgets.overShieldGlowR:Hide()
             end
-            self.widgets.overShieldGlow:Hide()
         else
-            if overshieldEnabled then
-                self.widgets.overShieldGlow:Show()
-            else
-                self.widgets.overShieldGlow:Hide()
-            end
+            self.widgets.shieldBar:Hide()
             self.widgets.shieldBarR:Hide()
+            self.widgets.overShieldGlow:Hide()
             self.widgets.overShieldGlowR:Hide()
         end
 
         -- Update shield indicator (user-configurable indicator on top of health bar)
-        if enabledIndicators["shieldBar"] then
+        if indicatorEnabled then
             -- On Midnight, we pass the secret absorb value directly; the indicator's SetValue
             -- accepts secrets since it's backed by a StatusBar on Midnight.
-            -- NOTE: indicatorBooleans["shieldBar"] (onlyShowOvershields) can't be honored with
-            -- secrets since we can't compute overshieldPercent. Show full absorbs instead.
-            self.indicators.shieldBar:Show()
-            self.indicators.shieldBar:SetValue(absorbs)
+            if indicatorBooleans["shieldBar"] and F.IsValueNonSecret(absorbs) and F.IsValueNonSecret(maxHealth) then
+                local health = calc:GetCurrentHealth()
+                if F.IsValueNonSecret(health) then
+                    local overshield = absorbs + health - maxHealth
+                    if overshield > 0 then
+                        self.indicators.shieldBar:Show()
+                        self.indicators.shieldBar:SetValue(overshield)
+                    else
+                        self.indicators.shieldBar:Hide()
+                    end
+                else
+                    self.indicators.shieldBar:Show()
+                    self.indicators.shieldBar:SetValue(absorbs)
+                end
+            else
+                -- If any operand is secret, overshield-only cannot be computed safely.
+                -- Fall back to showing total absorb amount.
+                self.indicators.shieldBar:Show()
+                self.indicators.shieldBar:SetValue(absorbs)
+            end
         else
             self.indicators.shieldBar:Hide()
         end
