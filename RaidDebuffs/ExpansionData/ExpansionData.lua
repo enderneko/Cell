@@ -1912,7 +1912,7 @@ Cell_ExpansionData.data = {
         {
             ["id"] = 748,
             ["image"] = 608199,
-            ["name"] = "Serpentshrine Cavern",
+            ["name"] = "Coilfang: Serpentshrine Cavern",
             ["bosses"] = {
                 {
                     ["id"] = 1567,
