@@ -1949,7 +1949,7 @@ Cell_ExpansionData.data = {
         {
             ["id"] = 749,
             ["image"] = 608218,
-            ["name"] = "The Eye",
+            ["name"] = "Tempest Keep",
             ["bosses"] = {
                 {
                     ["id"] = 1573,
