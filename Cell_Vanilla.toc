@@ -1,6 +1,6 @@
 ## Interface: 11508
 ## Title: Cell
-## Version: r276-beta
+## Version: r277-beta
 ## Author: enderneko
 ## X-Flavor: Vanilla
 ## SavedVariables: CellDB, CellDBBackup
