@@ -176,6 +176,14 @@ local function CheckUnitCast(sourceUnit, isRecheck)
 
     -- print(sourceUnit, name, spellId)
 
+    -- Enemy UnitCastingInfo fields can be secret independently of IsAuraRestricted.
+    -- Bail before we use any as a table key or in arithmetic.
+    if Cell.isMidnight and issecretvalue then
+        if issecretvalue(spellId) or issecretvalue(startTimeMS) or issecretvalue(endTimeMS) or issecretvalue(texture) then
+            return
+        end
+    end
+
     if spellId and (Cell.vars.targetedSpellsList[spellId] or showAllSpells) then
         if casts[sourceGUID] then
             casts[sourceGUID]["startTime"] = startTimeMS/1000

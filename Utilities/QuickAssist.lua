@@ -401,12 +401,14 @@ end
 
 local function QuickAssist_UpdateHealthMax(self)
     if not self.unit then return end
+    -- StatusBar:SetMinMaxValues accepts secret-wrapped values on Midnight (see UnitButton.lua:2398).
     self.healthBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
 end
 
 local function QuickAssist_UpdateHealth(self)
     if not self.unit then return end
 
+    -- StatusBar:SetValue accepts secret-wrapped values on Midnight.
     self.healthBar:SetValue(UnitHealth(self.unit))
 
     if UnitIsDeadOrGhost(self.unit) then

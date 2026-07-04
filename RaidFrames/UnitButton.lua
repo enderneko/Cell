@@ -1755,30 +1755,19 @@ UnitButton_UpdateAuras = function(self, updateInfo)
         UnitButton_UpdateBuffs(self, true)
         UnitButton_UpdateDebuffs(self, true)
     else
-        -- Midnight 12.0.0+: some aura fields may still be secret. Per-aura checks in
-        -- HandleBuff/HandleDebuff handle this. We no longer force full update for ALL
-        -- Midnight aura events â€” only fall back to full update if we encounter secret
-        -- isHelpful/isHarmful fields in addedAuras that prevent classification.
+        -- Classification via isHelpful/isHarmful is always safe; temporal fields are guarded at read sites.
         local buffsChanged, debuffsChanged
         wipe(self._missing_auras)
 
         if updateInfo.addedAuras then
             for _, aura in next, updateInfo.addedAuras do
-                if F.IsAuraNonSecret(aura) then
-                    if aura.isHelpful then
-                        buffsChanged = true
-                        self._buffs_cache[aura.auraInstanceID] = aura
-                    end
-                    if aura.isHarmful then
-                        debuffsChanged = true
-                        self._debuffs_cache[aura.auraInstanceID] = aura
-                    end
-                else
-                    -- Secret aura: can't classify as buff/debuff; force full update
-                    UnitButton_UpdateBuffs(self, true)
-                    UnitButton_UpdateDebuffs(self, true)
-                    I.UpdateStatusIcon(self)
-                    return
+                if aura.isHelpful then
+                    buffsChanged = true
+                    self._buffs_cache[aura.auraInstanceID] = aura
+                end
+                if aura.isHarmful then
+                    debuffsChanged = true
+                    self._debuffs_cache[aura.auraInstanceID] = aura
                 end
             end
         end
@@ -1899,8 +1888,8 @@ local function UnitButton_UpdateHealthStates(self, diff)
             local maxHealth = calc:GetMaximumHealth()
             local totalAbsorbs = calc:GetTotalDamageAbsorbs()
             local healAbsorbs = calc:GetTotalHealAbsorbs()
-            -- SetValue accepts secret values
-            self.indicators.healthText:SetValue(health, maxHealth, totalAbsorbs, healAbsorbs)
+            -- Pass calc so SetValue can route through Midnight curve/format methods when values are secret.
+            self.indicators.healthText:SetValue(health, maxHealth, totalAbsorbs, healAbsorbs, calc)
             self.indicators.healthText:Show()
         else
             self.indicators.healthText:Hide()
@@ -1969,8 +1958,8 @@ local function UnitButton_UpdatePowerStates(self)
 
     self.states.power = UnitPower(unit)
     self.states.powerMax = UnitPowerMax(unit)
-    -- Midnight 12.0.0+: UnitPowerMax may return a secret number during restricted contexts
-    if not (Cell.isMidnight and F.IsAuraRestricted()) then
+    -- powerMax can be secret on arena pets / enemy PvP; IsAuraRestricted misses this.
+    if not (Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(self.states.powerMax)) then
         if self.states.powerMax <= 0 then self.states.powerMax = 1 end
     end
 end
@@ -2280,10 +2269,9 @@ UnitButton_UpdatePowerText = function(self)
     if not self._shouldShowPowerText then return end
 
     if self.states.powerMax and self.states.power and not self.states.isDeadOrGhost then
-        -- On Midnight, power and powerMax may be secret values (Midnight 12.0.0+)
-        -- SetValue uses string.format/AbbreviateNumbers which accept secrets â†’ FontString:SetText accepts secrets
-        -- Secret handling is in the powerText indicator's SetValue method (Indicators/Base.lua) â€” Phase 8 follow-up
-        self.indicators.powerText:SetValue(self.states.power, self.states.powerMax)
+        -- Pass the unit so the percent formatter can use UnitPowerPercent(unit, nil, true, curve)
+        -- which returns a plain 0-100 value in contexts where raw UnitPower would be secret.
+        self.indicators.powerText:SetValue(self.states.power, self.states.powerMax, self.states.displayedUnit)
     else
         self.indicators.powerText:Hide()
     end
@@ -2307,10 +2295,10 @@ end
 UnitButton_UpdatePowerMax = function(self)
     if not (self._shouldShowPowerBar and self.states.powerMax) then return end
 
-    -- powerMax may be secret on Midnight 12.0.0+ for some units.
-    -- SetMinMaxSmoothedValue is a Lua mixin that does arithmetic (Clamp) â€" fails on secrets.
-    -- SetMinMaxValues is native C API that accepts secrets. Use it as fallback on Midnight.
-    if barAnimationType == "Smooth" and F.IsValueNonSecret(self.states.powerMax) then
+    -- Force native SetMinMaxValues on Midnight. SmoothStatusBarMixin caches min/max
+    -- internally and its per-frame Clamp() throws if either value was ever secret,
+    -- so the Smooth path is unsafe even when the current powerMax happens to be plain.
+    if barAnimationType == "Smooth" and not Cell.isMidnight then
         self.widgets.powerBar:SetMinMaxSmoothedValue(0, self.states.powerMax)
     else
         self.widgets.powerBar:SetMinMaxValues(0, self.states.powerMax)
@@ -2320,10 +2308,9 @@ end
 UnitButton_UpdatePower = function(self)
     if not (self._shouldShowPowerBar and self.states.power) then return end
 
-    -- self.states.power may be a secret value on Midnight 12.0.0+
-    -- SetBarValue maps to SetSmoothedValue in Smooth mode, which does Lua Clamp and fails on secrets.
-    -- Use native SetValue on Midnight when power is secret.
-    if Cell.isMidnight and not F.IsValueNonSecret(self.states.power) then
+    -- Same reason as UpdatePowerMax: always use native SetValue on Midnight to stay
+    -- off the SmoothStatusBar tick, mirroring what the health bar does at line 2395.
+    if Cell.isMidnight then
         self.widgets.powerBar:SetValue(self.states.power)
     else
         self.widgets.powerBar:SetBarValue(self.states.power)
@@ -2694,7 +2681,13 @@ local function UnitButton_UpdateThreatBar(self)
     local _, status, scaledPercentage, rawPercentage = UnitDetailedThreatSituation(unit, "target")
     if status then
         self.indicators.aggroBar:Show()
-        self.indicators.aggroBar:SetSmoothedValue(scaledPercentage)
+        -- SetSmoothedValue is a Lua mixin whose Clamp() would throw every tick on a secret percentage.
+        -- Fall back to native SetValue when the threat percent is secret.
+        if Cell.isMidnight and F.IsValueNonSecret and not F.IsValueNonSecret(scaledPercentage) then
+            self.indicators.aggroBar:SetValue(scaledPercentage)
+        else
+            self.indicators.aggroBar:SetSmoothedValue(scaledPercentage)
+        end
         self.indicators.aggroBar:SetStatusBarColor(GetThreatStatusColor(status))
     else
         self.indicators.aggroBar:Hide()
@@ -3377,7 +3370,10 @@ local function UnitButton_OnTick(self)
 
         if self.states.unit and self.states.displayedUnit then
             local displayedGuid = UnitGUID(self.states.displayedUnit)
-            if displayedGuid ~= self.__displayedGuid then
+            -- Secret GUID can't be compared against the cached plaintext; skip change detection this tick.
+            -- Real unit changes still come through the secure header.
+            local displayedGuidReadable = not (Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(displayedGuid))
+            if displayedGuidReadable and displayedGuid ~= self.__displayedGuid then
                 -- NOTE: displayed unit entity changed
                 F.RemoveElementsExceptKeys(self.states, "unit", "displayedUnit")
                 self.__displayedGuid = displayedGuid
@@ -3388,7 +3384,8 @@ local function UnitButton_OnTick(self)
             end
 
             local guid = UnitGUID(self.states.unit)
-            if guid and guid ~= self.__unitGuid then
+            local guidReadable = not (Cell.isMidnight and F.IsSecretValue and F.IsSecretValue(guid))
+            if guidReadable and guid and guid ~= self.__unitGuid then
                 -- print("guidChanged:", self:GetName(), self.states.unit, guid)
                 -- NOTE: unit entity changed
                 -- update Cell.vars.guids
