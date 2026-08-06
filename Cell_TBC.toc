@@ -1,6 +1,6 @@
-## Interface: 20505
+## Interface: 20506
 ## Title: Cell
-## Version: r277-beta
+## Version: r278-beta
 ## Author: enderneko
 ## X-Flavor: TBC
 ## SavedVariables: CellDB, CellDBBackup

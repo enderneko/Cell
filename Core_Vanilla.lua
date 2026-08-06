@@ -452,7 +452,7 @@ function eventFrame:ADDON_LOADED(arg1)
         Cell.versionNum = tonumber(string.match(Cell.version, "%d+"))
         if not CellDB["revise"] then CellDB["firstRun"] = true end
         F.Revise()
-        F.CheckWhatsNew()
+        -- F.CheckWhatsNew()
         F.RunSnippets()
 
         -- validation -----------------------------------------------------------------------------
