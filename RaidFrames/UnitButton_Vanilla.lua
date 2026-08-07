@@ -61,6 +61,7 @@ local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
 
 local barAnimationType, highlightEnabled, predictionEnabled
+local shieldEnabled, overshieldEnabled, overshieldReverseFillEnabled
 
 -------------------------------------------------
 -- unit button func declarations
@@ -1407,6 +1408,8 @@ end
 -------------------------------------------------
 -- functions
 -------------------------------------------------
+local LibShields = Cell.LibShields
+
 local function UnitButton_UpdateHealthStates(self, diff)
     local unit = self.states.displayedUnit
     local guid = self.states.guid
@@ -1417,7 +1420,11 @@ local function UnitButton_UpdateHealthStates(self, diff)
 
     self.states.health = health
     self.states.healthMax = healthMax
-    self.states.totalAbsorbs = 0
+    if guid then
+        self.states.totalAbsorbs = LibShields:GetTotalAbsorbs(guid)
+    else
+        self.states.totalAbsorbs = 0
+    end
 
     if healthMax == 0 then
         self.states.healthPercent = 0
@@ -2175,6 +2182,68 @@ if CELL_USE_LIBHEALCOMM then
 end
 
 -------------------------------------------------
+-- shields
+-------------------------------------------------
+UnitButton_UpdateShieldAbsorbs = function(self)
+    local unit = self.states.displayedUnit
+    if not unit then return end
+
+    UnitButton_UpdateHealthStates(self)
+
+    if self.states.totalAbsorbs > 0 then
+        local shieldPercent = self.states.totalAbsorbs / self.states.healthMax
+
+        if enabledIndicators["shieldBar"] then
+            if indicatorBooleans["shieldBar"] then
+                -- onlyShowOvershields
+                local overshieldPercent = (self.states.totalAbsorbs + self.states.health - self.states.healthMax) / self.states.healthMax
+                if overshieldPercent > 0 then
+                    self.indicators.shieldBar:Show()
+                    self.indicators.shieldBar:SetValue(overshieldPercent)
+                else
+                    self.indicators.shieldBar:Hide()
+                end
+            else
+                self.indicators.shieldBar:Show()
+                self.indicators.shieldBar:SetValue(shieldPercent)
+            end
+        else
+            self.indicators.shieldBar:Hide()
+        end
+
+        self.widgets.shieldBar:SetValue(shieldPercent, self.states.healthPercent)
+    else
+        self.indicators.shieldBar:Hide()
+        self.widgets.shieldBar:Hide()
+        self.widgets.overShieldGlow:Hide()
+        self.widgets.shieldBarR:Hide()
+        self.widgets.overShieldGlowR:Hide()
+    end
+end
+
+local function UnitButton_UpdatePowerWordShield(self, current, max, resetMax)
+    if not enabledIndicators["powerWordShield"] then return end
+
+    self.indicators.powerWordShield:UpdateShield(current, max, resetMax)
+end
+
+local function _UpdateShield(b)
+    UnitButton_UpdateShieldAbsorbs(b)
+    if enabledIndicators["powerWordShield"] then
+        local guid = b.states.guid
+        if guid then
+            local amount, max = LibShields:GetShieldAmount(guid, "powerWordShield")
+            b.indicators.powerWordShield:UpdateShield(amount, max, amount == 0)
+        end
+    end
+end
+
+-- Register LibShields callback to update unit buttons on shield changes
+LibShields:RegisterCallback("CellUnitButton", function(guid, totalAbsorbs, changedCategory, info)
+    F.HandleUnitButton("guid", guid, _UpdateShield)
+end)
+
+-------------------------------------------------
 -- cleu health updater
 -------------------------------------------------
 local cleuHealthUpdater = CreateFrame("Frame", "CellCleuHealthUpdater")
@@ -2242,6 +2311,7 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateTarget(self)
     UnitButton_UpdatePlayerRaidIcon(self)
     UnitButton_UpdateTargetRaidIcon(self)
+    UnitButton_UpdateShieldAbsorbs(self)
     UnitButton_UpdateInRange(self)
     UnitButton_UpdateRole(self)
     UnitButton_UpdateAssignment(self)
@@ -2378,10 +2448,12 @@ local function UnitButton_OnEvent(self, event, unit)
             UnitButton_UpdateHealthMax(self)
             UnitButton_UpdateHealth(self)
             UnitButton_UpdateHealPrediction(self)
+            UnitButton_UpdateShieldAbsorbs(self)
 
         elseif event == "UNIT_HEALTH" or event == "UNIT_HEALTH_FREQUENT" then
             UnitButton_UpdateHealth(self)
             UnitButton_UpdateHealPrediction(self)
+            UnitButton_UpdateShieldAbsorbs(self)
             -- UnitButton_UpdateStatusText(self)
 
         elseif event == "UNIT_HEAL_PREDICTION" then
@@ -2511,6 +2583,12 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             end
 
             ResetAuraTables(self)
+
+            -- reset shields
+            local guid = UnitGUID(value)
+            if guid then
+                LibShields:ResetGUID(guid)
+            end
         end
     end
 end
@@ -2551,6 +2629,11 @@ local function UnitButton_OnHide(self)
     UnitButton_UnregisterEvents(self)
 
     ResetAuraTables(self)
+
+    -- reset shields
+    if self.__displayedGuid then
+        LibShields:ResetGUID(self.__displayedGuid)
+    end
 
     -- NOTE: update Cell.vars.guids
     -- print("hide", self.states.unit, self.__unitGuid, self.__unitName)
@@ -2676,7 +2759,22 @@ end
 
 function B.UpdateShields(button)
     predictionEnabled = CellDB["appearance"]["healPrediction"][1]
+    shieldEnabled = CellDB["appearance"]["shield"][1]
+    overshieldEnabled = CellDB["appearance"]["overshield"][1]
+    overshieldReverseFillEnabled = shieldEnabled and CellDB["appearance"]["overshieldReverseFill"]
+
+    button.widgets.shieldBar:SetVertexColor(unpack(CellDB["appearance"]["shield"][2]))
+    button.widgets.shieldBarR:SetVertexColor(unpack(CellDB["appearance"]["shield"][2]))
+    button.widgets.overShieldGlow:SetVertexColor(unpack(CellDB["appearance"]["overshield"][2]))
+    button.widgets.overShieldGlowR:SetVertexColor(unpack(CellDB["appearance"]["overshield"][2]))
+
     UnitButton_UpdateHealPrediction(button)
+    UnitButton_UpdateShieldAbsorbs(button)
+end
+
+-- shields
+function B.UpdateShield(button)
+    UnitButton_UpdateShieldAbsorbs(button)
 end
 
 function B.SetTexture(button, tex)
@@ -2697,6 +2795,102 @@ function B.UpdateColor(button)
     button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
 end
 
+local function ShieldBar_SetValue_Horizontal(self, shieldPercent, healthPercent)
+    local barWidth = self:GetParent():GetWidth()
+    if shieldPercent + healthPercent > 1 then -- overshield
+        local p = 1 - healthPercent
+        if p ~= 0 then
+            if shieldEnabled then
+                self:SetWidth(p * barWidth)
+                self:Show()
+            else
+                self:Hide()
+            end
+        else
+            self:Hide()
+        end
+
+        if overshieldReverseFillEnabled then
+            p = shieldPercent + healthPercent - 1
+            if p > healthPercent then p = healthPercent end
+            self.shieldBarR:SetWidth(p * barWidth)
+            self.shieldBarR:Show()
+            if overshieldEnabled then
+                self.overShieldGlowR:Show()
+            else
+                self.overShieldGlowR:Hide()
+            end
+            self.overShieldGlow:Hide()
+        else
+            if overshieldEnabled then
+                self.overShieldGlow:Show()
+            else
+                self.overShieldGlow:Hide()
+            end
+            self.shieldBarR:Hide()
+            self.overShieldGlowR:Hide()
+        end
+    else
+        if shieldEnabled then
+            self:SetWidth(shieldPercent * barWidth)
+            self:Show()
+        else
+            self:Hide()
+        end
+        self.shieldBarR:Hide()
+        self.overShieldGlow:Hide()
+        self.overShieldGlowR:Hide()
+    end
+end
+
+local function ShieldBar_SetValue_Vertical(self, shieldPercent, healthPercent)
+    local barHeight = self:GetParent():GetHeight()
+    if shieldPercent + healthPercent > 1 then -- overshield
+        local p = 1 - healthPercent
+        if p ~= 0 then
+            if shieldEnabled then
+                self:SetHeight(p * barHeight)
+                self:Show()
+            else
+                self:Hide()
+            end
+        else
+            self:Hide()
+        end
+
+        if overshieldReverseFillEnabled then
+            p = shieldPercent + healthPercent - 1
+            if p > healthPercent then p = healthPercent end
+            self.shieldBarR:SetHeight(p * barHeight)
+            self.shieldBarR:Show()
+            if overshieldEnabled then
+                self.overShieldGlowR:Show()
+            else
+                self.overShieldGlowR:Hide()
+            end
+            self.overShieldGlow:Hide()
+        else
+            if overshieldEnabled then
+                self.overShieldGlow:Show()
+            else
+                self.overShieldGlow:Hide()
+            end
+            self.shieldBarR:Hide()
+            self.overShieldGlowR:Hide()
+        end
+    else
+        if shieldEnabled then
+            self:SetHeight(shieldPercent * barHeight)
+            self:Show()
+        else
+            self:Hide()
+        end
+        self.shieldBarR:Hide()
+        self.overShieldGlow:Hide()
+        self.overShieldGlowR:Hide()
+    end
+end
+
 function B.SetOrientation(button, orientation, rotateTexture)
     local healthBar = button.widgets.healthBar
     local healthBarLoss = button.widgets.healthBarLoss
@@ -2705,6 +2899,10 @@ function B.SetOrientation(button, orientation, rotateTexture)
     local incomingHeal = button.widgets.incomingHeal
     local damageFlashTex = button.widgets.damageFlashTex
     local gapTexture = button.widgets.gapTexture
+    local shieldBar = button.widgets.shieldBar
+    local shieldBarR = button.widgets.shieldBarR
+    local overShieldGlow = button.widgets.overShieldGlow
+    local overShieldGlowR = button.widgets.overShieldGlowR
 
     gapTexture:SetColorTexture(unpack(CELL_BORDER_COLOR))
 
@@ -2776,6 +2974,31 @@ function B.SetOrientation(button, orientation, rotateTexture)
             end
         end
 
+        -- update shieldBar
+        shieldBar.SetValue = ShieldBar_SetValue_Horizontal
+        P.ClearPoints(shieldBar)
+        P.Point(shieldBar, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
+        P.Point(shieldBar, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+
+        -- update shieldBarR
+        P.ClearPoints(shieldBarR)
+        P.Point(shieldBarR, "TOPRIGHT", healthBar:GetStatusBarTexture())
+        P.Point(shieldBarR, "BOTTOMRIGHT", healthBar:GetStatusBarTexture())
+
+        -- update overShieldGlow
+        P.ClearPoints(overShieldGlow)
+        P.Point(overShieldGlow, "TOPRIGHT")
+        P.Point(overShieldGlow, "BOTTOMRIGHT")
+        P.Width(overShieldGlow, 4)
+        F.RotateTexture(overShieldGlow, 0)
+
+        -- update overShieldGlowR
+        P.ClearPoints(overShieldGlowR)
+        P.Point(overShieldGlowR, "TOP", shieldBarR, "TOPLEFT", 0, 0)
+        P.Point(overShieldGlowR, "BOTTOM", shieldBarR, "BOTTOMLEFT", 0, 0)
+        P.Width(overShieldGlowR, 8)
+        F.RotateTexture(overShieldGlowR, 0)
+
         -- update damageFlashTex
         P.ClearPoints(damageFlashTex)
         P.Point(damageFlashTex, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
@@ -2833,6 +3056,31 @@ function B.SetOrientation(button, orientation, rotateTexture)
                 incomingHeal:Show()
             end
         end
+
+        -- update shieldBar
+        shieldBar.SetValue = ShieldBar_SetValue_Vertical
+        P.ClearPoints(shieldBar)
+        P.Point(shieldBar, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "TOPLEFT")
+        P.Point(shieldBar, "BOTTOMRIGHT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
+
+        -- update shieldBarR
+        P.ClearPoints(shieldBarR)
+        P.Point(shieldBarR, "TOPLEFT", healthBar:GetStatusBarTexture())
+        P.Point(shieldBarR, "TOPRIGHT", healthBar:GetStatusBarTexture())
+
+        -- update overShieldGlow
+        P.ClearPoints(overShieldGlow)
+        P.Point(overShieldGlow, "TOPLEFT")
+        P.Point(overShieldGlow, "TOPRIGHT")
+        P.Height(overShieldGlow, 4)
+        F.RotateTexture(overShieldGlow, 90)
+
+        -- update overShieldGlowR
+        P.ClearPoints(overShieldGlowR)
+        P.Point(overShieldGlowR, "LEFT", shieldBarR, "BOTTOMLEFT", 0, 0)
+        P.Point(overShieldGlowR, "RIGHT", shieldBarR, "BOTTOMRIGHT", 0, 0)
+        P.Height(overShieldGlowR, 8)
+        F.RotateTexture(overShieldGlowR, 90)
 
         -- update damageFlashTex
         P.ClearPoints(damageFlashTex)
@@ -2950,6 +3198,11 @@ end
 -- statusText
 function B.UpdateStatusText(button)
     UnitButton_UpdateStatusText(button)
+end
+
+-- shields
+function B.UpdateShield(button)
+    UnitButton_UpdateShieldAbsorbs(button)
 end
 
 -- animation
@@ -3163,11 +3416,28 @@ function CellUnitButton_OnLoad(button)
     shieldBar:Hide()
     shieldBar.SetValue = DumbFunc
 
+    local shieldBarR = midLevelFrame:CreateTexture(name.."ShieldBarR", "ARTWORK", nil, -5)
+    button.widgets.shieldBarR = shieldBarR
+    shieldBarR:SetTexture("Interface\\AddOns\\Cell\\Media\\shield", "REPEAT", "REPEAT")
+    shieldBarR:SetHorizTile(true)
+    shieldBarR:SetVertTile(true)
+    shieldBarR:Hide()
+    shieldBar.shieldBarR = shieldBarR
+
     -- over-shield glow
     local overShieldGlow = midLevelFrame:CreateTexture(name.."OverShieldGlow", "ARTWORK", nil, -4)
     button.widgets.overShieldGlow = overShieldGlow
-    overShieldGlow:SetTexture("Interface\\RaidFrame\\Shield-Overshield")
+    overShieldGlow:SetTexture("Interface\\AddOns\\Cell\\Media\\overshield")
     overShieldGlow:Hide()
+    shieldBar.overShieldGlow = overShieldGlow
+
+    -- over-shield glow reversed
+    local overShieldGlowR = midLevelFrame:CreateTexture(name.."OverShieldGlowR", "ARTWORK", nil, -4)
+    button.widgets.overShieldGlowR = overShieldGlowR
+    overShieldGlowR:SetTexture("Interface\\AddOns\\Cell\\Media\\overshield_reversed")
+    -- overShieldGlowR:SetBlendMode("ADD")
+    overShieldGlowR:Hide()
+    shieldBar.overShieldGlowR = overShieldGlowR
 
     -- bar animation
     -- flash
@@ -3249,6 +3519,7 @@ function CellUnitButton_OnLoad(button)
     I.CreateAggroBorder(button)
     I.CreatePlayerRaidIcon(button)
     I.CreateTargetRaidIcon(button)
+    I.CreateShieldBar(button)
     I.CreateAoEHealing(button)
     -- I.CreateDefensiveCooldowns(button)
     -- I.CreateExternalCooldowns(button)
