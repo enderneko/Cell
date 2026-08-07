@@ -4,6 +4,6 @@
     <Script file="Indicator_Bleeds.lua"/>
     <Script file="Indicator_DefaultSpells_TBC.lua"/>
     <Script file="Appearance_Defaults.lua"/>
-    <Script file="Layout_Defaults_TBC_Vanilla.lua"/>
+    <Script file="Layout_Defaults_TBC.lua"/>
     <Script file="ClickCasting_DefaultSpells_TBC.lua"/>
 </Ui>

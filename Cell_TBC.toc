@@ -15,7 +15,7 @@ Locales\LoadLocales.xml
 
 Libs\LoadLibs_Classic.xml
 
-Core_Vanilla.lua
+Core_TBC.lua
 Utils.lua
 Revise.lua
 Comm\LoadComm.xml
