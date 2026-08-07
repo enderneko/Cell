@@ -1566,7 +1566,7 @@ if Cell.isRetail or Cell.isMists then
         ["aggroBlink"] = {"enabled", "size", "position", "frameLevel"},
         ["aggroBorder"] = {"enabled", "thickness", "frameLevel"},
         ["aggroBar"] = {"enabled", "size", "position", "frameLevel"},
-        ["shieldBar"] = {"enabled", "checkbutton:onlyShowOvershields", "color-alpha", "height", "shieldBarPosition", "frameLevel"},
+        ["shieldBar"] = {"enabled", "checkbutton:onlyShowOvershields", "bartexture", "color-alpha", "height", "shieldBarPosition", "frameLevel"},
         ["aoeHealing"] = {"|cffb7b7b7"..L["Display a gradient texture when the unit receives a heal from your certain healing spells."], "enabled", "builtInAoEHealings", "customAoEHealings", "color", "height"},
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "checkbutton:showAnimation", "glowOptions", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "checkbutton:showAnimation", "glowOptions", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
@@ -1610,7 +1610,7 @@ elseif Cell.isCata or Cell.isWrath then
         ["aggroBlink"] = {"enabled", "size", "position", "frameLevel"},
         ["aggroBorder"] = {"enabled", "thickness", "frameLevel"},
         ["aggroBar"] = {"enabled", "size", "position", "frameLevel"},
-        ["shieldBar"] = {"enabled", "checkbutton:onlyShowOvershields", "color-alpha", "height", "shieldBarPosition", "frameLevel"},
+        ["shieldBar"] = {"enabled", "checkbutton:onlyShowOvershields", "bartexture", "color-alpha", "height", "shieldBarPosition", "frameLevel"},
         ["powerWordShield"] = {L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"], "enabled", "checkbutton:shieldByMe", "shape", "size-square", "position", "frameLevel"},
         ["aoeHealing"] = {"|cffb7b7b7"..L["Display a gradient texture when the unit receives a heal from your certain healing spells."], "enabled", "builtInAoEHealings", "customAoEHealings", "color", "height"},
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "checkbutton:showAnimation", "glowOptions", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
@@ -1753,6 +1753,7 @@ local function ShowIndicatorSettings(id)
         if currentSetting == "barOrientation" then currentSetting = "orientation" end
         if currentSetting == "durationVisibility" then currentSetting = "showDuration" end
         if currentSetting == "powerFormat" then currentSetting = "format" end
+        if currentSetting == "bartexture" then currentSetting = "texture" end
 
         -- enabled
         if currentSetting == "enabled" then
