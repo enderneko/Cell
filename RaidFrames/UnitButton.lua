@@ -27,12 +27,14 @@ local UnitGetTotalAbsorbs = UnitGetTotalAbsorbs
 local UnitGetTotalHealAbsorbs = UnitGetTotalHealAbsorbs
 local UnitIsFriend = UnitIsFriend
 local UnitIsUnit = UnitIsUnit
-local UnitIsPlayer = UnitIsPlayer
-local UnitIsConnected = UnitIsConnected
-local UnitIsAFK = UnitIsAFK
-local UnitIsFeignDeath = UnitIsFeignDeath
-local UnitIsDeadOrGhost = UnitIsDeadOrGhost
-local UnitIsGhost = UnitIsGhost
+-- These return a single boolean that Midnight can make secret; sanitized at the
+-- declaration so every call site below is safe. Fallbacks apply only when unreadable.
+local UnitIsPlayer = F.MakeSafeBoolAPI(UnitIsPlayer, true)            -- raid units are players
+local UnitIsConnected = F.MakeSafeBoolAPI(UnitIsConnected, true)      -- assume online, not DC
+local UnitIsAFK = F.MakeSafeBoolAPI(UnitIsAFK, false)
+local UnitIsFeignDeath = F.MakeSafeBoolAPI(UnitIsFeignDeath, false)
+local UnitIsDeadOrGhost = F.MakeSafeBoolAPI(UnitIsDeadOrGhost, false) -- assume alive
+local UnitIsGhost = F.MakeSafeBoolAPI(UnitIsGhost, false)
 local UnitPowerType = UnitPowerType
 local UnitPowerMax = UnitPowerMax
 -- local UnitInRange = UnitInRange
@@ -41,12 +43,12 @@ local SetRaidTargetIconTexture = SetRaidTargetIconTexture
 local GetTime = GetTime
 local GetRaidTargetIndex = GetRaidTargetIndex
 local GetReadyCheckStatus = GetReadyCheckStatus
-local UnitHasVehicleUI = UnitHasVehicleUI
+local UnitHasVehicleUI = F.MakeSafeBoolAPI(UnitHasVehicleUI, false)
 -- local UnitInVehicle = UnitInVehicle
 -- local UnitUsingVehicle = UnitUsingVehicle
-local UnitIsCharmed = UnitIsCharmed
+local UnitIsCharmed = F.MakeSafeBoolAPI(UnitIsCharmed, false)         -- assume not mind-controlled
 local UnitIsPlayer = UnitIsPlayer
-local UnitInPartyIsAI = UnitInPartyIsAI
+local UnitInPartyIsAI = F.MakeSafeBoolAPI(UnitInPartyIsAI, false)
 local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 local UnitThreatSituation = UnitThreatSituation
 local GetThreatStatusColor = GetThreatStatusColor
@@ -1086,8 +1088,19 @@ local function ForEachAuraHelper(button, func, continuationToken, ...)
     end
 end
 
-local function ForEachAura(button, filter, func)
+local function ForEachAuraUnsafe(button, filter, func)
     ForEachAuraHelper(button, func, GetAuraSlots(button.states.displayedUnit, filter))
+end
+
+-- GetAuraSlots() raises "Auras cannot be accessed when secret while tainted by 'Cell'"
+-- when the unit's auras are restricted. It returns no testable value, so the call
+-- itself has to be guarded. Restriction is per-unit and transient, so this is a
+-- per-call guard rather than a global latch. Real errors are still surfaced.
+local function ForEachAura(button, filter, func)
+    local ok, err = pcall(ForEachAuraUnsafe, button, filter, func)
+    if not ok and not F.IsSecretAccessError(err) then
+        geterrorhandler()(err)
+    end
 end
 
 -------------------------------------------------
@@ -1748,7 +1761,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    local isFullUpdate = not updateInfo or updateInfo.isFullUpdate
+    local isFullUpdate = F.IsFullAuraUpdate(updateInfo)
 
     if isFullUpdate then
         -- full update
@@ -1759,7 +1772,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
         local buffsChanged, debuffsChanged
         wipe(self._missing_auras)
 
-        if updateInfo.addedAuras then
+        if F.CanAccessValue(updateInfo.addedAuras) and updateInfo.addedAuras then
             for _, aura in next, updateInfo.addedAuras do
                 if aura.isHelpful then
                     buffsChanged = true
@@ -1772,7 +1785,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
             end
         end
 
-        if updateInfo.updatedAuraInstanceIDs then
+        if F.CanAccessValue(updateInfo.updatedAuraInstanceIDs) and updateInfo.updatedAuraInstanceIDs then
             local aura
             -- auraInstanceID is NOT secret and is safe to use as table key
             for _, auraInstanceID in next, updateInfo.updatedAuraInstanceIDs do
@@ -1811,7 +1824,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
             end
         end
 
-        if updateInfo.removedAuraInstanceIDs then
+        if F.CanAccessValue(updateInfo.removedAuraInstanceIDs) and updateInfo.removedAuraInstanceIDs then
             for _, auraInstanceID in next, updateInfo.removedAuraInstanceIDs do
                 if self._buffs_cache[auraInstanceID] then
                     self._buffs_cache[auraInstanceID] = nil

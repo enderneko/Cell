@@ -8,11 +8,11 @@ local LCG = LibStub("LibCustomGlow-1.0")
 local LGI = LibStub:GetLibrary("LibGroupInfo")
 local A = Cell.animations
 
-local UnitIsConnected = UnitIsConnected
-local UnitIsVisible = UnitIsVisible
-local UnitIsDeadOrGhost = UnitIsDeadOrGhost
+local UnitIsConnected = F.MakeSafeBoolAPI(UnitIsConnected, true)
+local UnitIsVisible = F.MakeSafeBoolAPI(UnitIsVisible, true)
+local UnitIsDeadOrGhost = F.MakeSafeBoolAPI(UnitIsDeadOrGhost, false)
 local UnitIsUnit = UnitIsUnit
-local UnitIsPlayer = UnitIsPlayer
+local UnitIsPlayer = F.MakeSafeBoolAPI(UnitIsPlayer, true)
 local UnitGUID = UnitGUID
 local UnitClassBase = UnitClassBase
 local UnitLevel = UnitLevel
