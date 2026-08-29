@@ -6,7 +6,7 @@ local U = Cell.uFuncs
 local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
 
-local UnitIsConnected = UnitIsConnected
+local UnitIsConnected = F.MakeSafeBoolAPI(UnitIsConnected, true)
 local InCombatLockdown = InCombatLockdown
 local GetUnitName = GetUnitName
 local UnitGUID = UnitGUID
@@ -170,8 +170,19 @@ local function ForEachAuraHelper(button, func, continuationToken, ...)
     end
 end
 
-local function ForEachAura(button, filter, func)
+local function ForEachAuraUnsafe(button, filter, func)
     ForEachAuraHelper(button, func, GetAuraSlots(button.unit, filter))
+end
+
+-- GetAuraSlots() raises "Auras cannot be accessed when secret while tainted by 'Cell'"
+-- when the unit's auras are restricted. It returns no testable value, so the call
+-- itself has to be guarded. Restriction is per-unit and transient, so this is a
+-- per-call guard rather than a global latch. Real errors are still surfaced.
+local function ForEachAura(button, filter, func)
+    local ok, err = pcall(ForEachAuraUnsafe, button, filter, func)
+    if not ok and not F.IsSecretAccessError(err) then
+        geterrorhandler()(err)
+    end
 end
 
 -- ----------------------------------------------------------------------- --
@@ -232,24 +243,24 @@ local function QuickAssist_UpdateAuras(self, updateInfo)
 
     local buffsChanged
 
-    if not updateInfo or updateInfo.isFullUpdate then
+    if F.IsFullAuraUpdate(updateInfo) then
         wipe(self._buffs_cache)
         wipe(self._buffs_count_cache)
         buffsChanged = true
     else
-        if updateInfo.addedAuras then
+        if F.CanAccessValue(updateInfo.addedAuras) and updateInfo.addedAuras then
             for _, aura in pairs(updateInfo.addedAuras) do
                 if aura.isHelpful then buffsChanged = true end
             end
         end
 
-        if updateInfo.updatedAuraInstanceIDs then
+        if F.CanAccessValue(updateInfo.updatedAuraInstanceIDs) and updateInfo.updatedAuraInstanceIDs then
             for _, auraInstanceID in pairs(updateInfo.updatedAuraInstanceIDs) do
                 if self._buffs_cache[auraInstanceID] then buffsChanged = true end
             end
         end
 
-        if updateInfo.removedAuraInstanceIDs then
+        if F.CanAccessValue(updateInfo.removedAuraInstanceIDs) and updateInfo.removedAuraInstanceIDs then
             for _, auraInstanceID in pairs(updateInfo.removedAuraInstanceIDs) do
                 if self._buffs_cache[auraInstanceID] then
                     self._buffs_cache[auraInstanceID] = nil

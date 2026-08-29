@@ -2564,3 +2564,56 @@ function F.IsValueNonSecret(val)
     if not issecretvalue then return true end
     return not issecretvalue(val)
 end
+
+-- Returns true if a value can be read in the CURRENT execution context.
+-- canaccessvalue() is more precise than issecretvalue(): a secret value is still
+-- readable while execution is untainted, and only errors once an addon has tainted
+-- the stack. Falls back to issecretvalue() on builds that lack it.
+function F.CanAccessValue(val)
+    if not Cell.isMidnight then return true end
+    if canaccessvalue then return canaccessvalue(val) end
+    if issecretvalue then return not issecretvalue(val) end
+    return true
+end
+
+-- Resolves updateInfo.isFullUpdate from a UNIT_AURA payload into a PLAIN boolean.
+-- The payload's fields can be secret; a boolean test on a secret raises
+-- "attempt to perform boolean test on ... (a secret boolean value, while execution
+-- tainted by 'Cell')". Never boolean-test updateInfo.isFullUpdate directly.
+-- When the flag is unreadable we report a full update: rescanning is always correct,
+-- whereas assuming an incremental update would silently skip the refresh (a real full
+-- update carries no addedAuras/updatedAuraInstanceIDs lists to fall back on).
+function F.IsFullAuraUpdate(updateInfo)
+    if not updateInfo then return true end
+    if not F.CanAccessValue(updateInfo) then return true end
+    local isFullUpdate = updateInfo.isFullUpdate
+    if not F.CanAccessValue(isFullUpdate) then return true end
+    return isFullUpdate and true or false
+end
+
+-- True if err came from Blizzard's restricted-aura / secret-value guard rather than a
+-- real bug. C_UnitAuras.GetAuraSlots() does not hand back a secret we could test with
+-- F.CanAccessValue() -- it raises "Auras cannot be accessed when secret while tainted
+-- by 'Cell'" outright -- so the only way to survive it is to catch and classify.
+function F.IsSecretAccessError(err)
+    if type(err) ~= "string" then return false end
+    return (string.find(err, "secret", 1, true) or string.find(err, "tainted", 1, true)) and true or false
+end
+
+-- Wraps a single-return boolean Unit API so it always yields a PLAIN boolean.
+-- These can be secret on Midnight; any boolean test on the result then raises
+-- "attempt to perform boolean test on a secret boolean value". Wrapping the API once
+-- at its local declaration sanitizes every call site in that file at no call-site cost.
+-- ONLY use on APIs that return exactly one boolean -- this truncates extra returns.
+-- `default` is what callers see when the real value is unreadable; pick the value that
+-- degrades most gracefully, since it will be wrong some of the time.
+function F.MakeSafeBoolAPI(fn, default)
+    default = default and true or false
+    if not fn then return function() return default end end
+    if not Cell.isMidnight then return fn end
+    return function(...)
+        local v = fn(...)
+        if F.CanAccessValue(v) then return v and true or false end
+        return default
+    end
+end
