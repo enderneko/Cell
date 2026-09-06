@@ -297,7 +297,7 @@ if Cell.isRetail then
                 C_Timer.After(6, function() I.UpdateStatusIcon(button) end)
             end
             icon:Show()
-        elseif UnitIsPlayer(unit) and phaseReason and not button.states.inVehicle then
+        elseif F.IsPlayerUnit(unit, button.states.guid) and phaseReason and not button.states.inVehicle then
             if phaseReason == 3 then -- chromie, yellow
                 icon:SetVertexColor(1, 1, 0)
             elseif phaseReason == 2 then -- warmode, red
@@ -351,7 +351,9 @@ else
             icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
             icon:SetTexCoord(0, 1, 0, 1)
             icon:Show()
-        elseif UnitIsPlayer(unit) and UnitIsConnected(unit) and not UnitInPhase(unit) and not button.states.inVehicle then
+        -- Midnight 12.0.0+: UnitInPhase can be secret; default to in-phase so a secret read
+        -- doesn't paint a phasing icon on everyone
+        elseif F.IsPlayerUnit(unit, button.states.guid) and UnitIsConnected(unit) and not F.SafeBool(UnitInPhase(unit), true) and not button.states.inVehicle then
             icon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
             icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             icon:Show()

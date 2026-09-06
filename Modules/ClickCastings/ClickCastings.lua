@@ -1696,6 +1696,8 @@ end
 -- check conflicts
 -------------------------------------------------
 function CheckConflicts()
+    if CellDB["general"]["hideSelfCastWarning"] then return end
+
     local selfCast = GetModifiedClick("SELFCAST")
     -- local focusCast = GetModifiedClick("FOCUSCAST")
 

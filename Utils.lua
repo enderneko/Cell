@@ -812,7 +812,7 @@ end
 -- end
 
 function F.UnitFullName(unit)
-    if not unit or not UnitIsPlayer(unit) then return end
+    if not unit or not F.IsPlayerUnit(unit) then return end
 
     local name = GetUnitName(unit, true)
 
@@ -1161,7 +1161,7 @@ function F.GetUnitClassColor(unit, class, guid)
     class = class or select(2, UnitClass(unit))
     guid = guid or UnitGUID(unit)
 
-    if UnitIsPlayer(unit) or UnitInPartyIsAI(unit) then -- player
+    if F.IsPlayerUnit(unit, guid) or F.IsAIUnit(unit) then -- player
         return F.GetClassColor(class)
     elseif F.IsPet(guid, unit) then -- pet
         return 0.5, 0.5, 1
@@ -1427,9 +1427,9 @@ end
 
 function F.UnitInGroup(unit, ignorePets)
     if ignorePets then
-        return UnitIsUnit(unit, "player") or UnitInParty(unit) or UnitInRaid(unit) or UnitInPartyIsAI(unit)
+        return UnitIsUnit(unit, "player") or UnitInParty(unit) or UnitInRaid(unit) or F.IsAIUnit(unit)
     else
-        return UnitIsUnit(unit, "player") or UnitIsUnit(unit, "pet") or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) or UnitInPartyIsAI(unit)
+        return UnitIsUnit(unit, "player") or UnitIsUnit(unit, "pet") or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) or F.IsAIUnit(unit)
     end
 end
 
@@ -1443,7 +1443,7 @@ function F.GetTargetUnitID(target)
 
     if not F.UnitInGroup(target) then return end
 
-    if UnitIsPlayer(target) or UnitInPartyIsAI(target) then
+    if F.IsPlayerUnit(target) or F.IsAIUnit(target) then
         for unit in F.IterateGroupMembers() do
             if UnitIsUnit(target, unit) then
                 return unit
@@ -1465,7 +1465,7 @@ function F.GetTargetPetID(target)
 
     if not F.UnitInGroup(target) then return end
 
-    if UnitIsPlayer(target) or UnitInPartyIsAI(target) then
+    if F.IsPlayerUnit(target) or F.IsAIUnit(target) then
         for unit in F.IterateGroupMembers() do
             if UnitIsUnit(target, unit) then
                 return F.GetPetUnit(unit)
@@ -2000,14 +2000,23 @@ end
 local function predicate(...)
     local idToFind = ...
     local id = select(13, ...)
+    -- Midnight 12.0.0+: comparing against a secret spellId throws
+    if not F.IsValueNonSecret(id) then return false end
     return idToFind == id
+end
+
+-- Midnight 12.0.0+: AuraUtil.FindAura enumerates through GetAuraSlots, which hard-errors for
+-- tainted code once any aura on the unit is secret. Report "not found" instead of throwing.
+local function UnpackFindAura(ok, ...)
+    if not ok then return nil end
+    return ...
 end
 
 function F.FindAuraById(unit, type, spellId)
     if type == "BUFF" then
-        return AuraUtil.FindAura(predicate, unit, "HELPFUL", spellId)
+        return UnpackFindAura(pcall(AuraUtil.FindAura, predicate, unit, "HELPFUL", spellId))
     else
-        return AuraUtil.FindAura(predicate, unit, "HARMFUL", spellId)
+        return UnpackFindAura(pcall(AuraUtil.FindAura, predicate, unit, "HARMFUL", spellId))
     end
 end
 
@@ -2016,7 +2025,7 @@ if Cell.isRetail then
         -- Midnight 12.0.0+: aura fields are secret during restricted contexts
         if Cell.isMidnight and F.IsAuraRestricted() then return {} end
         local debuffs = {}
-        AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+        pcall(AuraUtil.ForEachAura, unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if spellIds[spellId] then
                 debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
             end
@@ -2028,7 +2037,7 @@ if Cell.isRetail then
         -- Midnight 12.0.0+: aura fields are secret during restricted contexts
         if Cell.isMidnight and F.IsAuraRestricted() then return {} end
         local debuffs = {}
-        AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+        pcall(AuraUtil.ForEachAura, unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if types == "all" or types[debuffType] then
                 debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
             end
@@ -2563,4 +2572,28 @@ function F.IsValueNonSecret(val)
     if not Cell.isMidnight then return true end
     if not issecretvalue then return true end
     return not issecretvalue(val)
+end
+
+-- Reduces a possibly-secret boolean to a plain one so it can be branched on.
+-- A secret read falls back to default, or to false when no default is given.
+function F.SafeBool(val, default)
+    if not F.IsValueNonSecret(val) then return default or false end
+    return val and true or false
+end
+
+-- Midnight 12.0.0+: UnitIsPlayer returns a secret boolean in restricted contexts. The unit's
+-- GUID prefix is still readable in most of them, so fall back to that before giving up.
+function F.IsPlayerUnit(unit, guid)
+    local isPlayer = UnitIsPlayer(unit)
+    if F.IsValueNonSecret(isPlayer) then return isPlayer and true or false end
+    guid = guid or UnitGUID(unit)
+    if guid and F.IsValueNonSecret(guid) then
+        return strfind(guid, "^Player%-") and true or false
+    end
+    return false
+end
+
+-- Midnight 12.0.0+: UnitInPartyIsAI goes secret alongside UnitIsPlayer
+function F.IsAIUnit(unit)
+    return F.SafeBool(UnitInPartyIsAI(unit))
 end
