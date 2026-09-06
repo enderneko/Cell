@@ -418,7 +418,7 @@ unitname:SetAttribute("_onclick", [[
 ]])
 function unitname:SetUnit(index, target)
     local unitId = F.GetTargetUnitID(target)
-    if unitId and (UnitIsPlayer(unitId) or UnitInPartyIsAI(unitId)) then
+    if unitId and (F.IsPlayerUnit(unitId) or F.IsAIUnit(unitId)) then
         local name = GetUnitName(unitId, true)
         Cell.unitButtons.spotlight[index]:SetAttribute("unit", unitId)
         assignmentButtons[index]:SetText(name)

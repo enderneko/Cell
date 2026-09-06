@@ -832,7 +832,7 @@ function buffTrackerFrame:UnitUpdated(event, guid, unit, info)
     -- print(event, guid, unit, info.specId)
     if unit == "player" then
         if UnitIsUnit("player", myUnit) then CheckUnit(myUnit, true) end
-    elseif UnitIsPlayer(unit) then -- ignore pets
+    elseif F.IsPlayerUnit(unit, guid) then -- ignore pets
         CheckUnit(unit, true)
     end
 end

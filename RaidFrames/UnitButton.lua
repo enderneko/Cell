@@ -2005,7 +2005,7 @@ ShouldShowPowerText = function(b)
     elseif F.IsPet(b.states.guid) then
         class = "PET"
     elseif F.IsNPC(b.states.guid) then
-        if UnitInPartyIsAI(b.states.unit) then
+        if F.IsAIUnit(b.states.unit) then
             class = b.states.class
             role = GetRole(b)
         else
@@ -2047,7 +2047,7 @@ ShouldShowPowerBar = function(b)
     elseif F.IsPet(b.states.guid) then
         class = "PET"
     elseif F.IsNPC(b.states.guid) then
-        if UnitInPartyIsAI(b.states.unit) then
+        if F.IsAIUnit(b.states.unit) then
             class = b.states.class
             role = GetRole(b)
         else
@@ -2175,7 +2175,7 @@ UnitButton_UpdateRole = function(self)
 
         --! check vehicle root
         -- Midnight 12.0.0+: guid may be secret for NPC/boss units
-        if self.states.guid and not (issecretvalue and issecretvalue(self.states.guid)) and strfind(self.states.guid, "^Vehicle") and not UnitInPartyIsAI(unit) then
+        if self.states.guid and not (issecretvalue and issecretvalue(self.states.guid)) and strfind(self.states.guid, "^Vehicle") and not F.IsAIUnit(unit) then
             CheckVehicleRoot(self, unit)
         end
     else
@@ -2795,7 +2795,7 @@ UnitButton_UpdateStatusText = function(self)
     self.states.guid = UnitGUID(unit) -- update!
     if not self.states.guid then return end
 
-    if not UnitIsConnected(unit) and UnitIsPlayer(unit) then
+    if not UnitIsConnected(unit) and F.IsPlayerUnit(unit, self.states.guid) then
         statusText:Show()
         statusText:SetStatus("OFFLINE")
         statusText:ShowTimer()
@@ -2852,7 +2852,7 @@ local function UnitButton_UpdateName(self)
     self.states.fullName = F.UnitFullName(unit)
     self.states.class = UnitClassBase(unit)
     self.states.guid = UnitGUID(unit)
-    self.states.isPlayer = UnitIsPlayer(unit)
+    self.states.isPlayer = F.IsPlayerUnit(unit, self.states.guid)
 
     self.indicators.nameText:UpdateName()
 end
@@ -2863,7 +2863,7 @@ UnitButton_UpdateNameTextColor = function(self)
 
     if enabledIndicators["nameText"] then
         if indicatorColors["nameText"][1] == "class_color" or not UnitIsConnected(unit)
-        or ((UnitIsPlayer(unit) or UnitInPartyIsAI(unit)) and F.SafeBool(UnitIsCharmed(unit))) or self.states.inVehicle then
+        or ((F.IsPlayerUnit(unit, self.states.guid) or F.IsAIUnit(unit)) and F.SafeBool(UnitIsCharmed(unit))) or self.states.inVehicle then
             self.indicators.nameText:SetColor(F.GetUnitClassColor(unit))
         else
             self.indicators.nameText:SetColor(unpack(indicatorColors["nameText"][2]))
@@ -2884,8 +2884,8 @@ UnitButton_UpdateHealthColor = function(self)
     local unit = self.states.unit
     if not unit then return end
 
-    -- NOTE: Health bar coloring uses non-secret data (class, settings, UnitIsPlayer, etc.)
-    -- so the classic color logic below works on both Midnight and pre-Midnight.
+    -- NOTE: on Midnight the unit classification reads (UnitIsPlayer, UnitInPartyIsAI,
+    -- UnitIsCharmed) can all come back secret, so they go through the F helpers below.
     -- TODO: implement proper ColorCurve coloring for threshold/gradient modes once
     -- SetStatusBarColor secret color API is verified on PTR.
 
@@ -2900,7 +2900,7 @@ UnitButton_UpdateHealthColor = function(self)
         lossA =  CellDB["appearance"]["lossAlpha"]
     end
 
-    if UnitIsPlayer(unit) or UnitInPartyIsAI(unit) then -- player
+    if F.IsPlayerUnit(unit, self.states.guid) or F.IsAIUnit(unit) then -- player
         if not UnitIsConnected(unit) then
             barR, barG, barB = 0.4, 0.4, 0.4
             lossR, lossG, lossB = 0.4, 0.4, 0.4
@@ -3412,7 +3412,7 @@ local function UnitButton_OnTick(self)
                 end
 
                 -- NOTE: only save players' names
-                if UnitIsPlayer(self.states.unit) then
+                if F.IsPlayerUnit(self.states.unit, self.states.guid) then
                     -- update Cell.vars.names
                     local name = GetUnitName(self.states.unit, true)
                     if (name and self.__nameRetries and self.__nameRetries >= 4) or (name and name ~= UNKNOWN and name ~= UNKNOWNOBJECT) then
