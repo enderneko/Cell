@@ -303,10 +303,10 @@ end
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local alwaysUpdateAurasCB, translitCB
+local alwaysUpdateAurasCB, translitCB, hideSelfCastWarningCB
 
 local function CreateMiscPane()
-    local miscPane = Cell.CreateTitledPane(generalTab, L["Misc"], 205, 105)
+    local miscPane = Cell.CreateTitledPane(generalTab, L["Misc"], 205, 130)
     miscPane:SetPoint("TOPLEFT", generalTab, 222, -300)
 
     alwaysUpdateAurasCB = Cell.CreateCheckButton(miscPane, L["Always Update Auras"], function(checked, self)
@@ -324,6 +324,11 @@ local function CreateMiscPane()
         Cell.Fire("TranslitNames")
     end)
     translitCB:SetPoint("TOPLEFT", alwaysUpdateAurasCB, "BOTTOMLEFT", 0, -9)
+
+    hideSelfCastWarningCB = Cell.CreateCheckButton(miscPane, L["Hide Self Cast Key Warning"], function(checked, self)
+        CellDB["general"]["hideSelfCastWarning"] = checked
+    end, L["Don't warn about SELFCAST/FOCUSCAST modifier conflicts"], L["Click Castings still work, the popup is just suppressed"])
+    hideSelfCastWarningCB:SetPoint("TOPLEFT", translitCB, "BOTTOMLEFT", 0, -9)
 end
 
 -------------------------------------------------
@@ -520,6 +525,7 @@ local function ShowTab(tab)
         alwaysUpdateAurasCB:SetChecked(CellDB["general"]["alwaysUpdateAuras"])
         framePriorityWidget:Load(CellDB["general"]["framePriority"])
         translitCB:SetChecked(CellDB["general"]["translit"])
+        hideSelfCastWarningCB:SetChecked(CellDB["general"]["hideSelfCastWarning"])
 
     else
         generalTab:Hide()

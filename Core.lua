@@ -241,6 +241,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 },
                 ["useCleuHealthUpdater"] = false,
                 ["translit"] = false,
+                ["hideSelfCastWarning"] = false,
             }
         end
         Cell.vars.alwaysUpdateAuras = CellDB["general"]["alwaysUpdateAuras"]
