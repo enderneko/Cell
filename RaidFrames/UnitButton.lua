@@ -1086,8 +1086,16 @@ local function ForEachAuraHelper(button, func, continuationToken, ...)
     end
 end
 
+-- Midnight 12.0.0+: GetAuraSlots() hard-errors for tainted code as soon as any aura on the unit
+-- is secret, and there's no readable substitute for enumerating them. Drop the pass in that case
+-- rather than throwing; the indicators just come up empty until the restriction lifts.
+local function ProtectedForEachAuraHelper(button, func, ok, ...)
+    if not ok then return end
+    return ForEachAuraHelper(button, func, ...)
+end
+
 local function ForEachAura(button, filter, func)
-    ForEachAuraHelper(button, func, GetAuraSlots(button.states.displayedUnit, filter))
+    return ProtectedForEachAuraHelper(button, func, pcall(GetAuraSlots, button.states.displayedUnit, filter))
 end
 
 -------------------------------------------------
@@ -1748,7 +1756,10 @@ UnitButton_UpdateAuras = function(self, updateInfo)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    local isFullUpdate = not updateInfo or updateInfo.isFullUpdate
+    -- Midnight 12.0.0+: in restricted contexts isFullUpdate is itself a secret, and so are
+    -- addedAuras/removedAuraInstanceIDs. Nothing in the incremental path is readable, so fall
+    -- back to a full rescan whenever the flag can't be tested.
+    local isFullUpdate = not updateInfo or not F.IsValueNonSecret(updateInfo.isFullUpdate) or updateInfo.isFullUpdate
 
     if isFullUpdate then
         -- full update

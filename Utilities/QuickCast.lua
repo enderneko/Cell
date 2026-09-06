@@ -896,7 +896,9 @@ local function QuickCast_UpdateAuras(self)
 
     local glowBuffFound, outerBuffFound, innerBuffFound
 
-    AuraUtil.ForEachAura(self.unit, "HELPFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+    -- Midnight 12.0.0+: AuraUtil.ForEachAura goes through GetAuraSlots, which hard-errors for
+    -- tainted code when any aura on the unit is secret
+    pcall(AuraUtil.ForEachAura, self.unit, "HELPFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
         -- Midnight 12.0.0+: skip auras whose fields are secret; non-secret auras (e.g. raid buffs) are safe to read
         if Cell.isMidnight and issecretvalue and issecretvalue(spellId) then return end
 

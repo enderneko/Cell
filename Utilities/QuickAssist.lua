@@ -170,8 +170,14 @@ local function ForEachAuraHelper(button, func, continuationToken, ...)
     end
 end
 
+-- Midnight 12.0.0+: GetAuraSlots() hard-errors for tainted code once any aura on the unit is secret
+local function ProtectedForEachAuraHelper(button, func, ok, ...)
+    if not ok then return end
+    return ForEachAuraHelper(button, func, ...)
+end
+
 local function ForEachAura(button, filter, func)
-    ForEachAuraHelper(button, func, GetAuraSlots(button.unit, filter))
+    return ProtectedForEachAuraHelper(button, func, pcall(GetAuraSlots, button.unit, filter))
 end
 
 -- ----------------------------------------------------------------------- --
@@ -232,7 +238,8 @@ local function QuickAssist_UpdateAuras(self, updateInfo)
 
     local buffsChanged
 
-    if not updateInfo or updateInfo.isFullUpdate then
+    -- Midnight 12.0.0+: a secret isFullUpdate means the whole updateInfo is unreadable, so rescan
+    if not updateInfo or not F.IsValueNonSecret(updateInfo.isFullUpdate) or updateInfo.isFullUpdate then
         wipe(self._buffs_cache)
         wipe(self._buffs_count_cache)
         buffsChanged = true

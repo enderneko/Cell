@@ -2000,14 +2000,23 @@ end
 local function predicate(...)
     local idToFind = ...
     local id = select(13, ...)
+    -- Midnight 12.0.0+: comparing against a secret spellId throws
+    if not F.IsValueNonSecret(id) then return false end
     return idToFind == id
+end
+
+-- Midnight 12.0.0+: AuraUtil.FindAura enumerates through GetAuraSlots, which hard-errors for
+-- tainted code once any aura on the unit is secret. Report "not found" instead of throwing.
+local function UnpackFindAura(ok, ...)
+    if not ok then return nil end
+    return ...
 end
 
 function F.FindAuraById(unit, type, spellId)
     if type == "BUFF" then
-        return AuraUtil.FindAura(predicate, unit, "HELPFUL", spellId)
+        return UnpackFindAura(pcall(AuraUtil.FindAura, predicate, unit, "HELPFUL", spellId))
     else
-        return AuraUtil.FindAura(predicate, unit, "HARMFUL", spellId)
+        return UnpackFindAura(pcall(AuraUtil.FindAura, predicate, unit, "HARMFUL", spellId))
     end
 end
 
@@ -2016,7 +2025,7 @@ if Cell.isRetail then
         -- Midnight 12.0.0+: aura fields are secret during restricted contexts
         if Cell.isMidnight and F.IsAuraRestricted() then return {} end
         local debuffs = {}
-        AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+        pcall(AuraUtil.ForEachAura, unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if spellIds[spellId] then
                 debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
             end
@@ -2028,7 +2037,7 @@ if Cell.isRetail then
         -- Midnight 12.0.0+: aura fields are secret during restricted contexts
         if Cell.isMidnight and F.IsAuraRestricted() then return {} end
         local debuffs = {}
-        AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+        pcall(AuraUtil.ForEachAura, unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if types == "all" or types[debuffType] then
                 debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
             end
