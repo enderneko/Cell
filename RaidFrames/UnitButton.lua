@@ -2863,7 +2863,7 @@ UnitButton_UpdateNameTextColor = function(self)
 
     if enabledIndicators["nameText"] then
         if indicatorColors["nameText"][1] == "class_color" or not UnitIsConnected(unit)
-        or ((UnitIsPlayer(unit) or UnitInPartyIsAI(unit)) and UnitIsCharmed(unit)) or self.states.inVehicle then
+        or ((UnitIsPlayer(unit) or UnitInPartyIsAI(unit)) and F.SafeBool(UnitIsCharmed(unit))) or self.states.inVehicle then
             self.indicators.nameText:SetColor(F.GetUnitClassColor(unit))
         else
             self.indicators.nameText:SetColor(unpack(indicatorColors["nameText"][2]))
@@ -2904,7 +2904,9 @@ UnitButton_UpdateHealthColor = function(self)
         if not UnitIsConnected(unit) then
             barR, barG, barB = 0.4, 0.4, 0.4
             lossR, lossG, lossB = 0.4, 0.4, 0.4
-        elseif UnitIsCharmed(unit) then
+        -- Midnight 12.0.0+: UnitIsCharmed returns a secret boolean for units under
+        -- restricted control, a vehicle-seated party member for one
+        elseif F.SafeBool(UnitIsCharmed(unit)) then
             barR, barG, barB, barA = 0.5, 0, 1, 1
             lossR, lossG, lossB, lossA = barR*0.2, barG*0.2, barB*0.2, 1
         elseif self.states.inVehicle then

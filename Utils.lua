@@ -2573,3 +2573,10 @@ function F.IsValueNonSecret(val)
     if not issecretvalue then return true end
     return not issecretvalue(val)
 end
+
+-- Reduces a possibly-secret boolean to a plain one so it can be branched on.
+-- A secret read becomes false, which is the safe default for every current caller.
+function F.SafeBool(val)
+    if not F.IsValueNonSecret(val) then return false end
+    return val and true or false
+end
