@@ -1086,8 +1086,20 @@ local function ForEachAuraHelper(button, func, continuationToken, ...)
     end
 end
 
-local function ForEachAura(button, filter, func)
+local function ForEachAuraSweep(button, filter, func)
     ForEachAuraHelper(button, func, GetAuraSlots(button.states.displayedUnit, filter))
+end
+
+-- Midnight refuses aura enumeration to tainted code: GetAuraSlots() errors outright
+-- rather than handing back secret slots. Skip the sweep while the restriction is
+-- reported, and pcall it regardless, because the reported status misses cases.
+local function ForEachAura(button, filter, func)
+    if Cell.isMidnight then
+        if F.IsAuraRestricted() then return end
+        pcall(ForEachAuraSweep, button, filter, func)
+        return
+    end
+    ForEachAuraSweep(button, filter, func)
 end
 
 -------------------------------------------------
